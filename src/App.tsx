@@ -1,3 +1,5 @@
+import BuiltForDev from "./components/Home/BuiltForDev";
+
 function App() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
@@ -6,6 +8,7 @@ function App() {
           <h1 className="text-5xl font-bold text-gray-900 mb-4 text-center">
             TrustVC
           </h1>
+          <BuiltForDev />
         </div>
       </div>
     </div>
