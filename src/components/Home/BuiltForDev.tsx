@@ -1,3 +1,4 @@
+import React from 'react';
 import CodeIcon from '../../common/icons/CodeIcon';
 
 interface PointFormStatementProps {
