@@ -43,7 +43,7 @@ const BuiltForDev = () => (
         fontSize={36}
         className="border p-2 text-white rounded-lg bg-gradient-to-r from-trustvc-purple to-trustvc-blue flex-shrink-0"
       />
-      <h2 className="flex flex-col lg:flex-row lg:gap-1 text-4xl font-bold font-roboto sm:px-2">
+      <h2 className="flex flex-col lg:flex-row lg:gap-1 text-4xl font-bold sm:px-2">
         <span>Built for Developers,</span>
         <span className="text-trustvc-purple">Trusted by Enterprises</span>
       </h2>

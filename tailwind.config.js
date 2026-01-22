@@ -8,7 +8,6 @@ export default {
     extend: {
       fontFamily: {
         avenir: ["Avenir", "ui-sans-serif", "system-ui"],
-        poppins: ["Poppins", "ui-sans-serif", "system-ui"],
       },
       colors: {
         'trustvc-purple': "#686AD2",
