@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import './index.css'
-import AppRouter from './routes'
+import App from './App';
 import { BrowserRouter } from "react-router-dom";
 
 
@@ -14,7 +14,7 @@ if (!rootElement) {
 ReactDOM.createRoot(rootElement).render(
   <React.StrictMode>
     <BrowserRouter>
-      <AppRouter />
+      <App />
     </BrowserRouter>
   </React.StrictMode>
 )
