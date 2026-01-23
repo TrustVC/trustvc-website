@@ -1,14 +1,8 @@
-import React from 'react'
 import CodeIcon from '../../common/icons/CodeIcon'
+import LinkButton from '../../common/components/LinkButton'
 
 interface PointFormStatementProps {
   stmt: string
-}
-
-interface LinkButtonProps {
-  className?: string
-  href: string
-  children: React.ReactNode
 }
 
 const BUILT_FOR_DEV_FEATURES = [
@@ -25,19 +19,8 @@ const PointFormStatement = ({ stmt }: PointFormStatementProps) => (
   </div>
 )
 
-const LinkButton = ({ className = '', href, children }: LinkButtonProps) => (
-  <a
-    href={href}
-    target="_blank"
-    rel="noopener noreferrer"
-    className={`px-4 py-2 rounded-lg font-bold text-center ${className}`}
-  >
-    {children}
-  </a>
-)
-
 const BuiltForDev = () => (
-  <div className="px-4 sm:px-6 lg:px-8">
+  <div className="px-4 sm:px-6 lg:px-8 max-w-[1024px] mx-auto">
     <header className="flex flex-row gap-3 lg:gap-2 pb-3 items-start">
       <CodeIcon
         fontSize={36}
@@ -49,14 +32,14 @@ const BuiltForDev = () => (
       </h2>
     </header>
 
-    <div className="py-2 font-avenir text-gray-600">
+    <div className="py-2 font-avenir-medium text-gray-600">
       <p className="py-2 leading-snug text-xl">
         Get started in minutes with our comprehensive documentation. TrustVC
         abstracts away the complexity while maintaining full control and
         transparency.
       </p>
 
-      <ul className="flex flex-col gap-2 m-2">
+      <ul className="flex flex-col gap-2 m-2 pb-5">
         {BUILT_FOR_DEV_FEATURES.map(feature => (
           <li key={feature}>
             <PointFormStatement stmt={feature} />
@@ -72,7 +55,7 @@ const BuiltForDev = () => (
           TrustVC Documentation
         </LinkButton>
         <LinkButton
-          className="text-trustvc-button-purple"
+          className="bg-trustvc-button-purple text-white"
           href="https://github.com/TrustVC/trustvc"
         >
           View on GitHub
