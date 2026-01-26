@@ -177,7 +177,7 @@ const CarouselSlide = ({ content, image, stats }: CarouselSlideProps) => {
           </div>
         </div>
         <div
-          className="z-20 pt-6 lg:col-span-2 xl:col-span-1"
+          className="z-20 pt-6 lg:col-span-2 xl:col-span-1 min-w-[350px]"
         >
           <StatsSection stats={stats} />
         </div>
