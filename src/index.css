@@ -10,3 +10,15 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+.hero-carousel-pagination .swiper-pagination-bullet {
+    background: #dfe1ff; /* gray-300 */
+    opacity: 1;
+    width: 10px;
+    height: 10px;
+    margin: 0 !important;
+}
+
+.hero-carousel-pagination .swiper-pagination-bullet-active {
+    background: #5B5BB3; /* your purple color */
+}

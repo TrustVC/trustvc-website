@@ -1,36 +1,38 @@
-import React from 'react';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import 'swiper/css';
-import 'swiper/css/pagination';
-import 'swiper/css/navigation';
-import { Pagination } from 'swiper/modules';
-import LinkButton from '../../common/components/LinkButton';
-import RightArrowIcon from '../../common/icons/RightArrowIcon';
-import carouselData from '../../../public/data/carouselData.json';
+import { MutableRefObject, useRef } from 'react'
+
+import { Swiper, SwiperSlide } from 'swiper/react'
+import 'swiper/css'
+import 'swiper/css/pagination'
+import 'swiper/css/navigation'
+import { Navigation, Pagination, Autoplay } from 'swiper/modules'
+import type { Swiper as SwiperInstance } from 'swiper'
+import LinkButton from '../../common/components/LinkButton'
+import RightArrowIcon from '../../common/icons/RightArrowIcon'
+import carouselData from '../../data/carouselData.json'
 
 interface Stat {
-    value: string;
-    label: string;
+    value: string
+    label: string
 }
 
 interface ContentSection {
-    title: string;
-    subtitle: string;
-    description: string;
-    ctaUrl?: string;
+    title: string
+    subtitle: string
+    description: string
+    ctaUrl?: string
 }
 
 interface StatsGrid {
-    topLeft: Stat;
-    topRight: Stat;
-    bottomLeft: Stat;
-    bottomRight: Stat;
+    topLeft: Stat
+    topRight: Stat
+    bottomLeft: Stat
+    bottomRight: Stat
 }
 
 interface CarouselSlide {
-    content: ContentSection;
-    image: string;
-    stats?: StatsGrid;
+    content: ContentSection
+    image: string
+    stats?: StatsGrid
 }
 
 const StatDisplay = ({ value, label }: Stat) => (
@@ -42,15 +44,15 @@ const StatDisplay = ({ value, label }: Stat) => (
             <span>{label}</span>
         </div>
     </div>
-);
+)
 
 const ContentSection = ({
     title,
     subtitle,
     description,
-    ctaUrl
+    ctaUrl,
 }: ContentSection) => {
-    const isComingSoon = !ctaUrl;
+    const isComingSoon = !ctaUrl
 
     return (
         <div>
@@ -62,7 +64,7 @@ const ContentSection = ({
                 <span>{description}</span>
             </div>
             <LinkButton
-                href={ctaUrl || ""}
+                href={ctaUrl || ''}
                 className={`mt-3 w-fit items-center gap-2 bg-trustvc-button-purple text-white ${isComingSoon ? 'cursor-not-allowed opacity-50' : ''
                     }`}
             >
@@ -70,8 +72,8 @@ const ContentSection = ({
                 {!isComingSoon && <RightArrowIcon />}
             </LinkButton>
         </div>
-    );
-};
+    )
+}
 
 const StatsDisplay = ({ stats }: { stats: StatsGrid }) => (
     <div className="flex h-full flex-col items-center justify-center text-center font-avenir-medium">
@@ -81,14 +83,20 @@ const StatsDisplay = ({ stats }: { stats: StatsGrid }) => (
         <div className="mx-auto mt-4 grid w-fit grid-cols-2 items-center justify-items-center gap-x-20 gap-y-5">
             <StatDisplay value={stats.topLeft.value} label={stats.topLeft.label} />
             <StatDisplay value={stats.topRight.value} label={stats.topRight.label} />
-            <StatDisplay value={stats.bottomLeft.value} label={stats.bottomLeft.label} />
-            <StatDisplay value={stats.bottomRight.value} label={stats.bottomRight.label} />
+            <StatDisplay
+                value={stats.bottomLeft.value}
+                label={stats.bottomLeft.label}
+            />
+            <StatDisplay
+                value={stats.bottomRight.value}
+                label={stats.bottomRight.label}
+            />
         </div>
         <div className="mx-auto mt-4 w-fit rounded-full border border-gray-300 bg-white px-3 py-2">
             <span>2025 Growth to date</span>
         </div>
     </div>
-);
+)
 
 const ComingSoonPlaceholder = () => (
     <div className="flex h-full flex-col items-center justify-center text-center font-avenir-medium">
@@ -104,7 +112,7 @@ const ComingSoonPlaceholder = () => (
             </div>
         </div>
     </div>
-);
+)
 
 const StatsSection = ({ stats }: { stats?: StatsGrid }) => (
     <div className="flex h-full flex-col justify-center">
@@ -118,23 +126,27 @@ const StatsSection = ({ stats }: { stats?: StatsGrid }) => (
             </div>
         )}
     </div>
-);
+)
 
 const CarouselSlide = ({ content, image, stats }: CarouselSlide) => {
-    const focalX = 67;
-    const focalY = 45;
-    const translateX = 50 - focalX;
-    const translateY = 50 - focalY;
+    const focalX = 67
+    const focalY = 45
+    const translateX = 50 - focalX
+    const translateY = 50 - focalY
 
     return (
-        <div className="relative mx-auto max-w-[1280px] overflow-hidden px-6 py-10">
+        <div className="relative mx-auto max-w-[1280px] overflow-hidden px-6 pt-10">
             <div
                 className="relative mx-auto flex max-w-3xl items-center justify-center"
                 style={{
-                    transform: `translateX(${translateX}%) translateY(${translateY}%)`
+                    transform: `translateX(${translateX}%) translateY(${translateY}%)`,
                 }}
             >
-                <img src={image} alt="" className="max-h-full max-w-full object-contain" />
+                <img
+                    src={image}
+                    alt="hero-carousel-image"
+                    className="max-h-full max-w-full object-contain"
+                />
             </div>
             <div className="absolute top-1/2 left-0 right-0 z-10 flex -translate-y-1/2 items-stretch justify-between">
                 <div className="max-w-[420px] min-h-[320px] p-5">
@@ -150,28 +162,76 @@ const CarouselSlide = ({ content, image, stats }: CarouselSlide) => {
                 </div>
             </div>
         </div>
-    );
-};
+    )
+}
 
-const Carousel = () => (
-    <div className="mx-auto my-10 max-w-[1440px]">
-        <Swiper
-            slidesPerView={1}
-            loop={true}
-            pagination={{ clickable: true }}
-            modules={[Pagination]}
+const CarouselControlBar = ({
+    swiperRef,
+}: {
+    swiperRef: MutableRefObject<SwiperInstance | null>
+}) => {
+    return (
+        <div
+            className="flex items-center justify-center gap-4"
+            style={{ width: 'fit-content', margin: '0 auto' }}
         >
-            {carouselData.items.map((item, index) => (
-                <SwiperSlide key={index}>
-                    <CarouselSlide
-                        content={item.content}
-                        image={item.image}
-                        stats={item.stats}
-                    />
-                </SwiperSlide>
-            ))}
-        </Swiper>
-    </div>
-);
+            <button
+                onClick={() => swiperRef.current?.slidePrev()}
+                className="flex h-6 w-6 items-center justify-center text-gray-400 hover:text-trustvc-purple"
+            >
+                <div className="rotate-180">
+                    <RightArrowIcon />
+                </div>
+            </button>
+            <div
+                className="hero-carousel-pagination"
+                // Inline style to override default pagination styles
+                style={{
+                    display: 'flex',
+                    gap: '0.5rem',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                }}
+            />
+            <button
+                onClick={() => swiperRef.current?.slideNext()}
+                className="flex h-6 w-6 items-center justify-center text-gray-400 hover:text-trustvc-purple"
+            >
+                <RightArrowIcon />
+            </button>
+        </div>
+    )
+}
 
-export default Carousel;
+const Carousel = () => {
+    const swiperRef = useRef<SwiperInstance | null>(null)
+
+    return (
+        <div className="mx-auto my-10 max-w-[1440px] flex flex-col gap-6">
+            <div>
+                <Swiper
+                    modules={[Pagination, Navigation, Autoplay]}
+                    autoplay={{ delay: 5000, disableOnInteraction: true }}
+                    slidesPerView={1}
+                    loop={true}
+                    onSwiper={swiper => {
+                        swiperRef.current = swiper
+                    }}
+                    pagination={{
+                        clickable: true,
+                        el: '.hero-carousel-pagination',
+                    }}
+                >
+                    {carouselData.items.map((item, index) => (
+                        <SwiperSlide key={index}>
+                            <CarouselSlide {...item} />
+                        </SwiperSlide>
+                    ))}
+                </Swiper>
+            </div>
+            <CarouselControlBar swiperRef={swiperRef} />
+        </div>
+    )
+}
+
+export default Carousel
