@@ -5,7 +5,7 @@
         "title": "Driving Progress",
         "subtitle": "Across Industries",
         "description": "When trust is paramount, our secure and transparent framework makes digital verification effortless. Our numbers tell the story of a growing network of users and organizations who rely on us with their most important data.",
-        "ctaUrl": "/learn-more"
+        "link": "/learn-more"
       },
       "image": "images/carousel/carousel_1.png",
       "stats": {
@@ -32,7 +32,7 @@
         "title": "Driving Progress",
         "subtitle": "in Trade Industry",
         "description": "An open-source framework for digital trade documents. It allows trading partners to create, exchange, verify digitised documents, and transfer ownership of documents across different digital platforms seamlessly",
-        "ctaUrl": "/trade"
+        "link": "/trade"
       },
       "image": "images/carousel/carousel_2.png",
       "stats": {
