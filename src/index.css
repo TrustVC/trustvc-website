@@ -2,11 +2,67 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  /* Gilroy Light */
+  @font-face {
+    font-family: 'Gilroy';
+    src:
+      url('/fonts/GilroyLight/font.woff2') format('woff2'),
+      url('/fonts/GilroyLight/font.woff') format('woff');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  /* Gilroy Medium */
+  @font-face {
+    font-family: 'Gilroy';
+    src:
+      url('/fonts/GilroyMedium/font.woff2') format('woff2'),
+      url('/fonts/GilroyMedium/font.woff') format('woff');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  /* Gilroy Bold */
+  @font-face {
+    font-family: 'Gilroy';
+    src:
+      url('/fonts/GilroyBold/font.woff2') format('woff2'),
+      url('/fonts/GilroyBold/font.woff') format('woff');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  /* Gilroy ExtraBold */
+  @font-face {
+    font-family: 'Gilroy';
+    src:
+      url('/fonts/GilroyExtraBold/font.woff2') format('woff2'),
+      url('/fonts/GilroyExtraBold/font.woff') format('woff');
+    font-weight: 800;
+    font-style: normal;
+    font-display: swap;
+  }
+}
+
 body {
   margin: 0;
   font-family:
-    -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
-    'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    'Gilroy',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    'Roboto',
+    'Oxygen',
+    'Ubuntu',
+    'Cantarell',
+    'Fira Sans',
+    'Droid Sans',
+    'Helvetica Neue',
+    sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -21,4 +77,100 @@ body {
 
 .hero-carousel-pagination .swiper-pagination-bullet-active {
   background: #5b5bb3; /* your purple color */
+}
+
+/* Navbar Styles */
+.navbar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 88px;
+  padding: 0.5rem 1rem;
+  z-index: 1000;
+}
+
+.navbar-light {
+  background:
+    linear-gradient(
+      0deg,
+      rgba(222, 228, 233, 0) 0%,
+      rgba(222, 228, 233, 0) 100%
+    ),
+    rgba(255, 255, 255, 0.33);
+}
+
+.navbar-dark {
+  background:
+    linear-gradient(
+      0deg,
+      rgba(30, 32, 38, 0.33) 0%,
+      rgba(30, 32, 38, 0.33) 100%
+    ),
+    rgba(0, 0, 0, 0);
+}
+
+.navbar-content {
+  width: 100%;
+  height: 72px;
+  padding: 0.5rem;
+  border-radius: 1rem;
+  backdrop-filter: blur(12px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar-content-light {
+  background:
+    linear-gradient(
+      0deg,
+      rgba(222, 228, 233, 0.33) 0%,
+      rgba(222, 228, 233, 0.33) 100%
+    ),
+    rgba(255, 255, 255, 0.33);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.navbar-content-dark {
+  background:
+    linear-gradient(
+      0deg,
+      rgba(30, 32, 38, 0.33) 0%,
+      rgba(30, 32, 38, 0.33) 100%
+    ),
+    rgba(0, 0, 0, 0);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.logo-wrapper {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  height: 32px;
+  overflow: visible;
+}
+
+.logo-icon {
+  flex-shrink: 0;
+  display: block;
+}
+
+.logo-text {
+  flex-shrink: 0;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.contact-button {
+  background: linear-gradient(135deg, #686ad2 10%, #167eb0 90%);
+}
+
+/* Logo text colors */
+.logo-light path {
+  fill: #403d7d;
+}
+
+.logo-dark path {
+  fill: #aaaee6;
 }
