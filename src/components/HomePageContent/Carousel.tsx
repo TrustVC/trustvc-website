@@ -166,23 +166,13 @@ const StatsGridDisplay = ({
         lg:grid-cols-4 lg:mt-0
         xl:grid-cols-2 xl:mt-4 xl:gap-x-20"
     >
+      <StatDisplay value={stats.topLeft.value} label={stats.topLeft.label} />
+      <StatDisplay value={stats.topRight.value} label={stats.topRight.label} />
       <StatDisplay
-        isDarkMode={isDarkMode}
-        value={stats.topLeft.value}
-        label={stats.topLeft.label}
-      />
-      <StatDisplay
-        isDarkMode={isDarkMode}
-        value={stats.topRight.value}
-        label={stats.topRight.label}
-      />
-      <StatDisplay
-        isDarkMode={isDarkMode}
         value={stats.bottomLeft.value}
         label={stats.bottomLeft.label}
       />
       <StatDisplay
-        isDarkMode={isDarkMode}
         value={stats.bottomRight.value}
         label={stats.bottomRight.label}
       />
