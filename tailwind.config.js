@@ -5,7 +5,25 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        primary: {
+          30: '#403D7D',
+          50: '#5B5BB3',
+          60: '#686AD2',
+        },
+        secondary: {
+          60: '#167EB0',
+          100: '#8AD2EE',
+        },
+        neutral: {
+          50: '#5B6571',
+        },
+      },
+      fontFamily: {
+        gilroy: ['Gilroy', 'sans-serif'],
+      },
+    },
   },
   plugins: [],
 }
