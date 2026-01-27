@@ -57,4 +57,40 @@ describe('Home page', () => {
 
     expect(screen.getByText(/Trusted by Enterprises/i)).toBeInTheDocument()
   })
+
+  it('applies light mode text classes when isDarkMode is false', () => {
+    render(<Home isDarkMode={false} />)
+
+    const firstItem = carouselData.items[0]
+    const firstSlide = screen.getByLabelText('carousel-slide-0')
+
+    const carouselTitle = within(firstSlide).getByText(firstItem.content.title)
+    const carouselTitleContainer = carouselTitle.closest('div')
+    expect(carouselTitleContainer).not.toBeNull()
+    expect(carouselTitleContainer).toHaveClass('text-neutral-10')
+
+    const builtForDevelopersText = screen.getByText(/Built for Developers,/i)
+    expect(builtForDevelopersText).toHaveClass('text-neutral-10')
+
+    const builtForDevDescription = screen.getByText(/Get started in minutes/i)
+    expect(builtForDevDescription).toHaveClass('text-neutral-20')
+  })
+
+  it('applies dark mode text classes when isDarkMode is true', () => {
+    render(<Home isDarkMode={true} />)
+
+    const firstItem = carouselData.items[0]
+    const firstSlide = screen.getByLabelText('carousel-slide-0')
+
+    const carouselTitle = within(firstSlide).getByText(firstItem.content.title)
+    const carouselTitleContainer = carouselTitle.closest('div')
+    expect(carouselTitleContainer).not.toBeNull()
+    expect(carouselTitleContainer).toHaveClass('text-neutral-60')
+
+    const builtForDevelopersText = screen.getByText(/Built for Developers,/i)
+    expect(builtForDevelopersText).toHaveClass('text-neutral-60')
+
+    const builtForDevDescription = screen.getByText(/Get started in minutes/i)
+    expect(builtForDevDescription).toHaveClass('text-neutral-50')
+  })
 })
