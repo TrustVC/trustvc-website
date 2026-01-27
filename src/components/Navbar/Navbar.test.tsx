@@ -1,0 +1,123 @@
+import { describe, it, expect, vi } from 'vitest'
+import { render, screen, fireEvent } from '@testing-library/react'
+import Navbar from './Navbar'
+
+describe('Navbar Component', () => {
+  const mockSetIsDarkMode = vi.fn()
+
+  it('renders navbar with logo', () => {
+    render(<Navbar isDarkMode={false} setIsDarkMode={mockSetIsDarkMode} />)
+
+    // Logo should be present
+    const logos = screen.getAllByRole('link', { name: '' })
+    expect(logos.length).toBeGreaterThan(0)
+  })
+
+  it('renders navigation links', () => {
+    render(<Navbar isDarkMode={false} setIsDarkMode={mockSetIsDarkMode} />)
+
+    expect(screen.getByText('Home')).toBeInTheDocument()
+    expect(screen.getByText('Ecosystem')).toBeInTheDocument()
+    expect(screen.getByText('Gallery')).toBeInTheDocument()
+    expect(screen.getByText('News & Updates')).toBeInTheDocument()
+  })
+
+  it('renders Contact Us button', () => {
+    render(<Navbar isDarkMode={false} setIsDarkMode={mockSetIsDarkMode} />)
+
+    const contactButtons = screen.getAllByText('Contact Us')
+    expect(contactButtons.length).toBeGreaterThan(0)
+  })
+
+  it('toggles dark mode when sun icon is clicked', () => {
+    render(<Navbar isDarkMode={true} setIsDarkMode={mockSetIsDarkMode} />)
+
+    // Find sun icon button (first theme toggle button)
+    const themeButtons = screen.getAllByRole('button')
+    const sunButton = themeButtons.find(btn =>
+      btn.querySelector('svg path[d*="M12 19.3755"]')
+    )
+
+    if (sunButton) {
+      fireEvent.click(sunButton)
+      expect(mockSetIsDarkMode).toHaveBeenCalledWith(false)
+    }
+  })
+
+  it('toggles dark mode when moon icon is clicked', () => {
+    render(<Navbar isDarkMode={false} setIsDarkMode={mockSetIsDarkMode} />)
+
+    // Find moon icon button
+    const themeButtons = screen.getAllByRole('button')
+    const moonButton = themeButtons.find(btn =>
+      btn.querySelector('svg path[d*="M10.0762"]')
+    )
+
+    if (moonButton) {
+      fireEvent.click(moonButton)
+      expect(mockSetIsDarkMode).toHaveBeenCalledWith(true)
+    }
+  })
+
+  it('opens mobile menu when hamburger is clicked', () => {
+    render(<Navbar isDarkMode={false} setIsDarkMode={mockSetIsDarkMode} />)
+
+    // Find hamburger button
+    const hamburgerButton = screen
+      .getAllByRole('button')
+      .find(btn => btn.querySelector('svg path[d*="M20.1694 16.75"]'))
+
+    expect(hamburgerButton).toBeInTheDocument()
+
+    if (hamburgerButton) {
+      fireEvent.click(hamburgerButton)
+
+      // Mobile menu should appear with navigation items
+      const homeLinks = screen.getAllByText('Home')
+      expect(homeLinks.length).toBeGreaterThan(1) // Desktop + Mobile
+    }
+  })
+
+  it('opens ecosystem dropdown on hover', () => {
+    render(<Navbar isDarkMode={false} setIsDarkMode={mockSetIsDarkMode} />)
+
+    const ecosystemButtons = screen.getAllByText('Ecosystem')
+    const desktopEcosystemButton = ecosystemButtons[0]
+
+    // Hover over Ecosystem
+    fireEvent.mouseEnter(desktopEcosystemButton)
+
+    // Dropdown items should appear
+    const placeholders = screen.getAllByText('Placeholder')
+    expect(placeholders.length).toBeGreaterThan(0)
+  })
+
+  it('applies correct CSS classes for light mode', () => {
+    const { container } = render(
+      <Navbar isDarkMode={false} setIsDarkMode={mockSetIsDarkMode} />
+    )
+
+    const nav = container.querySelector('nav')
+    expect(nav).toHaveClass('navbar-light')
+    expect(nav).not.toHaveClass('navbar-dark')
+  })
+
+  it('applies correct CSS classes for dark mode', () => {
+    const { container } = render(
+      <Navbar isDarkMode={true} setIsDarkMode={mockSetIsDarkMode} />
+    )
+
+    const nav = container.querySelector('nav')
+    expect(nav).toHaveClass('navbar-dark')
+    expect(nav).not.toHaveClass('navbar-light')
+  })
+
+  it('renders contact button with correct CSS class', () => {
+    const { container } = render(
+      <Navbar isDarkMode={false} setIsDarkMode={mockSetIsDarkMode} />
+    )
+
+    const contactButtons = container.querySelectorAll('.contact-button')
+    expect(contactButtons.length).toBeGreaterThan(0)
+  })
+})
