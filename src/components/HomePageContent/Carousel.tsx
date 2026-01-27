@@ -46,16 +46,12 @@ interface CarouselProps {
   isDarkMode: boolean
 }
 
-const StatDisplay = ({ isDarkMode, value, label }: Stat & { isDarkMode: boolean }) => (
+const StatDisplay = ({ value, label }: Stat) => (
   <div>
     <div className="text-4xl font-bold text-primary-60">
       <span>{value}</span>
     </div>
-    <div
-      className={clsx(
-        'py-2 text-md font-avenir-medium text-neutral-30',
-      )}
-    >
+    <div className={clsx('py-2 text-md font-avenir-medium text-neutral-30')}>
       <span>{label}</span>
     </div>
   </div>
@@ -72,7 +68,12 @@ const ContentSection = ({
 
   return (
     <div>
-      <div className={clsx('flex flex-col min-h-[112px] text-4xl font-bold', isDarkMode ? 'text-neutral-60' : 'text-neutral-10')}>
+      <div
+        className={clsx(
+          'flex flex-col min-h-[112px] text-4xl font-bold',
+          isDarkMode ? 'text-neutral-60' : 'text-neutral-10'
+        )}
+      >
         <span className="py-1">{title}</span>
         <span className="text-primary-60">{subtitle}</span>
       </div>
@@ -91,7 +92,11 @@ const ContentSection = ({
           isDisabled={isComingSoon}
         >
           <span>{isComingSoon ? 'Coming Soon' : 'Learn More'}</span>
-          {!isComingSoon && <span className="ml-2"><RightArrowIcon height={24} width={20} /></span>}
+          {!isComingSoon && (
+            <span className="ml-2">
+              <RightArrowIcon height={24} width={20} />
+            </span>
+          )}
         </LinkButton>
       </div>
     </div>
@@ -116,12 +121,8 @@ const ComingSoonPlaceholder = ({ isDarkMode }: { isDarkMode: boolean }) => (
     >
       <span>Logo Here</span>
     </div>
-    <div
-      className="py-4 lg:py-0"
-    >
-      <div
-        className="py-2 text-4xl font-bold text-primary-60 lg:py-0 lg:text-3xl xl:py-2 xl:text-4xl"
-      >
+    <div className="py-4 lg:py-0">
+      <div className="py-2 text-4xl font-bold text-primary-60 lg:py-0 lg:text-3xl xl:py-2 xl:text-4xl">
         <span>Coming Soon</span>
       </div>
       <div
@@ -208,9 +209,7 @@ const StatsSection = ({
   isDarkMode: boolean
   stats?: StatsGridProps
 }) => (
-  <div
-    className="flex flex-col justify-center items-center md:min-w-[300px] lg:min-h-[100px] xl:min-w-[300px] xl:min-h-[300px]"
-  >
+  <div className="flex flex-col justify-center items-center md:min-w-[300px] lg:min-h-[100px] xl:min-w-[300px] xl:min-h-[300px]">
     {stats ? (
       <StatsGridDisplay isDarkMode={isDarkMode} stats={stats} />
     ) : (
@@ -219,20 +218,19 @@ const StatsSection = ({
   </div>
 )
 
-const CarouselSlide = ({ isDarkMode, content, image, stats }: CarouselSlideProps) => {
+const CarouselSlide = ({
+  isDarkMode,
+  content,
+  image,
+  stats,
+}: CarouselSlideProps) => {
   return (
     <div className="relative mx-auto px-6 max-w-[1280px]">
-      <div
-        className="grid grid-cols-1 lg:grid-cols-2 xl:flex xl:flex-row xl:justify-between"
-      >
-        <div
-          className="z-20 justify-center items-center p-6 min-h-[350px] lg:col-start-1 lg:row-start-1 lg:max-w-[420px]"
-        >
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:flex xl:flex-row xl:justify-between">
+        <div className="z-20 justify-center items-center p-6 min-h-[350px] lg:col-start-1 lg:row-start-1 lg:max-w-[420px]">
           <ContentSection isDarkMode={isDarkMode} {...content} />
         </div>
-        <div
-          className="z-10 flex-1 lg:col-start-2 lg:row-start-1 lg:w-full xl:max-h-[600px]"
-        >
+        <div className="z-10 flex-1 lg:col-start-2 lg:row-start-1 lg:w-full xl:max-h-[600px]">
           <div className="relative overflow-hidden min-h-[400px] md:overflow-visible xl:max-h-[600px]">
             <img
               src={image}
@@ -242,9 +240,7 @@ const CarouselSlide = ({ isDarkMode, content, image, stats }: CarouselSlideProps
             />
           </div>
         </div>
-        <div
-          className="z-20 pt-6 lg:col-span-2 xl:col-span-1 min-w-[350px]"
-        >
+        <div className="z-20 pt-6 lg:col-span-2 xl:col-span-1 min-w-[350px]">
           <StatsSection isDarkMode={isDarkMode} stats={stats} />
         </div>
       </div>
@@ -252,10 +248,7 @@ const CarouselSlide = ({ isDarkMode, content, image, stats }: CarouselSlideProps
   )
 }
 
-const CarouselControlBar = ({
-  isDarkMode,
-  swiperRef,
-}: CarouselControlBarProps) => {
+const CarouselControlBar = ({ swiperRef }: CarouselControlBarProps) => {
   return (
     <div
       className="flex items-center justify-center gap-4 text-neutral-30"

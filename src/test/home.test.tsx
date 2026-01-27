@@ -53,12 +53,8 @@ describe('Home page', () => {
   it('renders the Built for Developers section', () => {
     render(<Home isDarkMode={false} />)
 
-    expect(
-      screen.getByText(/Built for Developers/i)
-    ).toBeInTheDocument()
+    expect(screen.getByText(/Built for Developers/i)).toBeInTheDocument()
 
-    expect(
-      screen.getByText(/Trusted by Enterprises/i)
-    ).toBeInTheDocument()
+    expect(screen.getByText(/Trusted by Enterprises/i)).toBeInTheDocument()
   })
 })

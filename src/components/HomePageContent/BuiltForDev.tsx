@@ -30,24 +30,26 @@ const BuiltForDev = ({ isDarkMode }: BuiltForDevProps) => (
       <CodeIcon
         fontSize={36}
         className={clsx(
-          'p-2 text-white rounded-lg bg-gradient-to-r from-primary-50 to-secondary-60 flex-shrink-0',
+          'p-2 text-white rounded-lg bg-gradient-to-r from-primary-50 to-secondary-60 flex-shrink-0'
         )}
       />
       <h2 className="flex flex-col lg:flex-row lg:gap-1 text-4xl font-bold sm:px-2">
-        <span className={clsx(
-          isDarkMode ? 'text-neutral-60' : 'text-neutral-10'
-        )}>Built for Developers,</span>
-        <span className='text-primary-60'>Trusted by Enterprises</span>
+        <span
+          className={clsx(isDarkMode ? 'text-neutral-60' : 'text-neutral-10')}
+        >
+          Built for Developers,
+        </span>
+        <span className="text-primary-60">Trusted by Enterprises</span>
       </h2>
     </header>
 
-    <div className={clsx(
-      'py-2 font-avenir',
-    )}>
-      <p className={clsx(
-        'py-2 leading-snug text-xl',
-        isDarkMode ? 'text-neutral-50' : 'text-neutral-20'
-      )}>
+    <div className={clsx('py-2 font-avenir')}>
+      <p
+        className={clsx(
+          'py-2 leading-snug text-xl',
+          isDarkMode ? 'text-neutral-50' : 'text-neutral-20'
+        )}
+      >
         Get started in minutes with our comprehensive documentation. TrustVC
         abstracts away the complexity while maintaining full control and
         transparency.
@@ -62,10 +64,7 @@ const BuiltForDev = ({ isDarkMode }: BuiltForDevProps) => (
       </ul>
 
       <nav className="my-4 flex flex-col sm:flex-row gap-2">
-        <LinkButton
-          href="https://docs.tradetrust.io"
-          isDarkMode={isDarkMode}
-        >
+        <LinkButton href="https://docs.tradetrust.io" isDarkMode={isDarkMode}>
           TrustVC Documentation
         </LinkButton>
         <LinkButton

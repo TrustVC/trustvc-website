@@ -1,21 +1,28 @@
 import clsx from 'clsx'
+import { ReactNode } from 'react'
 
 interface LinkButtonProps {
   className?: string
   href?: string
-  children: React.ReactNode
+  children: ReactNode
   isDarkMode: boolean
   isDisabled?: boolean
 }
 
-const LinkButton = ({ className = '', href, children, isDarkMode, isDisabled }: LinkButtonProps) => {
+const LinkButton = ({
+  className = '',
+  href,
+  children,
+  isDarkMode,
+  isDisabled,
+}: LinkButtonProps) => {
   const disabled = isDisabled || !href
 
   return (
     <a
       href={disabled ? undefined : href}
-      target={disabled ? undefined : "_blank"}
-      rel={disabled ? undefined : "noopener noreferrer"}
+      target={disabled ? undefined : '_blank'}
+      rel={disabled ? undefined : 'noopener noreferrer'}
       aria-disabled={disabled}
       tabIndex={disabled ? -1 : undefined}
       onClick={event => {

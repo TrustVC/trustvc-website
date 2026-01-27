@@ -1,6 +1,5 @@
 import React, { ReactNode } from 'react'
 
-
 export type MockSwiperApi = {
   slideNext: () => void
   slidePrev: () => void
@@ -11,6 +10,7 @@ export function MockSwiper({
   onSwiper,
 }: {
   children: ReactNode
+  // eslint-disable-next-line no-unused-vars
   onSwiper?: (swiper: MockSwiperApi) => void
 }) {
   const [slideNumber, setSlideNumber] = React.useState(0)
@@ -21,9 +21,7 @@ export function MockSwiper({
   const swiper = React.useMemo<MockSwiperApi>(
     () => ({
       slideNext: () =>
-        setSlideNumber(i =>
-          totalSlides === 0 ? 0 : (i + 1) % totalSlides
-        ),
+        setSlideNumber(i => (totalSlides === 0 ? 0 : (i + 1) % totalSlides)),
       slidePrev: () =>
         setSlideNumber(i =>
           totalSlides === 0 ? 0 : (i - 1 + totalSlides) % totalSlides

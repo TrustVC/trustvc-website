@@ -68,7 +68,7 @@ body {
 }
 
 .hero-carousel-pagination .swiper-pagination-bullet-light {
-  background: #DFE1FF;
+  background: #dfe1ff;
   opacity: 1;
   width: 10px;
   height: 10px;
@@ -80,7 +80,7 @@ body {
 }
 
 .hero-carousel-pagination .swiper-pagination-bullet-dark {
-  background: #1F1B45;
+  background: #1f1b45;
   opacity: 1;
   width: 10px;
   height: 10px;
