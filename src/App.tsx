@@ -29,7 +29,7 @@ function App() {
       }}
     >
       <Navbar isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
-      <AppRouter />
+      <AppRouter isDarkMode={isDarkMode} />
     </div>
   )
 }

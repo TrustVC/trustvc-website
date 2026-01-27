@@ -67,8 +67,8 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-.hero-carousel-pagination .swiper-pagination-bullet {
-  background: #dfe1ff; /* gray-300 */
+.hero-carousel-pagination .swiper-pagination-bullet-light {
+  background: #DFE1FF;
   opacity: 1;
   width: 10px;
   height: 10px;
@@ -77,6 +77,14 @@ body {
 
 .hero-carousel-pagination .swiper-pagination-bullet-active {
   background: #5b5bb3; /* your purple color */
+}
+
+.hero-carousel-pagination .swiper-pagination-bullet-dark {
+  background: #1F1B45;
+  opacity: 1;
+  width: 10px;
+  height: 10px;
+  margin: 0 !important;
 }
 
 /* Navbar Styles */

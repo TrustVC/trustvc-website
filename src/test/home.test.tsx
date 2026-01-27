@@ -6,7 +6,7 @@ import Home from '../pages/Home'
 import carouselData from '../data/carouselData.json'
 
 vi.mock('swiper/react', async () => {
-  const { MockSwiper, MockSwiperSlide } = await import('../test/mocks/swiper')
+  const { MockSwiper, MockSwiperSlide } = await import('./mocks/swiper')
 
   return {
     Swiper: MockSwiper,
@@ -22,7 +22,7 @@ vi.mock('swiper/modules', () => ({
 
 describe('Home page', () => {
   it('renders carousel slide content from carouselData', () => {
-    render(<Home />)
+    render(<Home isDarkMode={false} />)
 
     const firstItem = carouselData.items[0]
     const firstSlide = screen.getByLabelText('carousel-slide-0')
@@ -38,7 +38,7 @@ describe('Home page', () => {
 
   it('shows the next carousel item when clicking the next navigation button', async () => {
     const user = userEvent.setup()
-    render(<Home />)
+    render(<Home isDarkMode={false} />)
 
     await user.click(screen.getByLabelText('carousel-next-button'))
 
@@ -51,7 +51,7 @@ describe('Home page', () => {
   })
 
   it('renders the Built for Developers section', () => {
-    render(<Home />)
+    render(<Home isDarkMode={false} />)
 
     expect(
       screen.getByText(/Built for Developers/i)

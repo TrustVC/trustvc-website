@@ -17,12 +17,12 @@ export default {
           100: '#8AD2EE',
         },
         neutral: {
-          50: '#5B6571',
+          10: '#1E2026',
+          20: '#3D444D',
+          30: '#5B6571',
+          50: '#A9B2BB',
+          60: '#DEE4E9',
         },
-        'trustvc-purple': "#686AD2",
-        'trustvc-button-purple': "#5B5BB3",
-        'trustvc-blue': "#167EB0",
-        'trustvc-subtext-grey': '#5B6571'
       },
       fontFamily: {
         gilroy: ['Gilroy', 'sans-serif'],

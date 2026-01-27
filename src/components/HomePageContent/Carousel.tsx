@@ -9,6 +9,7 @@ import type { Swiper as SwiperInstance } from 'swiper'
 import LinkButton from '../../common/components/LinkButton'
 import RightArrowIcon from '../../common/icons/RightArrowIcon'
 import carouselData from '../../data/carouselData.json'
+import clsx from 'clsx'
 
 interface Stat {
   value: string
@@ -30,62 +31,88 @@ interface StatsGridProps {
 }
 
 interface CarouselSlideProps {
+  isDarkMode: boolean
   content: ContentSectionProps
   image: string
   stats?: StatsGridProps
 }
 
-const StatDisplay = ({ value, label }: Stat) => (
+interface CarouselControlBarProps {
+  isDarkMode: boolean
+  swiperRef: MutableRefObject<SwiperInstance | null>
+}
+
+interface CarouselProps {
+  isDarkMode: boolean
+}
+
+const StatDisplay = ({ isDarkMode, value, label }: Stat & { isDarkMode: boolean }) => (
   <div>
-    <div className="text-4xl font-bold text-trustvc-purple">
+    <div className="text-4xl font-bold text-primary-60">
       <span>{value}</span>
     </div>
-    <div className="py-2 text-md font-avenir-medium text-gray-600">
+    <div
+      className={clsx(
+        'py-2 text-md font-avenir-medium text-neutral-30',
+      )}
+    >
       <span>{label}</span>
     </div>
   </div>
 )
 
 const ContentSection = ({
+  isDarkMode,
   title,
   subtitle,
   description,
   link,
-}: ContentSectionProps) => {
+}: ContentSectionProps & { isDarkMode: boolean }) => {
   const isComingSoon = !link
 
   return (
     <div>
-      <div className="flex flex-col min-h-[112px] text-4xl font-bold">
+      <div className={clsx('flex flex-col min-h-[112px] text-4xl font-bold', isDarkMode ? 'text-neutral-60' : 'text-neutral-10')}>
         <span className="py-1">{title}</span>
-        <span className="text-trustvc-purple">{subtitle}</span>
+        <span className="text-primary-60">{subtitle}</span>
       </div>
-      <div className="pb-5 font-avenir-medium text-gray-600">
+      <div
+        className={clsx(
+          'pb-5 font-avenir',
+          isDarkMode ? 'text-neutral-50' : 'text-neutral-20'
+        )}
+      >
         <span>{description}</span>
       </div>
-      <LinkButton
-        href={link || ''}
-        className={`items-center mt-3 gap-2 w-fit bg-trustvc-button-purple text-white ${
-          isComingSoon ? 'cursor-not-allowed opacity-50' : ''
-        }`}
-      >
-        <span>{isComingSoon ? 'Coming Soon' : 'Learn More'}</span>
-        {!isComingSoon && <RightArrowIcon />}
-      </LinkButton>
+      <div className="mt-4">
+        <LinkButton
+          href={link}
+          isDarkMode={isDarkMode}
+          isDisabled={isComingSoon}
+        >
+          <span>{isComingSoon ? 'Coming Soon' : 'Learn More'}</span>
+          {!isComingSoon && <span className="ml-2"><RightArrowIcon height={24} width={20} /></span>}
+        </LinkButton>
+      </div>
     </div>
   )
 }
 
-const ComingSoonPlaceholder = () => (
+const ComingSoonPlaceholder = ({ isDarkMode }: { isDarkMode: boolean }) => (
   <div
     className="flex flex-col items-center text-center font-avenir-medium
       lg:flex-row lg:gap-8 lg:text-center
       xl:flex-col xl:gap-0 xl:text-center"
   >
     <div
-      className="flex mx-auto px-3 py-2 w-fit font-bold bg-gray-200 border rounded-xl
-        lg:mx-0
-        xl:mx-auto"
+      className={clsx(
+        'flex mx-auto px-3 py-2 w-fit rounded-xl',
+        isDarkMode
+          ? 'bg-neutral-10 text-neutral-30'
+          : 'bg-neutral-60 text-neutral-10',
+        'lg:mx-0',
+        'xl:mx-auto'
+      )}
     >
       <span>Logo Here</span>
     </div>
@@ -93,12 +120,15 @@ const ComingSoonPlaceholder = () => (
       className="py-4 lg:py-0"
     >
       <div
-        className="py-2 text-4xl font-bold text-trustvc-purple lg:py-0 lg:text-3xl xl:py-2 xl:text-4xl"
+        className="py-2 text-4xl font-bold text-primary-60 lg:py-0 lg:text-3xl xl:py-2 xl:text-4xl"
       >
         <span>Coming Soon</span>
       </div>
       <div
-        className="py-1 text-md font-avenir-medium text-gray-600 lg:mt-1 xl:mt-0"
+        className={clsx(
+          'py-1 text-md font-avenir lg:mt-1 xl:mt-0',
+          isDarkMode ? 'text-neutral-30' : 'text-neutral-10'
+        )}
       >
         <span>Stay Tuned</span>
       </div>
@@ -106,16 +136,27 @@ const ComingSoonPlaceholder = () => (
   </div>
 )
 
-const StatsGridDisplay = ({ stats }: { stats: StatsGridProps }) => (
+const StatsGridDisplay = ({
+  isDarkMode,
+  stats,
+}: {
+  isDarkMode: boolean
+  stats: StatsGridProps
+}) => (
   <div
     className="flex flex-col items-center text-center font-avenir-medium
       lg:grid lg:grid-cols-[auto_1fr] lg:items-center lg:gap-x-8 lg:text-center
       xl:flex xl:flex-col xl:gap-0 xl:text-center"
   >
     <div
-      className="flex mx-auto px-3 py-2 w-fit font-bold bg-gray-200 border rounded-xl
-        lg:mx-0
-        xl:mx-auto"
+      className={clsx(
+        'flex mx-auto px-3 py-2 w-fit rounded-xl',
+        isDarkMode
+          ? 'bg-neutral-10 text-neutral-30'
+          : 'bg-neutral-60 text-neutral-10',
+        'lg:mx-0',
+        'xl:mx-auto'
+      )}
     >
       <span>Logo Here</span>
     </div>
@@ -124,36 +165,61 @@ const StatsGridDisplay = ({ stats }: { stats: StatsGridProps }) => (
         lg:grid-cols-4 lg:mt-0
         xl:grid-cols-2 xl:mt-4 xl:gap-x-20"
     >
-      <StatDisplay value={stats.topLeft.value} label={stats.topLeft.label} />
-      <StatDisplay value={stats.topRight.value} label={stats.topRight.label} />
       <StatDisplay
+        isDarkMode={isDarkMode}
+        value={stats.topLeft.value}
+        label={stats.topLeft.label}
+      />
+      <StatDisplay
+        isDarkMode={isDarkMode}
+        value={stats.topRight.value}
+        label={stats.topRight.label}
+      />
+      <StatDisplay
+        isDarkMode={isDarkMode}
         value={stats.bottomLeft.value}
         label={stats.bottomLeft.label}
       />
       <StatDisplay
+        isDarkMode={isDarkMode}
         value={stats.bottomRight.value}
         label={stats.bottomRight.label}
       />
     </div>
     <div
-      className="mx-auto mt-4 px-3 py-2 w-fit border border-gray-300 bg-white rounded-full
-        lg:col-span-2 lg:row-start-2 lg:mt-4
-        xl:col-span-1 xl:row-auto xl:mt-4"
+      className={clsx(
+        'mx-auto mt-4 px-3 py-2 w-fit rounded-full',
+        isDarkMode
+          ? 'bg-neutral-10 text-neutral-30'
+          : 'bg-neutral-60 text-neutral-10',
+        'lg:col-span-2 lg:row-start-2 lg:mt-4',
+        'xl:col-span-1 xl:row-auto xl:mt-4'
+      )}
     >
       <span>2025 Growth to date</span>
     </div>
   </div>
 )
 
-const StatsSection = ({ stats }: { stats?: StatsGridProps }) => (
+const StatsSection = ({
+  isDarkMode,
+  stats,
+}: {
+  isDarkMode: boolean
+  stats?: StatsGridProps
+}) => (
   <div
     className="flex flex-col justify-center items-center md:min-w-[300px] lg:min-h-[100px] xl:min-w-[300px] xl:min-h-[300px]"
   >
-    {stats ? <StatsGridDisplay stats={stats} /> : <ComingSoonPlaceholder />}
+    {stats ? (
+      <StatsGridDisplay isDarkMode={isDarkMode} stats={stats} />
+    ) : (
+      <ComingSoonPlaceholder isDarkMode={isDarkMode} />
+    )}
   </div>
 )
 
-const CarouselSlide = ({ content, image, stats }: CarouselSlideProps) => {
+const CarouselSlide = ({ isDarkMode, content, image, stats }: CarouselSlideProps) => {
   return (
     <div className="relative mx-auto px-6 max-w-[1280px]">
       <div
@@ -162,7 +228,7 @@ const CarouselSlide = ({ content, image, stats }: CarouselSlideProps) => {
         <div
           className="z-20 justify-center items-center p-6 min-h-[350px] lg:col-start-1 lg:row-start-1 lg:max-w-[420px]"
         >
-          <ContentSection {...content} />
+          <ContentSection isDarkMode={isDarkMode} {...content} />
         </div>
         <div
           className="z-10 flex-1 lg:col-start-2 lg:row-start-1 lg:w-full xl:max-h-[600px]"
@@ -179,7 +245,7 @@ const CarouselSlide = ({ content, image, stats }: CarouselSlideProps) => {
         <div
           className="z-20 pt-6 lg:col-span-2 xl:col-span-1 min-w-[350px]"
         >
-          <StatsSection stats={stats} />
+          <StatsSection isDarkMode={isDarkMode} stats={stats} />
         </div>
       </div>
     </div>
@@ -187,19 +253,18 @@ const CarouselSlide = ({ content, image, stats }: CarouselSlideProps) => {
 }
 
 const CarouselControlBar = ({
+  isDarkMode,
   swiperRef,
-}: {
-  swiperRef: MutableRefObject<SwiperInstance | null>
-}) => {
+}: CarouselControlBarProps) => {
   return (
     <div
-      className="flex items-center justify-center gap-4"
+      className="flex items-center justify-center gap-4 text-neutral-30"
       style={{ width: 'fit-content', margin: '0 auto' }}
     >
       <button
         aria-label="carousel-prev-button"
         onClick={() => swiperRef.current?.slidePrev()}
-        className="flex items-center justify-center h-6 w-6 text-gray-400 hover:text-trustvc-purple"
+        className="flex items-center justify-center h-6 w-6 hover:text-primary-60"
       >
         <div className="rotate-180">
           <RightArrowIcon />
@@ -219,7 +284,7 @@ const CarouselControlBar = ({
       <button
         aria-label="carousel-next-button"
         onClick={() => swiperRef.current?.slideNext()}
-        className="flex items-center justify-center h-6 w-6 text-gray-400 hover:text-trustvc-purple"
+        className="flex items-center justify-center h-6 w-6 hover:text-primary-60"
       >
         <RightArrowIcon />
       </button>
@@ -227,7 +292,7 @@ const CarouselControlBar = ({
   )
 }
 
-const Carousel = () => {
+const Carousel = ({ isDarkMode }: CarouselProps) => {
   const swiperRef = useRef<SwiperInstance | null>(null)
 
   return (
@@ -248,12 +313,12 @@ const Carousel = () => {
         >
           {carouselData.items.map((item, index) => (
             <SwiperSlide aria-label={`carousel-slide-${index}`} key={index}>
-              <CarouselSlide {...item} />
+              <CarouselSlide isDarkMode={isDarkMode} {...item} />
             </SwiperSlide>
           ))}
         </Swiper>
       </div>
-      <CarouselControlBar swiperRef={swiperRef} />
+      <CarouselControlBar isDarkMode={isDarkMode} swiperRef={swiperRef} />
     </div>
   )
 }
