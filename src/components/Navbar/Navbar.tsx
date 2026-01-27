@@ -18,7 +18,14 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
           {/* Hamburger Menu Button */}
           <div className="w-14 h-14 flex items-center justify-center">
             <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              onClick={() => {
+                setIsMobileMenuOpen(!isMobileMenuOpen)
+                if (isMobileMenuOpen) {
+                  setIsEcosystemOpen(false)
+                }
+              }}
+              aria-label="Toggle mobile menu"
+              aria-expanded={isMobileMenuOpen}
               className="w-10 h-10 flex items-center justify-center rounded-lg transition-colors duration-200"
               style={{
                 backgroundColor: 'transparent',
@@ -88,6 +95,9 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
             <div className="p-2 relative">
               <button
                 onClick={() => setIsEcosystemOpen(!isEcosystemOpen)}
+                aria-haspopup="true"
+                aria-expanded={isEcosystemOpen}
+                aria-controls="ecosystem-menu-desktop"
                 className="min-w-[40px] min-h-[40px] flex items-center justify-center px-1 py-[5px] rounded-lg transition-colors duration-200"
                 style={{
                   backgroundColor: 'transparent',
@@ -128,6 +138,8 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
               {/* Ecosystem Dropdown */}
               {isEcosystemOpen && (
                 <div
+                  id="ecosystem-menu-desktop"
+                  role="menu"
                   className="absolute left-0 min-w-[200px] rounded-lg shadow-lg border transition-all duration-200 z-50 pt-2"
                   style={{
                     top: 'calc(100% - 8px)',
@@ -255,6 +267,8 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
               <div className="p-1">
                 <button
                   onClick={() => setIsDarkMode(false)}
+                  aria-label="Switch to light mode"
+                  aria-pressed={!isDarkMode}
                   className="min-w-[40px] min-h-[40px] flex items-center justify-center p-[5px] rounded-lg overflow-hidden transition-colors duration-200"
                   style={{
                     backgroundColor: 'transparent',
@@ -286,6 +300,8 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
               <div className="p-1">
                 <button
                   onClick={() => setIsDarkMode(true)}
+                  aria-label="Switch to dark mode"
+                  aria-pressed={isDarkMode}
                   className="min-w-[40px] min-h-[40px] flex items-center justify-center p-[5px] rounded-lg overflow-hidden transition-colors duration-200"
                   style={{
                     backgroundColor: 'transparent',
@@ -331,6 +347,8 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
       {/* Mobile Menu Dropdown */}
       {isMobileMenuOpen && (
         <div
+          role="navigation"
+          aria-label="Mobile navigation menu"
           className="lg:hidden absolute top-[88px] left-0 right-0 border-t shadow-lg"
           style={{
             backgroundColor: isDarkMode
@@ -364,6 +382,9 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
             <div>
               <button
                 onClick={() => setIsEcosystemOpen(!isEcosystemOpen)}
+                aria-haspopup="true"
+                aria-expanded={isEcosystemOpen}
+                aria-controls="ecosystem-menu-mobile"
                 className="w-full px-4 py-3 text-left text-sm font-bold font-['Gilroy'] rounded-lg transition-colors duration-200 flex items-center justify-between"
                 style={{
                   color: isDarkMode ? '#808894' : '#5B6571',
@@ -401,7 +422,11 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
 
               {/* Ecosystem Sub-items */}
               {isEcosystemOpen && (
-                <div className="ml-4 mt-2 space-y-1">
+                <div
+                  id="ecosystem-menu-mobile"
+                  role="menu"
+                  className="ml-4 mt-2 space-y-1"
+                >
                   <a
                     href="/"
                     className="block px-4 py-2 text-left text-sm font-medium font-['Gilroy'] rounded-lg transition-colors duration-200"
@@ -500,6 +525,8 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
               {/* Sun Icon */}
               <button
                 onClick={() => setIsDarkMode(false)}
+                aria-label="Switch to light mode"
+                aria-pressed={!isDarkMode}
                 className="min-w-[40px] min-h-[40px] flex items-center justify-center p-[5px] rounded-lg overflow-hidden transition-colors duration-200"
                 style={{
                   backgroundColor: 'transparent',
@@ -529,6 +556,8 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
               {/* Moon Icon */}
               <button
                 onClick={() => setIsDarkMode(true)}
+                aria-label="Switch to dark mode"
+                aria-pressed={isDarkMode}
                 className="min-w-[40px] min-h-[40px] flex items-center justify-center p-[5px] rounded-lg overflow-hidden transition-colors duration-200"
                 style={{
                   backgroundColor: 'transparent',

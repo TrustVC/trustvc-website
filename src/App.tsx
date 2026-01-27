@@ -3,8 +3,12 @@ import Navbar from './components/Navbar'
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(() => {
-    const saved = localStorage.getItem('darkMode')
-    return saved ? JSON.parse(saved) : false
+    try {
+      const saved = localStorage.getItem('darkMode')
+      return saved ? JSON.parse(saved) === true : false
+    } catch {
+      return false
+    }
   })
 
   useEffect(() => {

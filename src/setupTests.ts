@@ -8,6 +8,10 @@ expect.extend(matchers)
 // Cleanup after each test
 afterEach(() => {
   cleanup()
+  // Reset localStorage mock to prevent state leakage between tests
+  Object.keys(localStorageMock).forEach(key => {
+    delete localStorageMock[key]
+  })
 })
 
 // Mock localStorage
@@ -15,7 +19,7 @@ const localStorageMock: Record<string, string> = {}
 
 const storage: Storage = {
   getItem: (key: string): string | null => {
-    return localStorageMock[key] || null
+    return key in localStorageMock ? localStorageMock[key] : null
   },
   setItem: (key: string, value: string): void => {
     localStorageMock[key] = value

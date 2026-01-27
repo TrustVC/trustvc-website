@@ -1,9 +1,13 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import Navbar from './Navbar'
 
 describe('Navbar Component', () => {
   const mockSetIsDarkMode = vi.fn()
+
+  beforeEach(() => {
+    mockSetIsDarkMode.mockClear()
+  })
 
   it('renders navbar with logo', () => {
     render(<Navbar isDarkMode={false} setIsDarkMode={mockSetIsDarkMode} />)
