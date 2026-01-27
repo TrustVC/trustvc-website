@@ -1,5 +1,5 @@
-import BuiltForDev from '../../components/Home/BuiltForDev'
-import Carousel from '../../components/Home/Carousel'
+import BuiltForDev from '../../components/HomePageContent/BuiltForDev'
+import Carousel from '../../components/HomePageContent/Carousel'
 
 const Home = () => {
   return (

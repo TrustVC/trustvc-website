@@ -197,6 +197,7 @@ const CarouselControlBar = ({
       style={{ width: 'fit-content', margin: '0 auto' }}
     >
       <button
+        aria-label="carousel-prev-button"
         onClick={() => swiperRef.current?.slidePrev()}
         className="flex items-center justify-center h-6 w-6 text-gray-400 hover:text-trustvc-purple"
       >
@@ -205,6 +206,7 @@ const CarouselControlBar = ({
         </div>
       </button>
       <div
+        aria-label="carousel-pagination"
         className="hero-carousel-pagination"
         // Inline style to override default pagination styles
         style={{
@@ -215,6 +217,7 @@ const CarouselControlBar = ({
         }}
       />
       <button
+        aria-label="carousel-next-button"
         onClick={() => swiperRef.current?.slideNext()}
         className="flex items-center justify-center h-6 w-6 text-gray-400 hover:text-trustvc-purple"
       >
@@ -244,7 +247,7 @@ const Carousel = () => {
           }}
         >
           {carouselData.items.map((item, index) => (
-            <SwiperSlide key={index}>
+            <SwiperSlide aria-label={`carousel-slide-${index}`} key={index}>
               <CarouselSlide {...item} />
             </SwiperSlide>
           ))}
