@@ -17,11 +17,16 @@ export default {
           100: '#8AD2EE',
         },
         neutral: {
-          50: '#5B6571',
+          10: '#1E2026',
+          20: '#3D444D',
+          30: '#5B6571',
+          50: '#A9B2BB',
+          60: '#DEE4E9',
         },
       },
       fontFamily: {
         gilroy: ['Gilroy', 'sans-serif'],
+        avenir: ["Avenir", "ui-sans-serif", "system-ui"],
       },
     },
   },

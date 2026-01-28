@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import Navbar from './components/Navbar'
+import AppRouter from './routes'
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(() => {
@@ -28,6 +29,7 @@ function App() {
       }}
     >
       <Navbar isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
+      <AppRouter isDarkMode={isDarkMode} />
     </div>
   )
 }

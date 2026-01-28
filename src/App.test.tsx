@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
 import App from './App'
 
 describe('App Component', () => {
@@ -9,11 +10,19 @@ describe('App Component', () => {
   })
 
   it('renders without crashing', () => {
-    render(<App />)
+    render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>
+    )
   })
 
   it('renders Navbar component', () => {
-    render(<App />)
+    render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>
+    )
 
     // Check if navigation elements are present
     expect(screen.getByText('Home')).toBeInTheDocument()
@@ -21,14 +30,22 @@ describe('App Component', () => {
   })
 
   it('starts with light mode by default', () => {
-    render(<App />)
+    render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>
+    )
 
     const app = document.querySelector('.min-h-screen')
     expect(app).toBeInTheDocument()
   })
 
   it('persists dark mode to localStorage', () => {
-    render(<App />)
+    render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>
+    )
 
     // Find and click moon icon to enable dark mode
     const buttons = screen.getAllByRole('button')
@@ -49,7 +66,11 @@ describe('App Component', () => {
     // Set dark mode in localStorage
     localStorage.setItem('darkMode', 'true')
 
-    const { container } = render(<App />)
+    const { container } = render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>
+    )
 
     // Check if navbar has dark mode class
     const nav = container.querySelector('.navbar-dark')
@@ -59,7 +80,11 @@ describe('App Component', () => {
   it('applies correct background gradient in dark mode', () => {
     localStorage.setItem('darkMode', 'true')
 
-    const { container } = render(<App />)
+    const { container } = render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>
+    )
 
     const app = container.querySelector('.min-h-screen')
     expect(app).toHaveStyle({
