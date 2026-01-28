@@ -251,7 +251,7 @@ body.dark-mode {
   flex-direction: column;
   color: #3d444d;
   font-size: 18px;
-  font-family: 'Avenir', sans-serif;
+  font-family: 'Gilroy', sans-serif;
   font-weight: 500;
   line-height: 24.48px;
   margin: 0;
@@ -400,7 +400,7 @@ body.dark-mode {
   text-align: center;
   color: #3d444d;
   font-size: 14px;
-  font-family: 'Avenir', sans-serif;
+  font-family: 'Gilroy', sans-serif;
   font-weight: 500;
   line-height: 21.7px;
   word-wrap: break-word;
@@ -424,7 +424,7 @@ body.dark-mode {
   text-align: center;
   color: #3d444d;
   font-size: 14px;
-  font-family: 'Avenir', sans-serif;
+  font-family: 'Gilroy', sans-serif;
   font-weight: 500;
   line-height: 21.7px;
   word-wrap: break-word;
@@ -538,7 +538,7 @@ body.dark-mode {
   flex: 1 1 0;
   color: #5b6571;
   font-size: 12px;
-  font-family: 'Avenir', sans-serif;
+  font-family: 'Gilroy', sans-serif;
   font-weight: 500;
   line-height: 19.8px;
   word-wrap: break-word;
@@ -562,13 +562,21 @@ body.dark-mode {
   flex-wrap: wrap;
   align-content: center;
   gap: 16px;
-  outline: none !important;
-  border: none !important;
 }
 
-.demo-button * {
-  outline: none !important;
-  border: none !important;
+.demo-button button,
+.demo-button .cta-button {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+}
+
+.demo-button button:focus-visible,
+.cta-button:focus-visible {
+  outline: 2px solid #686ad2;
+  outline-offset: 4px;
 }
 
 .demo-button::before {
@@ -646,7 +654,7 @@ body.dark-mode {
   flex-direction: column;
   color: white;
   font-size: 14px;
-  font-family: 'Avenir', sans-serif;
+  font-family: 'Gilroy', sans-serif;
   font-weight: 500;
   line-height: 21.7px;
   word-wrap: break-word;

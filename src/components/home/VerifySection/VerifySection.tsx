@@ -83,7 +83,6 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
                     id="file-upload"
                     type="file"
                     onChange={handleFileInput}
-                    accept=".tt,.etc"
                     style={{ display: 'none' }}
                   />
                 </div>
