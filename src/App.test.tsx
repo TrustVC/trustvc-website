@@ -77,18 +77,29 @@ describe('App Component', () => {
     expect(nav).toBeInTheDocument()
   })
 
-  it('applies correct background gradient in dark mode', () => {
+  it('applies dark mode class on the document body', () => {
     localStorage.setItem('darkMode', 'true')
 
-    const { container } = render(
+    render(
       <MemoryRouter>
         <App />
       </MemoryRouter>
     )
 
-    const app = container.querySelector('.min-h-screen')
-    expect(app).toHaveStyle({
-      background: 'linear-gradient(135deg, #1a1d2e 0%, #0f1419 100%)',
-    })
+    expect(document.body.classList.contains('dark-mode')).toBe(true)
+  })
+
+  it('renders NotFound page for unknown routes', () => {
+    render(
+      <MemoryRouter initialEntries={['/unknown-route']}>
+        <App />
+      </MemoryRouter>
+    )
+
+    expect(screen.getByText(/Page not found/i)).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Back to Home/i })).toHaveAttribute(
+      'href',
+      '/'
+    )
   })
 })

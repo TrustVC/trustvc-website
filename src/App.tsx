@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import Navbar from './components/Navbar'
+import Navbar from './components/common/Navbar'
 import AppRouter from './routes'
 
 function App() {
@@ -16,13 +16,18 @@ function App() {
     localStorage.setItem('darkMode', JSON.stringify(isDarkMode))
   }, [isDarkMode])
 
+  useEffect(() => {
+    if (isDarkMode) {
+      document.body.classList.add('dark-mode')
+    } else {
+      document.body.classList.remove('dark-mode')
+    }
+  }, [isDarkMode])
+
   return (
     <div
       className="min-h-screen"
       style={{
-        background: isDarkMode
-          ? 'linear-gradient(135deg, #1a1d2e 0%, #0f1419 100%)'
-          : '#ffffff',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',

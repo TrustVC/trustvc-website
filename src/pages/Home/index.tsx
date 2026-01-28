@@ -1,5 +1,7 @@
-import BuiltForDev from '../../components/HomePageContent/BuiltForDev'
-import Carousel from '../../components/HomePageContent/Carousel'
+import HeroSection from '../../components/home/HeroSection'
+import VerifySection from '../../components/home/VerifySection'
+import Carousel from '../../components/home/Carousel'
+import BuiltForDev from '../../components/home/BuiltForDev'
 
 interface HomeProps {
   isDarkMode: boolean
@@ -7,12 +9,26 @@ interface HomeProps {
 
 const Home = ({ isDarkMode }: HomeProps) => {
   return (
-    <div className="container mx-auto px-4 py-16">
-      <div className="max-w-[1440px] mx-auto">
-        <Carousel isDarkMode={isDarkMode} />
-        <BuiltForDev isDarkMode={isDarkMode} />
+    <>
+      <div
+        style={{
+          marginTop: '88px',
+          width: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        <HeroSection isDarkMode={isDarkMode} />
+        <VerifySection isDarkMode={isDarkMode} />
       </div>
-    </div>
+      <div className="container mx-auto px-4 py-16">
+        <div className="max-w-[1440px] mx-auto">
+          <Carousel isDarkMode={isDarkMode} />
+          <BuiltForDev isDarkMode={isDarkMode} />
+        </div>
+      </div>
+    </>
   )
 }
 

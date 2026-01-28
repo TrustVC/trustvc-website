@@ -1,5 +1,5 @@
-import CodeIcon from '../../common/icons/CodeIcon'
-import LinkButton from '../../common/components/LinkButton'
+import CodeIcon from '../../icons/CodeIcon'
+import LinkButton from '../../common/LinkButton'
 import clsx from 'clsx'
 
 interface PointFormStatementProps {
