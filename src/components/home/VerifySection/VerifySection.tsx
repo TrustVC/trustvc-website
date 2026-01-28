@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 interface VerifySectionProps {
   isDarkMode: boolean
@@ -6,6 +7,7 @@ interface VerifySectionProps {
 
 const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
   const [dragActive, setDragActive] = useState(false)
+  const navigate = useNavigate()
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault()
@@ -106,9 +108,10 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
                 </div>
               </div>
               <div className="cta-button-wrapper">
-                <div
+                <button
+                  type="button"
                   className="cta-button"
-                  onClick={() => (window.location.href = '/')}
+                  onClick={() => navigate('/')}
                 >
                   <div className="cta-boundary">
                     <div className="cta-padding" />
@@ -117,7 +120,7 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
                     </div>
                     <div className="cta-padding" />
                   </div>
-                </div>
+                </button>
               </div>
             </div>
           </div>

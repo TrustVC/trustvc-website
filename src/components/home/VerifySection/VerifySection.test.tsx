@@ -1,6 +1,17 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import VerifySection from './VerifySection'
+
+const mockNavigate = vi.fn()
+
+vi.mock('react-router-dom', async () => {
+  const actual =
+    await vi.importActual<typeof import('react-router-dom')>('react-router-dom')
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate,
+  }
+})
 
 describe('VerifySection', () => {
   it('renders the dropbox text', () => {
@@ -49,23 +60,13 @@ describe('VerifySection', () => {
   })
 
   it('navigates to root when CTA button is clicked', () => {
-    const originalHref = window.location.href
-    Object.defineProperty(window, 'location', {
-      writable: true,
-      value: { href: '' },
-    })
-
     render(<VerifySection isDarkMode={false} />)
     const ctaButton = screen
       .getByText(/Visit Document Gallery/i)
       .closest('.cta-button')
 
-    fireEvent.click(ctaButton!)
-    expect(window.location.href).toBe('/')
-
-    Object.defineProperty(window, 'location', {
-      writable: true,
-      value: { href: originalHref },
-    })
+    mockNavigate.mockClear()
+    fireEvent.click(ctaButton as HTMLElement)
+    expect(mockNavigate).toHaveBeenCalledWith('/')
   })
 })
