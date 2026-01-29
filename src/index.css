@@ -199,7 +199,7 @@ body.dark-mode {
 .hero-content {
   width: 100%;
   max-width: 720px;
-  min-width: 360px;
+  min-width: min(360px, 100%);
   padding: 8px;
   display: flex;
   flex-direction: column;
