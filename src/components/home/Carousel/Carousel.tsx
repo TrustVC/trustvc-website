@@ -215,7 +215,7 @@ const CarouselSlide = ({
   stats,
 }: CarouselSlideProps) => {
   return (
-    <div className="relative mx-auto px-6 max-w-[1280px]">
+    <div className="relative mx-auto px-2 max-w-[1280px]">
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:flex xl:flex-row xl:justify-between">
         <div className="z-20 justify-center items-center p-6 min-h-[350px] lg:col-start-1 lg:row-start-1 lg:max-w-[420px]">
           <ContentSection isDarkMode={isDarkMode} {...content} />

@@ -9,26 +9,14 @@ interface HomeProps {
 
 const Home = ({ isDarkMode }: HomeProps) => {
   return (
-    <>
-      <div
-        style={{
-          marginTop: '88px',
-          width: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
+    <div className="container mx-auto px-4 py-16">
+      <div className="max-w-[1440px] mx-auto">
         <HeroSection isDarkMode={isDarkMode} />
         <VerifySection isDarkMode={isDarkMode} />
+        <Carousel isDarkMode={isDarkMode} />
+        <BuiltForDev isDarkMode={isDarkMode} />
       </div>
-      <div className="container mx-auto px-4 py-16">
-        <div className="max-w-[1440px] mx-auto">
-          <Carousel isDarkMode={isDarkMode} />
-          <BuiltForDev isDarkMode={isDarkMode} />
-        </div>
-      </div>
-    </>
+    </div>
   )
 }
 
