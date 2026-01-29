@@ -6,9 +6,9 @@ import 'swiper/css/pagination'
 import 'swiper/css/navigation'
 import { Navigation, Pagination, Autoplay } from 'swiper/modules'
 import type { Swiper as SwiperInstance } from 'swiper'
-import LinkButton from '../../common/components/LinkButton'
-import RightArrowIcon from '../../common/icons/RightArrowIcon'
-import carouselData from '../../data/carouselData.json'
+import LinkButton from '../../common/LinkButton'
+import RightArrowIcon from '../../icons/RightArrowIcon'
+import carouselData from '../../../data/carousel.json'
 import clsx from 'clsx'
 
 interface Stat {
@@ -215,7 +215,7 @@ const CarouselSlide = ({
   stats,
 }: CarouselSlideProps) => {
   return (
-    <div className="relative mx-auto px-6 max-w-[1280px]">
+    <div className="relative mx-auto px-2 max-w-[1280px]">
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:flex xl:flex-row xl:justify-between">
         <div className="z-20 justify-center items-center p-6 min-h-[350px] lg:col-start-1 lg:row-start-1 lg:max-w-[420px]">
           <ContentSection isDarkMode={isDarkMode} {...content} />
@@ -279,7 +279,7 @@ const Carousel = ({ isDarkMode }: CarouselProps) => {
   const swiperRef = useRef<SwiperInstance | null>(null)
 
   return (
-    <div className="flex flex-col mx-auto my-10 gap-6 max-w-[1440px]">
+    <div className="flex flex-col mx-auto mt-10 mb-20 gap-6 max-w-[1440px]">
       <div>
         <Swiper
           modules={[Pagination, Navigation, Autoplay]}

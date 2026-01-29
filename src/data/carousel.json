@@ -7,7 +7,7 @@
         "description": "When trust is paramount, our secure and transparent framework makes digital verification effortless. Our numbers tell the story of a growing network of users and organizations who rely on us with their most important data.",
         "link": "/learn-more"
       },
-      "image": "images/carousel/carousel_1.png",
+      "image": "images/carousel/carousel-1.png",
       "stats": {
         "topLeft": {
           "value": "500K+",
@@ -34,7 +34,7 @@
         "description": "An open-source framework for digital trade documents. It allows trading partners to create, exchange, verify digitised documents, and transfer ownership of documents across different digital platforms seamlessly",
         "link": "/trade"
       },
-      "image": "images/carousel/carousel_2.png",
+      "image": "images/carousel/carousel-2.png",
       "stats": {
         "topLeft": {
           "value": "500K+",
@@ -60,7 +60,7 @@
         "subtitle": "In Academic Industry",
         "description": "OpenCerts is an open-source framework which education institutions can adopt for issuing certificates. Verify academic certificates, diplomas, and professional certifications instantly."
       },
-      "image": "images/carousel/carousel_3.png"
+      "image": "images/carousel/carousel-3.png"
     },
     {
       "content": {
@@ -68,7 +68,7 @@
         "subtitle": "In Legal Industry",
         "description": "A digital certificate of authenticity for public documents, launched by the Singapore Academy of Law (SAL) in partnership with IMDA in June 2025 to simplify and secure cross-border legal notarisation."
       },
-      "image": "images/carousel/carousel_4.png"
+      "image": "images/carousel/carousel-4.png"
     }
   ]
 }
