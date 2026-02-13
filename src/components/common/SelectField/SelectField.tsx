@@ -1,5 +1,5 @@
 import React from 'react'
-import { EnquiryType } from '../hooks/useContactForm'
+import { EnquiryType } from '@/hooks/useContactForm'
 
 interface SelectFieldProps {
   isDarkMode: boolean
@@ -37,7 +37,7 @@ const SelectField = ({
           value={value}
           onChange={e => onChange(e.target.value as EnquiryType)}
           required={required}
-          className={`w-full h-full bg-transparent text-base sm:text-sm font-small font-gilroy outline-none appearance-none px-3 pr-10 ${value === ''
+          className={`w-full h-full bg-transparent text-sm font-gilroy outline-none appearance-none px-3 pr-10 ${value === ''
             ? 'text-neutral-30'
             : isDarkMode
               ? 'text-neutral-60'
