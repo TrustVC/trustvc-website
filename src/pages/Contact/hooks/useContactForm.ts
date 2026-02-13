@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react'
-import { createServiceRequest } from '../../../utils'
+import { createServiceRequest } from '@/utils'
 
 type EnquiryType = '' | 'General Enquiry' | 'OpenCerts' | 'TradeTrust'
 

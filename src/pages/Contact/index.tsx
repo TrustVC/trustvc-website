@@ -1,10 +1,11 @@
-import { AttachmentDropzone, SelectField } from './components'
 import { useContactForm } from './hooks/useContactForm'
 
-import FormAlert from '../../components/common/FormAlert'
-import SubmitButton from '../../components/common/SubmitButton'
-import TextAreaField from '../../components/common/TextAreaField'
-import TextField from '../../components/common/TextField'
+import AttachmentDropzone from '@/components/common/AttachmentDropzone'
+import FormAlert from '@/components/common/FormAlert'
+import SelectField from '@/components/common/SelectField'
+import SubmitButton from '@/components/common/SubmitButton'
+import TextAreaField from '@/components/common/TextAreaField'
+import TextField from '@/components/common/TextField'
 
 interface ContactProps {
   isDarkMode: boolean
