@@ -332,7 +332,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
             </div>
             <div className="w-[141px] p-1">
               <a
-                href="/"
+                href="/contact"
                 className="contact-button w-full min-h-[48px] px-2 py-2 rounded-full overflow-hidden flex items-center justify-center"
               >
                 <div className="px-2 py-1 text-center text-white text-lg font-bold font-['Gilroy'] leading-normal">
@@ -594,7 +594,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
               }}
             >
               <a
-                href="/"
+                href="/contact"
                 className="contact-button w-full px-6 py-3 rounded-full text-white text-lg font-bold font-['Gilroy'] block text-center"
               >
                 Contact Us
