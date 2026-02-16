@@ -23,8 +23,11 @@ export type CreateServiceRequestResponse = {
 export const createServiceRequest = async (
   formData: FormData
 ): Promise<CreateServiceRequestResponse> => {
-  return fetchClientSupport.request<CreateServiceRequestResponse>('/service-request', {
-    method: 'POST',
-    body: formData,
-  })
+  return fetchClientSupport.request<CreateServiceRequestResponse>(
+    '/service-request',
+    {
+      method: 'POST',
+      body: formData,
+    }
+  )
 }

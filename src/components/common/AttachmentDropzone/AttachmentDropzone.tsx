@@ -24,8 +24,9 @@ const AttachmentDropzone = ({
   return (
     <div className="flex flex-col gap-2">
       <div
-        className={`text-xs font-semibold font-gilroy ${isDarkMode ? 'text-neutral-50' : 'text-neutral-20'
-          }`}
+        className={`text-xs font-semibold font-gilroy ${
+          isDarkMode ? 'text-neutral-50' : 'text-neutral-20'
+        }`}
       >
         Attachment
       </div>
@@ -38,7 +39,9 @@ const AttachmentDropzone = ({
         onDrop={onDrop}
       >
         <div className="frame-dropbox-text">
-          <div className="dropbox-text">Drop files here to upload screenshots</div>
+          <div className="dropbox-text">
+            Drop files here to upload screenshots
+          </div>
         </div>
         <div className="frame-divider">
           <div className="divider-text">or</div>
