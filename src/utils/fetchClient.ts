@@ -23,10 +23,7 @@ export class FetchClientError extends Error {
 export const createFetchClient = ({ baseUrl }: FetchClientOptions) => {
   const normalizedBaseUrl = baseUrl.replace(/\/$/, '')
 
-  const request = async <T>(
-    path: string,
-    init?: RequestInit
-  ): Promise<T> => {
+  const request = async <T>(path: string, init?: RequestInit): Promise<T> => {
     const response = await fetch(`${normalizedBaseUrl}${path}`, init)
 
     const contentType = response.headers.get('content-type') || ''
@@ -49,5 +46,6 @@ export const createFetchClient = ({ baseUrl }: FetchClientOptions) => {
 }
 
 export const fetchClientSupport = createFetchClient({
-  baseUrl: ((import.meta as any).env?.VITE_SUPPORT_API_BASE_URL as string) || '',
+  baseUrl:
+    ((import.meta as any).env?.VITE_SUPPORT_API_BASE_URL as string) || '',
 })

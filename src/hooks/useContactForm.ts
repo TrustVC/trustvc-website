@@ -37,21 +37,21 @@ export const useContactForm = () => {
     if (next.length > 0) setFiles(next)
   }, [])
 
-  const handleDrop = useCallback(
-    (e: React.DragEvent) => {
-      e.preventDefault()
-      e.stopPropagation()
-      setDragActive(false)
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setDragActive(false)
 
-      const dropped = Array.from(e.dataTransfer.files || [])
-      if (dropped.length > 0) setFiles(dropped)
+    const dropped = Array.from(e.dataTransfer.files || [])
+    if (dropped.length > 0) setFiles(dropped)
+  }, [])
+
+  const handleFileInput = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (e.target.files) setFilesFromList(e.target.files)
     },
-    []
+    [setFilesFromList]
   )
-
-  const handleFileInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) setFilesFromList(e.target.files)
-  }, [setFilesFromList])
 
   const resetForm = useCallback(() => {
     setEmail('')
@@ -83,11 +83,19 @@ export const useContactForm = () => {
 
       const summary = description.trim().slice(0, 100) || 'Support Request'
 
+      const entryPoint =
+        ((import.meta as any).env?.VITE_ENTRY_POINT as string) || 'dev'
+      const platformEnv =
+        ((import.meta as any).env?.VITE_PLATFORM as string) || 'dev'
+      const platform = JSON.stringify([{ env: platformEnv }])
+
       const formData = new FormData()
       formData.append('email', email)
       formData.append('summary', summary)
       formData.append('description', description)
       formData.append('typeOfEnquiry', typeOfEnquiry)
+      formData.append('entryPoint', entryPoint)
+      formData.append('platform', platform)
       for (const file of files) {
         formData.append('attachments', file)
       }

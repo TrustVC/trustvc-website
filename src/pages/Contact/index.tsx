@@ -31,20 +31,25 @@ const Contact = ({ isDarkMode }: ContactProps) => {
   } = useContactForm()
 
   return (
-    <div className={`w-full px-4 pt-[120px] pb-16 flex justify-center ${isDarkMode ? 'dark-mode' : ''}`}>
+    <div
+      className={`w-full px-4 pt-[120px] pb-16 flex justify-center ${isDarkMode ? 'dark-mode' : ''}`}
+    >
       <div className="w-full max-w-[1440px] flex flex-col items-center">
         <div className="w-full max-w-[760px] flex flex-col items-center text-center">
           <h1
-            className={`text-[40px] sm:text-5xl font-extrabold font-gilroy leading-tight ${isDarkMode ? 'text-neutral-60' : 'text-primary-50'
-              }`}
+            className={`text-[40px] sm:text-5xl font-extrabold font-gilroy leading-tight ${
+              isDarkMode ? 'text-neutral-60' : 'text-primary-50'
+            }`}
           >
             Contact Us
           </h1>
           <p
-            className={`mt-3 text-sm sm:text-base font-medium font-gilroy ${isDarkMode ? 'text-neutral-50' : 'text-neutral-20'
-              }`}
+            className={`mt-3 text-sm sm:text-base font-medium font-gilroy ${
+              isDarkMode ? 'text-neutral-50' : 'text-neutral-20'
+            }`}
           >
-            Get help with TrustVC product and services. We’ll get back to you soon
+            Get help with TrustVC product and services. We’ll get back to you
+            soon
           </p>
         </div>
 
@@ -53,14 +58,16 @@ const Contact = ({ isDarkMode }: ContactProps) => {
             <div className="w-full p-6 sm:p-8">
               <div className="flex flex-col gap-1">
                 <div
-                  className={`text-base font-bold font-gilroy ${isDarkMode ? 'text-neutral-60' : 'text-neutral-10'
-                    }`}
+                  className={`text-base font-bold font-gilroy ${
+                    isDarkMode ? 'text-neutral-60' : 'text-neutral-10'
+                  }`}
                 >
                   Submit a Request
                 </div>
                 <div
-                  className={`text-xs font-medium font-gilroy ${isDarkMode ? 'text-neutral-50' : 'text-neutral-20'
-                    }`}
+                  className={`text-xs font-medium font-gilroy ${
+                    isDarkMode ? 'text-neutral-50' : 'text-neutral-20'
+                  }`}
                 >
                   Encountering some issues? Let us know so that we can help.
                 </div>
@@ -116,7 +123,10 @@ const Contact = ({ isDarkMode }: ContactProps) => {
                 />
 
                 <div className="pt-2">
-                  <SubmitButton isDarkMode={isDarkMode} isSubmitting={isSubmitting} />
+                  <SubmitButton
+                    isDarkMode={isDarkMode}
+                    isSubmitting={isSubmitting}
+                  />
                 </div>
               </form>
             </div>

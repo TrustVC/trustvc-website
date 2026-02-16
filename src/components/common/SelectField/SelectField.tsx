@@ -21,28 +21,33 @@ const SelectField = ({
   return (
     <div className="flex flex-col gap-2">
       <label
-        className={`text-xs font-semibold font-gilroy ${isDarkMode ? 'text-neutral-50' : 'text-neutral-20'
-          }`}
+        className={`text-xs font-semibold font-gilroy ${
+          isDarkMode ? 'text-neutral-50' : 'text-neutral-20'
+        }`}
         htmlFor={id}
       >
         {label}
       </label>
 
       <div
-        className={`relative w-full h-12 sm:h-10 rounded-lg border flex items-center ${isDarkMode ? 'bg-black/10 border-white/15' : 'bg-white/90 border-black/15'
-          }`}
+        className={`relative w-full h-12 sm:h-10 rounded-lg border flex items-center ${
+          isDarkMode
+            ? 'bg-black/10 border-white/15'
+            : 'bg-white/90 border-black/15'
+        }`}
       >
         <select
           id={id}
           value={value}
           onChange={e => onChange(e.target.value as EnquiryType)}
           required={required}
-          className={`w-full h-full bg-transparent text-sm font-gilroy outline-none appearance-none px-3 pr-10 ${value === ''
-            ? 'text-neutral-30'
-            : isDarkMode
-              ? 'text-neutral-60'
-              : 'text-neutral-10'
-            }`}
+          className={`w-full h-full bg-transparent text-sm font-gilroy outline-none appearance-none px-3 pr-10 ${
+            value === ''
+              ? 'text-neutral-30'
+              : isDarkMode
+                ? 'text-neutral-60'
+                : 'text-neutral-10'
+          }`}
         >
           <option value="" disabled>
             Select an option.

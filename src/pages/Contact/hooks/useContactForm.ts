@@ -83,11 +83,19 @@ export const useContactForm = () => {
 
       const summary = description.trim().slice(0, 100) || 'Support Request'
 
+      const entryPoint =
+        ((import.meta as any).env?.VITE_ENTRY_POINT as string) || 'dev'
+      const platformEnv =
+        ((import.meta as any).env?.VITE_PLATFORM as string) || 'dev'
+      const platform = JSON.stringify([{ env: platformEnv }])
+
       const formData = new FormData()
       formData.append('email', email)
       formData.append('summary', summary)
       formData.append('description', description)
       formData.append('typeOfEnquiry', typeOfEnquiry)
+      formData.append('entryPoint', entryPoint)
+      formData.append('platform', platform)
       for (const file of files) {
         formData.append('attachments', file)
       }
