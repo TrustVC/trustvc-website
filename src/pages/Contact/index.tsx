@@ -121,7 +121,10 @@ const Contact = ({ isDarkMode }: ContactProps) => {
                 </div>
 
                 <div className="pt-2 flex justify-center">
-                  <SubmitButton isSubmitting={isSubmitting} />
+                  <SubmitButton
+                    isDarkMode={isDarkMode}
+                    isSubmitting={isSubmitting}
+                  />
                 </div>
               </form>
             </div>
