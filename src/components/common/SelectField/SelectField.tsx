@@ -79,7 +79,11 @@ const SelectField = ({
         </div>
       </div>
       {error && (
-        <p id={`${id}-error`} className="text-xs font-medium text-red-500" role="alert">
+        <p
+          id={`${id}-error`}
+          className="text-xs font-medium text-red-500"
+          role="alert"
+        >
           {error}
         </p>
       )}

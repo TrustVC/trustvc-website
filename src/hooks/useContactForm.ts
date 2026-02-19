@@ -58,18 +58,33 @@ export const useContactForm = () => {
     [setFilesFromList]
   )
 
-  const handleEmailChange = useCallback((value: React.SetStateAction<string>) => {
-    setEmail(value)
-    setFieldErrors(prev => (prev.email ? { ...prev, email: undefined } : prev))
-  }, [])
-  const handleTypeOfEnquiryChange = useCallback((value: React.SetStateAction<EnquiryType>) => {
-    setTypeOfEnquiry(value)
-    setFieldErrors(prev => (prev.typeOfEnquiry ? { ...prev, typeOfEnquiry: undefined } : prev))
-  }, [])
-  const handleDescriptionChange = useCallback((value: React.SetStateAction<string>) => {
-    setDescription(value)
-    setFieldErrors(prev => (prev.description ? { ...prev, description: undefined } : prev))
-  }, [])
+  const handleEmailChange = useCallback(
+    (value: React.SetStateAction<string>) => {
+      setEmail(value)
+      setFieldErrors(prev =>
+        prev.email ? { ...prev, email: undefined } : prev
+      )
+    },
+    []
+  )
+  const handleTypeOfEnquiryChange = useCallback(
+    (value: React.SetStateAction<EnquiryType>) => {
+      setTypeOfEnquiry(value)
+      setFieldErrors(prev =>
+        prev.typeOfEnquiry ? { ...prev, typeOfEnquiry: undefined } : prev
+      )
+    },
+    []
+  )
+  const handleDescriptionChange = useCallback(
+    (value: React.SetStateAction<string>) => {
+      setDescription(value)
+      setFieldErrors(prev =>
+        prev.description ? { ...prev, description: undefined } : prev
+      )
+    },
+    []
+  )
 
   const resetForm = useCallback(() => {
     setEmail('')
@@ -89,10 +104,17 @@ export const useContactForm = () => {
 
       const emailTrimmed = email.trim()
       const descriptionTrimmed = description.trim()
-      const errors: { email?: string; typeOfEnquiry?: string; description?: string } = {}
-      if (!emailTrimmed) errors.email = 'Please enter your email address before submitting.'
-      if (!typeOfEnquiry) errors.typeOfEnquiry = 'Please select an option before submitting.'
-      if (!descriptionTrimmed) errors.description = 'Please enter a description before submitting.'
+      const errors: {
+        email?: string
+        typeOfEnquiry?: string
+        description?: string
+      } = {}
+      if (!emailTrimmed)
+        errors.email = 'Please enter your email address before submitting.'
+      if (!typeOfEnquiry)
+        errors.typeOfEnquiry = 'Please select an option before submitting.'
+      if (!descriptionTrimmed)
+        errors.description = 'Please enter a description before submitting.'
 
       if (Object.keys(errors).length > 0) {
         setFieldErrors(errors)
@@ -113,9 +135,11 @@ export const useContactForm = () => {
         return
       }
 
-      const domain = typeof window !== 'undefined' 
-        ? window.location.hostname 
-        : ((import.meta as any).env?.VITE_ENTRY_POINT as string) || 'trustvc.io'
+      const domain =
+        typeof window !== 'undefined'
+          ? window.location.hostname
+          : ((import.meta as any).env?.VITE_ENTRY_POINT as string) ||
+            'trustvc.io'
       const platformEnv =
         ((import.meta as any).env?.VITE_PLATFORM as string) || 'dev'
       const platform = JSON.stringify([{ env: platformEnv }])
