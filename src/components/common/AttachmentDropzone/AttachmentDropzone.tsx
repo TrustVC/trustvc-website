@@ -24,7 +24,7 @@ const AttachmentDropzone = ({
   return (
     <div className="flex flex-col gap-2">
       <div
-        className={`text-xs font-semibold font-gilroy ${
+        className={`form-label ${
           isDarkMode ? 'text-neutral-50' : 'text-neutral-20'
         }`}
       >

@@ -37,20 +37,13 @@ const Contact = ({ isDarkMode }: ContactProps) => {
     >
       <div className="w-full max-w-[1440px] flex flex-col items-center">
         <div className="w-full max-w-[760px] flex flex-col items-center text-center">
-          <h1
-            className={`text-[40px] sm:text-5xl font-extrabold font-gilroy leading-tight ${
-              isDarkMode ? 'text-neutral-60' : 'text-primary-50'
-            }`}
-          >
-            Contact Us
+          <h1 className="contact-heading">
+            <span className="contact-heading-contact">Contact</span>{' '}
+            <span className="contact-heading-us">Us</span>
           </h1>
-          <p
-            className={`mt-3 text-sm sm:text-base font-medium font-gilroy ${
-              isDarkMode ? 'text-neutral-50' : 'text-neutral-20'
-            }`}
-          >
-            Get help with TrustVC product and services. We’ll get back to you
-            soon
+          <p className="contact-description mt-3">
+            Get help with TrustVC product and services. We&apos;ll get back to
+            you soon
           </p>
         </div>
 
@@ -127,11 +120,8 @@ const Contact = ({ isDarkMode }: ContactProps) => {
                   />
                 </div>
 
-                <div className="pt-2">
-                  <SubmitButton
-                    isDarkMode={isDarkMode}
-                    isSubmitting={isSubmitting}
-                  />
+                <div className="pt-2 flex justify-center">
+                  <SubmitButton isSubmitting={isSubmitting} />
                 </div>
               </form>
             </div>
