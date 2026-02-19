@@ -56,17 +56,17 @@ const Contact = ({ isDarkMode }: ContactProps) => {
 
         <div className="w-full max-w-[920px] mt-10">
           <div className="overlay-border-shadow">
-            <div className="w-full p-6 sm:p-8">
+            <div className="w-full py-6 px-4 sm:py-8 sm:px-6">
               <div className="flex flex-col gap-1">
                 <div
-                  className={`text-base font-bold font-gilroy ${
+                  className={`submit-request-title ${
                     isDarkMode ? 'text-neutral-60' : 'text-neutral-10'
                   }`}
                 >
                   Submit a Request
                 </div>
                 <div
-                  className={`text-xs font-medium font-gilroy ${
+                  className={`encountering-issues-text ${
                     isDarkMode ? 'text-neutral-50' : 'text-neutral-20'
                   }`}
                 >
@@ -74,54 +74,58 @@ const Contact = ({ isDarkMode }: ContactProps) => {
                 </div>
               </div>
 
-              <form className="mt-6 flex flex-col gap-5" onSubmit={onSubmit}>
-                <FormAlert
-                  isDarkMode={isDarkMode}
-                  error={submitError}
-                  success={submitSuccess}
-                />
+              <div className="mt-5 contact-form-divider" />
 
-                <TextField
-                  isDarkMode={isDarkMode}
-                  id="contact-email"
-                  label="Email *"
-                  value={email}
-                  onChange={setEmail}
-                  placeholder="your.name@email.com"
-                  type="email"
-                  error={fieldErrors.email}
-                />
+              <form className="mt-3 flex flex-col gap-5" onSubmit={onSubmit}>
+                <div className="contact-form-fields">
+                  <FormAlert
+                    isDarkMode={isDarkMode}
+                    error={submitError}
+                    success={submitSuccess}
+                  />
 
-                <SelectField
-                  isDarkMode={isDarkMode}
-                  id="contact-enquiry"
-                  label="Type of Enquiry *"
-                  value={typeOfEnquiry}
-                  onChange={setTypeOfEnquiry}
-                  error={fieldErrors.typeOfEnquiry}
-                />
+                  <TextField
+                    isDarkMode={isDarkMode}
+                    id="contact-email"
+                    label="Email *"
+                    value={email}
+                    onChange={setEmail}
+                    placeholder="your.name@email.com"
+                    type="email"
+                    error={fieldErrors.email}
+                  />
 
-                <TextAreaField
-                  isDarkMode={isDarkMode}
-                  id="contact-description"
-                  label="Description *"
-                  value={description}
-                  onChange={setDescription}
-                  placeholder="Please provide more information about your issue."
-                  rows={4}
-                  error={fieldErrors.description}
-                />
+                  <SelectField
+                    isDarkMode={isDarkMode}
+                    id="contact-enquiry"
+                    label="Type of Enquiry *"
+                    value={typeOfEnquiry}
+                    onChange={setTypeOfEnquiry}
+                    error={fieldErrors.typeOfEnquiry}
+                  />
 
-                <AttachmentDropzone
-                  isDarkMode={isDarkMode}
-                  dragActive={dragActive}
-                  onDragEnter={handleDrag}
-                  onDragLeave={handleDrag}
-                  onDragOver={handleDrag}
-                  onDrop={handleDrop}
-                  onFileInput={handleFileInput}
-                  fileInfoText={fileInfoText}
-                />
+                  <TextAreaField
+                    isDarkMode={isDarkMode}
+                    id="contact-description"
+                    label="Description *"
+                    value={description}
+                    onChange={setDescription}
+                    placeholder="Please provide more information about your issue."
+                    rows={4}
+                    error={fieldErrors.description}
+                  />
+
+                  <AttachmentDropzone
+                    isDarkMode={isDarkMode}
+                    dragActive={dragActive}
+                    onDragEnter={handleDrag}
+                    onDragLeave={handleDrag}
+                    onDragOver={handleDrag}
+                    onDrop={handleDrop}
+                    onFileInput={handleFileInput}
+                    fileInfoText={fileInfoText}
+                  />
+                </div>
 
                 <div className="pt-2">
                   <SubmitButton

@@ -26,7 +26,7 @@ const TextAreaField = ({
   return (
     <div className="flex flex-col gap-2">
       <label
-        className={`text-xs font-semibold font-gilroy ${
+        className={`form-label ${
           isDarkMode ? 'text-neutral-50' : 'text-neutral-20'
         }`}
         htmlFor={id}

@@ -74,7 +74,7 @@ const AttachmentDropzone = ({
             type="file"
             multiple
             onChange={onFileInput}
-            accept="*"
+            accept="image/jpeg,image/jpg,image/png,.jpg,.jpeg,.png"
             style={{ display: 'none' }}
           />
         </div>

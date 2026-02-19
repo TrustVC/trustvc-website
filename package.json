@@ -17,7 +17,9 @@
     "format:check": "prettier --check \"src/**/*.{js,jsx,ts,tsx,json,css,md}\"",
     "test": "vitest run",
     "test:ui": "vitest --ui",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "setup:hooks": "node scripts/setup-git-hooks.js",
+    "prepare": "node scripts/setup-git-hooks.js"
   },
   "dependencies": {
     "clsx": "^2.1.1",
