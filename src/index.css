@@ -51,10 +51,16 @@
   :root {
     --Neutral-33-90: #a9b2bb54;
     --Primary3360: #686ad2;
+    --Primary-100-50: #7d80d7;
+    --Primary-100-60: #686ad2;
+    --Neutral-100-30: #3d444d;
+    --Neutral-100-10: #1e2026;
 
     /* Base Colors - Light Mode */
     --Base-66-Base-L1: rgba(255, 255, 255, 0.66);
     --Base-66-Base-L2: rgba(30, 32, 38, 0.66);
+    --Base-33-Base-L1: rgba(255, 255, 255, 0.33);
+    --Base-33-Base-L2: rgba(30, 32, 38, 0.33);
     --Base-100-Base-L1: #ffffff;
     --base-100-base-l-2-c: rgba(222, 228, 233, 0.33);
   }
@@ -63,8 +69,13 @@
     /* Base Colors - Dark Mode */
     --Base-66-Base-L1: rgba(255, 255, 255, 0.66);
     --Base-66-Base-L2: rgba(30, 32, 38, 0.66);
+    --Base-33-Base-L2: rgba(30, 32, 38, 0.33);
     --Base-100-Base-L1: #000000;
     --base-100-base-l-2-c: rgba(30, 32, 38, 0.66);
+    --Primary-100-50: #7d80d7;
+    --Primary-100-60: #686ad2;
+    --Neutral-100-30: #3d444d;
+    --Neutral-100-10: #1e2026;
   }
 }
 
@@ -360,6 +371,48 @@ body.dark-mode {
     @apply font-avenir font-medium text-form-label align-middle;
   }
 
+  /* Contact Page Heading */
+  .contact-heading {
+    font-family: 'Gilroy', sans-serif;
+    font-weight: 800;
+    font-size: 40px;
+    line-height: 1.2;
+  }
+
+  @media (min-width: 640px) {
+    .contact-heading {
+      font-size: 48px;
+    }
+  }
+
+  .contact-heading-contact {
+    color: var(--Primary-100-60, #686ad2);
+  }
+
+  .contact-heading-us {
+    color: var(--Neutral-100-10, #1e2026);
+  }
+
+  .dark-mode .contact-heading-us {
+    color: #ffffff;
+  }
+
+  /* Contact Page Description */
+  .contact-description {
+    font-family: 'Avenir', sans-serif;
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 136%;
+    letter-spacing: 0%;
+    text-align: center;
+    vertical-align: middle;
+    color: var(--Neutral-100-30, #3d444d);
+  }
+
+  .dark-mode .contact-description {
+    color: #ffffff;
+  }
+
   /* Form Backgrounds - Using CSS variables for gradients */
   .overlay-border-shadow {
     background:
@@ -430,6 +483,41 @@ body.dark-mode {
         var(--Base-66-Base-L2, rgba(30, 32, 38, 0.66))
       );
   }
+
+  /* Submit Button */
+  .submit-button {
+    background: var(--Primary-100-50, #7d80d7);
+    width: 383px;
+    max-width: 100%;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+    border-radius: 8px;
+    padding: 5px;
+    color: white;
+    font-size: 14px;
+    font-family: 'Gilroy', sans-serif;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .dark-mode .submit-button {
+    color: #000000;
+  }
+
+  .submit-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  .submit-button:hover:not(:disabled) {
+    opacity: 0.9;
+  }
 }
 
 /* Contact form divider */
@@ -480,31 +568,41 @@ body.dark-mode {
 /* Dropbox Area */
 .dropbox-area {
   align-self: stretch;
-  padding: 24px;
+  width: 960px;
+  max-width: 100%;
+  height: 164px;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px dashed #aaaee6;
   background:
     linear-gradient(
       0deg,
-      rgba(222, 228, 233, 0) 0%,
-      rgba(222, 228, 233, 0) 100%
+      var(--Base-33-Base-L1, rgba(255, 255, 255, 0.33)),
+      var(--Base-33-Base-L1, rgba(255, 255, 255, 0.33))
     ),
-    rgba(255, 255, 255, 0.33);
-  border-radius: 12px;
-  border: 1px dashed #aaaee6;
+    linear-gradient(0deg, rgba(222, 228, 233, 0), rgba(222, 228, 233, 0));
+  opacity: 1;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
 }
 
+@media (min-width: 640px) {
+  .dropbox-area {
+    padding: 24px;
+  }
+}
+
 .dark-mode .dropbox-area {
   background:
+    linear-gradient(0deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)),
     linear-gradient(
       0deg,
-      rgba(30, 32, 38, 0.33) 0%,
-      rgba(30, 32, 38, 0.33) 100%
-    ),
-    rgba(0, 0, 0, 0);
-  border: 1px dashed #403d7d;
+      var(--Base-33-Base-L2, rgba(30, 32, 38, 0.33)),
+      var(--Base-33-Base-L2, rgba(30, 32, 38, 0.33))
+    );
+  border-color: #403d7d;
 }
 
 .dropbox-area.drag-active {
@@ -524,10 +622,11 @@ body.dark-mode {
 .dropbox-text {
   text-align: center;
   color: #3d444d;
-  font-size: 14px;
-  font-family: 'Gilroy', sans-serif;
+  font-family: 'Avenir', sans-serif;
   font-weight: 500;
-  line-height: 21.7px;
+  font-size: 14px;
+  line-height: 155%;
+  letter-spacing: 0%;
   word-wrap: break-word;
 }
 
@@ -662,10 +761,11 @@ body.dark-mode {
 .file-info-text {
   flex: 1 1 0;
   color: #5b6571;
-  font-size: 12px;
-  font-family: 'Gilroy', sans-serif;
+  font-family: 'Avenir', sans-serif;
   font-weight: 500;
-  line-height: 19.8px;
+  font-size: 12px;
+  line-height: 165%;
+  letter-spacing: 0%;
   word-wrap: break-word;
 }
 
