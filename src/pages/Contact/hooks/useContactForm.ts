@@ -5,6 +5,19 @@ type EnquiryType = '' | 'General_Enquiry' | 'OpenCerts' | 'TradeTrust'
 
 const MAX_TOTAL_UPLOAD_BYTES = 10 * 1024 * 1024
 
+const ALLOWED_FILE_TYPES = ['image/jpeg', 'image/jpg', 'image/png']
+const ALLOWED_FILE_EXTENSIONS = ['.jpg', '.jpeg', '.png']
+
+const isValidFileType = (file: File): boolean => {
+  const extension = file.name
+    .toLowerCase()
+    .substring(file.name.lastIndexOf('.'))
+  return (
+    ALLOWED_FILE_TYPES.includes(file.type.toLowerCase()) ||
+    ALLOWED_FILE_EXTENSIONS.includes(extension)
+  )
+}
+
 export const useContactForm = () => {
   const [email, setEmail] = useState('')
   const [typeOfEnquiry, setTypeOfEnquiry] = useState<EnquiryType>('')
@@ -22,7 +35,7 @@ export const useContactForm = () => {
 
   const fileInfoText = useMemo(() => {
     if (files.length === 0)
-      return 'Maximum 10 MB. Supported files include .JPG or .PNG only.'
+      return 'Maximum 10 MB. Supported files include .JPG, .JPEG, or .PNG only.'
     if (files.length === 1) return files[0].name
     return `${files.length} files selected`
   }, [files])
@@ -43,16 +56,28 @@ export const useContactForm = () => {
     setDragActive(false)
 
     const dropped = Array.from(e.dataTransfer.files || [])
-    if (dropped.length > 0) {
-      setFiles(dropped)
+    const validFiles = dropped.filter(isValidFileType)
+    if (validFiles.length !== dropped.length) {
+      setSubmitError(
+        'Some files were rejected. Only JPG, JPEG, and PNG files are allowed.'
+      )
+    }
+    if (validFiles.length > 0) {
+      setFiles(validFiles)
     }
   }, [])
 
   const handleFileInput = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const selected = Array.from(e.target.files || [])
-      if (selected.length > 0) {
-        setFiles(selected)
+      const validFiles = selected.filter(isValidFileType)
+      if (validFiles.length !== selected.length) {
+        setSubmitError(
+          'Some files were rejected. Only JPG, JPEG, and PNG files are allowed.'
+        )
+      }
+      if (validFiles.length > 0) {
+        setFiles(validFiles)
       }
     },
     []
@@ -121,6 +146,15 @@ export const useContactForm = () => {
         return
       }
 
+      // Validate file types
+      const invalidFiles = files.filter(f => !isValidFileType(f))
+      if (invalidFiles.length > 0) {
+        setSubmitError(
+          'Invalid file type. Only JPG, JPEG, and PNG files are allowed.'
+        )
+        return
+      }
+
       const totalBytes = files.reduce((sum, f) => sum + f.size, 0)
       if (totalBytes > MAX_TOTAL_UPLOAD_BYTES) {
         setSubmitError('Attachments exceed 10 MB total size limit.')
@@ -140,16 +174,12 @@ export const useContactForm = () => {
           ? window.location.hostname
           : ((import.meta as any).env?.VITE_ENTRY_POINT as string) ||
             'trustvc.io'
-      const platformEnv =
-        ((import.meta as any).env?.VITE_PLATFORM as string) || 'dev'
-      const platform = JSON.stringify([{ env: platformEnv }])
 
       const formData = new FormData()
       formData.append('email', email)
       formData.append('description', description)
       formData.append('typeOfEnquiry', typeOfEnquiry)
       formData.append('domain', domain)
-      formData.append('platform', platform)
       for (const file of files) {
         formData.append('attachments', file)
       }
