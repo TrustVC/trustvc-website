@@ -23,6 +23,7 @@ const Contact = ({ isDarkMode }: ContactProps) => {
     isSubmitting,
     submitError,
     submitSuccess,
+    fieldErrors,
     fileInfoText,
     handleDrag,
     handleDrop,
@@ -88,7 +89,7 @@ const Contact = ({ isDarkMode }: ContactProps) => {
                   onChange={setEmail}
                   placeholder="your.name@email.com"
                   type="email"
-                  required
+                  error={fieldErrors.email}
                 />
 
                 <SelectField
@@ -97,7 +98,7 @@ const Contact = ({ isDarkMode }: ContactProps) => {
                   label="Type of Enquiry *"
                   value={typeOfEnquiry}
                   onChange={setTypeOfEnquiry}
-                  required
+                  error={fieldErrors.typeOfEnquiry}
                 />
 
                 <TextAreaField
@@ -107,8 +108,8 @@ const Contact = ({ isDarkMode }: ContactProps) => {
                   value={description}
                   onChange={setDescription}
                   placeholder="Please provide more information about your issue."
-                  required
                   rows={4}
+                  error={fieldErrors.description}
                 />
 
                 <AttachmentDropzone

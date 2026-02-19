@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import { createServiceRequest } from '@/utils'
 
-type EnquiryType = '' | 'General Enquiry' | 'OpenCerts' | 'TradeTrust'
+type EnquiryType = '' | 'General_Enquiry' | 'OpenCerts' | 'TradeTrust'
 
 const MAX_TOTAL_UPLOAD_BYTES = 10 * 1024 * 1024
 
@@ -14,6 +14,11 @@ export const useContactForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [submitSuccess, setSubmitSuccess] = useState<string | null>(null)
+  const [fieldErrors, setFieldErrors] = useState<{
+    email?: string
+    typeOfEnquiry?: string
+    description?: string
+  }>({})
 
   const fileInfoText = useMemo(() => {
     if (files.length === 0)
@@ -53,12 +58,26 @@ export const useContactForm = () => {
     []
   )
 
+  const handleEmailChange = useCallback((value: React.SetStateAction<string>) => {
+    setEmail(value)
+    setFieldErrors(prev => (prev.email ? { ...prev, email: undefined } : prev))
+  }, [])
+  const handleTypeOfEnquiryChange = useCallback((value: React.SetStateAction<EnquiryType>) => {
+    setTypeOfEnquiry(value)
+    setFieldErrors(prev => (prev.typeOfEnquiry ? { ...prev, typeOfEnquiry: undefined } : prev))
+  }, [])
+  const handleDescriptionChange = useCallback((value: React.SetStateAction<string>) => {
+    setDescription(value)
+    setFieldErrors(prev => (prev.description ? { ...prev, description: undefined } : prev))
+  }, [])
+
   const resetForm = useCallback(() => {
     setEmail('')
     setTypeOfEnquiry('')
     setDescription('')
     setFiles([])
     setDragActive(false)
+    setFieldErrors({})
   }, [])
 
   const onSubmit = useCallback(
@@ -66,6 +85,19 @@ export const useContactForm = () => {
       e.preventDefault()
       setSubmitError(null)
       setSubmitSuccess(null)
+      setFieldErrors({})
+
+      const emailTrimmed = email.trim()
+      const descriptionTrimmed = description.trim()
+      const errors: { email?: string; typeOfEnquiry?: string; description?: string } = {}
+      if (!emailTrimmed) errors.email = 'Please enter your email address before submitting.'
+      if (!typeOfEnquiry) errors.typeOfEnquiry = 'Please select an option before submitting.'
+      if (!descriptionTrimmed) errors.description = 'Please enter a description before submitting.'
+
+      if (Object.keys(errors).length > 0) {
+        setFieldErrors(errors)
+        return
+      }
 
       const totalBytes = files.reduce((sum, f) => sum + f.size, 0)
       if (totalBytes > MAX_TOTAL_UPLOAD_BYTES) {
@@ -81,20 +113,18 @@ export const useContactForm = () => {
         return
       }
 
-      const summary = description.trim().slice(0, 100) || 'Support Request'
-
-      const entryPoint =
-        ((import.meta as any).env?.VITE_ENTRY_POINT as string) || 'dev'
+      const domain = typeof window !== 'undefined' 
+        ? window.location.hostname 
+        : ((import.meta as any).env?.VITE_ENTRY_POINT as string) || 'trustvc.io'
       const platformEnv =
         ((import.meta as any).env?.VITE_PLATFORM as string) || 'dev'
       const platform = JSON.stringify([{ env: platformEnv }])
 
       const formData = new FormData()
       formData.append('email', email)
-      formData.append('summary', summary)
       formData.append('description', description)
       formData.append('typeOfEnquiry', typeOfEnquiry)
-      formData.append('entryPoint', entryPoint)
+      formData.append('domain', domain)
       formData.append('platform', platform)
       for (const file of files) {
         formData.append('attachments', file)
@@ -122,11 +152,11 @@ export const useContactForm = () => {
 
   return {
     email,
-    setEmail,
+    setEmail: handleEmailChange,
     typeOfEnquiry,
-    setTypeOfEnquiry,
+    setTypeOfEnquiry: handleTypeOfEnquiryChange,
     description,
-    setDescription,
+    setDescription: handleDescriptionChange,
     files,
     setFiles,
     dragActive,
@@ -134,6 +164,8 @@ export const useContactForm = () => {
     isSubmitting,
     submitError,
     submitSuccess,
+    fieldErrors,
+    setFieldErrors,
     fileInfoText,
     handleDrag,
     handleDrop,

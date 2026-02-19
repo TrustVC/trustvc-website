@@ -9,6 +9,7 @@ interface TextAreaFieldProps {
   placeholder?: string
   required?: boolean
   rows?: number
+  error?: string
 }
 
 const TextAreaField = ({
@@ -20,6 +21,7 @@ const TextAreaField = ({
   placeholder,
   required,
   rows = 4,
+  error,
 }: TextAreaFieldProps) => {
   return (
     <div className="flex flex-col gap-2">
@@ -38,12 +40,21 @@ const TextAreaField = ({
         placeholder={placeholder}
         required={required}
         rows={rows}
+        aria-invalid={!!error}
+        aria-describedby={error ? `${id}-error` : undefined}
         className={`w-full px-3 py-2 rounded-lg border text-sm font-medium font-gilroy outline-none transition-colors resize-none ${
-          isDarkMode
-            ? 'bg-transparent border-white/10 text-neutral-60 placeholder:text-neutral-30 focus:border-primary-60'
-            : 'bg-white/70 border-black/10 text-neutral-10 placeholder:text-neutral-30 focus:border-primary-60'
+          error
+            ? 'border-red-500 focus:border-red-500'
+            : isDarkMode
+              ? 'bg-transparent border-white/10 text-neutral-60 placeholder:text-neutral-30 focus:border-primary-60'
+              : 'bg-white/70 border-black/10 text-neutral-10 placeholder:text-neutral-30 focus:border-primary-60'
         }`}
       />
+      {error && (
+        <p id={`${id}-error`} className="text-xs font-medium text-red-500" role="alert">
+          {error}
+        </p>
+      )}
     </div>
   )
 }

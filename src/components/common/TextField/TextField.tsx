@@ -9,6 +9,7 @@ interface TextFieldProps {
   placeholder?: string
   type?: string
   required?: boolean
+  error?: string
 }
 
 const TextField = ({
@@ -20,6 +21,7 @@ const TextField = ({
   placeholder,
   type = 'text',
   required,
+  error,
 }: TextFieldProps) => {
   return (
     <div className="flex flex-col gap-2">
@@ -38,12 +40,21 @@ const TextField = ({
         placeholder={placeholder}
         type={type}
         required={required}
+        aria-invalid={!!error}
+        aria-describedby={error ? `${id}-error` : undefined}
         className={`w-full h-10 px-3 rounded-lg border text-sm font-medium font-gilroy outline-none transition-colors ${
-          isDarkMode
-            ? 'bg-transparent border-white/10 text-neutral-60 placeholder:text-neutral-30 focus:border-primary-60'
-            : 'bg-white/70 border-black/10 text-neutral-10 placeholder:text-neutral-30 focus:border-primary-60'
+          error
+            ? 'border-red-500 focus:border-red-500'
+            : isDarkMode
+              ? 'bg-transparent border-white/10 text-neutral-60 placeholder:text-neutral-30 focus:border-primary-60'
+              : 'bg-white/70 border-black/10 text-neutral-10 placeholder:text-neutral-30 focus:border-primary-60'
         }`}
       />
+      {error && (
+        <p id={`${id}-error`} className="text-xs font-medium text-red-500" role="alert">
+          {error}
+        </p>
+      )}
     </div>
   )
 }

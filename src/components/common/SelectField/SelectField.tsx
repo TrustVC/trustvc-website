@@ -8,6 +8,7 @@ interface SelectFieldProps {
   value: EnquiryType
   onChange: React.Dispatch<React.SetStateAction<EnquiryType>>
   required?: boolean
+  error?: string
 }
 
 const SelectField = ({
@@ -17,6 +18,7 @@ const SelectField = ({
   value,
   onChange,
   required,
+  error,
 }: SelectFieldProps) => {
   return (
     <div className="flex flex-col gap-2">
@@ -30,10 +32,12 @@ const SelectField = ({
       </label>
 
       <div
-        className={`relative w-full h-12 sm:h-10 rounded-lg border flex items-center ${
-          isDarkMode
-            ? 'bg-black/10 border-white/15'
-            : 'bg-white/90 border-black/15'
+        className={`relative w-full min-h-[48px] sm:min-h-[40px] rounded-lg border flex items-center cursor-pointer ${
+          error
+            ? 'border-red-500'
+            : isDarkMode
+              ? 'bg-black/10 border-white/15'
+              : 'bg-white/90 border-black/15'
         }`}
       >
         <select
@@ -41,7 +45,9 @@ const SelectField = ({
           value={value}
           onChange={e => onChange(e.target.value as EnquiryType)}
           required={required}
-          className={`w-full h-full bg-transparent text-sm font-gilroy outline-none appearance-none px-3 pr-10 ${
+          aria-invalid={!!error}
+          aria-describedby={error ? `${id}-error` : undefined}
+          className={`w-full min-h-[48px] sm:min-h-[40px] bg-transparent text-base sm:text-sm font-gilroy outline-none appearance-none pl-3 pr-10 py-3 sm:py-2 cursor-pointer ${
             value === ''
               ? 'text-neutral-30'
               : isDarkMode
@@ -52,7 +58,7 @@ const SelectField = ({
           <option value="" disabled>
             Select an option.
           </option>
-          <option value="General Enquiry">General Enquiry</option>
+          <option value="General_Enquiry">General Enquiry</option>
           <option value="OpenCerts">OpenCerts</option>
           <option value="TradeTrust">TradeTrust</option>
         </select>
@@ -72,6 +78,11 @@ const SelectField = ({
           </svg>
         </div>
       </div>
+      {error && (
+        <p id={`${id}-error`} className="text-xs font-medium text-red-500" role="alert">
+          {error}
+        </p>
+      )}
     </div>
   )
 }
