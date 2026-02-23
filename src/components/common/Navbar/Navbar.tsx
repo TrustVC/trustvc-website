@@ -1,4 +1,4 @@
-import { useState, Dispatch, SetStateAction } from 'react'
+import { useState, useRef, useEffect, Dispatch, SetStateAction } from 'react'
 import Logo from '../Logo'
 
 interface NavbarProps {
@@ -9,9 +9,28 @@ interface NavbarProps {
 const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isEcosystemOpen, setIsEcosystemOpen] = useState(false)
+  const navRef = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        isMobileMenuOpen &&
+        navRef.current &&
+        !navRef.current.contains(e.target as Node)
+      ) {
+        setIsMobileMenuOpen(false)
+        setIsEcosystemOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [isMobileMenuOpen])
 
   return (
-    <nav className={`navbar ${isDarkMode ? 'navbar-dark' : 'navbar-light'}`}>
+    <nav
+      ref={navRef}
+      className={`navbar ${isDarkMode ? 'navbar-dark' : 'navbar-light'}`}
+    >
       <div className="flex items-center justify-center h-full max-w-[1440px] mx-auto">
         {/* Tablet View - Centered Logo with Hamburger */}
         <div className="flex lg:hidden items-center justify-between w-full">

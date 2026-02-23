@@ -727,6 +727,152 @@ body.dark-mode {
   word-wrap: break-word;
 }
 
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* VerifySection - dropbox state variants */
+.dropbox-area--centered {
+  justify-content: center;
+  min-height: 140px;
+  gap: 12px;
+}
+
+.dropbox-area--result {
+  align-items: stretch;
+  gap: 16px;
+}
+
+/* Spinner */
+.verify-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #686ad2;
+  border-top-color: transparent;
+  border-radius: 50%;
+  margin: 0 auto 12px;
+  animation: spin 0.8s linear infinite;
+}
+
+.verify-spinner-label {
+  text-align: center;
+  font-size: 14px;
+  font-family: 'Gilroy', sans-serif;
+  font-weight: 500;
+  color: #3d444d;
+}
+
+.dark-mode .verify-spinner-label {
+  color: #a9b2bb;
+}
+
+/* Result - status header */
+.verify-status-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+}
+
+.verify-status-title {
+  font-size: 16px;
+  font-family: 'Gilroy', sans-serif;
+  font-weight: 700;
+}
+
+.verify-status-title--valid {
+  color: #22c55e;
+}
+.verify-status-title--invalid {
+  color: #ef4444;
+}
+
+.verify-status-filename {
+  font-size: 12px;
+  font-family: 'Gilroy', sans-serif;
+  font-weight: 500;
+  color: #5b6571;
+  margin-top: 2px;
+}
+
+.dark-mode .verify-status-filename {
+  color: #808894;
+}
+
+/* Result - fragment list */
+.verify-fragment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-self: stretch;
+}
+
+.verify-fragment-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.dark-mode .verify-fragment-row {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.verify-fragment-label {
+  font-size: 13px;
+  font-family: 'Gilroy', sans-serif;
+  font-weight: 500;
+  color: #3d444d;
+}
+
+.dark-mode .verify-fragment-label {
+  color: #a9b2bb;
+}
+
+.verify-fragment-status {
+  margin-left: auto;
+  font-size: 12px;
+  font-family: 'Gilroy', sans-serif;
+  font-weight: 700;
+}
+
+.verify-fragment-status--valid {
+  color: #22c55e;
+}
+.verify-fragment-status--invalid {
+  color: #ef4444;
+}
+.verify-fragment-status--skipped {
+  color: #9ca3af;
+}
+
+/* Ghost button - used in result + error states */
+.verify-ghost-button {
+  align-self: center;
+  background: none;
+  border: 1px solid #5b5bb3;
+  border-radius: 6px;
+  padding: 6px 16px;
+  color: #5b5bb3;
+  font-size: 13px;
+  font-family: 'Gilroy', sans-serif;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* Error message */
+.verify-error-message {
+  text-align: center;
+  color: #ef4444;
+  font-size: 14px;
+  font-family: 'Gilroy', sans-serif;
+  font-weight: 500;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .cta-button-wrapper {
