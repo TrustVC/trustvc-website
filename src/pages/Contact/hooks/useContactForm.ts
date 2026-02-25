@@ -1,28 +1,29 @@
 import React, { useCallback, useMemo, useState } from 'react'
-import { createServiceRequest } from '@/utils'
+import {
+  getPresignedUrls,
+  uploadToPresignedUrl,
+  createServiceRequestWithKeys,
+} from '@/utils/upload'
+import {
+  MAX_TOTAL_UPLOAD_BYTES,
+  MAX_FILES,
+  isValidFileType,
+  getFileConstraintText,
+} from '@/utils/attachmentConfig'
+import type { AttachmentItem } from '@/types/attachment'
 
-type EnquiryType = '' | 'General_Enquiry' | 'OpenCerts' | 'TradeTrust'
+export type EnquiryType = '' | 'General_Enquiry' | 'OpenCerts' | 'TradeTrust'
 
-const MAX_TOTAL_UPLOAD_BYTES = 10 * 1024 * 1024
-
-const ALLOWED_FILE_TYPES = ['image/jpeg', 'image/jpg', 'image/png']
-const ALLOWED_FILE_EXTENSIONS = ['.jpg', '.jpeg', '.png']
-
-const isValidFileType = (file: File): boolean => {
-  const extension = file.name
-    .toLowerCase()
-    .substring(file.name.lastIndexOf('.'))
-  return (
-    ALLOWED_FILE_TYPES.includes(file.type.toLowerCase()) ||
-    ALLOWED_FILE_EXTENSIONS.includes(extension)
-  )
+let idCounter = 0
+function nextId() {
+  return `att-${++idCounter}-${Date.now()}`
 }
 
 export const useContactForm = () => {
   const [email, setEmail] = useState('')
   const [typeOfEnquiry, setTypeOfEnquiry] = useState<EnquiryType>('')
   const [description, setDescription] = useState('')
-  const [files, setFiles] = useState<File[]>([])
+  const [attachments, setAttachments] = useState<AttachmentItem[]>([])
   const [dragActive, setDragActive] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
@@ -33,69 +34,166 @@ export const useContactForm = () => {
     description?: string
   }>({})
 
-  const fileInfoText = useMemo(() => {
-    if (files.length === 0)
-      return 'Maximum 10 MB. Supported files include .JPG, .JPEG, or .PNG only.'
-    if (files.length === 1) return files[0].name
-    return `${files.length} files selected`
-  }, [files])
+  const fileInfoText = useMemo(() => getFileConstraintText(), [])
 
-  const handleDrag = useCallback((e: React.DragEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    if (e.type === 'dragenter' || e.type === 'dragover') {
-      setDragActive(true)
-    } else if (e.type === 'dragleave') {
-      setDragActive(false)
-    }
-  }, [])
+  const allUploaded = useMemo(
+    () =>
+      attachments.length === 0 ||
+      attachments.every((a) => a.status === 'uploaded'),
+    [attachments]
+  )
+  const hasError = useMemo(
+    () => attachments.some((a) => a.status === 'error'),
+    [attachments]
+  )
+  const isUploading = useMemo(
+    () =>
+      attachments.some(
+        (a) => a.status === 'uploading' || a.status === 'pending'
+      ),
+    [attachments]
+  )
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    setDragActive(false)
-
-    const dropped = Array.from(e.dataTransfer.files || [])
-    const validFiles = dropped.filter(isValidFileType)
-    if (validFiles.length !== dropped.length) {
-      setSubmitError(
-        'Some files were rejected. Only JPG, JPEG, and PNG files are allowed.'
+  const setAttachmentStatus = useCallback(
+    (
+      id: string,
+      update: Partial<
+        Pick<AttachmentItem, 'status' | 'progress' | 'error' | 'key' | 'filename'>
+      >
+    ) => {
+      setAttachments((prev) =>
+        prev.map((a) => (a.id === id ? { ...a, ...update } : a))
       )
-    }
-    if (validFiles.length > 0) {
-      setFiles(validFiles)
-    }
-  }, [])
+    },
+    []
+  )
 
-  const handleFileInput = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const selected = Array.from(e.target.files || [])
-      const validFiles = selected.filter(isValidFileType)
-      if (validFiles.length !== selected.length) {
+  const addFiles = useCallback(
+    (newFiles: File[]) => {
+      const valid = newFiles.filter(isValidFileType)
+      const invalidCount = newFiles.length - valid.length
+      if (invalidCount > 0) {
         setSubmitError(
           'Some files were rejected. Only JPG, JPEG, and PNG files are allowed.'
         )
       }
-      if (validFiles.length > 0) {
-        setFiles(validFiles)
+      if (valid.length === 0) return
+
+      const currentTotal = attachments.reduce((s, a) => s + a.file.size, 0)
+      const addedTotal = valid.reduce((s, f) => s + f.size, 0)
+      if (currentTotal + addedTotal > MAX_TOTAL_UPLOAD_BYTES) {
+        setSubmitError('Attachments exceed 10 MB total size limit.')
+        return
       }
+      if (attachments.length + valid.length > MAX_FILES) {
+        setSubmitError(`Maximum ${MAX_FILES} files allowed.`)
+        return
+      }
+
+      const items: AttachmentItem[] = valid.map((file) => ({
+        id: nextId(),
+        file,
+        filename: file.name,
+        status: 'pending',
+        progress: 0,
+        // Local preview URL so the user always sees a thumbnail immediately
+        previewUrl: URL.createObjectURL(file),
+      }))
+      setAttachments((prev) => [...prev, ...items])
+      setSubmitError(null)
+
+      ;(async () => {
+        try {
+          const files = items.map((a) => ({
+            filename: a.file.name,
+            contentType: a.file.type || 'application/octet-stream',
+            size: a.file.size,
+          }))
+          const presigned = await getPresignedUrls(files)
+          await Promise.all(
+            items.map((item, i) => {
+              const p = presigned[i]
+              if (!p) return Promise.resolve()
+              setAttachmentStatus(item.id, { status: 'uploading', progress: 0 })
+              return uploadToPresignedUrl(p.uploadUrl, item.file, (percent) => {
+                setAttachmentStatus(item.id, { progress: percent })
+              })
+                .then(() => {
+                  setAttachmentStatus(item.id, {
+                    status: 'uploaded',
+                    progress: 100,
+                    key: p.key,
+                    filename: p.filename,
+                    error: undefined,
+                  })
+                })
+                .catch((err) => {
+                  setAttachmentStatus(item.id, {
+                    status: 'error',
+                    error:
+                      err instanceof Error ? err.message : 'Upload failed',
+                  })
+                })
+            })
+          )
+        } catch (err) {
+          items.forEach((a) =>
+            setAttachmentStatus(a.id, {
+              status: 'error',
+              error:
+                err instanceof Error ? err.message : 'Failed to get upload URL',
+            })
+          )
+        }
+      })()
     },
-    []
+    [attachments, setAttachmentStatus]
   )
 
-  const handleEmailChange = useCallback(
-    (value: React.SetStateAction<string>) => {
-      setEmail(value)
-      setFieldErrors(prev =>
-        prev.email ? { ...prev, email: undefined } : prev
-      )
+  const removeAttachment = useCallback((id: string) => {
+    setAttachments((prev) => prev.filter((a) => a.id !== id))
+  }, [])
+
+  const clearAllAttachments = useCallback(() => {
+    setAttachments([])
+    setSubmitError(null)
+  }, [])
+
+  const handleDrag = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (e.type === 'dragenter' || e.type === 'dragover') setDragActive(true)
+    else if (e.type === 'dragleave') setDragActive(false)
+  }, [])
+
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault()
+      e.stopPropagation()
+      setDragActive(false)
+      const files = Array.from(e.dataTransfer.files || [])
+      addFiles(files)
     },
-    []
+    [addFiles]
   )
+
+  const handleFileInput = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const files = Array.from(e.target.files || [])
+      addFiles(files)
+      e.target.value = ''
+    },
+    [addFiles]
+  )
+
+  const handleEmailChange = useCallback((value: React.SetStateAction<string>) => {
+    setEmail(value)
+    setFieldErrors((prev) => (prev.email ? { ...prev, email: undefined } : prev))
+  }, [])
   const handleTypeOfEnquiryChange = useCallback(
     (value: React.SetStateAction<EnquiryType>) => {
       setTypeOfEnquiry(value)
-      setFieldErrors(prev =>
+      setFieldErrors((prev) =>
         prev.typeOfEnquiry ? { ...prev, typeOfEnquiry: undefined } : prev
       )
     },
@@ -104,7 +202,7 @@ export const useContactForm = () => {
   const handleDescriptionChange = useCallback(
     (value: React.SetStateAction<string>) => {
       setDescription(value)
-      setFieldErrors(prev =>
+      setFieldErrors((prev) =>
         prev.description ? { ...prev, description: undefined } : prev
       )
     },
@@ -115,9 +213,11 @@ export const useContactForm = () => {
     setEmail('')
     setTypeOfEnquiry('')
     setDescription('')
-    setFiles([])
+    setAttachments([])
     setDragActive(false)
     setFieldErrors({})
+    setSubmitError(null)
+    setSubmitSuccess(null)
   }, [])
 
   const onSubmit = useCallback(
@@ -140,24 +240,17 @@ export const useContactForm = () => {
         errors.typeOfEnquiry = 'Please select an option before submitting.'
       if (!descriptionTrimmed)
         errors.description = 'Please enter a description before submitting.'
-
       if (Object.keys(errors).length > 0) {
         setFieldErrors(errors)
         return
       }
 
-      // Validate file types
-      const invalidFiles = files.filter(f => !isValidFileType(f))
-      if (invalidFiles.length > 0) {
-        setSubmitError(
-          'Invalid file type. Only JPG, JPEG, and PNG files are allowed.'
-        )
+      if (attachments.length > 0 && !allUploaded) {
+        setSubmitError('Please wait for all files to finish uploading.')
         return
       }
-
-      const totalBytes = files.reduce((sum, f) => sum + f.size, 0)
-      if (totalBytes > MAX_TOTAL_UPLOAD_BYTES) {
-        setSubmitError('Attachments exceed 10 MB total size limit.')
+      if (hasError) {
+        setSubmitError('Please remove failed files or try again.')
         return
       }
 
@@ -172,36 +265,43 @@ export const useContactForm = () => {
       const domain =
         typeof window !== 'undefined'
           ? window.location.hostname
-          : ((import.meta as any).env?.VITE_ENTRY_POINT as string) ||
-            'trustvc.io'
+          : ((import.meta as any).env?.VITE_ENTRY_POINT as string) || 'trustvc.io'
 
-      const formData = new FormData()
-      formData.append('email', email)
-      formData.append('description', description)
-      formData.append('typeOfEnquiry', typeOfEnquiry)
-      formData.append('domain', domain)
-      for (const file of files) {
-        formData.append('attachments', file)
-      }
+      const attachmentKeys = attachments
+        .filter((a) => a.status === 'uploaded' && a.key && a.filename)
+        .map((a) => ({ key: a.key!, filename: a.filename }))
 
       try {
         setIsSubmitting(true)
-        await createServiceRequest(formData)
-
+        await createServiceRequestWithKeys({
+          email: emailTrimmed,
+          description: descriptionTrimmed,
+          typeOfEnquiry,
+          domain,
+          attachmentKeys,
+        })
         setSubmitSuccess(
-          'Request submitted successfully. We’ll get back to you soon.'
+          "Request submitted successfully. We'll get back to you soon."
         )
         resetForm()
       } catch (err) {
-        const errMessage =
-          (err as { message?: string } | null | undefined)?.message ||
+        const msg =
+          (err as { message?: string } | null | undefined)?.message ??
           'Failed to submit request.'
-        setSubmitError(errMessage)
+        setSubmitError(msg)
       } finally {
         setIsSubmitting(false)
       }
     },
-    [description, email, files, resetForm, typeOfEnquiry]
+    [
+      email,
+      typeOfEnquiry,
+      description,
+      attachments,
+      allUploaded,
+      hasError,
+      resetForm,
+    ]
   )
 
   return {
@@ -211,21 +311,21 @@ export const useContactForm = () => {
     setTypeOfEnquiry: handleTypeOfEnquiryChange,
     description,
     setDescription: handleDescriptionChange,
-    files,
-    setFiles,
+    attachments,
+    addFiles,
+    removeAttachment,
+    clearAllAttachments,
     dragActive,
-    setDragActive,
     isSubmitting,
     submitError,
     submitSuccess,
     fieldErrors,
-    setFieldErrors,
     fileInfoText,
+    allUploaded,
+    isUploading,
     handleDrag,
     handleDrop,
     handleFileInput,
     onSubmit,
   }
 }
-
-export type { EnquiryType }

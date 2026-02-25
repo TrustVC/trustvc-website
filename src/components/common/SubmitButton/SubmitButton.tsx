@@ -1,17 +1,20 @@
 interface SubmitButtonProps {
   isDarkMode: boolean
   isSubmitting: boolean
+  /** Optional: disable the button for other reasons (e.g. uploads in progress) */
+  isDisabled?: boolean
 }
 
-const SubmitButton = ({ isDarkMode, isSubmitting }: SubmitButtonProps) => {
+const SubmitButton = ({ isDarkMode, isSubmitting, isDisabled }: SubmitButtonProps) => {
   const baseClasses = 'submit-button'
   const themeClasses = isDarkMode ? 'bg-primary-60' : 'bg-primary-50'
-  const stateClasses = isSubmitting ? 'opacity-60 cursor-not-allowed' : ''
+  const disabled = isSubmitting || isDisabled
+  const stateClasses = disabled ? 'opacity-60 cursor-not-allowed' : ''
 
   return (
     <button
       type="submit"
-      disabled={isSubmitting}
+      disabled={disabled}
       className={`${baseClasses} ${themeClasses} ${stateClasses}`.trim()}
     >
       {isSubmitting ? 'Submitting…' : 'Submit'}

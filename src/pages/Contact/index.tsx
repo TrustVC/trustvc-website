@@ -1,6 +1,7 @@
 import { useContactForm } from './hooks/useContactForm'
 
 import AttachmentDropzone from '@/components/common/AttachmentDropzone'
+import { AttachmentFileList } from '@/components/common/AttachmentFileList'
 import FormAlert from '@/components/common/FormAlert'
 import SelectField from '@/components/common/SelectField'
 import SubmitButton from '@/components/common/SubmitButton'
@@ -19,12 +20,17 @@ const Contact = ({ isDarkMode }: ContactProps) => {
     setTypeOfEnquiry,
     description,
     setDescription,
+    attachments,
+    removeAttachment,
+    clearAllAttachments,
     dragActive,
     isSubmitting,
     submitError,
     submitSuccess,
     fieldErrors,
     fileInfoText,
+    allUploaded,
+    isUploading,
     handleDrag,
     handleDrop,
     handleFileInput,
@@ -118,12 +124,23 @@ const Contact = ({ isDarkMode }: ContactProps) => {
                     onFileInput={handleFileInput}
                     fileInfoText={fileInfoText}
                   />
+                  <AttachmentFileList
+                    attachments={attachments}
+                    onRemove={removeAttachment}
+                    onClearAll={clearAllAttachments}
+                    fileInfoText={fileInfoText}
+                    isDarkMode={isDarkMode}
+                  />
                 </div>
 
                 <div className="pt-2 flex justify-center">
                   <SubmitButton
                     isDarkMode={isDarkMode}
                     isSubmitting={isSubmitting}
+                    isDisabled={
+                      isUploading ||
+                      (attachments.length > 0 && !allUploaded)
+                    }
                   />
                 </div>
               </form>
