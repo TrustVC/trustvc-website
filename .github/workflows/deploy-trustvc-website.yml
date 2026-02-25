@@ -24,6 +24,9 @@ jobs:
   build-and-deploy:
     name: Build and deploy to CloudFront
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # id-token: write  # enable when using OIDC for AWS (no long-lived keys)
 
     env:
       # Map environment input to S3 bucket and CloudFront distribution
