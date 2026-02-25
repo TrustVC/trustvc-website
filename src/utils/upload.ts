@@ -44,10 +44,12 @@ export async function getPresignedUrls(
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ files }),
   })
-  const uploads = (res as { data?: { uploads: PresignUploadItem[] } }).data?.uploads
+  const uploads = (res as { data?: { uploads: PresignUploadItem[] } }).data
+    ?.uploads
   if (!uploads) {
     throw new Error(
-      (res as { error?: { message: string } }).error?.message || 'Failed to get upload URLs'
+      (res as { error?: { message: string } }).error?.message ||
+        'Failed to get upload URLs'
     )
   }
   return uploads
@@ -56,11 +58,11 @@ export async function getPresignedUrls(
 export async function uploadToPresignedUrl(
   uploadUrl: string,
   file: File,
-  onProgress?: (percent: number) => void
+  onProgress?: (_percent: number) => void
 ): Promise<void> {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest()
-    xhr.upload.addEventListener('progress', (e) => {
+    xhr.upload.addEventListener('progress', e => {
       if (e.lengthComputable && onProgress) {
         onProgress(Math.round((e.loaded / e.total) * 100))
       }
@@ -76,7 +78,10 @@ export async function uploadToPresignedUrl(
     xhr.addEventListener('error', () => reject(new Error('Upload failed')))
     xhr.addEventListener('abort', () => reject(new Error('Upload aborted')))
     xhr.open('PUT', uploadUrl)
-    xhr.setRequestHeader('Content-Type', file.type || 'application/octet-stream')
+    xhr.setRequestHeader(
+      'Content-Type',
+      file.type || 'application/octet-stream'
+    )
     xhr.send(file)
   })
 }
@@ -84,9 +89,12 @@ export async function uploadToPresignedUrl(
 export async function createServiceRequestWithKeys(
   payload: CreateServiceRequestWithKeysPayload
 ): Promise<CreateServiceRequestWithKeysResponse> {
-  return fetchClientSupport.request<CreateServiceRequestWithKeysResponse>('/service-request', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  })
+  return fetchClientSupport.request<CreateServiceRequestWithKeysResponse>(
+    '/service-request',
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    }
+  )
 }

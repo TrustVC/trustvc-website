@@ -138,8 +138,7 @@ const Contact = ({ isDarkMode }: ContactProps) => {
                     isDarkMode={isDarkMode}
                     isSubmitting={isSubmitting}
                     isDisabled={
-                      isUploading ||
-                      (attachments.length > 0 && !allUploaded)
+                      isUploading || (attachments.length > 0 && !allUploaded)
                     }
                   />
                 </div>

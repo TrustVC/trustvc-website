@@ -39,18 +39,16 @@ export const useContactForm = () => {
   const allUploaded = useMemo(
     () =>
       attachments.length === 0 ||
-      attachments.every((a) => a.status === 'uploaded'),
+      attachments.every(a => a.status === 'uploaded'),
     [attachments]
   )
   const hasError = useMemo(
-    () => attachments.some((a) => a.status === 'error'),
+    () => attachments.some(a => a.status === 'error'),
     [attachments]
   )
   const isUploading = useMemo(
     () =>
-      attachments.some(
-        (a) => a.status === 'uploading' || a.status === 'pending'
-      ),
+      attachments.some(a => a.status === 'uploading' || a.status === 'pending'),
     [attachments]
   )
 
@@ -58,11 +56,14 @@ export const useContactForm = () => {
     (
       id: string,
       update: Partial<
-        Pick<AttachmentItem, 'status' | 'progress' | 'error' | 'key' | 'filename'>
+        Pick<
+          AttachmentItem,
+          'status' | 'progress' | 'error' | 'key' | 'filename'
+        >
       >
     ) => {
-      setAttachments((prev) =>
-        prev.map((a) => (a.id === id ? { ...a, ...update } : a))
+      setAttachments(prev =>
+        prev.map(a => (a.id === id ? { ...a, ...update } : a))
       )
     },
     []
@@ -90,7 +91,7 @@ export const useContactForm = () => {
         return
       }
 
-      const items: AttachmentItem[] = valid.map((file) => ({
+      const items: AttachmentItem[] = valid.map(file => ({
         id: nextId(),
         file,
         filename: file.name,
@@ -99,12 +100,11 @@ export const useContactForm = () => {
         // Local preview URL so the user always sees a thumbnail immediately
         previewUrl: URL.createObjectURL(file),
       }))
-      setAttachments((prev) => [...prev, ...items])
+      setAttachments(prev => [...prev, ...items])
       setSubmitError(null)
-
       ;(async () => {
         try {
-          const files = items.map((a) => ({
+          const files = items.map(a => ({
             filename: a.file.name,
             contentType: a.file.type || 'application/octet-stream',
             size: a.file.size,
@@ -115,7 +115,7 @@ export const useContactForm = () => {
               const p = presigned[i]
               if (!p) return Promise.resolve()
               setAttachmentStatus(item.id, { status: 'uploading', progress: 0 })
-              return uploadToPresignedUrl(p.uploadUrl, item.file, (percent) => {
+              return uploadToPresignedUrl(p.uploadUrl, item.file, percent => {
                 setAttachmentStatus(item.id, { progress: percent })
               })
                 .then(() => {
@@ -127,17 +127,16 @@ export const useContactForm = () => {
                     error: undefined,
                   })
                 })
-                .catch((err) => {
+                .catch(err => {
                   setAttachmentStatus(item.id, {
                     status: 'error',
-                    error:
-                      err instanceof Error ? err.message : 'Upload failed',
+                    error: err instanceof Error ? err.message : 'Upload failed',
                   })
                 })
             })
           )
         } catch (err) {
-          items.forEach((a) =>
+          items.forEach(a =>
             setAttachmentStatus(a.id, {
               status: 'error',
               error:
@@ -151,7 +150,7 @@ export const useContactForm = () => {
   )
 
   const removeAttachment = useCallback((id: string) => {
-    setAttachments((prev) => prev.filter((a) => a.id !== id))
+    setAttachments(prev => prev.filter(a => a.id !== id))
   }, [])
 
   const clearAllAttachments = useCallback(() => {
@@ -186,14 +185,19 @@ export const useContactForm = () => {
     [addFiles]
   )
 
-  const handleEmailChange = useCallback((value: React.SetStateAction<string>) => {
-    setEmail(value)
-    setFieldErrors((prev) => (prev.email ? { ...prev, email: undefined } : prev))
-  }, [])
+  const handleEmailChange = useCallback(
+    (value: React.SetStateAction<string>) => {
+      setEmail(value)
+      setFieldErrors(prev =>
+        prev.email ? { ...prev, email: undefined } : prev
+      )
+    },
+    []
+  )
   const handleTypeOfEnquiryChange = useCallback(
     (value: React.SetStateAction<EnquiryType>) => {
       setTypeOfEnquiry(value)
-      setFieldErrors((prev) =>
+      setFieldErrors(prev =>
         prev.typeOfEnquiry ? { ...prev, typeOfEnquiry: undefined } : prev
       )
     },
@@ -202,7 +206,7 @@ export const useContactForm = () => {
   const handleDescriptionChange = useCallback(
     (value: React.SetStateAction<string>) => {
       setDescription(value)
-      setFieldErrors((prev) =>
+      setFieldErrors(prev =>
         prev.description ? { ...prev, description: undefined } : prev
       )
     },
@@ -265,11 +269,12 @@ export const useContactForm = () => {
       const domain =
         typeof window !== 'undefined'
           ? window.location.hostname
-          : ((import.meta as any).env?.VITE_ENTRY_POINT as string) || 'trustvc.io'
+          : ((import.meta as any).env?.VITE_ENTRY_POINT as string) ||
+            'trustvc.io'
 
       const attachmentKeys = attachments
-        .filter((a) => a.status === 'uploaded' && a.key && a.filename)
-        .map((a) => ({ key: a.key!, filename: a.filename }))
+        .filter(a => a.status === 'uploaded' && a.key && a.filename)
+        .map(a => ({ key: a.key!, filename: a.filename }))
 
       try {
         setIsSubmitting(true)

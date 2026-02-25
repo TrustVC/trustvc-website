@@ -1,4 +1,8 @@
-export type AttachmentFileStatus = 'pending' | 'uploading' | 'uploaded' | 'error'
+export type AttachmentFileStatus =
+  | 'pending'
+  | 'uploading'
+  | 'uploaded'
+  | 'error'
 
 export interface AttachmentItem {
   id: string

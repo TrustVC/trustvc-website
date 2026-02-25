@@ -5,7 +5,11 @@ interface SubmitButtonProps {
   isDisabled?: boolean
 }
 
-const SubmitButton = ({ isDarkMode, isSubmitting, isDisabled }: SubmitButtonProps) => {
+const SubmitButton = ({
+  isDarkMode,
+  isSubmitting,
+  isDisabled,
+}: SubmitButtonProps) => {
   const baseClasses = 'submit-button'
   const themeClasses = isDarkMode ? 'bg-primary-60' : 'bg-primary-50'
   const disabled = isSubmitting || isDisabled

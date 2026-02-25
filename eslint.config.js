@@ -43,6 +43,7 @@ export default [
       ...reactHooks.configs.recommended.rules,
       ...prettier.rules,
       ...tseslint.configs.recommendedTypeChecked[0].rules,
+      'no-unused-vars': 'off',
       'react/jsx-no-target-blank': 'off',
       'react-refresh/only-export-components': [
         'warn',

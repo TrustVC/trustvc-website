@@ -4,7 +4,7 @@ import type { AttachmentItem } from '@/types/attachment'
 
 interface FileItemProps {
   item: AttachmentItem
-  onRemove: (id: string) => void
+  onRemove: (_id: string) => void
   isDarkMode: boolean
 }
 
@@ -17,7 +17,9 @@ export function FileItem({ item, onRemove, isDarkMode }: FileItemProps) {
   return (
     <div
       className={`flex items-center gap-3 rounded-lg border p-3 min-w-0 ${
-        isDarkMode ? 'bg-black/10 border-white/15' : 'bg-white/90 border-black/10'
+        isDarkMode
+          ? 'bg-black/10 border-white/15'
+          : 'bg-white/90 border-black/10'
       } ${isError ? 'border-red-500' : ''}`}
     >
       <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-neutral-33/50 overflow-hidden">
@@ -39,7 +41,9 @@ export function FileItem({ item, onRemove, isDarkMode }: FileItemProps) {
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="3"
-                className={isDarkMode ? 'text-neutral-50/30' : 'text-neutral-20/30'}
+                className={
+                  isDarkMode ? 'text-neutral-50/30' : 'text-neutral-20/30'
+                }
               />
               <circle
                 cx="18"
