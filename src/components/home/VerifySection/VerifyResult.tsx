@@ -247,14 +247,22 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
                       View NFT Registry
                     </a>
                   ) : (
-                    <div className="vr-nft-link" onClick={onViewNftRegistry}>
+                    <button
+                      type="button"
+                      className="vr-nft-link"
+                      onClick={onViewNftRegistry}
+                    >
                       View NFT Registry
-                    </div>
+                    </button>
                   )
                 })()}
-                <div className="vr-nft-link" onClick={onViewEndorsementChain}>
+                <button
+                  type="button"
+                  className="vr-nft-link"
+                  onClick={onViewEndorsementChain}
+                >
                   View Endorsement Chain
-                </div>
+                </button>
               </div>
             </div>
           )}

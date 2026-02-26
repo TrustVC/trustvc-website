@@ -282,13 +282,16 @@ const NetworkModal: React.FC<NetworkModalProps> = ({
                           {visibleOptions
                             .filter(n => n.group === group)
                             .map(n => (
-                              <div
+                              <button
                                 key={n.chainId}
+                                type="button"
                                 className={`nm-item${n.chainId === selectedChainId ? ' nm-item--active' : ''}`}
                                 onClick={() => {
                                   setSelectedChainId(n.chainId)
                                   setDropdownOpen(false)
                                 }}
+                                role="option"
+                                aria-selected={n.chainId === selectedChainId}
                               >
                                 <img
                                   src={n.logo}
@@ -296,7 +299,7 @@ const NetworkModal: React.FC<NetworkModalProps> = ({
                                   className="nm-net-logo"
                                 />
                                 {n.label}
-                              </div>
+                              </button>
                             ))}
                         </div>
                       ))}
