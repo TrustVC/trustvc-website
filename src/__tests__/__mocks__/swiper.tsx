@@ -10,8 +10,7 @@ export function MockSwiper({
   onSwiper,
 }: {
   children: ReactNode
-  // eslint-disable-next-line no-unused-vars
-  onSwiper?: (swiper: MockSwiperApi) => void
+  onSwiper?: (_swiper: MockSwiperApi) => void
 }) {
   const [slideNumber, setSlideNumber] = React.useState(0)
 

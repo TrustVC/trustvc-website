@@ -1,4 +1,4 @@
-import { useState, Dispatch, SetStateAction } from 'react'
+import { useState, useRef, useEffect, Dispatch, SetStateAction } from 'react'
 import Logo from '../Logo'
 
 interface NavbarProps {
@@ -9,15 +9,35 @@ interface NavbarProps {
 const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isEcosystemOpen, setIsEcosystemOpen] = useState(false)
+  const navRef = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        isMobileMenuOpen &&
+        navRef.current &&
+        !navRef.current.contains(e.target as Node)
+      ) {
+        setIsMobileMenuOpen(false)
+        setIsEcosystemOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [isMobileMenuOpen])
 
   return (
-    <nav className={`navbar ${isDarkMode ? 'navbar-dark' : 'navbar-light'}`}>
+    <nav
+      ref={navRef}
+      className={`navbar ${isDarkMode ? 'navbar-dark' : 'navbar-light'}`}
+    >
       <div className="flex items-center justify-center h-full max-w-[1440px] mx-auto">
         {/* Tablet View - Centered Logo with Hamburger */}
         <div className="flex lg:hidden items-center justify-between w-full">
           {/* Hamburger Menu Button */}
           <div className="w-14 h-14 flex items-center justify-center">
             <button
+              type="button"
               onClick={() => {
                 setIsMobileMenuOpen(!isMobileMenuOpen)
                 if (isMobileMenuOpen) {
@@ -94,6 +114,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
             </div>
             <div className="p-2 relative">
               <button
+                type="button"
                 onClick={() => setIsEcosystemOpen(!isEcosystemOpen)}
                 aria-haspopup="true"
                 aria-expanded={isEcosystemOpen}
@@ -266,6 +287,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
               {/* Sun Icon - Primary Color */}
               <div className="p-1">
                 <button
+                  type="button"
                   onClick={() => setIsDarkMode(false)}
                   aria-label="Switch to light mode"
                   aria-pressed={!isDarkMode}
@@ -299,6 +321,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
               {/* Moon Icon - Neutral Color */}
               <div className="p-1">
                 <button
+                  type="button"
                   onClick={() => setIsDarkMode(true)}
                   aria-label="Switch to dark mode"
                   aria-pressed={isDarkMode}
@@ -381,6 +404,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
             </a>
             <div>
               <button
+                type="button"
                 onClick={() => setIsEcosystemOpen(!isEcosystemOpen)}
                 aria-haspopup="true"
                 aria-expanded={isEcosystemOpen}
@@ -524,6 +548,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
             <div className="flex items-center gap-2 px-2 py-3">
               {/* Sun Icon */}
               <button
+                type="button"
                 onClick={() => setIsDarkMode(false)}
                 aria-label="Switch to light mode"
                 aria-pressed={!isDarkMode}
@@ -555,6 +580,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
               </button>
               {/* Moon Icon */}
               <button
+                type="button"
                 onClick={() => setIsDarkMode(true)}
                 aria-label="Switch to dark mode"
                 aria-pressed={isDarkMode}
