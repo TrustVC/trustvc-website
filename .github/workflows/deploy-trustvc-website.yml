@@ -42,6 +42,10 @@ jobs:
       CF_DISTRIBUTION_DEVELOPMENT: ${{ secrets.TRUSTVC_WEB_CF_DISTRIBUTION_DEVELOPMENT }}
       CF_DISTRIBUTION_PRODUCTION: ${{ secrets.TRUSTVC_WEB_CF_DISTRIBUTION_PRODUCTION }}
 
+      # Full .env content per environment (one line or multiline, as in your local .env)
+      ENV_FILE_DEVELOPMENT: ${{ secrets.TRUSTVC_WEB_ENV_DEVELOPMENT }}
+      ENV_FILE_PRODUCTION: ${{ secrets.TRUSTVC_WEB_ENV_PRODUCTION }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -54,6 +58,14 @@ jobs:
           node-version: 20
           cache: 'npm'
           cache-dependency-path: package-lock.json
+
+      - name: Create .env for build
+        run: |
+          if [ "${DEPLOY_ENV}" = "production" ]; then
+            echo "${ENV_FILE_PRODUCTION}" > .env
+          else
+            echo "${ENV_FILE_DEVELOPMENT}" > .env
+          fi
 
       - name: Install dependencies
         run: npm ci
