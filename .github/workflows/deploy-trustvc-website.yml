@@ -53,18 +53,15 @@ jobs:
         with:
           node-version: 20
           cache: 'npm'
-          cache-dependency-path: trustvc-website/package-lock.json
+          cache-dependency-path: package-lock.json
 
       - name: Install dependencies
-        working-directory: trustvc-website
         run: npm ci
 
       - name: Lint
-        working-directory: trustvc-website
         run: npm run lint
 
       - name: Build
-        working-directory: trustvc-website
         run: npm run build
 
       - name: Configure AWS credentials
@@ -90,7 +87,6 @@ jobs:
 
       - name: Sync assets to S3
         if: steps.env-map.outputs.s3_bucket != ''
-        working-directory: trustvc-website
         run: |
           BUCKET="${{ steps.env-map.outputs.s3_bucket }}"
           # Long cache only for hashed assets (JS/CSS/fonts); never cache HTML at edge/browser for 1 year
