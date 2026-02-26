@@ -3,11 +3,14 @@ name: Deploy TrustVC Website
 on:
   workflow_dispatch:
     inputs:
-      target_branch:
-        description: 'Git branch to deploy'
+      branch:
+        description: 'Branch to deploy (always deploys from main)'
         required: true
         default: 'main'
-        type: string
+        type: choice
+        options:
+          - main
+          - develop
       environment:
         description: 'Deployment environment'
         required: true
@@ -39,29 +42,38 @@ jobs:
       CF_DISTRIBUTION_DEVELOPMENT: ${{ secrets.TRUSTVC_WEB_CF_DISTRIBUTION_DEVELOPMENT }}
       CF_DISTRIBUTION_PRODUCTION: ${{ secrets.TRUSTVC_WEB_CF_DISTRIBUTION_PRODUCTION }}
 
+      # Full .env content per environment (one line or multiline, as in your local .env)
+      ENV_FILE_DEVELOPMENT: ${{ secrets.TRUSTVC_WEB_ENV_DEVELOPMENT }}
+      ENV_FILE_PRODUCTION: ${{ secrets.TRUSTVC_WEB_ENV_PRODUCTION }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.inputs.target_branch }}
+          ref: main
 
       - name: Use Node.js 20
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'npm'
-          cache-dependency-path: trustvc-website/package-lock.json
+          cache-dependency-path: package-lock.json
+
+      - name: Create .env for build
+        run: |
+          if [ "${DEPLOY_ENV}" = "production" ]; then
+            echo "${ENV_FILE_PRODUCTION}" > .env
+          else
+            echo "${ENV_FILE_DEVELOPMENT}" > .env
+          fi
 
       - name: Install dependencies
-        working-directory: trustvc-website
         run: npm ci
 
       - name: Lint
-        working-directory: trustvc-website
         run: npm run lint
 
       - name: Build
-        working-directory: trustvc-website
         run: npm run build
 
       - name: Configure AWS credentials
@@ -87,7 +99,6 @@ jobs:
 
       - name: Sync assets to S3
         if: steps.env-map.outputs.s3_bucket != ''
-        working-directory: trustvc-website
         run: |
           BUCKET="${{ steps.env-map.outputs.s3_bucket }}"
           # Long cache only for hashed assets (JS/CSS/fonts); never cache HTML at edge/browser for 1 year
