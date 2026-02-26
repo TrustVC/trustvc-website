@@ -121,6 +121,29 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
     setIsTooltipVisible(true)
   }
 
+  const handleInfoFocus = (e: React.FocusEvent<HTMLButtonElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    const tooltipWidth = 280
+    const padding = 8
+
+    let left = rect.left - tooltipWidth + rect.width
+
+    if (left < padding) {
+      left = padding
+    }
+
+    if (left + tooltipWidth > window.innerWidth - padding) {
+      left = window.innerWidth - tooltipWidth - padding
+    }
+
+    setTooltipPosition({
+      top: rect.bottom + 8,
+      left,
+      width: tooltipWidth,
+    })
+    setIsTooltipVisible(true)
+  }
+
   return (
     <div className="vr-container">
       {/* ── Network info card ── */}
@@ -159,6 +182,8 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
               className="vr-info-btn"
               onMouseEnter={handleInfoMouseEnter}
               onMouseLeave={() => setIsTooltipVisible(false)}
+              onFocus={handleInfoFocus}
+              onBlur={() => setIsTooltipVisible(false)}
               aria-label="Network info"
             >
               <svg
@@ -251,6 +276,7 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
                       type="button"
                       className="vr-nft-link"
                       onClick={onViewNftRegistry}
+                      disabled={!onViewNftRegistry}
                     >
                       View NFT Registry
                     </button>
@@ -260,6 +286,7 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
                   type="button"
                   className="vr-nft-link"
                   onClick={onViewEndorsementChain}
+                  disabled={!onViewEndorsementChain}
                 >
                   View Endorsement Chain
                 </button>
@@ -304,6 +331,7 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
               type="button"
               className="vr-connect-btn"
               onClick={onConnectWallet}
+              disabled={!onConnectWallet}
             >
               <span className="vr-connect-btn-label">Connect Wallet</span>
             </button>

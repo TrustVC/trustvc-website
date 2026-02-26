@@ -125,13 +125,46 @@ const NetworkModal: React.FC<NetworkModalProps> = ({
     setIsTooltipVisible(true)
   }
 
+  const handleInfoFocus = (e: React.FocusEvent<HTMLButtonElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    const tooltipWidth = 280
+    const padding = 8
+
+    let left = rect.left - tooltipWidth + rect.width
+
+    if (left < padding) {
+      left = padding
+    }
+
+    if (left + tooltipWidth > window.innerWidth - padding) {
+      left = window.innerWidth - tooltipWidth - padding
+    }
+
+    setTooltipPosition({
+      top: rect.bottom + 8,
+      left,
+      width: tooltipWidth,
+    })
+    setIsTooltipVisible(true)
+  }
+
   useEffect(() => {
     const prev = document.body.style.overflow
     document.body.style.overflow = 'hidden'
+
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onCancel()
+      }
+    }
+
+    document.addEventListener('keydown', handleEscape)
+
     return () => {
       document.body.style.overflow = prev
+      document.removeEventListener('keydown', handleEscape)
     }
-  }, [])
+  }, [onCancel])
 
   const allowedGroups: ('Mainnet' | 'Testnet')[] =
     networkType === 'mainnet' ? ['Mainnet'] : ['Testnet']
@@ -144,6 +177,9 @@ const NetworkModal: React.FC<NetworkModalProps> = ({
   return (
     <div
       className="fixed inset-0 bg-black/50 flex items-center justify-center z-[1000] p-3 sm:p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="network-modal-title"
       onClick={e => {
         if (e.target === e.currentTarget) onCancel()
       }}
@@ -187,7 +223,7 @@ const NetworkModal: React.FC<NetworkModalProps> = ({
 
           {/* Title + fileName */}
           <div className="nm-title-group">
-            <div className="nm-title text-[18px] sm:text-[24px]">
+            <div id="network-modal-title" className="nm-title text-[18px] sm:text-[24px]">
               TrustVC Document Uploaded
             </div>
             {fileName && <div className="nm-filename">{fileName}</div>}
@@ -315,6 +351,8 @@ const NetworkModal: React.FC<NetworkModalProps> = ({
                   className="nm-info-btn"
                   onMouseEnter={handleInfoMouseEnter}
                   onMouseLeave={() => setIsTooltipVisible(false)}
+                  onFocus={handleInfoFocus}
+                  onBlur={() => setIsTooltipVisible(false)}
                   aria-label="Network selector info"
                 >
                   <svg
