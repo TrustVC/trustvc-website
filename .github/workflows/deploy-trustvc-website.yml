@@ -10,7 +10,7 @@ on:
         type: choice
         options:
           - main
-          - development
+          - develop
       environment:
         description: 'Deployment environment'
         required: true
