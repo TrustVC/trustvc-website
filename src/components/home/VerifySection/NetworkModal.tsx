@@ -223,7 +223,10 @@ const NetworkModal: React.FC<NetworkModalProps> = ({
 
           {/* Title + fileName */}
           <div className="nm-title-group">
-            <div id="network-modal-title" className="nm-title text-[18px] sm:text-[24px]">
+            <div
+              id="network-modal-title"
+              className="nm-title text-[18px] sm:text-[24px]"
+            >
               TrustVC Document Uploaded
             </div>
             {fileName && <div className="nm-filename">{fileName}</div>}
