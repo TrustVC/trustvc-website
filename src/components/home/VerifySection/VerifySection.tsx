@@ -9,12 +9,30 @@ interface VerifySectionProps {
   isDarkMode: boolean
 }
 
+const CHAIN_NAMES: Record<string, string> = {
+  '1': 'Ethereum',
+  '137': 'Polygon',
+  '50': 'XDC Network',
+  '101010': 'Stability (Beta)',
+  '1338': 'Astron',
+  '11155111': 'Sepolia',
+  '80002': 'Polygon Amoy',
+  '51': 'Apothem',
+  '20180427': 'Stability Testnet (Beta)',
+  '21002': 'Astron Testnet',
+}
+
 const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
   const {
     verifyStatus,
     fileName,
     errorMessage,
     dragActive,
+    verifiedChainId,
+    issuerName,
+    isTransferable,
+    tokenRegistryAddress,
+    tags,
     getGroupStatus,
     handleDrag,
     handleDrop,
@@ -23,6 +41,10 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
     handleNetworkConfirm,
     handleNetworkCancel,
   } = useVerify()
+
+  const networkName = verifiedChainId
+    ? (CHAIN_NAMES[verifiedChainId] ?? `Chain ${verifiedChainId}`)
+    : undefined
 
   const navigate = useNavigate()
 
@@ -103,6 +125,12 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
             {verifyStatus === 'valid' && (
               <VerifyResult
                 fileName={fileName}
+                networkName={networkName}
+                chainId={verifiedChainId}
+                issuer={issuerName}
+                isTransferable={isTransferable}
+                tokenRegistryAddress={tokenRegistryAddress}
+                tags={tags}
                 getGroupStatus={getGroupStatus}
                 onReset={handleReset}
               />

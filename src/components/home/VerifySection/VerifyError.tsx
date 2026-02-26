@@ -18,7 +18,7 @@ const VerifyError: React.FC<VerifyErrorProps> = ({ errorMessage, onReset }) => (
         />
       </svg>
       <div className="verify-error-message">{errorMessage}</div>
-      <button onClick={onReset} className="verify-ghost-button">
+      <button type="button" onClick={onReset} className="verify-ghost-button">
         Try again
       </button>
     </div>

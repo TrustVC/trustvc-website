@@ -117,95 +117,110 @@ describe('verifyDocument — integration with real fixtures', () => {
     })
   })
 
-  describe('W3C transferable documents → valid', () => {
-    const rpcUrl = getRpcUrl('101010') // Stability
+  describe.skipIf(!getRpcUrl('101010'))(
+    'W3C transferable documents → valid',
+    () => {
+      const rpcUrl = getRpcUrl('101010') // Stability
 
-    it('BBS2020 transferable record', async () => {
-      const { isValid } = await verify(w3cBbs2020TransferableRecord, {
-        rpcProviderUrl: rpcUrl,
+      it('BBS2020 transferable record', async () => {
+        const { isValid } = await verify(w3cBbs2020TransferableRecord, {
+          rpcProviderUrl: rpcUrl,
+        })
+        expect(isValid).toBe(true)
       })
-      expect(isValid).toBe(true)
-    })
 
-    it('BBS2023 transferable document', async () => {
-      const { isValid } = await verify(w3cBbs2023TransferableDoc, {
-        rpcProviderUrl: rpcUrl,
+      it('BBS2023 transferable document', async () => {
+        const { isValid } = await verify(w3cBbs2023TransferableDoc, {
+          rpcProviderUrl: rpcUrl,
+        })
+        expect(isValid).toBe(true)
       })
-      expect(isValid).toBe(true)
-    })
 
-    it('ECDSA transferable document', async () => {
-      const { isValid } = await verify(w3cEcdsaTransferableDoc, {
-        rpcProviderUrl: rpcUrl,
+      it('ECDSA transferable document', async () => {
+        const { isValid } = await verify(w3cEcdsaTransferableDoc, {
+          rpcProviderUrl: rpcUrl,
+        })
+        expect(isValid).toBe(true)
       })
-      expect(isValid).toBe(true)
-    })
-  })
+    }
+  )
 
   // ── W3C invalid documents ──────────────────────────────────────────────────
 
-  describe('W3C documents expected to be invalid', () => {
-    it('revoked ECDSA W3C document → invalid', async () => {
-      const rpcUrl = getRpcUrl('101010') // Stability
+  describe.skipIf(!getRpcUrl('101010'))(
+    'W3C documents expected to be invalid',
+    () => {
+      it('revoked ECDSA W3C document → invalid', async () => {
+        const rpcUrl = getRpcUrl('101010') // Stability
 
-      const { isValid } = await verify(w3cRevokedDoc, {
-        rpcProviderUrl: rpcUrl,
+        const { isValid } = await verify(w3cRevokedDoc, {
+          rpcProviderUrl: rpcUrl,
+        })
+        expect(isValid).toBe(false)
       })
-      expect(isValid).toBe(false)
-    })
-  })
+    }
+  )
 
   // ── OA blockchain documents ────────────────────────────
 
-  describe('OA blockchain documents → valid', () => {
-    const stabilityRpcUrl = getRpcUrl('101010') // Stability
+  describe.skipIf(!getRpcUrl('101010'))(
+    'OA blockchain documents → valid',
+    () => {
+      const stabilityRpcUrl = getRpcUrl('101010') // Stability
 
-    it('OA v2 DNS-TXT docstore', async () => {
-      const { isValid } = await verify(oaDnsTxtDocstoreV2, {
-        rpcProviderUrl: stabilityRpcUrl,
+      it('OA v2 DNS-TXT docstore', async () => {
+        const { isValid } = await verify(oaDnsTxtDocstoreV2, {
+          rpcProviderUrl: stabilityRpcUrl,
+        })
+        expect(isValid).toBe(true)
       })
-      expect(isValid).toBe(true)
-    })
 
-    it('OA v2 DNS-TXT token registry', async () => {
-      const { isValid } = await verify(oaDnsTxtTokenRegistryV2, {
-        rpcProviderUrl: stabilityRpcUrl,
+      it('OA v2 DNS-TXT token registry', async () => {
+        const { isValid } = await verify(oaDnsTxtTokenRegistryV2, {
+          rpcProviderUrl: stabilityRpcUrl,
+        })
+        expect(isValid).toBe(true)
       })
-      expect(isValid).toBe(true)
-    })
 
-    it('OA v3 DNS-TXT docstore', async () => {
-      const { isValid } = await verify(oaDnsTxtDocstoreV3, {
-        rpcProviderUrl: stabilityRpcUrl,
+      it('OA v3 DNS-TXT docstore', async () => {
+        const { isValid } = await verify(oaDnsTxtDocstoreV3, {
+          rpcProviderUrl: stabilityRpcUrl,
+        })
+        expect(isValid).toBe(true)
       })
-      expect(isValid).toBe(true)
-    })
 
-    it('OA v3 DNS-TXT token registry', async () => {
-      const { isValid } = await verify(oaDnsTxtTokenRegistryV3, {
-        rpcProviderUrl: stabilityRpcUrl,
+      it('OA v3 DNS-TXT token registry', async () => {
+        const { isValid } = await verify(oaDnsTxtTokenRegistryV3, {
+          rpcProviderUrl: stabilityRpcUrl,
+        })
+        expect(isValid).toBe(true)
       })
-      expect(isValid).toBe(true)
-    })
-  })
+    }
+  )
 
   // ── Documents without network field (need explicit RPC) ──────────────────
 
   describe('Documents without embedded network → valid with explicit RPC', () => {
-    it('OA v2 docstore (no network field) → valid with Ethereum RPC', async () => {
-      const ethereumRpcUrl = getRpcUrl('1')
-      const { isValid } = await verify(oaNoNetworkEthereumV2, {
-        rpcProviderUrl: ethereumRpcUrl,
-      })
-      expect(isValid).toBe(true)
-    })
+    it.skipIf(!getRpcUrl('1'))(
+      'OA v2 docstore (no network field) → valid with Ethereum RPC',
+      async () => {
+        const ethereumRpcUrl = getRpcUrl('1')
+        const { isValid } = await verify(oaNoNetworkEthereumV2, {
+          rpcProviderUrl: ethereumRpcUrl,
+        })
+        expect(isValid).toBe(true)
+      }
+    )
 
-    it('OA v3 token registry (no network field) → valid with Stability RPC', async () => {
-      const stabilityRpcUrl = getRpcUrl('101010')
-      const { isValid } = await verify(oaNoNetworkStabilityV3, {
-        rpcProviderUrl: stabilityRpcUrl,
-      })
-      expect(isValid).toBe(true)
-    })
+    it.skipIf(!getRpcUrl('101010'))(
+      'OA v3 token registry (no network field) → valid with Stability RPC',
+      async () => {
+        const stabilityRpcUrl = getRpcUrl('101010')
+        const { isValid } = await verify(oaNoNetworkStabilityV3, {
+          rpcProviderUrl: stabilityRpcUrl,
+        })
+        expect(isValid).toBe(true)
+      }
+    )
   })
 })

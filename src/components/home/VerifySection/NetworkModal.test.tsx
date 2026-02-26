@@ -1,4 +1,3 @@
-import React from 'react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import NetworkModal from './NetworkModal'
@@ -10,15 +9,12 @@ const defaultProps = {
   fileName: 'document.tt',
   onConfirm: vi.fn(),
   onCancel: vi.fn(),
-  networkType: 'testnet' as const, // Explicitly set to testnet for consistent testing
+  networkType: 'testnet' as const,
 }
 
-// The dropdown toggle is the only button that isn't Cancel, Verify, or ?
+// The dropdown toggle button has class nm-dropdown-btn
 const getDropdownToggle = () =>
-  screen.getAllByRole('button').find(b => {
-    const text = b.textContent?.trim()
-    return text !== 'Cancel' && text !== 'Verify' && text !== '?'
-  })!
+  document.querySelector('button.nm-dropdown-btn') as HTMLElement
 
 // ─── Tests ────────────────────────────────────────────────────────────────────
 
@@ -32,14 +28,18 @@ describe('NetworkModal', () => {
   describe('rendering', () => {
     it('renders the header title', () => {
       render(<NetworkModal {...defaultProps} />)
-      expect(
-        screen.getByText('TradeTrust Document Uploaded')
-      ).toBeInTheDocument()
+      expect(screen.getByText('TrustVC Document Uploaded')).toBeInTheDocument()
     })
 
     it('renders the fileName in the header', () => {
       render(<NetworkModal {...defaultProps} fileName="my-doc.tt" />)
       expect(screen.getByText('my-doc.tt')).toBeInTheDocument()
+    })
+
+    it('does not render the fileName when it is empty', () => {
+      render(<NetworkModal {...defaultProps} fileName="" />)
+      // Only the title should appear, not an empty filename
+      expect(screen.getByText('TrustVC Document Uploaded')).toBeInTheDocument()
     })
 
     it('renders the subtitle text', () => {
@@ -54,22 +54,24 @@ describe('NetworkModal', () => {
       expect(screen.getByText('Select Network:')).toBeInTheDocument()
     })
 
-    it('renders Cancel and Verify buttons', () => {
+    it('renders Cancel and Proceed buttons', () => {
       render(<NetworkModal {...defaultProps} />)
       expect(
         screen.getByRole('button', { name: /cancel/i })
       ).toBeInTheDocument()
       expect(
-        screen.getByRole('button', { name: /verify/i })
+        screen.getByRole('button', { name: /proceed/i })
       ).toBeInTheDocument()
     })
 
-    it('renders the ? help button', () => {
+    it('renders the info button with aria-label "Network selector info"', () => {
       render(<NetworkModal {...defaultProps} />)
-      expect(screen.getByRole('button', { name: '?' })).toBeInTheDocument()
+      expect(
+        screen.getByRole('button', { name: /network selector info/i })
+      ).toBeInTheDocument()
     })
 
-    it('shows Sepolia as the default selected network when VITE_NETWORK_TYPE is not mainnet', () => {
+    it('shows Sepolia as the default selected network in testnet mode', () => {
       render(<NetworkModal {...defaultProps} />)
       expect(getDropdownToggle().textContent).toContain('Sepolia')
     })
@@ -96,7 +98,7 @@ describe('NetworkModal', () => {
 
   describe('network filtering by networkType prop', () => {
     describe('testnet mode', () => {
-      it('shows only Testnet group', () => {
+      it('shows only Testnet group header', () => {
         render(<NetworkModal {...defaultProps} networkType="testnet" />)
         fireEvent.click(getDropdownToggle())
         expect(screen.getAllByText('Testnet').length).toBeGreaterThan(0)
@@ -118,7 +120,7 @@ describe('NetworkModal', () => {
         expect(getDropdownToggle().textContent).toContain('Sepolia')
       })
 
-      it('calls onConfirm with testnet chainId', () => {
+      it('calls onConfirm with testnet chainId when Proceed is clicked', () => {
         const onConfirm = vi.fn()
         render(
           <NetworkModal
@@ -127,13 +129,13 @@ describe('NetworkModal', () => {
             onConfirm={onConfirm}
           />
         )
-        fireEvent.click(screen.getByRole('button', { name: /verify/i }))
+        fireEvent.click(screen.getByRole('button', { name: /proceed/i }))
         expect(onConfirm).toHaveBeenCalledWith('11155111')
       })
     })
 
     describe('mainnet mode', () => {
-      it('shows only Mainnet group', () => {
+      it('shows only Mainnet group header', () => {
         render(<NetworkModal {...defaultProps} networkType="mainnet" />)
         fireEvent.click(getDropdownToggle())
         expect(screen.getAllByText('Mainnet').length).toBeGreaterThan(0)
@@ -155,7 +157,7 @@ describe('NetworkModal', () => {
         expect(getDropdownToggle().textContent).toContain('Ethereum')
       })
 
-      it('calls onConfirm with mainnet chainId', () => {
+      it('calls onConfirm with mainnet chainId when Proceed is clicked', () => {
         const onConfirm = vi.fn()
         render(
           <NetworkModal
@@ -164,11 +166,11 @@ describe('NetworkModal', () => {
             onConfirm={onConfirm}
           />
         )
-        fireEvent.click(screen.getByRole('button', { name: /verify/i }))
+        fireEvent.click(screen.getByRole('button', { name: /proceed/i }))
         expect(onConfirm).toHaveBeenCalledWith('1')
       })
 
-      it('allows selecting different mainnet networks', () => {
+      it('allows selecting a different mainnet network before confirming', () => {
         const onConfirm = vi.fn()
         render(
           <NetworkModal
@@ -179,7 +181,7 @@ describe('NetworkModal', () => {
         )
         fireEvent.click(getDropdownToggle())
         fireEvent.click(screen.getByText('Polygon'))
-        fireEvent.click(screen.getByRole('button', { name: /verify/i }))
+        fireEvent.click(screen.getByRole('button', { name: /proceed/i }))
         expect(onConfirm).toHaveBeenCalledWith('137')
       })
     })
@@ -217,7 +219,7 @@ describe('NetworkModal', () => {
       fireEvent.click(screen.getByText('Polygon Amoy'))
       // Dropdown should be closed
       expect(screen.queryByText('Apothem')).not.toBeInTheDocument()
-      // Polygon Amoy should now be the selected network shown in the toggle
+      // Polygon Amoy should now appear in the toggle
       expect(getDropdownToggle().textContent).toContain('Polygon Amoy')
     })
 
@@ -225,7 +227,6 @@ describe('NetworkModal', () => {
       render(<NetworkModal {...defaultProps} />)
       fireEvent.click(getDropdownToggle())
       expect(screen.getByText('Polygon Amoy')).toBeInTheDocument()
-      // The backdrop is a fixed inset-0 div rendered when the dropdown is open
       const backdrop = document.querySelector(
         '.fixed.inset-0.z-\\[9\\]'
       ) as HTMLElement
@@ -242,9 +243,11 @@ describe('NetworkModal', () => {
       expect(screen.queryByText('Network Selector')).not.toBeInTheDocument()
     })
 
-    it('appears when hovering over the ? button', () => {
+    it('appears when hovering over the info button', () => {
       render(<NetworkModal {...defaultProps} />)
-      fireEvent.mouseEnter(screen.getByRole('button', { name: '?' }))
+      fireEvent.mouseEnter(
+        screen.getByRole('button', { name: /network selector info/i })
+      )
       expect(screen.getByText('Network Selector')).toBeInTheDocument()
       expect(
         screen.getByText(/A document can only be successfully verified/)
@@ -254,12 +257,14 @@ describe('NetworkModal', () => {
       ).toBeInTheDocument()
     })
 
-    it('disappears when the mouse leaves the ? button', () => {
+    it('disappears when the mouse leaves the info button', () => {
       render(<NetworkModal {...defaultProps} />)
-      const helpBtn = screen.getByRole('button', { name: '?' })
-      fireEvent.mouseEnter(helpBtn)
+      const infoBtn = screen.getByRole('button', {
+        name: /network selector info/i,
+      })
+      fireEvent.mouseEnter(infoBtn)
       expect(screen.getByText('Network Selector')).toBeInTheDocument()
-      fireEvent.mouseLeave(helpBtn)
+      fireEvent.mouseLeave(infoBtn)
       expect(screen.queryByText('Network Selector')).not.toBeInTheDocument()
     })
   })
@@ -275,7 +280,7 @@ describe('NetworkModal', () => {
 
     it('calls onConfirm with chainId "11155111" (Sepolia) by default', () => {
       render(<NetworkModal {...defaultProps} />)
-      fireEvent.click(screen.getByRole('button', { name: /verify/i }))
+      fireEvent.click(screen.getByRole('button', { name: /proceed/i }))
       expect(defaultProps.onConfirm).toHaveBeenCalledWith('11155111')
     })
 
@@ -283,7 +288,7 @@ describe('NetworkModal', () => {
       render(<NetworkModal {...defaultProps} />)
       fireEvent.click(getDropdownToggle())
       fireEvent.click(screen.getByText('Polygon Amoy'))
-      fireEvent.click(screen.getByRole('button', { name: /verify/i }))
+      fireEvent.click(screen.getByRole('button', { name: /proceed/i }))
       expect(defaultProps.onConfirm).toHaveBeenCalledWith('80002')
     })
 
@@ -294,10 +299,10 @@ describe('NetworkModal', () => {
       expect(defaultProps.onCancel).toHaveBeenCalledTimes(1)
     })
 
-    it('does not call onCancel when clicking inside the modal', () => {
+    it('does not call onCancel when clicking inside the modal card', () => {
       render(<NetworkModal {...defaultProps} />)
-      const modal = document.querySelector('.max-w-\\[600px\\]') as HTMLElement
-      fireEvent.click(modal)
+      const card = document.querySelector('.nm-card') as HTMLElement
+      fireEvent.click(card)
       expect(defaultProps.onCancel).not.toHaveBeenCalled()
     })
   })

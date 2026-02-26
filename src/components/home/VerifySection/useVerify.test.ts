@@ -1,7 +1,7 @@
 import React from 'react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { renderHook, act, waitFor } from '@testing-library/react'
-import { useVerify } from './useVerify'
+import { useVerify, makeExplorerAddressURL } from './useVerify'
 
 // ─── Mocks ────────────────────────────────────────────────────────────────────
 
@@ -31,8 +31,35 @@ vi.mock('@trustvc/trustvc', () => ({
   isTransferableRecord: vi.fn(),
   isDocumentRevokable: vi.fn(),
   SUPPORTED_CHAINS: {
-    '1': { rpcUrl: 'https://eth-mainnet.example.com' },
-    '137': { rpcUrl: 'https://polygon.example.com' },
+    '1': {
+      rpcUrl: 'https://eth-mainnet.example.com',
+      explorerUrl: 'https://etherscan.io',
+    },
+    '137': {
+      rpcUrl: 'https://polygon.example.com',
+      explorerUrl: 'https://polygonscan.com',
+    },
+  },
+  // Document type predicates used in getIssuerName / getDocumentTags
+  isWrappedV2Document: vi.fn().mockReturnValue(false),
+  isWrappedV3Document: vi.fn().mockReturnValue(false),
+  isRawV2Document: vi.fn().mockReturnValue(false),
+  isSignedWrappedV2Document: vi.fn().mockReturnValue(false),
+  isRawV3Document: vi.fn().mockReturnValue(false),
+  isSignedWrappedV3Document: vi.fn().mockReturnValue(false),
+  // Title escrow helpers used in detectTokenRegistryVersion
+  isTitleEscrowVersion: vi.fn().mockResolvedValue(false),
+  TitleEscrowInterface: { V4: 'V4', V5: 'V5' },
+  getTokenRegistryAddress: vi.fn().mockReturnValue(undefined),
+  getTokenId: vi.fn().mockReturnValue(undefined),
+  // Namespace objects (only methods used in the source are stubbed)
+  utils: {},
+  v2: {},
+  v3: {},
+  vc: {
+    isSignedDocument: vi.fn().mockReturnValue(false),
+    isRawDocument: vi.fn().mockReturnValue(false),
+    isSignedDocumentV2_0: vi.fn().mockReturnValue(false),
   },
 }))
 
@@ -557,6 +584,116 @@ describe('useVerify', () => {
       expect(result.current.getGroupStatus('DOCUMENT_INTEGRITY')).toBe(
         'INVALID'
       )
+    })
+  })
+
+  // ── New state values (issuerName, isTransferable, tags) ───────────────────
+
+  describe('new state values', () => {
+    it('starts with empty issuerName', () => {
+      const { result } = renderHook(() => useVerify())
+      expect(result.current.issuerName).toBe('')
+    })
+
+    it('starts with isTransferable false', () => {
+      const { result } = renderHook(() => useVerify())
+      expect(result.current.isTransferable).toBe(false)
+    })
+
+    it('starts with an empty tags array', () => {
+      const { result } = renderHook(() => useVerify())
+      expect(result.current.tags).toEqual([])
+    })
+
+    it('sets isTransferable to true when document is a transferable record', async () => {
+      vi.mocked(verifyDocument).mockResolvedValue([
+        {
+          name: 'OpenAttestationHash',
+          status: 'VALID',
+          type: 'DOCUMENT_INTEGRITY',
+        },
+      ])
+      vi.mocked(getChainId).mockReturnValue('1' as any)
+      vi.mocked(isTransferableRecord).mockReturnValue(true)
+      vi.mocked(isDocumentRevokable).mockReturnValue(false)
+
+      const { result } = renderHook(() => useVerify())
+      await act(async () => {
+        triggerFileInput(result, makeFile({ test: true }))
+      })
+      await waitFor(() =>
+        expect(['valid', 'invalid']).toContain(result.current.verifyStatus)
+      )
+      expect(result.current.isTransferable).toBe(true)
+    })
+
+    it('sets isTransferable to false when document is not transferable', async () => {
+      vi.mocked(verifyDocument).mockResolvedValue([
+        {
+          name: 'OpenAttestationHash',
+          status: 'VALID',
+          type: 'DOCUMENT_INTEGRITY',
+        },
+      ])
+      vi.mocked(getChainId).mockReturnValue('1' as any)
+      vi.mocked(isTransferableRecord).mockReturnValue(false)
+      vi.mocked(isDocumentRevokable).mockReturnValue(false)
+
+      const { result } = renderHook(() => useVerify())
+      await act(async () => {
+        triggerFileInput(result, makeFile({ test: true }))
+      })
+      await waitFor(() =>
+        expect(['valid', 'invalid']).toContain(result.current.verifyStatus)
+      )
+      expect(result.current.isTransferable).toBe(false)
+    })
+
+    it('resets issuerName, isTransferable, and tags on handleReset', async () => {
+      vi.mocked(verifyDocument).mockResolvedValue([
+        {
+          name: 'OpenAttestationHash',
+          status: 'VALID',
+          type: 'DOCUMENT_INTEGRITY',
+        },
+      ])
+      vi.mocked(getChainId).mockReturnValue('1' as any)
+      vi.mocked(isTransferableRecord).mockReturnValue(false)
+      vi.mocked(isDocumentRevokable).mockReturnValue(false)
+
+      const { result } = renderHook(() => useVerify())
+      await act(async () => {
+        triggerFileInput(result, makeFile({ test: true }))
+      })
+      await waitFor(() => expect(result.current.verifyStatus).toBe('valid'))
+
+      act(() => {
+        result.current.handleReset()
+      })
+
+      expect(result.current.issuerName).toBe('')
+      expect(result.current.isTransferable).toBe(false)
+      expect(result.current.tags).toEqual([])
+    })
+  })
+
+  // ── makeExplorerAddressURL ─────────────────────────────────────────────────
+
+  describe('makeExplorerAddressURL', () => {
+    it('returns undefined for an unknown chainId', () => {
+      expect(makeExplorerAddressURL('0xabc', '9999')).toBeUndefined()
+    })
+
+    it('builds the correct explorer URL for a known chain with an explorerUrl', () => {
+      // chainId '1' mock has explorerUrl: 'https://etherscan.io'
+      const url = makeExplorerAddressURL('0xdeadbeef', '1')
+      expect(url).toBe('https://etherscan.io/address/0xdeadbeef')
+    })
+
+    it('builds the correct explorer URL for another known chain', () => {
+      // chainId '137' mock has explorerUrl: 'https://polygonscan.com'
+      const url = makeExplorerAddressURL('0xcafe', '137')
+      expect(url).toBe('https://polygonscan.com/address/0xcafe')
     })
   })
 })

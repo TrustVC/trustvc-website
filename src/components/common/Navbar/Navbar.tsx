@@ -37,6 +37,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
           {/* Hamburger Menu Button */}
           <div className="w-14 h-14 flex items-center justify-center">
             <button
+              type="button"
               onClick={() => {
                 setIsMobileMenuOpen(!isMobileMenuOpen)
                 if (isMobileMenuOpen) {
@@ -113,6 +114,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
             </div>
             <div className="p-2 relative">
               <button
+                type="button"
                 onClick={() => setIsEcosystemOpen(!isEcosystemOpen)}
                 aria-haspopup="true"
                 aria-expanded={isEcosystemOpen}
@@ -285,6 +287,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
               {/* Sun Icon - Primary Color */}
               <div className="p-1">
                 <button
+                  type="button"
                   onClick={() => setIsDarkMode(false)}
                   aria-label="Switch to light mode"
                   aria-pressed={!isDarkMode}
@@ -318,6 +321,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
               {/* Moon Icon - Neutral Color */}
               <div className="p-1">
                 <button
+                  type="button"
                   onClick={() => setIsDarkMode(true)}
                   aria-label="Switch to dark mode"
                   aria-pressed={isDarkMode}
@@ -400,6 +404,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
             </a>
             <div>
               <button
+                type="button"
                 onClick={() => setIsEcosystemOpen(!isEcosystemOpen)}
                 aria-haspopup="true"
                 aria-expanded={isEcosystemOpen}
@@ -543,6 +548,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
             <div className="flex items-center gap-2 px-2 py-3">
               {/* Sun Icon */}
               <button
+                type="button"
                 onClick={() => setIsDarkMode(false)}
                 aria-label="Switch to light mode"
                 aria-pressed={!isDarkMode}
@@ -574,6 +580,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
               </button>
               {/* Moon Icon */}
               <button
+                type="button"
                 onClick={() => setIsDarkMode(true)}
                 aria-label="Switch to dark mode"
                 aria-pressed={isDarkMode}

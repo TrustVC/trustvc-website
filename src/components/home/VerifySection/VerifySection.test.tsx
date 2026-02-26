@@ -31,6 +31,9 @@ const defaultHook: UseVerifyReturn = {
   fileName: '',
   errorMessage: '',
   dragActive: false,
+  isTransferable: false,
+  tokenRegistryVersion: null,
+  tags: [],
   getGroupStatus: vi.fn().mockReturnValue('VALID' as const),
   handleDrag: vi.fn(),
   handleDrop: vi.fn(),
@@ -98,7 +101,9 @@ describe('VerifySection', () => {
     it('renders VerifyResult with the fileName', () => {
       setStatus({ verifyStatus: 'valid', fileName: 'valid-doc.tt' })
       render(<VerifySection isDarkMode={false} />)
-      expect(screen.getByText('Document Verified')).toBeInTheDocument()
+      expect(
+        screen.getByRole('button', { name: /upload new file/i })
+      ).toBeInTheDocument()
       expect(screen.getByText('valid-doc.tt')).toBeInTheDocument()
     })
 
