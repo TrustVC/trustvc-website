@@ -3,11 +3,14 @@ name: Deploy TrustVC Website
 on:
   workflow_dispatch:
     inputs:
-      target_branch:
-        description: 'Git branch to deploy'
+      branch:
+        description: 'Branch to deploy (always deploys from main)'
         required: true
         default: 'main'
-        type: string
+        type: choice
+        options:
+          - main
+          - development
       environment:
         description: 'Deployment environment'
         required: true
@@ -43,7 +46,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.inputs.target_branch }}
+          ref: main
 
       - name: Use Node.js 20
         uses: actions/setup-node@v4
