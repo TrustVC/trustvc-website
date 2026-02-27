@@ -97,8 +97,6 @@ export const useContactForm = () => {
         filename: file.name,
         status: 'pending',
         progress: 0,
-        // Local preview URL so the user always sees a thumbnail immediately
-        previewUrl: URL.createObjectURL(file),
       }))
       setAttachments(prev => [...prev, ...items])
       setSubmitError(null)
@@ -124,6 +122,10 @@ export const useContactForm = () => {
                     progress: 100,
                     key: p.key,
                     filename: p.filename,
+                    previewUrl:
+                      typeof URL !== 'undefined'
+                        ? URL.createObjectURL(item.file)
+                        : undefined,
                     error: undefined,
                   })
                 })
@@ -150,11 +152,24 @@ export const useContactForm = () => {
   )
 
   const removeAttachment = useCallback((id: string) => {
-    setAttachments(prev => prev.filter(a => a.id !== id))
+    setAttachments(prev => {
+      const toRemove = prev.find(a => a.id === id)
+      if (toRemove?.previewUrl && typeof URL !== 'undefined') {
+        URL.revokeObjectURL(toRemove.previewUrl)
+      }
+      return prev.filter(a => a.id !== id)
+    })
   }, [])
 
   const clearAllAttachments = useCallback(() => {
-    setAttachments([])
+    setAttachments(prev => {
+      if (typeof URL !== 'undefined') {
+        prev.forEach(a => {
+          if (a.previewUrl) URL.revokeObjectURL(a.previewUrl)
+        })
+      }
+      return []
+    })
     setSubmitError(null)
   }, [])
 

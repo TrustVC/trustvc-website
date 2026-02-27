@@ -22,7 +22,7 @@ export function FileItem({ item, onRemove, isDarkMode }: FileItemProps) {
           : 'bg-white/90 border-black/10'
       } ${isError ? 'border-red-500' : ''}`}
     >
-      <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-neutral-33/50 overflow-hidden">
+      <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-[8px] bg-neutral-33/50 overflow-hidden">
         {isError ? (
           <span className="text-red-500 text-xs font-medium">!</span>
         ) : previewUrl ? (
@@ -50,11 +50,11 @@ export function FileItem({ item, onRemove, isDarkMode }: FileItemProps) {
                 cy="18"
                 r="16"
                 fill="none"
-                stroke="currentColor"
                 strokeWidth="3"
                 strokeDasharray={`${progress * 1.02} 100`}
                 strokeLinecap="round"
-                className="text-primary-60 transition-all duration-300"
+                className="transition-all duration-300"
+                stroke="#686AD2"
               />
             </svg>
           </div>
