@@ -1,4 +1,5 @@
 import React from 'react'
+import { FieldError } from '@/components/common/FieldError'
 
 interface TextFieldProps {
   isDarkMode: boolean
@@ -50,15 +51,7 @@ const TextField = ({
               : 'bg-white/70 border-black/10 text-neutral-10 placeholder:text-neutral-30 focus:border-primary-60'
         }`}
       />
-      {error && (
-        <p
-          id={`${id}-error`}
-          className="text-xs font-medium text-red-500"
-          role="alert"
-        >
-          {error}
-        </p>
-      )}
+      {error && <FieldError message={error} id={`${id}-error`} />}
     </div>
   )
 }

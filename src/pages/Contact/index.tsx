@@ -2,6 +2,7 @@ import { useContactForm } from './hooks/useContactForm'
 
 import AttachmentDropzone from '@/components/common/AttachmentDropzone'
 import { AttachmentFileList } from '@/components/common/AttachmentFileList'
+import { FieldError } from '@/components/common/FieldError'
 import FormAlert from '@/components/common/FormAlert'
 import SelectField from '@/components/common/SelectField'
 import SubmitButton from '@/components/common/SubmitButton'
@@ -73,16 +74,20 @@ const Contact = ({ isDarkMode }: ContactProps) => {
                 </div>
               </div>
 
-              <div className="mt-5 contact-form-divider" />
+              <FormAlert
+                isDarkMode={isDarkMode}
+                error={submitError}
+                success={submitSuccess}
+              />
 
-              <form className="mt-3 flex flex-col gap-5" onSubmit={onSubmit}>
+              <div className="mt-3 contact-form-divider" />
+
+              <form
+                className="mt-3 flex flex-col gap-5"
+                onSubmit={onSubmit}
+                noValidate
+              >
                 <div className="contact-form-fields">
-                  <FormAlert
-                    isDarkMode={isDarkMode}
-                    error={submitError}
-                    success={submitSuccess}
-                  />
-
                   <TextField
                     isDarkMode={isDarkMode}
                     id="contact-email"
@@ -114,16 +119,24 @@ const Contact = ({ isDarkMode }: ContactProps) => {
                     error={fieldErrors.description}
                   />
 
-                  <AttachmentDropzone
-                    isDarkMode={isDarkMode}
-                    dragActive={dragActive}
-                    onDragEnter={handleDrag}
-                    onDragLeave={handleDrag}
-                    onDragOver={handleDrag}
-                    onDrop={handleDrop}
-                    onFileInput={handleFileInput}
-                    fileInfoText={fileInfoText}
-                  />
+                  <div className="flex flex-col gap-2">
+                    <AttachmentDropzone
+                      isDarkMode={isDarkMode}
+                      dragActive={dragActive}
+                      onDragEnter={handleDrag}
+                      onDragLeave={handleDrag}
+                      onDragOver={handleDrag}
+                      onDrop={handleDrop}
+                      onFileInput={handleFileInput}
+                      fileInfoText={fileInfoText}
+                    />
+                    {fieldErrors.attachments && (
+                      <FieldError
+                        message={fieldErrors.attachments}
+                        id="contact-attachments-error"
+                      />
+                    )}
+                  </div>
                   <AttachmentFileList
                     attachments={attachments}
                     onRemove={removeAttachment}

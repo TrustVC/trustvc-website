@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { EnquiryType } from '@/hooks/useContactForm'
+import { FieldError } from '@/components/common/FieldError'
 
 interface SelectFieldProps {
   isDarkMode: boolean
@@ -119,15 +120,7 @@ const SelectField = ({
           </div>
         )}
       </div>
-      {error && (
-        <p
-          id={`${id}-error`}
-          className="text-xs font-medium text-red-500"
-          role="alert"
-        >
-          {error}
-        </p>
-      )}
+      {error && <FieldError message={error} id={`${id}-error`} />}
     </div>
   )
 }

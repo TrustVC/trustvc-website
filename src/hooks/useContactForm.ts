@@ -157,7 +157,7 @@ export const useContactForm = () => {
 
       const totalBytes = files.reduce((sum, f) => sum + f.size, 0)
       if (totalBytes > MAX_TOTAL_UPLOAD_BYTES) {
-        setSubmitError('Attachments exceed 10 MB total size limit.')
+        setSubmitError('Total file size exceeded 10 MB limit.')
         return
       }
 
