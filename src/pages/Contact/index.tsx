@@ -130,12 +130,6 @@ const Contact = ({ isDarkMode }: ContactProps) => {
                       onFileInput={handleFileInput}
                       fileInfoText={fileInfoText}
                     />
-                    {fieldErrors.attachments && (
-                      <FieldError
-                        message={fieldErrors.attachments}
-                        id="contact-attachments-error"
-                      />
-                    )}
                   </div>
                   <AttachmentFileList
                     attachments={attachments}
@@ -144,6 +138,12 @@ const Contact = ({ isDarkMode }: ContactProps) => {
                     fileInfoText={fileInfoText}
                     isDarkMode={isDarkMode}
                   />
+                  {fieldErrors.attachments && (
+                    <FieldError
+                      message={fieldErrors.attachments}
+                      id="contact-attachments-error"
+                    />
+                  )}
                 </div>
 
                 <div className="pt-2 flex justify-center">
