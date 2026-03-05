@@ -32,6 +32,9 @@ const Contact = ({ isDarkMode }: ContactProps) => {
     fileInfoText,
     allUploaded,
     isUploading,
+    validateEmail,
+    validateTypeOfEnquiry,
+    validateDescription,
     handleDrag,
     handleDrop,
     handleFileInput,
@@ -94,6 +97,7 @@ const Contact = ({ isDarkMode }: ContactProps) => {
                     label="Email *"
                     value={email}
                     onChange={setEmail}
+                    onBlur={validateEmail}
                     placeholder="your.name@email.com"
                     type="email"
                     error={fieldErrors.email}
@@ -105,6 +109,7 @@ const Contact = ({ isDarkMode }: ContactProps) => {
                     label="Type of Enquiry *"
                     value={typeOfEnquiry}
                     onChange={setTypeOfEnquiry}
+                    onBlur={validateTypeOfEnquiry}
                     error={fieldErrors.typeOfEnquiry}
                   />
 
@@ -114,6 +119,7 @@ const Contact = ({ isDarkMode }: ContactProps) => {
                     label="Description *"
                     value={description}
                     onChange={setDescription}
+                    onBlur={validateDescription}
                     placeholder="Please provide more information about your issue."
                     rows={4}
                     error={fieldErrors.description}

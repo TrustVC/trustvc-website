@@ -11,6 +11,7 @@ interface TextFieldProps {
   type?: string
   required?: boolean
   error?: string
+  onBlur?: () => void
 }
 
 const TextField = ({
@@ -23,6 +24,7 @@ const TextField = ({
   type = 'text',
   required,
   error,
+  onBlur,
 }: TextFieldProps) => {
   return (
     <div className="flex flex-col gap-2">
@@ -38,6 +40,7 @@ const TextField = ({
         id={id}
         value={value}
         onChange={e => onChange(e.target.value)}
+        onBlur={onBlur}
         placeholder={placeholder}
         type={type}
         required={required}

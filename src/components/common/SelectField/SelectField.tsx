@@ -10,6 +10,7 @@ interface SelectFieldProps {
   onChange: React.Dispatch<React.SetStateAction<EnquiryType>>
   required?: boolean
   error?: string
+  onBlur?: () => void
 }
 
 const SelectField = ({
@@ -20,6 +21,7 @@ const SelectField = ({
   onChange,
   required,
   error,
+  onBlur,
 }: SelectFieldProps) => {
   const options: { value: EnquiryType; label: string }[] = [
     { value: '', label: 'Select an option.' },
@@ -49,6 +51,7 @@ const SelectField = ({
           if (!e.currentTarget.contains(e.relatedTarget as Node | null)) {
             setIsOpen(false)
           }
+          onBlur?.()
         }}
       >
         <button
