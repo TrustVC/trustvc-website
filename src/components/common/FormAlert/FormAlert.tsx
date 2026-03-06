@@ -10,17 +10,23 @@ const FormAlert = ({ isDarkMode, error, success }: FormAlertProps) => {
 
   return (
     <div
-      className={`w-full px-4 py-3 rounded-lg border text-sm font-medium font-gilroy ${
+      className={`form-alert w-full px-4 py-3 rounded-lg text-sm font-medium font-gilroy flex items-start gap-2 ${
         error
-          ? isDarkMode
-            ? 'border-red-500/40 text-red-200 bg-red-500/10'
-            : 'border-red-500/30 text-red-700 bg-red-50'
+          ? 'form-alert-error'
           : isDarkMode
-            ? 'border-emerald-400/30 text-emerald-200 bg-emerald-400/10'
-            : 'border-emerald-500/25 text-emerald-700 bg-emerald-50'
+            ? 'border border-emerald-400/30 text-emerald-200 bg-emerald-400/10'
+            : 'border border-emerald-500/25 text-emerald-700 bg-emerald-50'
       }`}
     >
-      {message}
+      {error && (
+        <img
+          src="/icons/attention.svg"
+          alt=""
+          className="w-5 h-5 flex-shrink-0 mt-0.5"
+          aria-hidden="true"
+        />
+      )}
+      <span>{message}</span>
     </div>
   )
 }

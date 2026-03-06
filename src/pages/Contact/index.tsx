@@ -1,6 +1,8 @@
 import { useContactForm } from './hooks/useContactForm'
 
 import AttachmentDropzone from '@/components/common/AttachmentDropzone'
+import { AttachmentFileList } from '@/components/common/AttachmentFileList'
+import { FieldError } from '@/components/common/FieldError'
 import FormAlert from '@/components/common/FormAlert'
 import SelectField from '@/components/common/SelectField'
 import SubmitButton from '@/components/common/SubmitButton'
@@ -19,12 +21,20 @@ const Contact = ({ isDarkMode }: ContactProps) => {
     setTypeOfEnquiry,
     description,
     setDescription,
+    attachments,
+    removeAttachment,
+    clearAllAttachments,
     dragActive,
     isSubmitting,
     submitError,
     submitSuccess,
     fieldErrors,
     fileInfoText,
+    allUploaded,
+    isUploading,
+    validateEmail,
+    validateTypeOfEnquiry,
+    validateDescription,
     handleDrag,
     handleDrop,
     handleFileInput,
@@ -67,22 +77,27 @@ const Contact = ({ isDarkMode }: ContactProps) => {
                 </div>
               </div>
 
-              <div className="mt-5 contact-form-divider" />
+              <FormAlert
+                isDarkMode={isDarkMode}
+                error={submitError}
+                success={submitSuccess}
+              />
 
-              <form className="mt-3 flex flex-col gap-5" onSubmit={onSubmit}>
+              <div className="mt-3 contact-form-divider" />
+
+              <form
+                className="mt-3 flex flex-col gap-5"
+                onSubmit={onSubmit}
+                noValidate
+              >
                 <div className="contact-form-fields">
-                  <FormAlert
-                    isDarkMode={isDarkMode}
-                    error={submitError}
-                    success={submitSuccess}
-                  />
-
                   <TextField
                     isDarkMode={isDarkMode}
                     id="contact-email"
                     label="Email *"
                     value={email}
                     onChange={setEmail}
+                    onBlur={validateEmail}
                     placeholder="your.name@email.com"
                     type="email"
                     error={fieldErrors.email}
@@ -94,6 +109,7 @@ const Contact = ({ isDarkMode }: ContactProps) => {
                     label="Type of Enquiry *"
                     value={typeOfEnquiry}
                     onChange={setTypeOfEnquiry}
+                    onBlur={validateTypeOfEnquiry}
                     error={fieldErrors.typeOfEnquiry}
                   />
 
@@ -103,27 +119,46 @@ const Contact = ({ isDarkMode }: ContactProps) => {
                     label="Description *"
                     value={description}
                     onChange={setDescription}
+                    onBlur={validateDescription}
                     placeholder="Please provide more information about your issue."
                     rows={4}
                     error={fieldErrors.description}
                   />
 
-                  <AttachmentDropzone
-                    isDarkMode={isDarkMode}
-                    dragActive={dragActive}
-                    onDragEnter={handleDrag}
-                    onDragLeave={handleDrag}
-                    onDragOver={handleDrag}
-                    onDrop={handleDrop}
-                    onFileInput={handleFileInput}
+                  <div className="flex flex-col gap-2">
+                    <AttachmentDropzone
+                      isDarkMode={isDarkMode}
+                      dragActive={dragActive}
+                      onDragEnter={handleDrag}
+                      onDragLeave={handleDrag}
+                      onDragOver={handleDrag}
+                      onDrop={handleDrop}
+                      onFileInput={handleFileInput}
+                      fileInfoText={fileInfoText}
+                    />
+                  </div>
+                  <AttachmentFileList
+                    attachments={attachments}
+                    onRemove={removeAttachment}
+                    onClearAll={clearAllAttachments}
                     fileInfoText={fileInfoText}
+                    isDarkMode={isDarkMode}
                   />
+                  {fieldErrors.attachments && (
+                    <FieldError
+                      message={fieldErrors.attachments}
+                      id="contact-attachments-error"
+                    />
+                  )}
                 </div>
 
                 <div className="pt-2 flex justify-center">
                   <SubmitButton
                     isDarkMode={isDarkMode}
                     isSubmitting={isSubmitting}
+                    isDisabled={
+                      isUploading || (attachments.length > 0 && !allUploaded)
+                    }
                   />
                 </div>
               </form>

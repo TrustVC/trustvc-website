@@ -55,6 +55,10 @@
     --Primary-100-60: #686ad2;
     --Neutral-100-30: #3d444d;
     --Neutral-100-10: #1e2026;
+    --text-secondary: #5b6571;
+    --primary-button-color: #5b5bb3;
+    --Alert-100-50: #b83152;
+    --Alert-100-110: #fddae2;
 
     /* Base Colors - Light Mode */
     --Base-66-Base-L1: rgba(255, 255, 255, 0.66);
@@ -74,8 +78,10 @@
     --base-100-base-l-2-c: rgba(30, 32, 38, 0.66);
     --Primary-100-50: #7d80d7;
     --Primary-100-60: #686ad2;
-    --Neutral-100-30: #3d444d;
+    --Neutral-100-30: #a9b2bb;
     --Neutral-100-10: #1e2026;
+    --primary-button-color: #7d80d7;
+    --Alert-100-110: #480418;
   }
 }
 
@@ -360,15 +366,61 @@ body.dark-mode {
 /* Typography Classes - Using Tailwind utilities */
 @layer components {
   .submit-request-title {
-    @apply font-gilroy font-bold text-submit-title align-middle;
+    font-family: 'Gilroy', sans-serif;
+    font-weight: 700;
+    vertical-align: middle;
+    font-size: 24px;
+    line-height: 133%;
   }
 
   .encountering-issues-text {
-    @apply font-avenir font-medium text-encountering-text align-middle;
+    font-family: 'Avenir', sans-serif;
+    font-weight: 500;
+    vertical-align: middle;
+    font-size: 14px;
+    line-height: 155%;
   }
 
   .form-label {
-    @apply font-avenir font-medium text-form-label align-middle;
+    font-family: 'Avenir', sans-serif;
+    font-weight: 500;
+    vertical-align: middle;
+    font-size: 18px;
+    line-height: 136%;
+  }
+
+  /* Field error text (email, enquiry, description, attachments) */
+  .field-error-text {
+    color: var(--Alert-100-50, #b83152);
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .field-error-text.field-error-with-icon {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .field-error-text .field-error-icon {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    margin-top: 0.125em;
+  }
+
+  /* Top-level form alert (API/config error and success) */
+  .form-alert-error,
+  .form-alert {
+    margin-top: 1rem;
+  }
+  .form-alert-error {
+    background: var(--Alert-100-110, #fddae2);
+    color: var(--Neutral-100-10, #1e2026);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+  }
+  .dark-mode .form-alert-error {
+    border-color: rgba(239, 68, 68, 0.3);
+    background: var(--Alert-100-110, #480418);
+    color: #dee4e9;
   }
 
   /* Contact Page Heading */
@@ -737,7 +789,7 @@ body.dark-mode {
   display: flex;
   flex-direction: column;
   color: white;
-  font-size: 12px;
+  font-size: 14px;
   font-family: 'Gilroy', sans-serif;
   font-weight: 700;
   line-height: 19.8px;

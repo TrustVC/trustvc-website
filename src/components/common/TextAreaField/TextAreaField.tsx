@@ -1,4 +1,5 @@
 import React from 'react'
+import { FieldError } from '@/components/common/FieldError'
 
 interface TextAreaFieldProps {
   isDarkMode: boolean
@@ -10,6 +11,7 @@ interface TextAreaFieldProps {
   required?: boolean
   rows?: number
   error?: string
+  onBlur?: () => void
 }
 
 const TextAreaField = ({
@@ -22,6 +24,7 @@ const TextAreaField = ({
   required,
   rows = 4,
   error,
+  onBlur,
 }: TextAreaFieldProps) => {
   return (
     <div className="flex flex-col gap-2">
@@ -37,6 +40,7 @@ const TextAreaField = ({
         id={id}
         value={value}
         onChange={e => onChange(e.target.value)}
+        onBlur={onBlur}
         placeholder={placeholder}
         required={required}
         rows={rows}
@@ -50,15 +54,7 @@ const TextAreaField = ({
               : 'bg-white/70 border-black/10 text-neutral-10 placeholder:text-neutral-30 focus:border-primary-60'
         }`}
       />
-      {error && (
-        <p
-          id={`${id}-error`}
-          className="text-xs font-medium text-red-500"
-          role="alert"
-        >
-          {error}
-        </p>
-      )}
+      {error && <FieldError message={error} id={`${id}-error`} />}
     </div>
   )
 }
