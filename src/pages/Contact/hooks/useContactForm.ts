@@ -354,9 +354,12 @@ export const useContactForm = () => {
         )
         resetForm()
       } catch (err) {
+        const fallback =
+          'Our support system is temporarily unavailable. Please try again in a few minutes.'
+        const rawMessage = (err as { message?: string } | null | undefined)
+          ?.message
         const msg =
-          (err as { message?: string } | null | undefined)?.message ??
-          'Failed to submit request.'
+          rawMessage && rawMessage !== 'Failed to fetch' ? rawMessage : fallback
         setSubmitError(msg)
       } finally {
         setIsSubmitting(false)
