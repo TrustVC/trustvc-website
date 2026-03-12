@@ -69,9 +69,11 @@ export const useEndorsementChain = ({
         try {
           const rpcUrl = getRpcUrl(verifiedChainId)
           if (!rpcUrl) {
-            throw new Error(`No RPC URL configured for chain ${verifiedChainId}`)
+            throw new Error(
+              `No RPC URL configured for chain ${verifiedChainId}`
+            )
           }
-          
+
           const provider = new ethers.providers.JsonRpcProvider(rpcUrl as any)
           const _endorsementChain = await fetchEndorsementChain(
             tokenRegistryAddress,

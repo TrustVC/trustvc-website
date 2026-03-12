@@ -141,7 +141,9 @@ describe('EndorsementChain', () => {
           endorsementChain={undefined}
         />
       )
-      const centeredWrapper = container.querySelector('.spinner-centered-wrapper')
+      const centeredWrapper = container.querySelector(
+        '.spinner-centered-wrapper'
+      )
       expect(centeredWrapper).toBeInTheDocument()
     })
   })
@@ -235,9 +237,9 @@ describe('EndorsementChain', () => {
       const { container } = render(<EndorsementChainLayout {...defaultProps} />)
       const remarks = container.querySelectorAll('.remarks')
       const remarksTexts = Array.from(remarks).map(el => el.textContent)
-      expect(remarksTexts.some(text => text?.includes('Initial issuance'))).toBe(
-        true
-      )
+      expect(
+        remarksTexts.some(text => text?.includes('Initial issuance'))
+      ).toBe(true)
       expect(
         remarksTexts.some(text => text?.includes('Transfer to new owner'))
       ).toBe(true)
