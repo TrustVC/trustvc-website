@@ -459,6 +459,8 @@ export const useVerify = (): UseVerifyReturn => {
     setTokenRegistryVersion(null)
     setTokenRegistryAddress(undefined)
     setTags([])
+    setTokenId(undefined)
+    setKeyId(undefined)
   }
 
   const getGroupStatus = (type: string) => computeGroupStatus(fragments, type)

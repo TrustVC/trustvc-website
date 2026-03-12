@@ -63,6 +63,8 @@ export const useEndorsementChain = ({
   }
 
   useEffect(() => {
+    let cancelled = false
+
     const fetchEndorsementData = async () => {
       if (tokenRegistryAddress && tokenId && verifiedChainId) {
         setEndorsementChainStatus({ status: 'loading' })
@@ -81,9 +83,11 @@ export const useEndorsementChain = ({
             provider,
             keyId
           )
+          if (cancelled) return
           setEndorsementChain(_endorsementChain)
           setEndorsementChainStatus({ status: 'success' })
         } catch (error) {
+          if (cancelled) return
           console.error('Failed to fetch endorsement chain:', error)
           const errorMessage =
             error instanceof Error
@@ -94,11 +98,16 @@ export const useEndorsementChain = ({
         }
       } else {
         // Reset to idle if required params are missing
+        if (cancelled) return
         setEndorsementChainStatus({ status: 'idle' })
         setEndorsementChain(undefined)
       }
     }
     fetchEndorsementData()
+
+    return () => {
+      cancelled = true
+    }
   }, [tokenRegistryAddress, tokenId, verifiedChainId, keyId])
 
   return {

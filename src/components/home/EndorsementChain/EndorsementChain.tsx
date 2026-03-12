@@ -174,7 +174,10 @@ const getHistoryChain = (endorsementChain?: EndorsementChain) => {
         break
 
       default:
-        throw Error('eventType not matched')
+        console.warn(
+          `Unknown endorsement event type: ${endorsementChainEvent.type}`
+        )
+        break
     }
   })
 
@@ -304,9 +307,7 @@ const EndorsementChainLayout: React.FC<EndorsementChainProps> = ({
                         </div>
                         <div className="column column-2-items">
                           <div className="subheader">Remarks</div>
-                          <div className="remarks">
-                            {data?.remark ?? ''} some extra long remarks
-                          </div>
+                          <div className="remarks">{data?.remark ?? ''}</div>
                         </div>
                       </div>
                     </div>

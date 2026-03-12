@@ -1600,8 +1600,6 @@ body.dark-mode {
   min-width: 308px;
   max-width: 1280px;
   border-radius: 16px;
-  border: 1px solid var(--Neutral-33-90, #3d444d54);
-  display: flex;
   flex-direction: column;
   opacity: 1;
   border: 1px solid var(--Neutral-33-90, #a9b2bb54);
@@ -1663,9 +1661,8 @@ body.dark-mode {
   min-height: 20px;
 }
 .ec-error-message {
-  font-family: Gilroy;
+  font-family: Gilroy, sans-serif;
   font-weight: 700;
-  font-style: Bold;
   font-size: 18px;
   line-height: 136%;
   letter-spacing: 0%;
