@@ -16,6 +16,7 @@ import {
   TitleEscrowInterface,
   getTokenRegistryAddress,
   getTokenId,
+  getDocumentData as getDocumentDataFromWrappedDocument,
 } from '@trustvc/trustvc'
 
 export type VerifyStatus =
@@ -52,6 +53,8 @@ export interface UseVerifyReturn {
   tokenRegistryVersion: TokenRegistryVersion
   tokenRegistryAddress?: string
   tags: string[]
+  tokenId?: string
+  keyId?: string
   getGroupStatus: (_type: string) => 'VALID' | 'INVALID'
   handleDrag: (_e: React.DragEvent) => void
   handleDrop: (_e: React.DragEvent) => void
@@ -272,7 +275,15 @@ const toErrorMessage = (
   if (err instanceof Error) return err.message
   return fallback
 }
-
+const getDocumentData = (wrappedDocument: any) => {
+  if (
+    vc.isSignedDocument(wrappedDocument) ||
+    vc.isRawDocument(wrappedDocument)
+  ) {
+    return wrappedDocument as any
+  }
+  return getDocumentDataFromWrappedDocument(wrappedDocument)
+}
 export const makeExplorerAddressURL = (
   address: string,
   chainId: string
@@ -300,7 +311,8 @@ export const useVerify = (): UseVerifyReturn => {
     string | undefined
   >(undefined)
   const [tags, setTags] = useState<string[]>([])
-
+  const [tokenId, setTokenId] = useState<string | undefined>(undefined)
+  const [keyId, setKeyId] = useState<string | undefined>(undefined)
   const runVerification = async (
     doc: unknown,
     chainId: string | null | undefined
@@ -335,6 +347,12 @@ export const useVerify = (): UseVerifyReturn => {
       ? getTokenRegistryAddress(doc as any)
       : undefined
     setTokenRegistryAddress(registryAddress)
+    //add code to fetch TokenId , keyId from the document
+    const _tokenId = getTokenId(doc as any)
+    const _keyId = getDocumentData(doc as any)?.id
+
+    setTokenId(_tokenId)
+    setKeyId(_keyId)
 
     // Detect token registry version (async)
     let trVersion: TokenRegistryVersion = null
@@ -456,6 +474,8 @@ export const useVerify = (): UseVerifyReturn => {
     tokenRegistryVersion,
     tokenRegistryAddress,
     tags,
+    tokenId,
+    keyId,
     getGroupStatus,
     handleDrag,
     handleDrop,
