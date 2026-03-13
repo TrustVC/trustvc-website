@@ -348,11 +348,14 @@ export const useVerify = (): UseVerifyReturn => {
       : undefined
     setTokenRegistryAddress(registryAddress)
     //add code to fetch TokenId , keyId from the document
-    const _tokenId = getTokenId(doc as any)
-    const _keyId = getDocumentData(doc as any)?.id
 
-    setTokenId(_tokenId)
+    const _keyId = getDocumentData(doc as any)?.id
     setKeyId(_keyId)
+
+    if (transferable) {
+      const _tokenId = getTokenId(doc as any)
+      setTokenId(_tokenId)
+    }
 
     // Detect token registry version (async)
     let trVersion: TokenRegistryVersion = null

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 
 interface OverlayProps {
   children: React.ReactNode
@@ -13,6 +13,15 @@ const Overlay: React.FC<OverlayProps> = ({ children, className, onClose }) => {
       onClose()
     }
   }
+
+  // Lock body scroll when overlay is mounted
+  useEffect(() => {
+    document.body.classList.add('overlay-open')
+
+    return () => {
+      document.body.classList.remove('overlay-open')
+    }
+  }, [])
 
   return (
     <div

@@ -36,6 +36,7 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
     issuerName,
     isTransferable,
     tokenRegistryAddress,
+    tokenRegistryVersion,
     tags,
     tokenId,
     keyId,
@@ -137,6 +138,7 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
             onReset={handleHideEndorsementChain}
             isDarkMode={isDarkMode}
             endorsementChainStatus={endorsementChainStatus}
+            tokenRegistryVersion={tokenRegistryVersion}
           />
         )}
         <div className="overlay-border-shadow">

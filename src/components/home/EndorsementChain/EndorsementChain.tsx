@@ -5,12 +5,14 @@ import { EndorsementChain } from '@trustvc/trustvc'
 import { format } from 'date-fns'
 import { EndorsementChainStatus } from './useEndorsementChain'
 import Spinner from '../../common/Spinner'
+import { TokenRegistryVersion } from '../VerifySection/useVerify'
 
 interface EndorsementChainProps {
   endorsementChain?: any
   onReset: () => void
   isDarkMode?: boolean
   endorsementChainStatus?: EndorsementChainStatus
+  tokenRegistryVersion?: TokenRegistryVersion
 }
 enum ActionType {
   INITIAL = 'Document has been issued',
@@ -239,6 +241,7 @@ const EndorsementChainLayout: React.FC<EndorsementChainProps> = ({
   onReset,
   isDarkMode,
   endorsementChainStatus,
+  tokenRegistryVersion,
 }) => {
   const historyChain = getHistoryChain(endorsementChain)
   const { status, errorMessage } = endorsementChainStatus ?? {}
@@ -263,6 +266,7 @@ const EndorsementChainLayout: React.FC<EndorsementChainProps> = ({
                 size="large"
                 centered
                 label="Loading Endorsement Chain..."
+                className="ec-spinner"
               />
             )}
             {status === 'error' && (
@@ -306,7 +310,12 @@ const EndorsementChainLayout: React.FC<EndorsementChainProps> = ({
                           <div className="organization">Organisation B</div>
                         </div>
                         <div className="column column-2-items">
-                          <div className="subheader">Remarks</div>
+                          <div className="subheader">
+                            Remarks
+                            {tokenRegistryVersion === 'V4'
+                              ? ' (Unavailable on TR V4)'
+                              : ''}
+                          </div>
                           <div className="remarks">{data?.remark ?? ''}</div>
                         </div>
                       </div>
