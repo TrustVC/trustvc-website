@@ -64,7 +64,7 @@ export const useContactForm = () => {
       update: Partial<
         Pick<
           AttachmentItem,
-          'status' | 'progress' | 'error' | 'key' | 'filename'
+          'status' | 'progress' | 'error' | 'key' | 'filename' | 'previewUrl'
         >
       >
     ) => {
