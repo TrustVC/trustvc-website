@@ -16,10 +16,11 @@ const Overlay: React.FC<OverlayProps> = ({ children, className, onClose }) => {
 
   // Lock body scroll when overlay is mounted
   useEffect(() => {
-    document.body.classList.add('overlay-open')
+    const originalOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
 
     return () => {
-      document.body.classList.remove('overlay-open')
+      document.body.style.overflow = originalOverflow
     }
   }, [])
 
