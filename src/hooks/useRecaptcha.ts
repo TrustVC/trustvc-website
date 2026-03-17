@@ -24,15 +24,12 @@ export const useRecaptcha = ({ siteKey, onChange }: UseRecaptchaOptions) => {
       if (!window.grecaptcha || typeof window.grecaptcha.render !== 'function')
         return
 
-      widgetIdRef.current = window.grecaptcha.render(
-        containerRef.current,
-        {
-          sitekey: siteKeyRef.current,
-          callback: (token: string) => {
-            onChangeRef.current?.(token)
-          },
-        } as unknown as { sitekey: string }
-      )
+      widgetIdRef.current = window.grecaptcha.render(containerRef.current, {
+        sitekey: siteKeyRef.current,
+        callback: (token: string) => {
+          onChangeRef.current?.(token)
+        },
+      } as unknown as { sitekey: string })
     }
 
     const loadScript = () => {
@@ -70,4 +67,3 @@ export const useRecaptcha = ({ siteKey, onChange }: UseRecaptchaOptions) => {
 
   return { containerRef, getToken, reset }
 }
-
