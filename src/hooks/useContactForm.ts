@@ -161,7 +161,7 @@ export const useContactForm = () => {
         return
       }
 
-      const baseUrl = (import.meta as any).env?.VITE_SUPPORT_API_BASE_URL as
+      const baseUrl = import.meta.env?.VITE_SUPPORT_API_BASE_URL as
         | string
         | undefined
       if (!baseUrl) {
@@ -172,8 +172,7 @@ export const useContactForm = () => {
       const domain =
         typeof window !== 'undefined'
           ? window.location.hostname
-          : ((import.meta as any).env?.VITE_ENTRY_POINT as string) ||
-            'trustvc.io'
+          : (import.meta.env?.VITE_ENTRY_POINT as string) || 'trustvc.io'
 
       const formData = new FormData()
       formData.append('email', email)

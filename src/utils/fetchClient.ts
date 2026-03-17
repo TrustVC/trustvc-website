@@ -2,6 +2,12 @@ type FetchClientOptions = {
   baseUrl: string
 }
 
+interface ApiErrorBody {
+  success?: boolean
+  error?: { message?: string }
+  message?: string
+}
+
 export type FetchClientErrorDetails = {
   status: number
   message: string
@@ -31,10 +37,11 @@ export const createFetchClient = ({ baseUrl }: FetchClientOptions) => {
       ? await response.json()
       : null
 
-    if (!response.ok || (data && (data as any).success === false)) {
+    const errorBody = data as ApiErrorBody | null
+    if (!response.ok || (errorBody && errorBody.success === false)) {
       const message =
-        (data as any)?.error?.message ||
-        (data as any)?.message ||
+        errorBody?.error?.message ||
+        errorBody?.message ||
         `Request failed with status ${response.status}`
       throw new FetchClientError({ status: response.status, message, data })
     }
@@ -47,5 +54,5 @@ export const createFetchClient = ({ baseUrl }: FetchClientOptions) => {
 
 export const fetchClientSupport = createFetchClient({
   baseUrl:
-    ((import.meta as any).env?.VITE_SUPPORT_API_BASE_URL as string) || '',
+    (import.meta.env?.VITE_SUPPORT_API_BASE_URL as string | undefined) || '',
 })

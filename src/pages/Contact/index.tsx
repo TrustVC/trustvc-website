@@ -1,19 +1,26 @@
+import { useRef } from 'react'
 import { useContactForm } from './hooks/useContactForm'
 
 import AttachmentDropzone from '@/components/common/AttachmentDropzone'
 import { AttachmentFileList } from '@/components/common/AttachmentFileList'
 import { FieldError } from '@/components/common/FieldError'
 import FormAlert from '@/components/common/FormAlert'
+import { Recaptcha, type RecaptchaHandle } from '@/components/common/Recaptcha'
 import SelectField from '@/components/common/SelectField'
 import SubmitButton from '@/components/common/SubmitButton'
 import TextAreaField from '@/components/common/TextAreaField'
 import TextField from '@/components/common/TextField'
+
+const RECAPTCHA_SITE_KEY = import.meta.env?.VITE_RECAPTCHA_SITE_KEY as
+  | string
+  | undefined
 
 interface ContactProps {
   isDarkMode: boolean
 }
 
 const Contact = ({ isDarkMode }: ContactProps) => {
+  const recaptchaRef = useRef<RecaptchaHandle>(null)
   const {
     email,
     setEmail,
@@ -30,16 +37,23 @@ const Contact = ({ isDarkMode }: ContactProps) => {
     submitSuccess,
     fieldErrors,
     fileInfoText,
-    allUploaded,
-    isUploading,
     validateEmail,
     validateTypeOfEnquiry,
     validateDescription,
     handleDrag,
     handleDrop,
     handleFileInput,
+    clearRecaptchaError,
     onSubmit,
-  } = useContactForm()
+    isFormValid,
+  } = useContactForm({
+    getRecaptchaToken: () =>
+      RECAPTCHA_SITE_KEY
+        ? (recaptchaRef.current?.getToken() ?? Promise.resolve(''))
+        : Promise.resolve('dev-skip'),
+    resetRecaptcha: () => recaptchaRef.current?.reset(),
+    recaptchaRequired: !!RECAPTCHA_SITE_KEY,
+  })
 
   return (
     <div
@@ -86,7 +100,7 @@ const Contact = ({ isDarkMode }: ContactProps) => {
               <div className="mt-3 contact-form-divider" />
 
               <form
-                className="mt-3 flex flex-col gap-5"
+                className="mt-3 flex flex-col"
                 onSubmit={onSubmit}
                 noValidate
               >
@@ -141,7 +155,6 @@ const Contact = ({ isDarkMode }: ContactProps) => {
                     attachments={attachments}
                     onRemove={removeAttachment}
                     onClearAll={clearAllAttachments}
-                    fileInfoText={fileInfoText}
                     isDarkMode={isDarkMode}
                   />
                   {fieldErrors.attachments && (
@@ -150,15 +163,32 @@ const Contact = ({ isDarkMode }: ContactProps) => {
                       id="contact-attachments-error"
                     />
                   )}
+                  {RECAPTCHA_SITE_KEY && (
+                    <>
+                      <Recaptcha
+                        ref={recaptchaRef}
+                        siteKey={RECAPTCHA_SITE_KEY}
+                        className="flex justify-center"
+                        onChange={clearRecaptchaError}
+                      />
+                      {fieldErrors.recaptcha && (
+                        <FieldError
+                          message={fieldErrors.recaptcha}
+                          id="contact-recaptcha-error"
+                          containerClassName="flex justify-center"
+                          textClassName="text-center"
+                          iconClassName="text-center"
+                        />
+                      )}
+                    </>
+                  )}
                 </div>
 
                 <div className="pt-2 flex justify-center">
                   <SubmitButton
                     isDarkMode={isDarkMode}
                     isSubmitting={isSubmitting}
-                    isDisabled={
-                      isUploading || (attachments.length > 0 && !allUploaded)
-                    }
+                    isDisabled={!isFormValid || isSubmitting}
                   />
                 </div>
               </form>
