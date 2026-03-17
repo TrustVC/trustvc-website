@@ -14,6 +14,19 @@ export function FileItem({ item, onRemove, isDarkMode }: FileItemProps) {
   const isUploading = status === 'uploading'
   const isError = status === 'error'
 
+  const getStatusLabel = () => {
+    if (isUploading) {
+      return `Uploading - ${progress}%`
+    }
+    if (status === 'uploaded') {
+      return 'Uploaded'
+    }
+    if (status === 'pending') {
+      return ''
+    }
+    return error || 'Error'
+  }
+
   return (
     <div
       className={`flex items-center gap-3 rounded-lg border p-3 min-w-0 ${
@@ -76,13 +89,7 @@ export function FileItem({ item, onRemove, isDarkMode }: FileItemProps) {
         <p
           className={`text-xs mt-0.5 ${isError ? 'text-red-500' : isDarkMode ? 'text-neutral-50' : 'text-neutral-20'}`}
         >
-          {isUploading
-            ? `Uploading - ${progress}%`
-            : status === 'uploaded'
-              ? 'Uploaded'
-              : status === 'pending'
-                ? ''
-                : error || 'Error'}
+          {getStatusLabel()}
         </p>
       </div>
       <button
