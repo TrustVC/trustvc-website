@@ -170,9 +170,7 @@ export const useContactForm = () => {
       }
 
       const domain =
-        typeof window !== 'undefined'
-          ? window.location.hostname
-          : (import.meta.env?.VITE_ENTRY_POINT as string) || 'trustvc.io'
+        typeof window !== 'undefined' ? window.location.hostname : 'trustvc.io'
 
       const formData = new FormData()
       formData.append('email', email)
