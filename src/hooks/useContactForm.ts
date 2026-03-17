@@ -169,8 +169,7 @@ export const useContactForm = () => {
         return
       }
 
-      const domain =
-        typeof window !== 'undefined' ? window.location.hostname : 'trustvc.io'
+      const domain = globalThis.window?.location?.hostname ?? 'trustvc.io'
 
       const formData = new FormData()
       formData.append('email', email)
