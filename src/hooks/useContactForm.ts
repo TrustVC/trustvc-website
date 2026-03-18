@@ -168,9 +168,10 @@ export const useContactForm = (options: UseContactFormOptions) => {
 
   const clearAllAttachments = useCallback(() => {
     setAttachments(prev => {
-      if (globalThis.URL?.revokeObjectURL) {
+      const canRevoke = typeof globalThis.URL?.revokeObjectURL === 'function'
+      if (canRevoke) {
         prev.forEach(a => {
-          if (a.previewUrl) globalThis.URL!.revokeObjectURL(a.previewUrl)
+          if (a.previewUrl) globalThis.URL.revokeObjectURL(a.previewUrl)
         })
       }
       return []
