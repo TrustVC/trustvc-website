@@ -376,10 +376,6 @@ export const useContactForm = (options: UseContactFormOptions) => {
                       progress: 100,
                       key: p.key,
                       filename: p.filename,
-                      previewUrl:
-                        typeof URL !== 'undefined'
-                          ? URL.createObjectURL(item.file)
-                          : undefined,
                       error: undefined,
                     })
                   })
