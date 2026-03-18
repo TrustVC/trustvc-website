@@ -1,5 +1,5 @@
 import { useRef } from 'react'
-import { useContactForm } from './hooks/useContactForm'
+import { useContactForm } from '@/hooks/useContactForm'
 
 import AttachmentDropzone from '@/components/common/AttachmentDropzone'
 import { AttachmentFileList } from '@/components/common/AttachmentFileList'
