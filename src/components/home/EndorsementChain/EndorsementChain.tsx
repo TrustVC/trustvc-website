@@ -87,7 +87,7 @@ const getHistoryChain = (endorsementChain?: EndorsementChain) => {
       case 'SURRENDERED':
         historyChain.push({
           action: ActionType.RETURNED_TO_ISSUER,
-          isNewBeneficiary: true,
+          isNewBeneficiary: false,
           isNewHolder: false,
           timestamp,
           remark,
@@ -211,30 +211,31 @@ const CheckIcon = () => (
   </svg>
 )
 
-const LineDesign: React.FunctionComponent<{ first?: boolean }> = ({
-  first,
-}) => {
-  if (first) {
-    return (
-      <div className="line-design-container">
-        <div className="line-design-path short line-design-path--first" />
-        <div className="line-design-dot">
-          <div className="dot" />
-        </div>
-        <div className="line-design-path " />
+const LineDesign: React.FunctionComponent<{
+  first?: boolean
+  last?: boolean
+}> = ({ first, last }) => {
+  //   if (first) {
+  return (
+    <div className="line-design-container">
+      <div className={`line-design-path short ${first ? 'first' : ''}`} />
+      <div className="line-design-dot">
+        <div className="dot" />
       </div>
-    )
-  } else {
-    return (
-      <div className="line-design-container">
-        <div className="line-design-path short " />
-        <div className="line-design-dot">
-          <div className="dot" />
-        </div>
-        <div className="line-design-path " />
-      </div>
-    )
-  }
+      <div className={`line-design-path ${last ? 'last' : ''}`} />
+    </div>
+  )
+  //   } else {
+  //     return (
+  //       <div className="line-design-container">
+  //         <div className="line-design-path short " />
+  //         <div className="line-design-dot">
+  //           <div className="dot" />
+  //         </div>
+  //         <div className="line-design-path " />
+  //       </div>
+  //     )
+  //   }
 }
 const EndorsementChainLayout: React.FC<EndorsementChainProps> = ({
   endorsementChain,
@@ -247,9 +248,10 @@ const EndorsementChainLayout: React.FC<EndorsementChainProps> = ({
   const { status, errorMessage } = endorsementChainStatus ?? {}
 
   return (
-    // <div className={`endorsement-chain ${isDarkMode ? 'dark-mode' : ''}`}>
     <Overlay>
-      <div className={`endorsement-chain ${isDarkMode ? 'dark-mode' : ''}`}>
+      <div
+        className={`endorsement-chain ${isDarkMode ? 'dark-mode' : ''} ${status === 'loading' ? 'is-loading' : ''}`}
+      >
         {/* First Component - Header Section */}
         <div className="header-section">
           <div className="ec-header-content">
@@ -280,7 +282,10 @@ const EndorsementChainLayout: React.FC<EndorsementChainProps> = ({
             {status === 'success' &&
               historyChain?.map((data: any, key: number) => (
                 <div className="entity" key={key}>
-                  <LineDesign first={key === 0} />
+                  <LineDesign
+                    first={key === 0}
+                    last={key === historyChain.length - 1}
+                  />
                   <div className="entity-content-frame">
                     <div className="content">
                       <div className="entry-header">
@@ -298,14 +303,14 @@ const EndorsementChainLayout: React.FC<EndorsementChainProps> = ({
                         <div className="column">
                           <div className="subheader">Owner</div>
                           <div className="wallet-address">
-                            {data.isNewBeneficiary ? data.beneficiary : ''}
+                            {data.isNewBeneficiary ? data.beneficiary : '_'}
                           </div>
                           <div className="organization">Organisation A</div>
                         </div>
                         <div className="column">
                           <div className="subheader">Holder</div>
                           <div className="wallet-address">
-                            {data.isNewHolder ? data.holder : ''}
+                            {data.isNewHolder ? data.holder : '_'}
                           </div>
                           <div className="organization">Organisation B</div>
                         </div>
@@ -316,11 +321,13 @@ const EndorsementChainLayout: React.FC<EndorsementChainProps> = ({
                               ? ' (Unavailable on TR V4)'
                               : ''}
                           </div>
-                          <div className="remarks">{data?.remark ?? ''}</div>
+                          <div className="remarks">{data?.remark ?? '-'}</div>
                         </div>
                       </div>
                     </div>
-                    <div className="divider"></div>
+                    {key !== historyChain.length - 1 && (
+                      <div className="divider"></div>
+                    )}
                   </div>
                 </div>
               ))}

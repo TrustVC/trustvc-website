@@ -777,6 +777,7 @@ body.dark-mode {
   justify-content: center;
   align-items: center;
   width: 100%;
+  height: 100%;
 }
 
 .spinner-label {
@@ -791,10 +792,6 @@ body.dark-mode {
   color: #a9b2bb;
 }
 
-.ec-spinner {
-  width: 67vw;
-  height: 25vw;
-}
 /* Ghost button - used in error states */
 .verify-ghost-button {
   align-self: center;
@@ -1593,14 +1590,15 @@ body.dark-mode {
 
 .endorsement-chain {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   width: 100%;
-  max-height: 714px;
-  min-width: 308px;
   max-width: 1280px;
+  min-width: 308px;
+  max-height: 100%;
+  margin: 0 auto;
   border-radius: 16px;
-  flex-direction: column;
   opacity: 1;
   border: 1px solid var(--Neutral-33-90, #a9b2bb54);
   box-shadow: 0px 8px 32px 0px var(--Primary3360);
@@ -1611,6 +1609,12 @@ body.dark-mode {
       var(--Base-66-Base-L1, rgba(255, 255, 255, 0.66))
     ),
     linear-gradient(0deg, rgba(222, 228, 233, 0), rgba(222, 228, 233, 0));
+
+  transition: max-height 0.3s ease-in-out;
+}
+
+.endorsement-chain.is-loading {
+  max-height: 333px;
 }
 
 .dark-mode .endorsement-chain {
@@ -1687,10 +1691,6 @@ body.dark-mode {
   flex-shrink: 0;
 }
 
-.endorsement-chain .wallet-address:empty::before {
-  content: '\00a0';
-  visibility: hidden;
-}
 .endorsement-chain .remarks {
   font-family: 'Avenir', sans-serif;
   font-weight: 500;
@@ -1720,7 +1720,9 @@ body.dark-mode {
 .dark-mode .endorsement-chain .organization {
   color: #dee4e9;
 }
-
+.ec-spinner {
+  height: 144.48px;
+}
 .endorsement-chain .date-frame {
   font-family: 'Avenir', sans-serif;
   height: 36px;
@@ -1763,6 +1765,7 @@ body.dark-mode {
 /* Content Section */
 .endorsement-chain .content-section {
   width: 100%;
+  height: 100%;
   max-width: 1280px;
   max-height: 562px;
   padding: 16px;
@@ -1784,8 +1787,8 @@ body.dark-mode {
 /* Section Frame */
 .section-frame {
   width: 100%;
+  height: 100%;
   max-width: 1248px;
-  /* height: 1104px; */
   opacity: 1;
 }
 
@@ -1822,7 +1825,6 @@ body.dark-mode {
 /* Entity */
 .entity {
   width: 100%;
-  height: 100%;
   max-width: 1248px;
   min-width: 280px;
   padding-right: 16px;
@@ -1959,8 +1961,10 @@ body.dark-mode {
   margin-top: 2px;
   height: 16px;
 }
-.line-design-path--first {
-  height: 16px;
+.line-design-path.first {
+  border-color: transparent;
+}
+.line-design-path.last {
   border-color: transparent;
 }
 
@@ -2016,6 +2020,7 @@ body.dark-mode {
 
 .overlay-content {
   position: relative;
-  max-width: 100%;
-  max-height: 100%;
+  width: 100%;
+  height: 100%;
+  align-content: center;
 }
