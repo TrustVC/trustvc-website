@@ -49,7 +49,9 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
     handleNetworkCancel,
   } = useVerify()
 
-  // Fetch endorsement chain data when file is verified
+  // Fetch endorsement chain data only when file is verified as valid and transferable
+  const isValidTransferable =
+    verifyStatus === 'valid' && isTransferable === true
   const {
     endorsementChain,
     endorsementChainStatus,
@@ -57,10 +59,10 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
     handleShowEndorsementChain,
     handleHideEndorsementChain,
   } = useEndorsementChain({
-    tokenRegistryAddress,
-    tokenId,
-    verifiedChainId,
-    keyId,
+    tokenRegistryAddress: isValidTransferable ? tokenRegistryAddress : undefined,
+    tokenId: isValidTransferable ? tokenId : undefined,
+    verifiedChainId: isValidTransferable ? verifiedChainId : undefined,
+    keyId: isValidTransferable ? keyId : undefined,
   })
 
   const networkName = verifiedChainId

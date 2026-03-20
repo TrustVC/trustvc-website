@@ -215,7 +215,6 @@ const LineDesign: React.FunctionComponent<{
   first?: boolean
   last?: boolean
 }> = ({ first, last }) => {
-  //   if (first) {
   return (
     <div className="line-design-container">
       <div className={`line-design-path short ${first ? 'first' : ''}`} />
@@ -225,17 +224,6 @@ const LineDesign: React.FunctionComponent<{
       <div className={`line-design-path ${last ? 'last' : ''}`} />
     </div>
   )
-  //   } else {
-  //     return (
-  //       <div className="line-design-container">
-  //         <div className="line-design-path short " />
-  //         <div className="line-design-dot">
-  //           <div className="dot" />
-  //         </div>
-  //         <div className="line-design-path " />
-  //       </div>
-  //     )
-  //   }
 }
 const EndorsementChainLayout: React.FC<EndorsementChainProps> = ({
   endorsementChain,

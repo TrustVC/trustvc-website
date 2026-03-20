@@ -1685,7 +1685,6 @@ body.dark-mode {
   letter-spacing: 0%;
   vertical-align: middle;
   color: #5b5bb3;
-  word-break: break-all;
   overflow-wrap: break-word;
   min-height: 22px;
   flex-shrink: 0;
@@ -1699,7 +1698,6 @@ body.dark-mode {
   letter-spacing: 0%;
   vertical-align: middle;
   color: #60636b;
-  word-break: break-word;
   overflow-wrap: break-word;
   min-height: 22px;
 }
