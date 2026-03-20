@@ -273,7 +273,7 @@ describe('EndorsementChain', () => {
 
     it('renders first entry with special line design', () => {
       const { container } = render(<EndorsementChainLayout {...defaultProps} />)
-      const firstLinePath = container.querySelector('.line-design-path--first')
+      const firstLinePath = container.querySelector('.line-design-path.first')
       expect(firstLinePath).toBeInTheDocument()
     })
   })
@@ -470,7 +470,8 @@ describe('EndorsementChain', () => {
     it('renders dividers between entries', () => {
       const { container } = render(<EndorsementChainLayout {...defaultProps} />)
       const dividers = container.querySelectorAll('.divider')
-      expect(dividers.length).toBe(3)
+      // Dividers are rendered between entries, so n-1 dividers for n entries
+      expect(dividers.length).toBe(2)
     })
 
     it('renders dots in line design', () => {
