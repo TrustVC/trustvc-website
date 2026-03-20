@@ -59,7 +59,9 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
     handleShowEndorsementChain,
     handleHideEndorsementChain,
   } = useEndorsementChain({
-    tokenRegistryAddress: isValidTransferable ? tokenRegistryAddress : undefined,
+    tokenRegistryAddress: isValidTransferable
+      ? tokenRegistryAddress
+      : undefined,
     tokenId: isValidTransferable ? tokenId : undefined,
     verifiedChainId: isValidTransferable ? verifiedChainId : undefined,
     keyId: isValidTransferable ? keyId : undefined,
