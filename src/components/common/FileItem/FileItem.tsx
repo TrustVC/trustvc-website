@@ -11,8 +11,21 @@ interface FileItemProps {
 export function FileItem({ item, onRemove, isDarkMode }: FileItemProps) {
   const { id, filename, status, progress, error, previewUrl } = item
   const displayName = truncateFilename(filename, 36)
-  const isUploading = status === 'uploading' || status === 'pending'
+  const isUploading = status === 'uploading'
   const isError = status === 'error'
+
+  const getStatusLabel = () => {
+    if (isUploading) {
+      return `Uploading - ${progress}%`
+    }
+    if (status === 'uploaded') {
+      return 'Uploaded'
+    }
+    if (status === 'pending') {
+      return ''
+    }
+    return error || 'Error'
+  }
 
   return (
     <div
@@ -76,11 +89,7 @@ export function FileItem({ item, onRemove, isDarkMode }: FileItemProps) {
         <p
           className={`text-xs mt-0.5 ${isError ? 'text-red-500' : isDarkMode ? 'text-neutral-50' : 'text-neutral-20'}`}
         >
-          {isUploading
-            ? `Uploading - ${progress}%`
-            : status === 'uploaded'
-              ? 'Uploaded'
-              : error || 'Error'}
+          {getStatusLabel()}
         </p>
       </div>
       <button

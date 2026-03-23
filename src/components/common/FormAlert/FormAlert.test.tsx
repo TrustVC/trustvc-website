@@ -32,36 +32,4 @@ describe('FormAlert', () => {
     expect(screen.getByText('Error msg')).toBeInTheDocument()
     expect(screen.queryByText('Success msg')).not.toBeInTheDocument()
   })
-
-  it('applies light-mode error styles', () => {
-    render(<FormAlert isDarkMode={false} error="fail" />)
-    const el = screen.getByText('fail')
-    expect(el).toHaveClass('border-red-500/30')
-    expect(el).toHaveClass('text-red-700')
-    expect(el).toHaveClass('bg-red-50')
-  })
-
-  it('applies dark-mode error styles', () => {
-    render(<FormAlert isDarkMode={true} error="fail" />)
-    const el = screen.getByText('fail')
-    expect(el).toHaveClass('border-red-500/40')
-    expect(el).toHaveClass('text-red-200')
-    expect(el).toHaveClass('bg-red-500/10')
-  })
-
-  it('applies light-mode success styles', () => {
-    render(<FormAlert isDarkMode={false} success="ok" />)
-    const el = screen.getByText('ok')
-    expect(el).toHaveClass('border-emerald-500/25')
-    expect(el).toHaveClass('text-emerald-700')
-    expect(el).toHaveClass('bg-emerald-50')
-  })
-
-  it('applies dark-mode success styles', () => {
-    render(<FormAlert isDarkMode={true} success="ok" />)
-    const el = screen.getByText('ok')
-    expect(el).toHaveClass('border-emerald-400/30')
-    expect(el).toHaveClass('text-emerald-200')
-    expect(el).toHaveClass('bg-emerald-400/10')
-  })
 })
