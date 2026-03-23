@@ -274,7 +274,6 @@ export const useContactForm = (options: UseContactFormOptions) => {
     setDragActive(false)
     setFieldErrors({})
     // clearAllAttachments already clears submitError
-    setSubmitSuccess(null)
     setRecaptchaCompleted(false)
   }, [clearAllAttachments])
 

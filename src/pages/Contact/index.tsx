@@ -45,7 +45,6 @@ const Contact = ({ isDarkMode }: ContactProps) => {
     handleFileInput,
     clearRecaptchaError,
     onSubmit,
-    isFormValid,
   } = useContactForm({
     getRecaptchaToken: () =>
       RECAPTCHA_SITE_KEY
@@ -188,7 +187,7 @@ const Contact = ({ isDarkMode }: ContactProps) => {
                   <SubmitButton
                     isDarkMode={isDarkMode}
                     isSubmitting={isSubmitting}
-                    isDisabled={!isFormValid || isSubmitting}
+                    isDisabled={isSubmitting}
                   />
                 </div>
               </form>
