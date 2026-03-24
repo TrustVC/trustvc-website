@@ -291,6 +291,7 @@ export const useContactForm = (options: UseContactFormOptions) => {
         typeOfEnquiry?: string
         description?: string
         attachments?: string
+        recaptcha?: string
       } = {}
       if (!emailTrimmed)
         errors.email = 'Please enter your email address before submitting.'
@@ -300,6 +301,9 @@ export const useContactForm = (options: UseContactFormOptions) => {
         errors.typeOfEnquiry = 'Please select an option before submitting.'
       if (!descriptionTrimmed)
         errors.description = 'Please enter a description before submitting.'
+      if (recaptchaRequired && !recaptchaCompleted) {
+        errors.recaptcha = 'Please complete the reCAPTCHA verification.'
+      }
       if (Object.keys(errors).length > 0) {
         setFieldErrors(errors)
         return
@@ -428,6 +432,8 @@ export const useContactForm = (options: UseContactFormOptions) => {
       getRecaptchaToken,
       resetRecaptcha,
       setAttachmentStatus,
+      recaptchaRequired,
+      recaptchaCompleted,
     ]
   )
 
