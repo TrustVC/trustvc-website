@@ -23,16 +23,13 @@ export const getRpcUrl = (chainId: string): string | null => {
  */
 export const toErrorMessage = (
   err: unknown,
-  fallback = 'An error occurred. Please try again.'
+  fallback = 'Verification failed. Please try again.'
 ): string => {
   if (err instanceof SyntaxError) {
-    return 'Invalid file format. Please upload a valid document.'
+    return 'Invalid file format. Please upload a valid TrustVC document.'
   }
   if (err instanceof Error) {
     return err.message
-  }
-  if (typeof err === 'string') {
-    return err
   }
   return fallback
 }
