@@ -1,10 +1,7 @@
 import { useEffect, useState } from 'react'
-import {
-  fetchEndorsementChain,
-  EndorsementChain,
-  SUPPORTED_CHAINS,
-} from '@trustvc/trustvc'
+import { fetchEndorsementChain, EndorsementChain } from '@trustvc/trustvc'
 import { ethers } from 'ethers'
+import { getRpcUrl } from '../../../utils/helper'
 
 export interface EndorsementChainStatus {
   status: 'idle' | 'loading' | 'success' | 'error'
@@ -24,21 +21,6 @@ interface UseEndorsementChainReturn {
   showEndorsementChain: boolean
   handleShowEndorsementChain: () => void
   handleHideEndorsementChain: () => void
-}
-
-const getRpcUrl = (chainId: string): string | null => {
-  const chainEnvUrl = import.meta.env[`VITE_RPC_URL_${chainId}`]
-  if (chainEnvUrl) return chainEnvUrl
-
-  const chainDefaultUrl =
-    SUPPORTED_CHAINS[chainId as keyof typeof SUPPORTED_CHAINS]?.rpcUrl
-  const safeChainUrl = chainDefaultUrl?.includes('undefined')
-    ? null
-    : chainDefaultUrl
-  if (safeChainUrl) return safeChainUrl
-
-  // Chain not recognised — return null to surface the issue
-  return null
 }
 
 export const useEndorsementChain = ({
