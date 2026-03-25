@@ -4,7 +4,7 @@ interface FormAlertProps {
   success?: string | null
 }
 
-const FormAlert = ({ error, success }: FormAlertProps) => {
+const FormAlert = ({ isDarkMode, error, success }: FormAlertProps) => {
   const message = error || success
   if (!message) return null
 
@@ -15,7 +15,13 @@ const FormAlert = ({ error, success }: FormAlertProps) => {
       }`}
     >
       <img
-        src={error ? '/icons/attention.svg' : '/icons/circle-check.svg'}
+        src={
+          error
+            ? '/icons/attention.svg'
+            : isDarkMode
+              ? '/icons/circle-check-dark.svg'
+              : '/icons/circle-check.svg'
+        }
         alt=""
         className="w-5 h-5 flex-shrink-0 mt-0.5"
         aria-hidden="true"
