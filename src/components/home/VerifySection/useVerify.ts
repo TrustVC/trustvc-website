@@ -405,7 +405,9 @@ export const useVerify = (): UseVerifyReturn => {
       await runVerification(doc, chainId)
     } catch (err) {
       clearVerificationMetadata()
-      setErrorMessage(toErrorMessage(err, 'Verification failed. Please try again.'))
+      setErrorMessage(
+        toErrorMessage(err, 'Verification failed. Please try again.')
+      )
       setVerifyStatus('error')
     }
   }
@@ -416,7 +418,9 @@ export const useVerify = (): UseVerifyReturn => {
     try {
       await runVerification(pendingDoc, chainId)
     } catch (err) {
-      setErrorMessage(toErrorMessage(err, 'Verification failed. Please try again.'))
+      setErrorMessage(
+        toErrorMessage(err, 'Verification failed. Please try again.')
+      )
       setVerifyStatus('error')
     } finally {
       setPendingDoc(null)
