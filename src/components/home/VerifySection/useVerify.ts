@@ -16,7 +16,9 @@ import {
   TitleEscrowInterface,
   getTokenRegistryAddress,
   getTokenId,
+  getDocumentData as getDocumentDataFromWrappedDocument,
 } from '@trustvc/trustvc'
+import { toErrorMessage } from '../../../utils/helper'
 
 export type VerifyStatus =
   | 'idle'
@@ -52,6 +54,8 @@ export interface UseVerifyReturn {
   tokenRegistryVersion: TokenRegistryVersion
   tokenRegistryAddress?: string
   tags: string[]
+  tokenId?: string
+  keyId?: string
   getGroupStatus: (_type: string) => 'VALID' | 'INVALID'
   handleDrag: (_e: React.DragEvent) => void
   handleDrop: (_e: React.DragEvent) => void
@@ -263,16 +267,15 @@ const getRpcUrl = (chainId: string): string | null => {
   return null
 }
 
-const toErrorMessage = (
-  err: unknown,
-  fallback = 'Verification failed. Please try again.'
-): string => {
-  if (err instanceof SyntaxError)
-    return 'Invalid file format. Please upload a valid TrustVC document.'
-  if (err instanceof Error) return err.message
-  return fallback
+const getDocumentData = (wrappedDocument: any) => {
+  if (
+    vc.isSignedDocument(wrappedDocument) ||
+    vc.isRawDocument(wrappedDocument)
+  ) {
+    return wrappedDocument as any
+  }
+  return getDocumentDataFromWrappedDocument(wrappedDocument)
 }
-
 export const makeExplorerAddressURL = (
   address: string,
   chainId: string
@@ -300,7 +303,8 @@ export const useVerify = (): UseVerifyReturn => {
     string | undefined
   >(undefined)
   const [tags, setTags] = useState<string[]>([])
-
+  const [tokenId, setTokenId] = useState<string | undefined>(undefined)
+  const [keyId, setKeyId] = useState<string | undefined>(undefined)
   const runVerification = async (
     doc: unknown,
     chainId: string | null | undefined
@@ -335,6 +339,15 @@ export const useVerify = (): UseVerifyReturn => {
       ? getTokenRegistryAddress(doc as any)
       : undefined
     setTokenRegistryAddress(registryAddress)
+    //add code to fetch TokenId , keyId from the document
+
+    const _keyId = getDocumentData(doc as any)?.id
+    setKeyId(_keyId)
+
+    if (transferable) {
+      const _tokenId = getTokenId(doc as any)
+      setTokenId(_tokenId)
+    }
 
     // Detect token registry version (async)
     let trVersion: TokenRegistryVersion = null
@@ -358,12 +371,24 @@ export const useVerify = (): UseVerifyReturn => {
     setVerifyStatus(isValid ? 'valid' : 'invalid')
   }
 
+  const clearVerificationMetadata = () => {
+    setVerifiedChainId('')
+    setIssuerName('')
+    setIsTransferable(false)
+    setTokenRegistryVersion(null)
+    setTokenRegistryAddress(undefined)
+    setTags([])
+    setTokenId(undefined)
+    setKeyId(undefined)
+  }
+
   const processFile = async (file: File) => {
     setFileName(file.name)
     setVerifyStatus('verifying')
     setFragments([])
     setErrorMessage('')
     setPendingDoc(null)
+    clearVerificationMetadata()
 
     try {
       const text = await file.text()
@@ -379,7 +404,10 @@ export const useVerify = (): UseVerifyReturn => {
 
       await runVerification(doc, chainId)
     } catch (err) {
-      setErrorMessage(toErrorMessage(err))
+      clearVerificationMetadata()
+      setErrorMessage(
+        toErrorMessage(err, 'Verification failed. Please try again.')
+      )
       setVerifyStatus('error')
     }
   }
@@ -390,7 +418,9 @@ export const useVerify = (): UseVerifyReturn => {
     try {
       await runVerification(pendingDoc, chainId)
     } catch (err) {
-      setErrorMessage(toErrorMessage(err))
+      setErrorMessage(
+        toErrorMessage(err, 'Verification failed. Please try again.')
+      )
       setVerifyStatus('error')
     } finally {
       setPendingDoc(null)
@@ -401,6 +431,7 @@ export const useVerify = (): UseVerifyReturn => {
     setVerifyStatus('idle')
     setFileName('')
     setPendingDoc(null)
+    clearVerificationMetadata()
   }
 
   const handleDrag = (e: React.DragEvent) => {
@@ -435,12 +466,7 @@ export const useVerify = (): UseVerifyReturn => {
     setFileName('')
     setErrorMessage('')
     setPendingDoc(null)
-    setVerifiedChainId('')
-    setIssuerName('')
-    setIsTransferable(false)
-    setTokenRegistryVersion(null)
-    setTokenRegistryAddress(undefined)
-    setTags([])
+    clearVerificationMetadata()
   }
 
   const getGroupStatus = (type: string) => computeGroupStatus(fragments, type)
@@ -456,6 +482,8 @@ export const useVerify = (): UseVerifyReturn => {
     tokenRegistryVersion,
     tokenRegistryAddress,
     tags,
+    tokenId,
+    keyId,
     getGroupStatus,
     handleDrag,
     handleDrop,

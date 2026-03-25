@@ -52,6 +52,7 @@ vi.mock('@trustvc/trustvc', () => ({
   TitleEscrowInterface: { V4: 'V4', V5: 'V5' },
   getTokenRegistryAddress: vi.fn().mockReturnValue(undefined),
   getTokenId: vi.fn().mockReturnValue(undefined),
+  getDocumentData: vi.fn().mockReturnValue({ id: 'test-key-id' }),
   // Namespace objects (only methods used in the source are stubbed)
   utils: {},
   v2: {},
