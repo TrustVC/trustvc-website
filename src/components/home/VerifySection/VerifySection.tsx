@@ -40,6 +40,7 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
     tags,
     tokenId,
     keyId,
+    rawDocument,
     getGroupStatus,
     handleDrag,
     handleDrop,
@@ -159,6 +160,7 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
                 isTransferable={isTransferable}
                 tokenRegistryAddress={tokenRegistryAddress}
                 tags={tags}
+                rawDocument={rawDocument}
                 getGroupStatus={getGroupStatus}
                 onReset={handleReset}
                 onViewEndorsementChain={handleShowEndorsementChain}
