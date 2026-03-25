@@ -417,10 +417,20 @@ body.dark-mode {
     color: var(--Neutral-100-10, #1e2026);
     border: 1px solid rgba(239, 68, 68, 0.4);
   }
+  .form-alert-success {
+    background: #b3ecff;
+    color: #0b384f;
+    border: 1px solid rgba(11, 56, 79, 0.2);
+  }
   .dark-mode .form-alert-error {
     border-color: rgba(239, 68, 68, 0.3);
     background: var(--Alert-100-110, #480418);
     color: #dee4e9;
+  }
+  .dark-mode .form-alert-success {
+    background: #b3ecff;
+    color: #0b384f;
+    border-color: rgba(11, 56, 79, 0.2);
   }
 
   /* Contact Page Heading */
