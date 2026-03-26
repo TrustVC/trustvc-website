@@ -37,10 +37,11 @@ export const createFetchClient = ({ baseUrl }: FetchClientOptions) => {
       ? await response.json()
       : null
 
-    if (!response.ok || (data && (data as any).success === false)) {
+    const errorBody = data as ApiErrorBody | null
+    if (!response.ok || (errorBody && errorBody.success === false)) {
       const message =
-        (data as any)?.error?.message ||
-        (data as any)?.message ||
+        errorBody?.error?.message ||
+        errorBody?.message ||
         `Request failed with status ${response.status}`
       throw new FetchClientError({ status: response.status, message, data })
     }
