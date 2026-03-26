@@ -33,7 +33,6 @@ export const createFetchClient = ({ baseUrl }: FetchClientOptions) => {
     const response = await fetch(`${normalizedBaseUrl}${path}`, init)
 
     const contentType = response.headers.get('content-type') || ''
-    const contentType = response.headers.get('content-type') || ''
     const data: T | null = contentType.includes('application/json')
       ? await response.json()
       : null
@@ -46,16 +45,19 @@ export const createFetchClient = ({ baseUrl }: FetchClientOptions) => {
       throw new FetchClientError({ status: response.status, message, data })
     }
 
-    return data as T  // Note: may be null for non-JSON responses
+    return data as T // Note: may be null for non-JSON responses
   }
 
   return { request }
 }
 
-const supportApiBaseUrl = ((import.meta as any).env?.VITE_SUPPORT_API_BASE_URL as string) || ''
+const supportApiBaseUrl =
+  ((import.meta as any).env?.VITE_SUPPORT_API_BASE_URL as string) || ''
 
 if (!supportApiBaseUrl && typeof window !== 'undefined') {
-  console.warn('[fetchClient] VITE_SUPPORT_API_BASE_URL is not configured. API requests may fail.')
+  console.warn(
+    '[fetchClient] VITE_SUPPORT_API_BASE_URL is not configured. API requests may fail.'
+  )
 }
 
 export const fetchClientSupport = createFetchClient({

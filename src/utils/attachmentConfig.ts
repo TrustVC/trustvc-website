@@ -23,4 +23,3 @@ export function isValidFileType(file: File): boolean {
 export function getFileConstraintText(): string {
   return 'Maximum 10 MB total size. Supported files include .JPG, .JPEG, or .PNG only.'
 }
-}

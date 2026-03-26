@@ -24,4 +24,3 @@ export function truncateFilename(name: string, maxLength = 32): string {
   const keep = maxLength - ext.length - 3
   return base.slice(0, Math.max(0, keep)) + '...' + ext
 }
-}
