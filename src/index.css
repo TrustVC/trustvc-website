@@ -364,9 +364,9 @@ body.dark-mode {
 }
 
 /* Typography Classes - Using Tailwind utilities */
-@layer components {
+`@layer` components {
   .submit-request-title {
-    font-family: 'Gilroy', sans-serif;
+    font-family: Gilroy, sans-serif;
     font-weight: 700;
     vertical-align: middle;
     font-size: 24px;
@@ -374,7 +374,7 @@ body.dark-mode {
   }
 
   .encountering-issues-text {
-    font-family: 'Avenir', sans-serif;
+    font-family: Avenir, sans-serif;
     font-weight: 500;
     vertical-align: middle;
     font-size: 14px;
@@ -382,7 +382,7 @@ body.dark-mode {
   }
 
   .form-label {
-    font-family: 'Avenir', sans-serif;
+    font-family: Avenir, sans-serif;
     font-weight: 500;
     vertical-align: middle;
     font-size: 18px;
