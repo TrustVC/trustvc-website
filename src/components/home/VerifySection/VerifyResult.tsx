@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import NetworkTooltip from './NetworkTooltip'
+import DocumentRenderer from './DocumentRenderer'
 import { makeExplorerAddressURL } from './useVerify'
+import { CheckCircle, CrossCircle } from '../../common/Icons'
 
 interface VerifyResultProps {
   fileName: string
@@ -12,6 +14,7 @@ interface VerifyResultProps {
   tags?: string[]
   owner?: { name?: string; address?: string }
   holder?: { name?: string; address?: string }
+  rawDocument?: unknown
   getGroupStatus: (_type: string) => 'VALID' | 'INVALID'
   onReset: () => void
   onViewNftRegistry?: () => void
@@ -25,51 +28,6 @@ const VERIFICATION_CHECKS = [
   { type: 'DOCUMENT_INTEGRITY', label: 'Document has not been tampered with' },
 ]
 
-const CheckCircle = () => (
-  <svg
-    width="20"
-    height="20"
-    viewBox="0 0 20 20"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    style={{ flexShrink: 0, marginTop: 2 }}
-  >
-    <path
-      d="M18.3332 9.23355V10.0002C18.3321 11.7972 17.7503 13.5458 16.6743 14.9851C15.5983 16.4244 14.0859 17.4773 12.3626 17.9868C10.6394 18.4963 8.79755 18.4351 7.11189 17.8124C5.42624 17.1896 3.98705 16.0386 3.00897 14.5311C2.03089 13.0236 1.56633 11.2403 1.68457 9.44714C1.80281 7.65402 2.49751 5.94715 3.66507 4.58111C4.83263 3.21506 6.41049 2.26303 8.16333 1.867C9.91616 1.47097 11.7501 1.65216 13.3915 2.38355"
-      stroke="#3AAF86"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <path
-      d="M18.3333 3.33301L10 11.6747L7.5 9.17467"
-      stroke="#3AAF86"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-)
-
-const CrossCircle = () => (
-  <svg
-    width="20"
-    height="20"
-    viewBox="0 0 20 20"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    style={{ flexShrink: 0, marginTop: 2 }}
-  >
-    <circle cx="10" cy="10" r="9" stroke="#ef4444" strokeWidth="2" />
-    <path
-      d="M6.5 6.5l7 7M13.5 6.5l-7 7"
-      stroke="#ef4444"
-      strokeWidth="2"
-      strokeLinecap="round"
-    />
-  </svg>
-)
-
 const VerifyResult: React.FC<VerifyResultProps> = ({
   fileName,
   networkName,
@@ -80,6 +38,7 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
   tags,
   owner,
   holder,
+  rawDocument,
   getGroupStatus,
   onReset,
   onViewNftRegistry,
@@ -338,6 +297,11 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
           </div>
         )}
       </div>
+
+      {/* ── Template Renderer ── */}
+      {rawDocument ? (
+        <DocumentRenderer rawDocument={rawDocument} fileName={fileName} />
+      ) : null}
 
       {/* Tooltip */}
       <NetworkTooltip isVisible={isTooltipVisible} position={tooltipPosition} />

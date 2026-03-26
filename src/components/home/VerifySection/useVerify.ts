@@ -56,6 +56,7 @@ export interface UseVerifyReturn {
   tags: string[]
   tokenId?: string
   keyId?: string
+  rawDocument?: unknown
   getGroupStatus: (_type: string) => 'VALID' | 'INVALID'
   handleDrag: (_e: React.DragEvent) => void
   handleDrop: (_e: React.DragEvent) => void
@@ -305,6 +306,7 @@ export const useVerify = (): UseVerifyReturn => {
   const [tags, setTags] = useState<string[]>([])
   const [tokenId, setTokenId] = useState<string | undefined>(undefined)
   const [keyId, setKeyId] = useState<string | undefined>(undefined)
+  const [rawDocument, setRawDocument] = useState<unknown>(undefined)
   const runVerification = async (
     doc: unknown,
     chainId: string | null | undefined
@@ -367,6 +369,7 @@ export const useVerify = (): UseVerifyReturn => {
     const documentTags = getDocumentTags(doc, trVersion)
     setTags(documentTags)
 
+    setRawDocument(doc)
     setVerifiedChainId(chainId ?? '')
     setVerifyStatus(isValid ? 'valid' : 'invalid')
   }
@@ -380,6 +383,7 @@ export const useVerify = (): UseVerifyReturn => {
     setTags([])
     setTokenId(undefined)
     setKeyId(undefined)
+    setRawDocument(undefined)
   }
 
   const processFile = async (file: File) => {
@@ -484,6 +488,7 @@ export const useVerify = (): UseVerifyReturn => {
     tags,
     tokenId,
     keyId,
+    rawDocument,
     getGroupStatus,
     handleDrag,
     handleDrop,
