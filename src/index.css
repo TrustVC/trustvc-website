@@ -455,7 +455,7 @@ body.dark-mode {
     font-weight: 500;
     font-size: 18px;
     line-height: 136%;
-    letter-spacing: 0%;
+    letter-spacing: normal;
     text-align: center;
     vertical-align: middle;
     color: var(--Neutral-100-30, #3d444d);
