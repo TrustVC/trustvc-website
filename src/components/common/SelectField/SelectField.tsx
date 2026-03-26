@@ -99,7 +99,11 @@ const SelectField = ({
 
         {isOpen && (
           <div
-            className="absolute z-10 mt-1 w-full rounded-lg border border-black/10 bg-white shadow-lg"
+            className={`absolute z-10 mt-1 w-full rounded-lg border shadow-lg ${
+              isDarkMode
+                ? 'bg-neutral-800 border-white/10'
+                : 'bg-white border-black/10'
+            }`}
             role="listbox"
             aria-labelledby={id}
           >
