@@ -11,7 +11,6 @@ import Spinner from '../../common/Spinner'
 
 interface VerifySectionProps {
   isDarkMode: boolean
-  onFileSelected?: (file: File) => void
 }
 
 const CHAIN_NAMES: Record<string, string> = {

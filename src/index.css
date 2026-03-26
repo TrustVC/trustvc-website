@@ -574,7 +574,6 @@ body.dark-mode {
 
 /* Contact form divider */
 .contact-form-divider {
-  height: 1px;
   width: 100%;
   border: 1px solid var(--Neutral-33-90, #a9b2bb54);
   background:

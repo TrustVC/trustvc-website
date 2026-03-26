@@ -14,6 +14,7 @@ export function FieldError({
   id,
   containerClassName,
   textClassName,
+  iconClassName,
 }: FieldErrorProps) {
   return (
     <p
@@ -27,7 +28,7 @@ export function FieldError({
       <img
         src="/icons/information-circle.svg"
         alt=""
-        className="field-error-icon"
+        className={clsx('field-error-icon', iconClassName)}
         aria-hidden="true"
       />
       <span className={clsx('field-error-text', textClassName)}>{message}</span>
