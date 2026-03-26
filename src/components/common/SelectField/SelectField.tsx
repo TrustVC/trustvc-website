@@ -50,8 +50,8 @@ const SelectField = ({
         onBlur={e => {
           if (!e.currentTarget.contains(e.relatedTarget as Node | null)) {
             setIsOpen(false)
+            onBlur?.()
           }
-          onBlur?.()
         }}
       >
         <button
