@@ -12,7 +12,10 @@ export default [
     files: ['**/*.{js,jsx,ts,tsx}'],
     languageOptions: {
       ecmaVersion: 2020,
-      globals: globals.browser,
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+      },
       parser: tseslint.parser,
       parserOptions: {
         ecmaVersion: 'latest',
@@ -25,6 +28,8 @@ export default [
             'tailwind.config.js',
             'vite.config.js',
             'src/test/setup.js',
+            'src/shims/dotenv-config.js',
+            'src/shims/node-fetch.js',
           ],
         },
       },
@@ -49,6 +54,14 @@ export default [
         'warn',
         { allowConstantExport: true },
       ],
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+        },
+      ],
+      'no-unused-vars': 'off',
     },
   },
 ]

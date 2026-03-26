@@ -245,6 +245,7 @@ const CarouselControlBar = ({ swiperRef }: CarouselControlBarProps) => {
       style={{ width: 'fit-content', margin: '0 auto' }}
     >
       <button
+        type="button"
         aria-label="carousel-prev-button"
         onClick={() => swiperRef.current?.slidePrev()}
         className="flex items-center justify-center h-6 w-6 hover:text-primary-60"
@@ -265,6 +266,7 @@ const CarouselControlBar = ({ swiperRef }: CarouselControlBarProps) => {
         }}
       />
       <button
+        type="button"
         aria-label="carousel-next-button"
         onClick={() => swiperRef.current?.slideNext()}
         className="flex items-center justify-center h-6 w-6 hover:text-primary-60"
