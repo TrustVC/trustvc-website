@@ -33,20 +33,20 @@ export const createFetchClient = ({ baseUrl }: FetchClientOptions) => {
     const response = await fetch(`${normalizedBaseUrl}${path}`, init)
 
     const contentType = response.headers.get('content-type') || ''
-    const data = contentType.includes('application/json')
+    const contentType = response.headers.get('content-type') || ''
+    const data: T | null = contentType.includes('application/json')
       ? await response.json()
       : null
 
-    const errorBody = data as ApiErrorBody | null
-    if (!response.ok || (errorBody && errorBody.success === false)) {
+    if (!response.ok || (data && (data as any).success === false)) {
       const message =
-        errorBody?.error?.message ||
-        errorBody?.message ||
+        (data as any)?.error?.message ||
+        (data as any)?.message ||
         `Request failed with status ${response.status}`
       throw new FetchClientError({ status: response.status, message, data })
     }
 
-    return data as T
+    return data as T  // Note: may be null for non-JSON responses
   }
 
   return { request }
