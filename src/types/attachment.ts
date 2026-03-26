@@ -17,8 +17,11 @@ export interface AttachmentItem {
 
 export function truncateFilename(name: string, maxLength = 32): string {
   if (name.length <= maxLength) return name
-  const ext = name.slice(name.lastIndexOf('.'))
-  const base = name.slice(0, name.length - ext.length)
+  const dotIndex = name.lastIndexOf('.')
+  const hasExtension = dotIndex > 0
+  const ext = hasExtension ? name.slice(dotIndex) : ''
+  const base = hasExtension ? name.slice(0, dotIndex) : name
   const keep = maxLength - ext.length - 3
   return base.slice(0, Math.max(0, keep)) + '...' + ext
+}
 }
