@@ -58,13 +58,17 @@ describe('Overlay', () => {
 
   it('locks body scroll on mount and restores on unmount', () => {
     document.body.style.overflow = 'auto'
-    const { unmount } = render(
-      <Overlay>
-        <span>Content</span>
-      </Overlay>
-    )
-    expect(document.body.style.overflow).toBe('hidden')
-    unmount()
-    expect(document.body.style.overflow).toBe('auto')
+    try {
+      const { unmount } = render(
+        <Overlay>
+          <span>Content</span>
+        </Overlay>
+      )
+      expect(document.body.style.overflow).toBe('hidden')
+      unmount()
+      expect(document.body.style.overflow).toBe('auto')
+    } finally {
+      document.body.style.overflow = ''
+    }
   })
 })

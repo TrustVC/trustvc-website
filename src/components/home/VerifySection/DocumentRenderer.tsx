@@ -45,6 +45,7 @@ const DocumentRenderer: React.FC<DocumentRendererProps> = ({
   const [rendererHeight, setRendererHeight] = useState(250)
   const [isRendererReady, setIsRendererReady] = useState(false)
   const [qrCodePopover, setQrCodePopover] = useState(false)
+  const qrWrapperRef = useRef<HTMLDivElement>(null)
 
   const document = useMemo(
     () => (rawDocument ? getOpenAttestationData(rawDocument) : undefined),
@@ -99,7 +100,7 @@ const DocumentRenderer: React.FC<DocumentRendererProps> = ({
     if (toFrame.current && document) {
       toFrame.current(renderDocument({ document }))
     }
-  }, [document, toFrame])
+  }, [document])
 
   useEffect(() => {
     if (
@@ -109,7 +110,30 @@ const DocumentRenderer: React.FC<DocumentRendererProps> = ({
     ) {
       toFrame.current(selectTemplate(selectedTemplate))
     }
-  }, [selectedTemplate, toFrame])
+  }, [selectedTemplate])
+
+  useEffect(() => {
+    if (!qrCodePopover) return
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        qrWrapperRef.current &&
+        !qrWrapperRef.current.contains(e.target as Node)
+      ) {
+        setQrCodePopover(false)
+      }
+    }
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setQrCodePopover(false)
+      }
+    }
+    window.document.addEventListener('mousedown', handleClickOutside)
+    window.document.addEventListener('keydown', handleEscape)
+    return () => {
+      window.document.removeEventListener('mousedown', handleClickOutside)
+      window.document.removeEventListener('keydown', handleEscape)
+    }
+  }, [qrCodePopover])
 
   const handlePrint = () => {
     if (toFrame.current) {
@@ -117,9 +141,13 @@ const DocumentRenderer: React.FC<DocumentRendererProps> = ({
     }
   }
 
-  const downloadHref = rawDocument
-    ? `data:text/json;,${encodeURIComponent(JSON.stringify(rawDocument, null, 2))}`
-    : undefined
+  const downloadHref = useMemo(
+    () =>
+      rawDocument
+        ? `data:application/json;charset=utf-8,${encodeURIComponent(JSON.stringify(rawDocument, null, 2))}`
+        : undefined,
+    [rawDocument]
+  )
 
   if (!templateSource) return null
 
@@ -130,24 +158,30 @@ const DocumentRenderer: React.FC<DocumentRendererProps> = ({
         className="vr-template-tabs-wrapper"
         style={{ display: isRendererReady ? undefined : 'none' }}
       >
-        <div className="vr-template-tabs">
+        <div className="vr-template-tabs" role="tablist">
           {templates.map(({ id, label }) => (
-            <div
+            <button
               key={id}
+              id={`tab-${id}`}
+              role="tab"
+              aria-selected={id === selectedTemplate}
               className={`vr-template-tab ${id === selectedTemplate ? 'vr-template-tab--active' : ''}`}
               onClick={() => setSelectedTemplate(id)}
             >
-              <span className="vr-template-tab-label">{label}</span>
-            </div>
+              <span>{label}</span>
+            </button>
           ))}
           {attachments.length > 0 && (
-            <div
+            <button
+              id="tab-attachments"
+              role="tab"
+              aria-selected={selectedTemplate === 'attachmentTab'}
               className={`vr-template-tab ${selectedTemplate === 'attachmentTab' ? 'vr-template-tab--active' : ''}`}
               onClick={() => setSelectedTemplate('attachmentTab')}
             >
-              <span className="vr-template-tab-label">Attachments</span>
+              <span>Attachments</span>
               <span className="vr-attachment-count">{attachments.length}</span>
-            </div>
+            </button>
           )}
         </div>
       </div>
@@ -156,7 +190,14 @@ const DocumentRenderer: React.FC<DocumentRendererProps> = ({
       <div className="vr-renderer-section">
         {/* Attachments pane */}
         {selectedTemplate === 'attachmentTab' && (
-          <AttachmentsPane attachments={attachments} />
+          <div
+            id="tabpanel-attachments"
+            role="tabpanel"
+            aria-labelledby="tab-attachments"
+            tabIndex={0}
+          >
+            <AttachmentsPane attachments={attachments} />
+          </div>
         )}
 
         {/* Document utility toolbar */}
@@ -167,7 +208,13 @@ const DocumentRenderer: React.FC<DocumentRendererProps> = ({
                 <div className="vr-doc-utility-info">
                   <div className="vr-doc-utility-label">Rendered View:</div>
                   <div className="vr-doc-utility-detail">
-                    {selectedTemplate.trim().toUpperCase()} rendered from{' '}
+                    {(
+                      templates.find(t => t.id === selectedTemplate)?.label ??
+                      selectedTemplate
+                    )
+                      .trim()
+                      .toUpperCase()}{' '}
+                    rendered from{' '}
                     <a
                       href={templateSource}
                       className="vr-doc-utility-link"
@@ -181,15 +228,18 @@ const DocumentRenderer: React.FC<DocumentRendererProps> = ({
               )}
               <div className="vr-doc-utility-actions">
                 {qrCodeUrl && (
-                  <div className="vr-doc-utility-qr-wrapper">
-                    <div
+                  <div className="vr-doc-utility-qr-wrapper" ref={qrWrapperRef}>
+                    <button
+                      type="button"
                       className="vr-doc-utility-btn"
+                      aria-label="Show QR code"
+                      aria-expanded={qrCodePopover}
                       onClick={() => setQrCodePopover(!qrCodePopover)}
                     >
                       <div className="vr-doc-utility-btn-boundary">
                         <QRCodeIcon />
                       </div>
-                    </div>
+                    </button>
                     {qrCodePopover && (
                       <div className="vr-qr-popover">
                         <QRCodeSVG
@@ -211,18 +261,24 @@ const DocumentRenderer: React.FC<DocumentRendererProps> = ({
                     )}
                   </div>
                 )}
-                <div className="vr-doc-utility-btn" onClick={handlePrint}>
+                <button
+                  type="button"
+                  className="vr-doc-utility-btn"
+                  aria-label="Print document"
+                  onClick={handlePrint}
+                >
                   <div className="vr-doc-utility-btn-boundary">
                     <PrinterIcon />
                   </div>
-                </div>
+                </button>
                 {downloadHref && (
                   <a
-                    download={`${fileName || 'document'}.tt`}
+                    download={fileName || 'document'}
                     target="_blank"
                     rel="noopener noreferrer"
                     href={downloadHref}
                     className="vr-doc-utility-btn"
+                    aria-label="Download document"
                   >
                     <div className="vr-doc-utility-btn-boundary">
                       <DownloadIcon />
@@ -247,6 +303,12 @@ const DocumentRenderer: React.FC<DocumentRendererProps> = ({
 
         {/* Renderer iframe */}
         <div
+          id="tabpanel-renderer"
+          role="tabpanel"
+          aria-labelledby={
+            selectedTemplate ? `tab-${selectedTemplate}` : undefined
+          }
+          tabIndex={0}
           className="vr-renderer-frame"
           style={{
             display: selectedTemplate === 'attachmentTab' ? 'none' : undefined,
@@ -274,12 +336,33 @@ const DocumentRenderer: React.FC<DocumentRendererProps> = ({
 
 // ── Attachments sub-component ──
 
+const SAFE_MIME_TYPES = new Set([
+  'application/pdf',
+  'application/json',
+  'application/xml',
+  'application/octet-stream',
+  'image/png',
+  'image/jpeg',
+  'image/gif',
+  'text/plain',
+  'text/csv',
+  'text/xml',
+])
+
+const getSafeDownloadHref = (type: string, data: string): string => {
+  const mimeType = SAFE_MIME_TYPES.has(type) ? type : 'application/octet-stream'
+  return `data:${mimeType};base64,${data}`
+}
+
 const AttachmentsPane: React.FC<{ attachments: DocumentAttachment[] }> = ({
   attachments,
 }) => (
   <div className="vr-attachments-pane">
     {attachments.map((att, idx) => (
-      <div key={idx} className="vr-attachment-tile">
+      <div
+        key={`${idx}-${att.filename}-${att.type}`}
+        className="vr-attachment-tile"
+      >
         <div className="vr-attachment-icon">
           <FileIcon filename={att.filename} type={att.type} />
         </div>
@@ -291,9 +374,10 @@ const AttachmentsPane: React.FC<{ attachments: DocumentAttachment[] }> = ({
           </span>
         </div>
         <a
-          href={`data:${att.type};base64,${att.data}`}
+          href={getSafeDownloadHref(att.type, att.data)}
           download={att.filename}
           className="vr-attachment-download"
+          aria-label={`Download ${att.filename}`}
         >
           <DownloadIcon />
         </a>

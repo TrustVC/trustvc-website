@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, fireEvent } from '@testing-library/react'
 import VerifyError from './VerifyError'
 
@@ -7,6 +7,10 @@ describe('VerifyError', () => {
     errorMessage: 'Something went wrong',
     onReset: vi.fn(),
   }
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
 
   it('renders the error message', () => {
     const { getByText } = render(<VerifyError {...defaultProps} />)

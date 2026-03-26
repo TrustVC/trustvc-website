@@ -145,7 +145,8 @@ export const getAttachments = (rawDocument: any): DocumentAttachment[] => {
 
 export const formatFileSize = (base64Data: string): string => {
   if (!base64Data) return ''
-  const bytes = Math.ceil((base64Data.length * 3) / 4)
+  const padding = (base64Data.match(/=+$/) || [''])[0].length
+  const bytes = Math.ceil((base64Data.length * 3) / 4) - padding
   if (bytes < 1024) return `${bytes} B`
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`

@@ -120,6 +120,13 @@ describe('formatFileSize', () => {
     const data = 'A'.repeat(1400000)
     expect(formatFileSize(data)).toBe('1.0 MB')
   })
+
+  it('accounts for base64 padding characters', () => {
+    // 'AA==' is 4 chars with 2 padding = 1 byte
+    expect(formatFileSize('AA==')).toBe('1 B')
+    // 'AAA=' is 4 chars with 1 padding = 2 bytes
+    expect(formatFileSize('AAA=')).toBe('2 B')
+  })
 })
 
 describe('getFileExtension', () => {
@@ -186,7 +193,7 @@ describe('getTemplateSourceUrl', () => {
     vi.mocked(trustvc.isWrappedV2Document).mockReturnValue(true)
     vi.mocked(trustvc.getDocumentData).mockReturnValue({
       $template: { url: 'https://v2-renderer.example.com' },
-    })
+    } as any)
     const doc = {
       data: { $template: { url: 'https://v2-renderer.example.com' } },
     }
@@ -222,7 +229,7 @@ describe('getOpenAttestationData', () => {
 
   it('calls getDocumentData for OA documents', () => {
     const doc = { data: { name: 'test' } }
-    vi.mocked(trustvc.getDocumentData).mockReturnValue({ name: 'test' })
+    vi.mocked(trustvc.getDocumentData).mockReturnValue({ name: 'test' } as any)
     expect(getOpenAttestationData(doc)).toEqual({ name: 'test' })
   })
 })

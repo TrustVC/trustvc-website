@@ -24,6 +24,7 @@ describe('PrimaryButton', () => {
     const label = container.querySelector('label')
     expect(label).toBeTruthy()
     expect(label?.getAttribute('for')).toBe('file-input')
+    expect(container.querySelector('button')).toBeNull()
   })
 
   it('calls onClick when clicked', () => {

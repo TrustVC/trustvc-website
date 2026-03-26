@@ -91,11 +91,10 @@ describe('DocumentRenderer', () => {
     expect((tabsWrapper as HTMLElement).style.display).toBe('none')
   })
 
-  it('renders download button with correct filename', () => {
-    render(<DocumentRenderer {...defaultProps} />)
-    // The download link is always present in the DOM but hidden until ready
-    const iframe = screen.getByTestId('frame-connector')
-    expect(iframe).toBeTruthy()
+  it('renders FrameConnector with correct source', () => {
+    const { container } = render(<DocumentRenderer {...defaultProps} />)
+    const frame = container.querySelector('[data-testid="frame-connector"]')
+    expect(frame).toBeTruthy()
   })
 
   describe('with attachments', () => {
@@ -107,9 +106,9 @@ describe('DocumentRenderer', () => {
     })
 
     it('does not show attachment tab before renderer is ready', () => {
-      render(<DocumentRenderer {...defaultProps} />)
+      const { container } = render(<DocumentRenderer {...defaultProps} />)
       // Tabs wrapper is hidden until ready
-      const tabsWrapper = document.querySelector('.vr-template-tabs-wrapper')
+      const tabsWrapper = container.querySelector('.vr-template-tabs-wrapper')
       expect((tabsWrapper as HTMLElement).style.display).toBe('none')
     })
   })
