@@ -53,13 +53,9 @@ describe('App Component', () => {
       btn.querySelector('svg path[d*="M10.0762"]')
     )
 
-    if (moonButton) {
-      fireEvent.click(moonButton)
-
-      // Check localStorage
-      const savedMode = localStorage.getItem('darkMode')
-      expect(savedMode).toBe('true')
-    }
+    expect(moonButton).toBeTruthy()
+    fireEvent.click(moonButton as HTMLButtonElement)
+    expect(localStorage.getItem('darkMode')).toBe('true')
   })
 
   it('loads dark mode from localStorage', () => {
