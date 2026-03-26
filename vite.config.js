@@ -6,12 +6,14 @@ import { nodePolyfills } from 'vite-plugin-node-polyfills'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
-export default defineConfig(() => {
+export default defineConfig(({ mode }) => {
+  const isTest = mode === 'test'
+
   return {
     define: {
       'process.env': {},
       'process.browser': true,
-      'process.version': JSON.stringify('v16.0.0')
+      ...(isTest ? {} : { 'process.version': JSON.stringify('v16.0.0') })
     },
     plugins: [
       react(),
