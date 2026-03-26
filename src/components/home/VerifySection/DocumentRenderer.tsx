@@ -306,7 +306,9 @@ const DocumentRenderer: React.FC<DocumentRendererProps> = ({
           id="tabpanel-renderer"
           role="tabpanel"
           aria-labelledby={
-            selectedTemplate ? `tab-${selectedTemplate}` : undefined
+            selectedTemplate && selectedTemplate !== 'attachmentTab'
+              ? `tab-${selectedTemplate}`
+              : undefined
           }
           tabIndex={0}
           className="vr-renderer-frame"
