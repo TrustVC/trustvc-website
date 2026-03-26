@@ -14,7 +14,6 @@ export function FieldError({
   id,
   containerClassName,
   textClassName,
-  iconClassName,
 }: FieldErrorProps) {
   return (
     <p

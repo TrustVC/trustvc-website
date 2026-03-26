@@ -2,7 +2,6 @@ import { fileURLToPath, URL } from 'node:url'
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
-import { fileURLToPath } from 'url'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -10,7 +9,9 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 export default defineConfig(() => {
   return {
     define: {
-      'process.env': {}
+      'process.env': {},
+      'process.browser': true,
+      'process.version': JSON.stringify('v16.0.0')
     },
     plugins: [
       react(),

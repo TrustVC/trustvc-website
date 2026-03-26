@@ -19,7 +19,6 @@ const SelectField = ({
   label,
   value,
   onChange,
-  required,
   error,
   onBlur,
 }: SelectFieldProps) => {
