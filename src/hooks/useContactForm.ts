@@ -404,6 +404,7 @@ export const useContactForm = (options: UseContactFormOptions) => {
         setSubmitSuccess(
           "Request submitted successfully. We'll get back to you soon."
         )
+        globalThis.window?.scrollTo({ top: 0, behavior: 'smooth' })
         resetForm()
         resetRecaptcha?.()
       } catch (err) {
