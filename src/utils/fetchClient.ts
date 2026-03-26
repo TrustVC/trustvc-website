@@ -52,7 +52,12 @@ export const createFetchClient = ({ baseUrl }: FetchClientOptions) => {
   return { request }
 }
 
+const supportApiBaseUrl = ((import.meta as any).env?.VITE_SUPPORT_API_BASE_URL as string) || ''
+
+if (!supportApiBaseUrl && typeof window !== 'undefined') {
+  console.warn('[fetchClient] VITE_SUPPORT_API_BASE_URL is not configured. API requests may fail.')
+}
+
 export const fetchClientSupport = createFetchClient({
-  baseUrl:
-    (import.meta.env?.VITE_SUPPORT_API_BASE_URL as string | undefined) || '',
+  baseUrl: supportApiBaseUrl,
 })
