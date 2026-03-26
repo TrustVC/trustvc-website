@@ -21,6 +21,8 @@ const AttachmentDropzone = ({
   onFileInput,
   fileInfoText,
 }: AttachmentDropzoneProps) => {
+  const fileInputRef = React.useRef<HTMLInputElement>(null)
+
   return (
     <div className="flex flex-col gap-2">
       <div
@@ -47,7 +49,12 @@ const AttachmentDropzone = ({
           <div className="divider-text">or</div>
         </div>
         <div className="standard-button-primary">
-          <label htmlFor="contact-file-upload" className="button-boundary">
+          <button
+            type="button"
+            className="button-boundary"
+            onClick={() => fileInputRef.current?.click()}
+            aria-label="Browse Files"
+          >
             <div className="button-padding" />
             <div className="contextual-icon-frame">
               <img
@@ -63,14 +70,15 @@ const AttachmentDropzone = ({
               <div className="button-label">Browse Files</div>
             </div>
             <div className="button-padding" />
-          </label>
+          </button>
           <input
+            ref={fileInputRef}
             id="contact-file-upload"
             type="file"
             multiple
             onChange={onFileInput}
             accept="image/jpeg,image/jpg,image/png,.jpg,.jpeg,.png"
-            style={{ display: 'none' }}
+            className="sr-only"
           />
         </div>
       </div>

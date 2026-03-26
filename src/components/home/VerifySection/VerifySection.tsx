@@ -3,11 +3,54 @@ import { useNavigate } from 'react-router-dom'
 
 interface VerifySectionProps {
   isDarkMode: boolean
+  onFileSelected?: (file: File) => void
 }
 
-const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
+const VerifySection: React.FC<VerifySectionProps> = ({
+  isDarkMode,
+  onFileSelected,
+}) => {
   const [dragActive, setDragActive] = useState(false)
+  const [, setSelectedFile] = useState<File | null>(null)
+  const [fileError, setFileError] = useState<string | null>(null)
   const navigate = useNavigate()
+  const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024
+  const ALLOWED_EXTENSIONS = ['.tt', '.etc']
+  const ALLOWED_MIME_TYPES = ['text/plain', 'application/octet-stream']
+
+  const validateFile = (file: File): string | null => {
+    if (file.size > MAX_FILE_SIZE_BYTES) {
+      return 'File must be 10 MB or smaller.'
+    }
+
+    const name = file.name.toLowerCase()
+    const hasAllowedExtension = ALLOWED_EXTENSIONS.some(ext =>
+      name.endsWith(ext)
+    )
+    const fileType = file.type.toLowerCase()
+    const hasAllowedMimeType =
+      !fileType || ALLOWED_MIME_TYPES.includes(fileType)
+
+    if (!hasAllowedExtension || !hasAllowedMimeType) {
+      return 'Unsupported file type. Allowed formats: .TT, .ETC.'
+    }
+
+    return null
+  }
+
+  const handleSelectedFile = (file?: File | null): boolean => {
+    const normalizedFile = file ?? null
+    if (!normalizedFile) return false
+    const validationError = validateFile(normalizedFile)
+    if (validationError) {
+      setFileError(validationError)
+      return false
+    }
+    setFileError(null)
+    setSelectedFile(normalizedFile)
+    onFileSelected?.(normalizedFile)
+    return true
+  }
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault()
@@ -24,14 +67,15 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
     e.stopPropagation()
     setDragActive(false)
 
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      // console.log('File dropped:', e.dataTransfer.files[0])
-    }
+    const file = e.dataTransfer?.files?.[0] ?? null
+    handleSelectedFile(file)
   }
 
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      // console.log('File selected:', e.target.files[0])
+    const file = e.target.files?.[0] ?? null
+    const isValid = handleSelectedFile(file)
+    if (!isValid) {
+      e.target.value = ''
     }
   }
 
@@ -83,6 +127,7 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
                     id="file-upload"
                     type="file"
                     onChange={handleFileInput}
+                    accept=".tt,.etc,text/plain,application/octet-stream"
                     style={{ display: 'none' }}
                   />
                 </div>
@@ -92,6 +137,11 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
                   Maximum 10 MB. Supported files include .TT, .ETC, .ETC, and
                   .ETC.
                 </div>
+                {fileError && (
+                  <div className="field-error-text mt-1" role="alert">
+                    {fileError}
+                  </div>
+                )}
               </div>
             </div>
             <div className="demo-button">
