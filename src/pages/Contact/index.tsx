@@ -51,7 +51,7 @@ const Contact = ({ isDarkMode }: ContactProps) => {
         ? (recaptchaRef.current?.getToken() ?? Promise.resolve(''))
         : Promise.resolve(''),
     resetRecaptcha: () => recaptchaRef.current?.reset(),
-    recaptchaRequired: true,
+    recaptchaRequired: !!RECAPTCHA_SITE_KEY,
   })
 
   return (
