@@ -233,7 +233,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
             </div>
             <div className="p-2">
               <a
-                href="/"
+                href="/news-updates"
                 className="min-w-[40px] min-h-[40px] flex items-center justify-center px-1 py-[5px] rounded-lg transition-colors duration-200"
                 style={{
                   backgroundColor: 'transparent',
@@ -257,7 +257,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
             </div>
             <div className="p-2">
               <a
-                href="/"
+                href="/news-updates"
                 className="min-w-[40px] min-h-[40px] flex items-center justify-center px-1 py-[5px] rounded-lg transition-colors duration-200"
                 style={{
                   backgroundColor: 'transparent',
@@ -509,7 +509,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
               )}
             </div>
             <a
-              href="/"
+              href="/news-updates"
               className="px-4 py-3 text-left text-sm font-bold font-['Gilroy'] rounded-lg transition-colors duration-200"
               style={{
                 color: isDarkMode ? '#808894' : '#5B6571',
@@ -527,7 +527,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
               Gallery
             </a>
             <a
-              href="/"
+              href="/news-updates"
               className="px-4 py-3 text-left text-sm font-bold font-['Gilroy'] rounded-lg transition-colors duration-200"
               style={{
                 color: isDarkMode ? '#808894' : '#5B6571',
