@@ -263,11 +263,7 @@ const News = ({ isDarkMode }: NewsProps) => {
                               .map((category, index) => (
                                 <div
                                   key={`${article._id}-${category.title}-${index}`}
-                                  className={`news-category-chip inline-flex items-center gap-1 px-3 py-1 rounded-full border ${
-                                    isDarkMode
-                                      ? 'bg-transparent border-[#A9B2BB54]'
-                                      : 'bg-white/95 border-transparent'
-                                  }`}
+                                  className="news-category-chip inline-flex items-center gap-1 px-3 py-1 rounded-full border bg-white/95 border-transparent"
                                 >
                                   <img
                                     src={
