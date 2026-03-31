@@ -1,9 +1,10 @@
-import { Suspense, lazy, useEffect, useMemo, useRef, useState } from 'react'
+import { Suspense, lazy } from 'react'
 import { Link } from 'react-router-dom'
 import { format } from 'date-fns'
-import { fetchNewsArticles, getBodyText } from '../../lib/sanity/news'
+import clsx from 'clsx'
+import { getBodyText } from '../../lib/sanity/news'
 import { getSanityImageUrl } from '../../lib/sanity/client'
-import type { NewsArticle } from '../../types/news'
+import { useNewsList } from '../../hooks/useNewsList'
 
 interface NewsProps {
   isDarkMode: boolean
@@ -13,89 +14,44 @@ const ShimmerPostCards = lazy(
   () => import('../../components/common/ShimmerPostCards')
 )
 
-const GRID_CARD_ESTIMATED_HEIGHT = 350
-
-const getReadTimeText = (body?: NewsArticle['body']) => {
-  const words = getBodyText(body).split(/\s+/).filter(Boolean).length
-  const minutes = Math.max(1, Math.ceil(words / 200))
-  return `${minutes} min read`
-}
-
 const News = ({ isDarkMode }: NewsProps) => {
-  const [articles, setArticles] = useState<NewsArticle[]>([])
-  const [loading, setLoading] = useState(true)
-  const [visibleCount, setVisibleCount] = useState(0)
-  const [isLoadingMore, setIsLoadingMore] = useState(false)
-  const loadMoreAnchorRef = useRef<HTMLDivElement | null>(null)
+  const {
+    articles,
+    loading,
+    isLoadingMore,
+    featuredArticle,
+    featuredImageUrl,
+    articleGrid,
+    visibleArticles,
+    hasMoreArticles,
+    loadMoreAnchorRef,
+    getReadTimeText,
+  } = useNewsList()
 
-  useEffect(() => {
-    const load = async () => {
-      const data = await fetchNewsArticles()
-      setArticles(data)
-      setLoading(false)
-    }
-
-    load()
-  }, [])
-
-  const featuredArticle = useMemo(() => articles[0], [articles])
-  const articleGrid = useMemo(() => articles.slice(1), [articles])
-  const visibleArticles = useMemo(
-    () => articleGrid.slice(0, visibleCount),
-    [articleGrid, visibleCount]
+  const shellSurfaceClass = clsx(
+    'rounded-2xl overflow-hidden border',
+    isDarkMode ? 'bg-[#1E2026]/80 border-[#3D444D]' : 'bg-white/80 border-[#DEE4E9]'
   )
-  const hasMoreArticles = visibleCount < articleGrid.length
-  const featuredImageUrl = featuredArticle
-    ? getSanityImageUrl(featuredArticle.mainImage)
-        ?.width(1200)
-        .height(650)
-        .url()
-    : null
-
-  useEffect(() => {
-    if (!articleGrid.length) {
-      setVisibleCount(0)
-      return
-    }
-
-    const columns = window.innerWidth >= 768 ? 2 : 1
-    const rowsToFillViewport = Math.max(
-      1,
-      Math.ceil(window.innerHeight / GRID_CARD_ESTIMATED_HEIGHT)
-    )
-    const initialCount = Math.min(
-      articleGrid.length,
-      rowsToFillViewport * columns
-    )
-    setVisibleCount(initialCount)
-  }, [articleGrid])
-
-  useEffect(() => {
-    if (!hasMoreArticles || isLoadingMore || !loadMoreAnchorRef.current) return
-
-    const columns = window.innerWidth >= 768 ? 2 : 1
-    const batchSize = Math.max(columns, columns * 2)
-
-    const observer = new IntersectionObserver(
-      entries => {
-        const firstEntry = entries[0]
-        if (!firstEntry?.isIntersecting) return
-
-        setIsLoadingMore(true)
-        window.setTimeout(() => {
-          setVisibleCount(prev =>
-            Math.min(prev + batchSize, articleGrid.length)
-          )
-          setIsLoadingMore(false)
-        }, 350)
-      },
-      { rootMargin: '200px 0px' }
-    )
-
-    observer.observe(loadMoreAnchorRef.current)
-    return () => observer.disconnect()
-  }, [articleGrid.length, hasMoreArticles, isLoadingMore])
-
+  const subTextClass = clsx(
+    'mt-3 text-base sm:text-lg max-w-3xl mx-auto',
+    isDarkMode ? 'text-[#A9B2BB]' : 'text-[#3D444D]'
+  )
+  const titleTextClass = clsx(
+    'text-[24px] font-bold leading-[133%]',
+    isDarkMode ? 'text-[#E6EBFF]' : 'text-[#1E2026]'
+  )
+  const excerptTextClass = clsx(
+    'mt-3 text-[18px] leading-[136%] font-medium line-clamp-3',
+    isDarkMode ? 'text-[#A9B2BB]' : 'text-[#3D444D]'
+  )
+  const cardTitleTextClass = clsx(
+    'text-xl font-bold leading-tight',
+    isDarkMode ? 'text-[#E6EBFF]' : 'text-[#1E2026]'
+  )
+  const cardExcerptTextClass = clsx(
+    'mt-2 text-sm line-clamp-2',
+    isDarkMode ? 'text-[#A9B2BB]' : 'text-[#3D444D]'
+  )
   return (
     <section
       className={`news-page w-full px-4 pt-[120px] pb-16 flex justify-center bg-transparent ${
@@ -118,11 +74,7 @@ const News = ({ isDarkMode }: NewsProps) => {
               Updates
             </span>
           </h1>
-          <p
-            className={`mt-3 text-base sm:text-lg max-w-3xl mx-auto ${
-              isDarkMode ? 'text-[#A9B2BB]' : 'text-[#3D444D]'
-            }`}
-          >
+          <p className={subTextClass}>
             Stay up to date with the latest TrustVC developments, partnerships,
             and industry insights in the verifiable credentials space.
           </p>
@@ -136,11 +88,12 @@ const News = ({ isDarkMode }: NewsProps) => {
           </div>
         ) : articles.length === 0 ? (
           <div
-            className={`rounded-2xl p-10 text-center border ${
+            className={clsx(
+              'rounded-2xl p-10 text-center border',
               isDarkMode
                 ? 'bg-[#1E2026]/70 border-[#3D444D] text-[#A9B2BB]'
                 : 'bg-white/80 border-[#DEE4E9] text-[#5B6571]'
-            }`}
+            )}
           >
             No posts published yet.
           </div>
@@ -148,11 +101,10 @@ const News = ({ isDarkMode }: NewsProps) => {
           <div className="space-y-4">
             {featuredArticle && (
               <article
-                className={`grid grid-cols-1 lg:grid-cols-2 lg:items-stretch rounded-2xl overflow-hidden border shadow-[0_8px_32px_rgba(104,106,210,0.15)] ${
-                  isDarkMode
-                    ? 'bg-[#1E2026]/80 border-[#3D444D]'
-                    : 'bg-white/80 border-[#DEE4E9]'
-                }`}
+                className={clsx(
+                  'grid grid-cols-1 lg:grid-cols-2 lg:items-stretch shadow-[0_8px_32px_rgba(104,106,210,0.15)]',
+                  shellSurfaceClass
+                )}
               >
                 {featuredImageUrl && (
                   <div className="relative h-full">
@@ -178,16 +130,6 @@ const News = ({ isDarkMode }: NewsProps) => {
                   <div className="flex flex-wrap items-center gap-3 text-xs mb-3">
                     {featuredArticle.categories?.[0]?.title && (
                       <span className="news-category-chip inline-flex items-center gap-1 px-2 py-1 rounded-full border border-[#A9B2BB54]">
-                        <img
-                          src={
-                            isDarkMode
-                              ? '/icons/category-dark.svg'
-                              : '/icons/category-light.svg'
-                          }
-                          alt=""
-                          aria-hidden="true"
-                          className="w-3 h-3"
-                        />
                         {featuredArticle.categories[0].title}
                       </span>
                     )}
@@ -215,19 +157,10 @@ const News = ({ isDarkMode }: NewsProps) => {
                         : 'Recent'}
                     </span>
                   </div>
-                  <h2
-                    className={`text-[24px] font-bold leading-[133%] ${
-                      isDarkMode ? 'text-[#E6EBFF]' : 'text-[#1E2026]'
-                    }`}
-                  >
+                  <h2 className={titleTextClass}>
                     {featuredArticle.title}
                   </h2>
-                  <p
-                    className={`mt-3 text-[18px] leading-[136%] font-medium line-clamp-3 ${
-                      isDarkMode ? 'text-[#A9B2BB]' : 'text-[#3D444D]'
-                    }`}
-                    style={{ fontFamily: 'Avenir, Gilroy, sans-serif' }}
-                  >
+                  <p className={excerptTextClass} style={{ fontFamily: 'Avenir, Gilroy, sans-serif' }}>
                     {featuredArticle.subtitle ||
                       getBodyText(featuredArticle.body)}
                   </p>
@@ -259,11 +192,10 @@ const News = ({ isDarkMode }: NewsProps) => {
                   <Link
                     key={article._id}
                     to={`/news-updates/${article.slug?.current || ''}`}
-                    className={`rounded-2xl overflow-hidden border shadow-[0_8px_24px_rgba(104,106,210,0.15)] transition-transform hover:-translate-y-0.5 ${
-                      isDarkMode
-                        ? 'bg-[#1E2026]/80 border-[#3D444D]'
-                        : 'bg-white/80 border-[#DEE4E9]'
-                    }`}
+                    className={clsx(
+                      'shadow-[0_8px_24px_rgba(104,106,210,0.15)] transition-transform hover:-translate-y-0.5',
+                      shellSurfaceClass
+                    )}
                   >
                     {imageUrl && (
                       <div className="relative">
@@ -281,16 +213,7 @@ const News = ({ isDarkMode }: NewsProps) => {
                                   key={`${article._id}-${category.title}-${index}`}
                                   className="news-category-chip inline-flex items-center gap-1 px-3 py-1 rounded-full border bg-white/95 border-transparent"
                                 >
-                                  <img
-                                    src={
-                                      isDarkMode
-                                        ? '/icons/category-dark.svg'
-                                        : '/icons/category-light.svg'
-                                    }
-                                    alt=""
-                                    aria-hidden="true"
-                                    className="w-3 h-3"
-                                  />
+
                                   {category.title}
                                 </div>
                               ))}
@@ -324,18 +247,10 @@ const News = ({ isDarkMode }: NewsProps) => {
                           {getReadTimeText(article.body)}
                         </span>
                       </div>
-                      <h3
-                        className={`text-xl font-bold leading-tight ${
-                          isDarkMode ? 'text-[#E6EBFF]' : 'text-[#1E2026]'
-                        }`}
-                      >
+                      <h3 className={cardTitleTextClass}>
                         {article.title}
                       </h3>
-                      <p
-                        className={`mt-2 text-sm line-clamp-2 ${
-                          isDarkMode ? 'text-[#A9B2BB]' : 'text-[#3D444D]'
-                        }`}
-                      >
+                      <p className={cardExcerptTextClass}>
                         {article.subtitle || getBodyText(article.body)}
                       </p>
                       <span className="mt-3 inline-flex items-center gap-1 text-sm font-bold text-[#5B5BB3]">

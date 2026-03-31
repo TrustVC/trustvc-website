@@ -1,17 +1,12 @@
-import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { format } from 'date-fns'
-import {
-  fetchNewsArticleBySlug,
-  fetchNewsArticles,
-  getBodyText,
-} from '../../lib/sanity/news'
-import { getSanityImageUrl } from '../../lib/sanity/client'
+import clsx from 'clsx'
+import { getBodyText } from '../../lib/sanity/news'
 import type {
-  NewsArticle,
   PortableTextBlock,
   PortableTextSpan,
 } from '../../types/news'
+import { useNewsDetail } from '../../hooks/useNewsDetail'
 
 interface NewsDetailProps {
   isDarkMode: boolean
@@ -19,71 +14,44 @@ interface NewsDetailProps {
 
 const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
   const { slug } = useParams<{ slug: string }>()
-  const [article, setArticle] = useState<NewsArticle | null>(null)
-  const [nextArticle, setNextArticle] = useState<NewsArticle | null>(null)
-  const [loading, setLoading] = useState(true)
+  const {
+    article,
+    nextArticle,
+    loading,
+    subtitleText,
+    articleImageUrl,
+    nextArticleImageUrl,
+    authorImageUrl,
+    publishedDateLabel,
+    updatedDateLabel,
+    showUpdatedDate,
+    articleReadTime,
+    nextArticleReadTime,
+  } = useNewsDetail(slug)
 
-  useEffect(() => {
-    const load = async () => {
-      if (!slug) {
-        setLoading(false)
-        return
-      }
-
-      setLoading(true)
-      const [data, list] = await Promise.all([
-        fetchNewsArticleBySlug(slug),
-        fetchNewsArticles(),
-      ])
-
-      setArticle(data)
-
-      if (data?.slug?.current && Array.isArray(list) && list.length) {
-        const idx = list.findIndex(a => a.slug?.current === data.slug?.current)
-        if (idx >= 0 && idx < list.length - 1) {
-          setNextArticle(list[idx + 1])
-        } else {
-          setNextArticle(null)
-        }
-      } else {
-        setNextArticle(null)
-      }
-
-      setLoading(false)
-    }
-
-    load()
-  }, [slug])
-
-  const subtitleText = article?.subtitle || ''
-  const articleImageUrl = article
-    ? getSanityImageUrl(article.mainImage)?.width(1300).height(700).url()
-    : null
-
-  const nextArticleImageUrl = nextArticle
-    ? getSanityImageUrl(nextArticle.mainImage)?.width(600).height(320).url()
-    : null
-  const authorImageUrl = article?.author?.image
-    ? getSanityImageUrl(article.author.image)?.width(96).height(96).url()
-    : null
-  const publishedDateLabel = article?.publishedAt
-    ? format(new Date(article.publishedAt), 'MMMM d, yyyy')
-    : 'Recent'
-  const updatedDateLabel = article?.updatedAt
-    ? format(new Date(article.updatedAt), 'MMMM d, yyyy')
-    : null
-  const showUpdatedDate = Boolean(
-    updatedDateLabel &&
-    article?.publishedAt &&
-    updatedDateLabel !== publishedDateLabel
+  const panelTextClass = isDarkMode ? 'text-[#A9B2BB]' : 'text-[#5B6571]'
+  const titleClass = clsx(
+    'mt-3 text-3xl md:text-5xl font-bold leading-tight',
+    isDarkMode ? 'text-[#E6EBFF]' : 'text-[#1E2026]'
   )
-
-  const getReadTimeText = (textOrBody: NewsArticle['body']) => {
-    const text = getBodyText(textOrBody)
-    const words = text.split(/\s+/).filter(Boolean).length
-    const minutes = Math.max(1, Math.ceil(words / 200))
-    return `${minutes} min read`
-  }
+  const subtitleClass = clsx(
+    'mt-3 text-base md:text-lg',
+    isDarkMode ? 'text-[#A9B2BB]' : 'text-[#3D444D]'
+  )
+  const metaCardClass = clsx(
+    'w-full max-w-[1100px] rounded-2xl p-10 text-center border',
+    isDarkMode
+      ? 'bg-[#1E2026]/70 border-[#3D444D] text-[#A9B2BB]'
+      : 'bg-white/80 border-[#DEE4E9] text-[#5B6571]'
+  )
+  const articleBodyClass = clsx(
+    'mt-8 max-w-3xl mx-auto space-y-6 text-[15px] leading-7',
+    isDarkMode ? 'text-[#A9B2BB]' : 'text-[#3D444D]'
+  )
+  const footerMetaClass = clsx(
+    'mt-8 max-w-3xl mx-auto flex flex-wrap items-center justify-between gap-3 text-sm',
+    isDarkMode ? 'text-[#A9B2BB]' : 'text-[#5B6571]'
+  )
 
   const renderPortableTextSpan = (
     span: PortableTextSpan,
@@ -127,14 +95,18 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
   if (loading) {
     return (
       <section className="w-full px-4 pt-[120px] pb-16 flex justify-center">
-        <div
-          className={`w-full max-w-[1100px] rounded-2xl p-10 text-center border ${
-            isDarkMode
-              ? 'bg-[#1E2026]/70 border-[#3D444D] text-[#A9B2BB]'
-              : 'bg-white/80 border-[#DEE4E9] text-[#5B6571]'
-          }`}
-        >
-          Loading article...
+        <div className={clsx(metaCardClass, 'animate-pulse')}>
+          <div className="mx-auto max-w-3xl space-y-4">
+            <div className={clsx('h-4 w-48 mx-auto rounded', isDarkMode ? 'bg-[#3D444D]' : 'bg-[#DEE4E9]')} />
+            <div className={clsx('h-10 w-3/4 mx-auto rounded', isDarkMode ? 'bg-[#3D444D]' : 'bg-[#DEE4E9]')} />
+            <div className={clsx('h-4 w-2/3 mx-auto rounded', isDarkMode ? 'bg-[#3D444D]' : 'bg-[#DEE4E9]')} />
+            <div className={clsx('mt-6 h-[260px] w-full rounded-2xl', isDarkMode ? 'bg-[#2A2F37]' : 'bg-[#EEF2F6]')} />
+            <div className="space-y-3 pt-4">
+              <div className={clsx('h-3 w-full rounded', isDarkMode ? 'bg-[#3D444D]' : 'bg-[#DEE4E9]')} />
+              <div className={clsx('h-3 w-[92%] rounded', isDarkMode ? 'bg-[#3D444D]' : 'bg-[#DEE4E9]')} />
+              <div className={clsx('h-3 w-[88%] rounded', isDarkMode ? 'bg-[#3D444D]' : 'bg-[#DEE4E9]')} />
+            </div>
+          </div>
         </div>
       </section>
     )
@@ -144,11 +116,7 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
     return (
       <section className="w-full px-4 pt-[120px] pb-16 flex justify-center">
         <div className="w-full max-w-[1100px] text-center">
-          <h1
-            className={`text-3xl font-bold ${
-              isDarkMode ? 'text-[#E6EBFF]' : 'text-[#1E2026]'
-            }`}
-          >
+          <h1 className={clsx('text-3xl font-bold', isDarkMode ? 'text-[#E6EBFF]' : 'text-[#1E2026')}>
             Article not found
           </h1>
           <Link
@@ -166,9 +134,7 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
     <section className="w-full px-4 pt-[120px] pb-16 flex justify-center bg-transparent">
       <article className="w-full max-w-[1100px]">
         <nav
-          className={`text-xs mb-6 ${
-            isDarkMode ? 'text-[#808894]' : 'text-[#5B6571]'
-          }`}
+          className={clsx('text-xs mb-6', isDarkMode ? 'text-[#808894]' : 'text-[#5B6571')}
         >
           <Link to="/" className="hover:text-[#5B5BB3]">
             Home
@@ -192,19 +158,11 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
               Featured
             </div>
           )}
-          <h1
-            className={`mt-3 text-3xl md:text-5xl font-bold leading-tight ${
-              isDarkMode ? 'text-[#E6EBFF]' : 'text-[#1E2026]'
-            }`}
-          >
+          <h1 className={titleClass}>
             {article.title}
           </h1>
           {subtitleText && (
-            <p
-              className={`mt-3 text-base md:text-lg ${
-                isDarkMode ? 'text-[#A9B2BB]' : 'text-[#3D444D]'
-              }`}
-            >
+            <p className={subtitleClass}>
               {subtitleText}
             </p>
           )}
@@ -218,11 +176,7 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
               className="lg:col-span-8 w-full rounded-2xl object-cover h-[240px] sm:h-[340px] lg:h-[420px]"
             />
           )}
-          <aside
-            className={`lg:col-span-4 p-1 h-fit ${
-              isDarkMode ? 'text-[#A9B2BB]' : 'text-[#5B6571]'
-            }`}
-          >
+          <aside className={clsx('lg:col-span-4 p-1 h-fit', panelTextClass)}>
             <div className="inline-flex items-center gap-3">
               <img
                 src={authorImageUrl || '/icons/profile-default.svg'}
@@ -246,7 +200,7 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
                 aria-hidden="true"
                 className="w-3.5 h-3.5"
               />
-              {`${Math.max(1, Math.ceil(getBodyText(article.body).split(/\s+/).length / 200))} min read`}
+              {articleReadTime}
             </div>
             <div
               className="mt-3 text-sm flex items-center gap-2"
@@ -272,16 +226,6 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
                         : 'bg-white text-[#3D444D]'
                     }`}
                   >
-                    <img
-                      src={
-                        isDarkMode
-                          ? '/icons/category-dark.svg'
-                          : '/icons/category-light.svg'
-                      }
-                      alt=""
-                      aria-hidden="true"
-                      className="w-3 h-3"
-                    />
                     {cat.title}
                   </span>
                 ))}
@@ -290,11 +234,7 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
           </aside>
         </div>
 
-        <div
-          className={`mt-8 max-w-3xl mx-auto space-y-6 text-[15px] leading-7 ${
-            isDarkMode ? 'text-[#A9B2BB]' : 'text-[#3D444D]'
-          }`}
-        >
+        <div className={articleBodyClass}>
           {article.body?.length ? (
             article.body
               .filter(block => block?._type === 'block')
@@ -310,11 +250,7 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
           )}
         </div>
 
-        <div
-          className={`mt-8 max-w-3xl mx-auto flex flex-wrap items-center justify-between gap-3 text-sm ${
-            isDarkMode ? 'text-[#A9B2BB]' : 'text-[#5B6571]'
-          }`}
-        >
+        <div className={footerMetaClass}>
           {article.source && (
             <div>
               <span className="font-semibold">Source: </span>
@@ -358,16 +294,6 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
                                 : 'bg-white/95 border-transparent text-[#3D444D]'
                             }`}
                           >
-                            <img
-                              src={
-                                isDarkMode
-                                  ? '/icons/category-dark.svg'
-                                  : '/icons/category-light.svg'
-                              }
-                              alt=""
-                              aria-hidden="true"
-                              className="w-3 h-3"
-                            />
                             {nextArticle.categories[0].title}
                           </div>
                         )}
@@ -396,7 +322,7 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
                             aria-hidden="true"
                             className="w-3.5 h-3.5"
                           />
-                          {getReadTimeText(nextArticle.body)}
+                          {nextArticleReadTime}
                         </span>
                       </div>
                       <div className="mt-2 text-2xl font-bold text-[#1E2026] leading-tight">
