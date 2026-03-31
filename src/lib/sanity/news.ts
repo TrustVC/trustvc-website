@@ -13,7 +13,7 @@ const NEWS_LIST_QUERY = groq`*[_type == "post"] | order(featured desc, published
   "updatedAt": _updatedAt,
   source,
   body,
-  author->{name},
+  author->{name, image},
   categories[]->{title}
 }`
 
@@ -28,16 +28,41 @@ const NEWS_DETAIL_QUERY = groq`*[_type == "post" && slug.current == $slug][0]{
   "updatedAt": _updatedAt,
   source,
   body,
-  author->{name},
+  author->{name, image},
   categories[]->{title}
 }`
+
+const isFeaturedPost = (article: NewsArticle) =>
+  Boolean(article.featured) ||
+  Boolean(
+    article.categories?.some(
+      category => category.title?.toLowerCase().trim() === 'featured'
+    )
+  )
+
+const normalizeFeatured = (article: NewsArticle): NewsArticle => ({
+  ...article,
+  featured: isFeaturedPost(article),
+})
+
+const sortFeaturedFirst = (articles: NewsArticle[]) =>
+  [...articles].sort((a, b) => {
+    if (Boolean(b.featured) !== Boolean(a.featured)) {
+      return Number(Boolean(b.featured)) - Number(Boolean(a.featured))
+    }
+
+    const aTime = a.publishedAt ? new Date(a.publishedAt).getTime() : 0
+    const bTime = b.publishedAt ? new Date(b.publishedAt).getTime() : 0
+    return bTime - aTime
+  })
 
 export const fetchNewsArticles = async () => {
   if (!isSanityConfigured || !sanityClient) return []
 
   try {
     const data = await sanityClient.fetch<NewsArticle[]>(NEWS_LIST_QUERY)
-    return data ?? []
+    const normalized = (data ?? []).map(normalizeFeatured)
+    return sortFeaturedFirst(normalized)
   } catch (err) {
     console.error('[Sanity] fetchNewsArticles failed', err)
     return []
@@ -51,7 +76,7 @@ export const fetchNewsArticleBySlug = async (slug: string) => {
     const data = await sanityClient.fetch<NewsArticle | null>(NEWS_DETAIL_QUERY, {
       slug,
     })
-    return data
+    return data ? normalizeFeatured(data) : null
   } catch (err) {
     console.error('[Sanity] fetchNewsArticleBySlug failed', err)
     return null

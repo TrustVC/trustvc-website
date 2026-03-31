@@ -12,6 +12,7 @@ export interface SanityImage {
 
 export interface SanityAuthor {
   name?: string
+  image?: SanityImage
 }
 
 export interface SanityCategory {
@@ -20,12 +21,22 @@ export interface SanityCategory {
 
 export interface PortableTextSpan {
   _type?: string
+  _key?: string
   text?: string
+  marks?: string[]
+}
+
+export interface PortableTextMarkDef {
+  _key?: string
+  _type?: string
+  href?: string
 }
 
 export interface PortableTextBlock {
   _type?: string
+  _key?: string
   children?: PortableTextSpan[]
+  markDefs?: PortableTextMarkDef[]
 }
 
 export interface NewsArticle {

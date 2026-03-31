@@ -9,7 +9,8 @@ export default defineType({
       name: 'title',
       title: 'Title',
       type: 'string',
-      validation: Rule => Rule.required().min(2).max(50),
+      validation: Rule =>
+        Rule.required().min(2).max(25).error('Category name must be 2-25 characters.'),
     }),
     defineField({
       name: 'description',

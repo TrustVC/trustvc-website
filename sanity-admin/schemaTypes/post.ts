@@ -45,7 +45,8 @@ export default defineType({
       title: 'Categories',
       type: 'array',
       of: [{type: 'reference', to: [{type: 'category'}]}],
-      validation: Rule => Rule.min(1).required(),
+      validation: Rule =>
+        Rule.min(1).max(4).required().error('Choose between 1 and 4 categories.'),
     }),
     defineField({
       name: 'publishedAt',

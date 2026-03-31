@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 import { format } from 'date-fns'
 import { fetchNewsArticleBySlug, fetchNewsArticles, getBodyText } from '../../lib/sanity/news'
 import { getSanityImageUrl } from '../../lib/sanity/client'
-import type { NewsArticle } from '../../types/news'
+import type { NewsArticle, PortableTextBlock, PortableTextSpan } from '../../types/news'
 
 interface NewsDetailProps {
   isDarkMode: boolean
@@ -47,12 +47,6 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
     load()
   }, [slug])
 
-  const paragraphs = useMemo(() => {
-    const body = getBodyText(article?.body)
-    if (!body) return []
-    return body.split('\n\n').filter(Boolean)
-  }, [article?.body])
-
   const subtitleText = article?.subtitle || ''
   const articleImageUrl = article
     ? getSanityImageUrl(article.mainImage)?.width(1300).height(700).url()
@@ -61,12 +55,61 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
   const nextArticleImageUrl = nextArticle
     ? getSanityImageUrl(nextArticle.mainImage)?.width(600).height(320).url()
     : null
+  const authorImageUrl = article?.author?.image
+    ? getSanityImageUrl(article.author.image)?.width(96).height(96).url()
+    : null
+  const publishedDateLabel = article?.publishedAt
+    ? format(new Date(article.publishedAt), 'MMMM d, yyyy')
+    : 'Recent'
+  const updatedDateLabel = article?.updatedAt
+    ? format(new Date(article.updatedAt), 'MMMM d, yyyy')
+    : null
+  const showUpdatedDate = Boolean(
+    updatedDateLabel && article?.publishedAt && updatedDateLabel !== publishedDateLabel
+  )
 
   const getReadTimeText = (textOrBody: NewsArticle['body']) => {
     const text = getBodyText(textOrBody)
     const words = text.split(/\s+/).filter(Boolean).length
     const minutes = Math.max(1, Math.ceil(words / 200))
     return `${minutes} min read`
+  }
+
+  const renderPortableTextSpan = (
+    span: PortableTextSpan,
+    block: PortableTextBlock,
+    index: number
+  ) => {
+    const text = span.text || ''
+    const marks = span.marks || []
+    const key = span._key || `span-${index}`
+
+    const hasStrong = marks.includes('strong')
+    const linkMarkKey = marks.find(mark =>
+      block.markDefs?.some(def => def._key === mark && def._type === 'link')
+    )
+    const linkDef = linkMarkKey
+      ? block.markDefs?.find(def => def._key === linkMarkKey && def._type === 'link')
+      : null
+
+    const content = hasStrong ? <strong>{text}</strong> : text
+
+    if (linkDef?.href) {
+      const isExternal = /^https?:\/\//.test(linkDef.href)
+      return (
+        <a
+          key={key}
+          href={linkDef.href}
+          target={isExternal ? '_blank' : undefined}
+          rel={isExternal ? 'noopener noreferrer' : undefined}
+          className="underline text-[#5B5BB3] hover:opacity-80"
+        >
+          {content}
+        </a>
+      )
+    }
+
+    return <span key={key}>{content}</span>
   }
 
   if (loading) {
@@ -109,9 +152,7 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
 
   return (
     <section
-      className={`w-full px-4 pt-[120px] pb-16 flex justify-center bg-transparent ${
-        isDarkMode ? 'dark-mode' : ''
-      }`}
+      className="w-full px-4 pt-[120px] pb-16 flex justify-center bg-transparent"
     >
       <article className="w-full max-w-[1100px]">
         <nav
@@ -131,7 +172,12 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
 
         <header className="text-center max-w-3xl mx-auto">
           {article.featured && (
-            <div className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-[#5B5BB3] text-white text-xs font-bold">
+            <div
+              className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-white text-xs font-bold"
+              style={{
+                background: 'linear-gradient(105.36deg, #3C83F6 0%, #6467F2 100%)',
+              }}
+            >
               Featured
             </div>
           )}
@@ -166,61 +212,57 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
               isDarkMode ? 'text-[#A9B2BB]' : 'text-[#5B6571]'
             }`}
           >
-            <div className="font-bold text-[#5B5BB3] text-lg">
-              {article.author?.name || 'Author Name'}
-            </div>
-            <div className="mt-4 text-sm inline-flex items-center gap-2">
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
+            <div className="inline-flex items-center gap-3">
+              <img
+                src={authorImageUrl || '/icons/profile-default.svg'}
+                alt={article.author?.name || 'Author'}
+                className="w-12 h-12 rounded-full object-cover"
+              />
+              <div
+                className="font-bold text-lg"
+                style={{ color: 'var(--Neutral-100-50, #5B6571)' }}
               >
-                <circle cx="12" cy="12" r="9" stroke="#5B6571" strokeWidth="1.8" />
-                <path
-                  d="M12 7V12L15 14"
-                  stroke="#5B6571"
-                  strokeWidth="1.8"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-              {Math.max(1, Math.ceil(getBodyText(article.body).split(/\s+/).length / 200))} min
-              read
+                {article.author?.name || 'Author Name'}
+              </div>
             </div>
-            <div className="mt-3 text-sm inline-flex items-center gap-2">
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M7 2V5M17 2V5M3 9H21M5 4H19C20.1046 4 21 4.89543 21 6V19C21 20.1046 20.1046 21 19 21H5C3.89543 21 3 20.1046 3 19V6C3 4.89543 3.89543 4 5 4Z"
-                  stroke="#5B6571"
-                  strokeWidth="1.8"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-              {article.publishedAt
-                ? format(new Date(article.publishedAt), 'MMMM d, yyyy')
-                : 'Recent'}
-              {article.updatedAt
-                ? ` (Updated ${format(new Date(article.updatedAt), 'MMMM d, yyyy')})`
-                : ''}
+            <div
+              className="mt-4 text-sm flex items-center gap-2 whitespace-nowrap"
+              style={{ color: 'var(--Neutral-100-50, #5B6571)' }}
+            >
+              <img
+                src="/images/networks/clock.svg"
+                alt=""
+                aria-hidden="true"
+                className="w-3.5 h-3.5"
+              />
+              {`${Math.max(1, Math.ceil(getBodyText(article.body).split(/\s+/).length / 200))} min read`}
+            </div>
+            <div
+              className="mt-3 text-sm flex items-center gap-2"
+              style={{ color: 'var(--Neutral-100-50, #5B6571)' }}
+            >
+              <img
+                src="/images/networks/calendar.svg"
+                alt=""
+                aria-hidden="true"
+                className="w-3.5 h-3.5"
+              />
+              {publishedDateLabel}
+              {showUpdatedDate ? ` (Updated ${updatedDateLabel})` : ''}
             </div>
             {!!article.categories?.length && (
               <div className="mt-3 flex flex-wrap gap-2">
                 {article.categories.map(cat => (
                   <span
                     key={cat.title}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white text-[#3D444D] text-xs font-semibold"
+                    className={`inline-flex items-center gap-1 rounded-[9999px] border border-[#A9B2BB54] px-[10.56px] py-[2.56px] text-xs font-semibold ${
+                      isDarkMode ? 'bg-transparent text-[#5B6571]' : 'bg-white text-[#3D444D]'
+                    }`}
                   >
                     <img
-                      src="/images/networks/label.svg"
+                      src={
+                        isDarkMode ? '/icons/category-dark.svg' : '/icons/category-light.svg'
+                      }
                       alt=""
                       aria-hidden="true"
                       className="w-3 h-3"
@@ -238,10 +280,18 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
             isDarkMode ? 'text-[#A9B2BB]' : 'text-[#3D444D]'
           }`}
         >
-          {(paragraphs.length ? paragraphs : ['No content available yet.']).map(
-            paragraph => (
-              <p key={paragraph.slice(0, 60)}>{paragraph}</p>
-            )
+          {article.body?.length ? (
+            article.body
+              .filter(block => block?._type === 'block')
+              .map((block, blockIndex) => (
+                <p key={block._key || `block-${blockIndex}`}>
+                  {(block.children || []).map((span, spanIndex) =>
+                    renderPortableTextSpan(span, block, spanIndex)
+                  )}
+                </p>
+              ))
+          ) : (
+            <p>No content available yet.</p>
           )}
         </div>
 
@@ -287,9 +337,19 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
                           className="w-full h-[190px] sm:h-[220px] object-cover"
                         />
                         {nextArticle.categories?.[0]?.title && (
-                          <div className="absolute top-3 right-3 inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white/95 text-[#3D444D] text-xs font-semibold">
+                          <div
+                            className={`absolute top-3 right-3 inline-flex items-center gap-1 px-3 py-1 rounded-full border text-xs font-semibold ${
+                              isDarkMode
+                                ? 'bg-transparent border-[#A9B2BB54] text-[#5B6571]'
+                                : 'bg-white/95 border-transparent text-[#3D444D]'
+                            }`}
+                          >
                             <img
-                              src="/images/networks/label.svg"
+                              src={
+                                isDarkMode
+                                  ? '/icons/category-dark.svg'
+                                  : '/icons/category-light.svg'
+                              }
                               alt=""
                               aria-hidden="true"
                               className="w-3 h-3"
@@ -302,48 +362,23 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
                     <div className="p-4 sm:p-5">
                       <div className="flex flex-wrap items-center gap-4 text-xs text-[#5B6571] font-semibold">
                         <span className="inline-flex items-center gap-1">
-                          <svg
-                            width="14"
-                            height="14"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M7 2V5M17 2V5M3 9H21M5 4H19C20.1046 4 21 4.89543 21 6V19C21 20.1046 20.1046 21 19 21H5C3.89543 21 3 20.1046 3 19V6C3 4.89543 3.89543 4 5 4Z"
-                              stroke="#5B6571"
-                              strokeWidth="1.8"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                          </svg>
+                          <img
+                            src="/images/networks/calendar.svg"
+                            alt=""
+                            aria-hidden="true"
+                            className="w-3.5 h-3.5"
+                          />
                           {nextArticle.publishedAt
                             ? format(new Date(nextArticle.publishedAt), 'MMMM d, yyyy')
                             : 'Recent'}
                         </span>
                         <span className="inline-flex items-center gap-1">
-                          <svg
-                            width="14"
-                            height="14"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <circle
-                              cx="12"
-                              cy="12"
-                              r="9"
-                              stroke="#5B6571"
-                              strokeWidth="1.8"
-                            />
-                            <path
-                              d="M12 7V12L15 14"
-                              stroke="#5B6571"
-                              strokeWidth="1.8"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                          </svg>
+                          <img
+                            src="/images/networks/clock.svg"
+                            alt=""
+                            aria-hidden="true"
+                            className="w-3.5 h-3.5"
+                          />
                           {getReadTimeText(nextArticle.body)}
                         </span>
                       </div>
