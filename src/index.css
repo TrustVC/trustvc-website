@@ -102,15 +102,23 @@ body.dark-mode {
       #ffffff 0%,
       rgba(223, 225, 255, 0.33) 100%
     );
-  background-size: 100% auto, cover;
-  background-position: bottom center, center;
+  background-size:
+    100% auto,
+    cover;
+  background-position:
+    bottom center,
+    center;
   background-repeat: no-repeat, no-repeat;
 }
 
 .app-shell--news-dark {
   background-image: url('/backgrounds/bottom-backgound-grid.svg');
-  background-size: 100% auto, cover;
-  background-position: bottom center, center;
+  background-size:
+    100% auto,
+    cover;
+  background-position:
+    bottom center,
+    center;
   background-repeat: no-repeat, no-repeat;
 }
 

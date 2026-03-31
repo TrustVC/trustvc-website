@@ -1,9 +1,17 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { format } from 'date-fns'
-import { fetchNewsArticleBySlug, fetchNewsArticles, getBodyText } from '../../lib/sanity/news'
+import {
+  fetchNewsArticleBySlug,
+  fetchNewsArticles,
+  getBodyText,
+} from '../../lib/sanity/news'
 import { getSanityImageUrl } from '../../lib/sanity/client'
-import type { NewsArticle, PortableTextBlock, PortableTextSpan } from '../../types/news'
+import type {
+  NewsArticle,
+  PortableTextBlock,
+  PortableTextSpan,
+} from '../../types/news'
 
 interface NewsDetailProps {
   isDarkMode: boolean
@@ -65,7 +73,9 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
     ? format(new Date(article.updatedAt), 'MMMM d, yyyy')
     : null
   const showUpdatedDate = Boolean(
-    updatedDateLabel && article?.publishedAt && updatedDateLabel !== publishedDateLabel
+    updatedDateLabel &&
+    article?.publishedAt &&
+    updatedDateLabel !== publishedDateLabel
   )
 
   const getReadTimeText = (textOrBody: NewsArticle['body']) => {
@@ -89,7 +99,9 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
       block.markDefs?.some(def => def._key === mark && def._type === 'link')
     )
     const linkDef = linkMarkKey
-      ? block.markDefs?.find(def => def._key === linkMarkKey && def._type === 'link')
+      ? block.markDefs?.find(
+          def => def._key === linkMarkKey && def._type === 'link'
+        )
       : null
 
     const content = hasStrong ? <strong>{text}</strong> : text
@@ -151,9 +163,7 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
   }
 
   return (
-    <section
-      className="w-full px-4 pt-[120px] pb-16 flex justify-center bg-transparent"
-    >
+    <section className="w-full px-4 pt-[120px] pb-16 flex justify-center bg-transparent">
       <article className="w-full max-w-[1100px]">
         <nav
           className={`text-xs mb-6 ${
@@ -175,7 +185,8 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
             <div
               className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-white text-xs font-bold"
               style={{
-                background: 'linear-gradient(105.36deg, #3C83F6 0%, #6467F2 100%)',
+                background:
+                  'linear-gradient(105.36deg, #3C83F6 0%, #6467F2 100%)',
               }}
             >
               Featured
@@ -256,12 +267,16 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
                   <span
                     key={cat.title}
                     className={`inline-flex items-center gap-1 rounded-[9999px] border border-[#A9B2BB54] px-[10.56px] py-[2.56px] text-xs font-semibold ${
-                      isDarkMode ? 'bg-transparent text-[#5B6571]' : 'bg-white text-[#3D444D]'
+                      isDarkMode
+                        ? 'bg-transparent text-[#5B6571]'
+                        : 'bg-white text-[#3D444D]'
                     }`}
                   >
                     <img
                       src={
-                        isDarkMode ? '/icons/category-dark.svg' : '/icons/category-light.svg'
+                        isDarkMode
+                          ? '/icons/category-dark.svg'
+                          : '/icons/category-light.svg'
                       }
                       alt=""
                       aria-hidden="true"
@@ -311,8 +326,7 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
         <div
           className="mt-12 w-full rounded-2xl p-5 sm:p-7 border border-[#A9B2BB54] bg-cover bg-center"
           style={{
-            background:
-              'linear-gradient(97.83deg, #686AD2 10%, #167EB0 90%)',
+            background: 'linear-gradient(97.83deg, #686AD2 10%, #167EB0 90%)',
             backgroundImage:
               "url('/images/carousel/next_article.svg'), linear-gradient(97.83deg, #686AD2 10%, #167EB0 90%)",
           }}
@@ -369,7 +383,10 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
                             className="w-3.5 h-3.5"
                           />
                           {nextArticle.publishedAt
-                            ? format(new Date(nextArticle.publishedAt), 'MMMM d, yyyy')
+                            ? format(
+                                new Date(nextArticle.publishedAt),
+                                'MMMM d, yyyy'
+                              )
                             : 'Recent'}
                         </span>
                         <span className="inline-flex items-center gap-1">

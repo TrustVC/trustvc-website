@@ -10,10 +10,16 @@ const ShimmerPostCards = ({ count = 4, isDarkMode }: ShimmerPostCardsProps) => {
         <div
           key={`shimmer-post-card-${index}`}
           className={`rounded-2xl overflow-hidden border animate-pulse ${
-            isDarkMode ? 'bg-[#1E2026]/80 border-[#3D444D]' : 'bg-white/80 border-[#DEE4E9]'
+            isDarkMode
+              ? 'bg-[#1E2026]/80 border-[#3D444D]'
+              : 'bg-white/80 border-[#DEE4E9]'
           }`}
         >
-          <div className={isDarkMode ? 'bg-[#2A313B] h-[210px]' : 'bg-[#E6EBFF] h-[210px]'} />
+          <div
+            className={
+              isDarkMode ? 'bg-[#2A313B] h-[210px]' : 'bg-[#E6EBFF] h-[210px]'
+            }
+          />
           <div className="p-4">
             <div className="flex gap-3 mb-3">
               <div

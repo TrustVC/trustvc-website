@@ -9,7 +9,9 @@ interface NewsProps {
   isDarkMode: boolean
 }
 
-const ShimmerPostCards = lazy(() => import('../../components/common/ShimmerPostCards'))
+const ShimmerPostCards = lazy(
+  () => import('../../components/common/ShimmerPostCards')
+)
 
 const GRID_CARD_ESTIMATED_HEIGHT = 350
 
@@ -44,7 +46,10 @@ const News = ({ isDarkMode }: NewsProps) => {
   )
   const hasMoreArticles = visibleCount < articleGrid.length
   const featuredImageUrl = featuredArticle
-    ? getSanityImageUrl(featuredArticle.mainImage)?.width(1200).height(650).url()
+    ? getSanityImageUrl(featuredArticle.mainImage)
+        ?.width(1200)
+        .height(650)
+        .url()
     : null
 
   useEffect(() => {
@@ -58,7 +63,10 @@ const News = ({ isDarkMode }: NewsProps) => {
       1,
       Math.ceil(window.innerHeight / GRID_CARD_ESTIMATED_HEIGHT)
     )
-    const initialCount = Math.min(articleGrid.length, rowsToFillViewport * columns)
+    const initialCount = Math.min(
+      articleGrid.length,
+      rowsToFillViewport * columns
+    )
     setVisibleCount(initialCount)
   }, [articleGrid])
 
@@ -75,7 +83,9 @@ const News = ({ isDarkMode }: NewsProps) => {
 
         setIsLoadingMore(true)
         window.setTimeout(() => {
-          setVisibleCount(prev => Math.min(prev + batchSize, articleGrid.length))
+          setVisibleCount(prev =>
+            Math.min(prev + batchSize, articleGrid.length)
+          )
           setIsLoadingMore(false)
         }, 350)
       },
@@ -97,12 +107,16 @@ const News = ({ isDarkMode }: NewsProps) => {
           <h1 className="text-4xl sm:text-5xl font-bold">
             <span
               style={{
-                color: isDarkMode ? '#FFFFFF' : 'var(--Neutral-100-10, #1E2026)',
+                color: isDarkMode
+                  ? '#FFFFFF'
+                  : 'var(--Neutral-100-10, #1E2026)',
               }}
             >
               News &amp;{' '}
             </span>
-            <span style={{ color: 'var(--Primary-100-60, #686AD2)' }}>Updates</span>
+            <span style={{ color: 'var(--Primary-100-60, #686AD2)' }}>
+              Updates
+            </span>
           </h1>
           <p
             className={`mt-3 text-base sm:text-lg max-w-3xl mx-auto ${
@@ -194,7 +208,10 @@ const News = ({ isDarkMode }: NewsProps) => {
                         className="w-3.5 h-3.5"
                       />
                       {featuredArticle.publishedAt
-                        ? format(new Date(featuredArticle.publishedAt), 'MMMM d, yyyy')
+                        ? format(
+                            new Date(featuredArticle.publishedAt),
+                            'MMMM d, yyyy'
+                          )
                         : 'Recent'}
                     </span>
                   </div>
@@ -211,16 +228,15 @@ const News = ({ isDarkMode }: NewsProps) => {
                     }`}
                     style={{ fontFamily: 'Avenir, Gilroy, sans-serif' }}
                   >
-                    {featuredArticle.subtitle || getBodyText(featuredArticle.body)}
+                    {featuredArticle.subtitle ||
+                      getBodyText(featuredArticle.body)}
                   </p>
                   <Link
                     to={`/news-updates/${featuredArticle.slug?.current || ''}`}
                     className="mt-6 inline-flex w-fit items-center justify-center gap-1 rounded-lg px-4 py-2 text-sm font-bold text-white hover:opacity-90"
                     style={{ background: 'var(--Primary-100-50, #5B5BB3)' }}
                   >
-                    <span>
-                      Read Full Article
-                    </span>
+                    <span>Read Full Article</span>
                     <img
                       src="/images/networks/forward-white.svg"
                       alt=""
@@ -292,7 +308,10 @@ const News = ({ isDarkMode }: NewsProps) => {
                             className="w-3.5 h-3.5"
                           />
                           {article.publishedAt
-                            ? format(new Date(article.publishedAt), 'MMMM d, yyyy')
+                            ? format(
+                                new Date(article.publishedAt),
+                                'MMMM d, yyyy'
+                              )
                             : 'Recent'}
                         </span>
                         <span className="news-meta-text inline-flex items-center gap-1">
@@ -336,14 +355,19 @@ const News = ({ isDarkMode }: NewsProps) => {
               {isLoadingMore && (
                 <Suspense fallback={null}>
                   <ShimmerPostCards
-                    count={Math.min(2, articleGrid.length - visibleArticles.length)}
+                    count={Math.min(
+                      2,
+                      articleGrid.length - visibleArticles.length
+                    )}
                     isDarkMode={isDarkMode}
                   />
                 </Suspense>
               )}
             </div>
 
-            {hasMoreArticles && <div ref={loadMoreAnchorRef} className="h-8 w-full" />}
+            {hasMoreArticles && (
+              <div ref={loadMoreAnchorRef} className="h-8 w-full" />
+            )}
           </div>
         )}
       </div>

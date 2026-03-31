@@ -73,9 +73,12 @@ export const fetchNewsArticleBySlug = async (slug: string) => {
   if (!isSanityConfigured || !sanityClient) return null
 
   try {
-    const data = await sanityClient.fetch<NewsArticle | null>(NEWS_DETAIL_QUERY, {
-      slug,
-    })
+    const data = await sanityClient.fetch<NewsArticle | null>(
+      NEWS_DETAIL_QUERY,
+      {
+        slug,
+      }
+    )
     return data ? normalizeFeatured(data) : null
   } catch (err) {
     console.error('[Sanity] fetchNewsArticleBySlug failed', err)
