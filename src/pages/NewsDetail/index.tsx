@@ -3,6 +3,7 @@ import { format } from 'date-fns'
 import clsx from 'clsx'
 import { getBodyText } from '../../lib/sanity/news'
 import type {
+  NewsDetailHookResult,
   PortableTextBlock,
   PortableTextSpan,
 } from '../../types/news'
@@ -27,7 +28,7 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
     showUpdatedDate,
     articleReadTime,
     nextArticleReadTime,
-  } = useNewsDetail(slug)
+  }: NewsDetailHookResult = useNewsDetail(slug)
 
   const panelTextClass = isDarkMode ? 'text-[#A9B2BB]' : 'text-[#5B6571]'
   const titleClass = clsx(

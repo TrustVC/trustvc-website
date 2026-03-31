@@ -5,6 +5,7 @@ import clsx from 'clsx'
 import { getBodyText } from '../../lib/sanity/news'
 import { getSanityImageUrl } from '../../lib/sanity/client'
 import { useNewsList } from '../../hooks/useNewsList'
+import { NewsListHookResult } from '../../types/news'
 
 interface NewsProps {
   isDarkMode: boolean
@@ -26,7 +27,7 @@ const News = ({ isDarkMode }: NewsProps) => {
     hasMoreArticles,
     loadMoreAnchorRef,
     getReadTimeText,
-  } = useNewsList()
+  }: NewsListHookResult = useNewsList()
 
   const shellSurfaceClass = clsx(
     'rounded-2xl overflow-hidden border',

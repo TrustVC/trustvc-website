@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { fetchNewsArticles, getBodyText } from '../lib/sanity/news'
 import { getSanityImageUrl } from '../lib/sanity/client'
-import type { NewsArticle } from '../types/news'
+import type { NewsArticle, NewsListHookResult } from '../types/news'
 
 const GRID_CARD_ESTIMATED_HEIGHT = 350
 
@@ -11,7 +11,7 @@ const getReadTimeText = (body?: NewsArticle['body']) => {
   return `${minutes} min read`
 }
 
-export const useNewsList = () => {
+export const useNewsList = (): NewsListHookResult => {
   const [articles, setArticles] = useState<NewsArticle[]>([])
   const [loading, setLoading] = useState(true)
   const [visibleCount, setVisibleCount] = useState(0)
@@ -48,13 +48,13 @@ export const useNewsList = () => {
   )
   const hasMoreArticles = visibleCount < articleGrid.length
 
-  const featuredImageUrl = useMemo(
+  const featuredImageUrl: string | null = useMemo(
     () =>
       featuredArticle
         ? getSanityImageUrl(featuredArticle.mainImage)
             ?.width(1200)
             .height(650)
-            .url()
+            .url() ?? null
         : null,
     [featuredArticle]
   )

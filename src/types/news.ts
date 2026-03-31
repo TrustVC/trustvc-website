@@ -53,3 +53,31 @@ export interface NewsArticle {
   author?: SanityAuthor
   categories?: SanityCategory[]
 }
+
+export type NewsDetailHookResult = {
+  article: NewsArticle | null
+  nextArticle: NewsArticle | null
+  loading: boolean
+  subtitleText: string
+  articleImageUrl: string | null
+  nextArticleImageUrl: string | null
+  authorImageUrl: string | null
+  publishedDateLabel: string
+  updatedDateLabel: string | null
+  showUpdatedDate: boolean
+  articleReadTime: string
+  nextArticleReadTime: string
+}
+
+export type NewsListHookResult = {
+  articles: NewsArticle[]
+  loading: boolean
+  isLoadingMore: boolean
+  featuredArticle: NewsArticle | null
+  featuredImageUrl: string | null
+  articleGrid: NewsArticle[]
+  visibleArticles: NewsArticle[]
+  hasMoreArticles: boolean
+  loadMoreAnchorRef: React.RefObject<HTMLDivElement>
+  getReadTimeText: (body?: NewsArticle['body']) => string
+}
