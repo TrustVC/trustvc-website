@@ -1,3 +1,5 @@
+import type { RefObject } from 'react'
+
 export interface SanitySlug {
   current?: string
 }
@@ -78,6 +80,6 @@ export type NewsListHookResult = {
   articleGrid: NewsArticle[]
   visibleArticles: NewsArticle[]
   hasMoreArticles: boolean
-  loadMoreAnchorRef: React.RefObject<HTMLDivElement>
+  loadMoreAnchorRef: RefObject<HTMLDivElement>
   getReadTimeText: (body?: NewsArticle['body']) => string
 }

@@ -117,7 +117,7 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
     return (
       <section className="w-full px-4 pt-[120px] pb-16 flex justify-center">
         <div className="w-full max-w-[1100px] text-center">
-          <h1 className={clsx('text-3xl font-bold', isDarkMode ? 'text-[#E6EBFF]' : 'text-[#1E2026')}>
+          <h1 className={clsx('text-3xl font-bold', isDarkMode ? 'text-[#E6EBFF]' : 'text-[#1E2026]')}>
             Article not found
           </h1>
           <Link
@@ -135,7 +135,8 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
     <section className="w-full px-4 pt-[120px] pb-16 flex justify-center bg-transparent">
       <article className="w-full max-w-[1100px]">
         <nav
-          className={clsx('text-xs mb-6', isDarkMode ? 'text-[#808894]' : 'text-[#5B6571')}
+          className={clsx('text-xs mb-6', isDarkMode ? 'text-[#808894]' : 'text-[#5B6571]')}
+          aria-label="Breadcrumb"
         >
           <Link to="/" className="hover:text-[#5B5BB3]">
             Home
@@ -184,16 +185,15 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
                 alt={article.author?.name || 'Author'}
                 className="w-12 h-12 rounded-full object-cover"
               />
-              <div
-                className="font-bold text-lg"
-                style={{ color: 'var(--Neutral-100-50, #5B6571)' }}
-              >
+              <div className={clsx('font-bold text-lg', isDarkMode ? 'text-[#A9B2BB]' : 'text-[#5B6571]')}>
                 {article.author?.name || 'Author Name'}
               </div>
             </div>
             <div
-              className="mt-4 text-sm flex items-center gap-2 whitespace-nowrap"
-              style={{ color: 'var(--Neutral-100-50, #5B6571)' }}
+              className={clsx(
+                'mt-4 text-sm flex items-center gap-2 whitespace-nowrap',
+                isDarkMode ? 'text-[#A9B2BB]' : 'text-[#5B6571]'
+              )}
             >
               <img
                 src="/images/networks/clock.svg"
@@ -204,8 +204,10 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
               {articleReadTime}
             </div>
             <div
-              className="mt-3 text-sm flex items-center gap-2"
-              style={{ color: 'var(--Neutral-100-50, #5B6571)' }}
+              className={clsx(
+                'mt-3 text-sm flex items-center gap-2',
+                isDarkMode ? 'text-[#A9B2BB]' : 'text-[#5B6571]'
+              )}
             >
               <img
                 src="/images/networks/calendar.svg"
@@ -274,9 +276,9 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
             </div>
 
             <div className="md:col-span-8 lg:col-span-9">
-              {nextArticle ? (
+              {nextArticle?.slug?.current ? (
                 <Link
-                  to={`/news-updates/${nextArticle.slug?.current || ''}`}
+                  to={`/news-updates/${nextArticle.slug.current}`}
                   className="block rounded-2xl overflow-hidden border border-[#A9B2BB54] bg-[#FFFFFFE5]"
                 >
                   <div className="flex flex-col">

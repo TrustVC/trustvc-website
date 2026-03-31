@@ -47,7 +47,8 @@ npx sanity deploy
   - `VITE_SANITY_PROJECT_ID`
   - `VITE_SANITY_DATASET`
   - `VITE_SANITY_API_VERSION`
-  - `VITE_SANITY_READ_TOKEN` (if dataset is private)
+  - Do not expose a read token in `VITE_*` variables.
+  - If a token is required, keep it server-side as `SANITY_READ_TOKEN` and call Sanity through a server-only endpoint.
 
 ## Schema Overview
 
@@ -162,4 +163,4 @@ Supports:
   - author name + image
   - categories
   - featured flag
-  - body rich text (supports bold + links in detail view)
+  - body rich text (supports headings, blockquotes, bold, emphasis, links, lists, and images in detail view)

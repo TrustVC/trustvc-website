@@ -11,6 +11,11 @@ const getReadTimeText = (body?: NewsArticle['body']) => {
   return `${minutes} min read`
 }
 
+const hasSlug = (
+  article: NewsArticle
+): article is NewsArticle & { slug: { current: string } } =>
+  Boolean(article.slug?.current)
+
 export const useNewsList = (): NewsListHookResult => {
   const [articles, setArticles] = useState<NewsArticle[]>([])
   const [loading, setLoading] = useState(true)
@@ -25,7 +30,7 @@ export const useNewsList = (): NewsListHookResult => {
       try {
         const data = await fetchNewsArticles()
         if (!isActive) return
-        setArticles(data)
+        setArticles(data.filter(hasSlug))
       } finally {
         if (isActive) {
           setLoading(false)
@@ -79,6 +84,7 @@ export const useNewsList = (): NewsListHookResult => {
 
     const columns = window.innerWidth >= 768 ? 2 : 1
     const batchSize = Math.max(columns, columns * 2)
+    let timeoutId: number | null = null
 
     const observer = new IntersectionObserver(
       entries => {
@@ -86,7 +92,7 @@ export const useNewsList = (): NewsListHookResult => {
         if (!firstEntry?.isIntersecting) return
 
         setIsLoadingMore(true)
-        window.setTimeout(() => {
+        timeoutId = window.setTimeout(() => {
           setVisibleCount(prev => Math.min(prev + batchSize, articleGrid.length))
           setIsLoadingMore(false)
         }, 350)
@@ -95,7 +101,12 @@ export const useNewsList = (): NewsListHookResult => {
     )
 
     observer.observe(loadMoreAnchorRef.current)
-    return () => observer.disconnect()
+    return () => {
+      if (timeoutId !== null) {
+        window.clearTimeout(timeoutId)
+      }
+      observer.disconnect()
+    }
   }, [articleGrid.length, hasMoreArticles, isLoadingMore])
 
   return {

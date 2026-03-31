@@ -165,19 +165,21 @@ const News = ({ isDarkMode }: NewsProps) => {
                     {featuredArticle.subtitle ||
                       getBodyText(featuredArticle.body)}
                   </p>
-                  <Link
-                    to={`/news-updates/${featuredArticle.slug?.current || ''}`}
-                    className="mt-6 inline-flex w-fit items-center justify-center gap-1 rounded-lg px-4 py-2 text-sm font-bold text-white hover:opacity-90"
-                    style={{ background: 'var(--Primary-100-50, #5B5BB3)' }}
-                  >
-                    <span>Read Full Article</span>
-                    <img
-                      src="/images/networks/forward-white.svg"
-                      alt=""
-                      aria-hidden="true"
-                      className="h-5"
-                    />
-                  </Link>
+                  {featuredArticle.slug?.current && (
+                    <Link
+                      to={`/news-updates/${featuredArticle.slug.current}`}
+                      className="mt-6 inline-flex w-fit items-center justify-center gap-1 rounded-lg px-4 py-2 text-sm font-bold text-white hover:opacity-90"
+                      style={{ background: 'var(--Primary-100-50, #5B5BB3)' }}
+                    >
+                      <span>Read Full Article</span>
+                      <img
+                        src="/images/networks/forward-white.svg"
+                        alt=""
+                        aria-hidden="true"
+                        className="h-5"
+                      />
+                    </Link>
+                  )}
                 </div>
               </article>
             )}
@@ -186,8 +188,8 @@ const News = ({ isDarkMode }: NewsProps) => {
               {visibleArticles.map(article => {
                 const imageUrl = getSanityImageUrl(article.mainImage)
                   ?.width(900)
-                  .height(420)
-                  .url()
+                  ?.height(420)
+                  ?.url()
 
                 return (
                   <Link
