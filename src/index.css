@@ -338,7 +338,15 @@ body.dark-mode {
 .overlay-border-shadow {
   align-self: stretch;
   min-width: min(340px, 100%);
-  padding: 16px 16px;
+  padding: 16px;
+  background:
+    linear-gradient(
+      0deg,
+      rgba(222, 228, 233, 0) 0%,
+      rgba(222, 228, 233, 0) 100%
+    ),
+    rgba(255, 255, 255, 0.66);
+  box-shadow: 0px 8px 32px rgba(104, 106, 210, 0.33);
   border-radius: 16px;
   outline: 1px rgba(169, 178, 187, 0.33) solid;
   outline-offset: -1px;
