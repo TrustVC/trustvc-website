@@ -303,9 +303,7 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
           )}
         </div>
 
-        <div
-          className="news-next-container mt-12 w-full rounded-2xl p-5 sm:p-7 border border-[#A9B2BB54] bg-cover bg-center"
-        >
+        <div className="news-next-container mt-12 w-full rounded-2xl p-5 sm:p-7 border border-[#A9B2BB54] bg-cover bg-center">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
             <div className="md:col-span-4 lg:col-span-3">
               <div className="text-white text-3xl font-bold">Next Article:</div>

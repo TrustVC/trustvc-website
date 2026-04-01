@@ -154,9 +154,7 @@ const News = ({ isDarkMode }: NewsProps) => {
                     </span>
                   </div>
                   <h2 className={titleTextClass}>{featuredArticle.title}</h2>
-                  <p
-                    className={clsx(excerptTextClass, 'news-excerpt-font')}
-                  >
+                  <p className={clsx(excerptTextClass, 'news-excerpt-font')}>
                     {featuredArticle.subtitle ||
                       getBodyText(featuredArticle.body)}
                   </p>
