@@ -64,18 +64,10 @@ const News = ({ isDarkMode }: NewsProps) => {
       <div className="w-full max-w-[1280px]">
         <header className="text-center mb-8">
           <h1 className="text-4xl sm:text-5xl font-bold">
-            <span
-              style={{
-                color: isDarkMode
-                  ? '#FFFFFF'
-                  : 'var(--Neutral-100-10, #1E2026)',
-              }}
-            >
+            <span className={isDarkMode ? 'text-white' : 'text-[#1E2026]'}>
               News &amp;{' '}
             </span>
-            <span style={{ color: 'var(--Primary-100-60, #686AD2)' }}>
-              Updates
-            </span>
+            <span className="text-[#686AD2]">Updates</span>
           </h1>
           <p className={subTextClass}>
             Stay up to date with the latest TrustVC developments, partnerships,
@@ -117,13 +109,7 @@ const News = ({ isDarkMode }: NewsProps) => {
                       className="w-full h-full min-h-[280px] md:min-h-[340px] object-cover"
                     />
                     {featuredArticle.featured && (
-                      <span
-                        className="absolute top-3 left-3 inline-flex items-center gap-1 px-2 py-1 rounded-full text-white text-xs font-bold"
-                        style={{
-                          background:
-                            'linear-gradient(105.36deg, #3C83F6 0%, #6467F2 100%)',
-                        }}
-                      >
+                      <span className="news-featured-badge absolute top-3 left-3 inline-flex items-center gap-1 px-2 py-1 rounded-full text-white text-xs font-bold">
                         Featured
                       </span>
                     )}
@@ -148,7 +134,7 @@ const News = ({ isDarkMode }: NewsProps) => {
                         src="/images/networks/clock.svg"
                         alt=""
                         aria-hidden="true"
-                        className="w-[18px] h-[18px]"
+                        className="news-meta-icon"
                       />
                       {getReadTimeText(featuredArticle.body)}
                     </span>
@@ -157,7 +143,7 @@ const News = ({ isDarkMode }: NewsProps) => {
                         src="/images/networks/calendar.svg"
                         alt=""
                         aria-hidden="true"
-                        className="w-[18px] h-[18px]"
+                        className="news-meta-icon"
                       />
                       {featuredArticle.publishedAt
                         ? format(
@@ -169,8 +155,7 @@ const News = ({ isDarkMode }: NewsProps) => {
                   </div>
                   <h2 className={titleTextClass}>{featuredArticle.title}</h2>
                   <p
-                    className={excerptTextClass}
-                    style={{ fontFamily: 'Avenir, Gilroy, sans-serif' }}
+                    className={clsx(excerptTextClass, 'news-excerpt-font')}
                   >
                     {featuredArticle.subtitle ||
                       getBodyText(featuredArticle.body)}
@@ -178,8 +163,7 @@ const News = ({ isDarkMode }: NewsProps) => {
                   {featuredArticle.slug?.current && (
                     <Link
                       to={`/news-updates/${featuredArticle.slug.current}`}
-                      className="mt-6 inline-flex w-fit items-center justify-center gap-1 rounded-lg px-4 py-2 text-sm font-bold text-white hover:opacity-90"
-                      style={{ background: 'var(--Primary-100-50, #5B5BB3)' }}
+                      className="news-read-full-btn mt-6 inline-flex w-fit items-center justify-center gap-1 rounded-lg px-4 py-2 text-sm font-bold text-white hover:opacity-90"
                     >
                       <span>Read Full Article</span>
                       <img
@@ -245,7 +229,7 @@ const News = ({ isDarkMode }: NewsProps) => {
                             src="/images/networks/calendar.svg"
                             alt=""
                             aria-hidden="true"
-                            className="w-[18px] h-[18px]"
+                            className="news-meta-icon"
                           />
                           {article.publishedAt
                             ? format(
@@ -259,7 +243,7 @@ const News = ({ isDarkMode }: NewsProps) => {
                             src="/images/networks/clock.svg"
                             alt=""
                             aria-hidden="true"
-                            className="w-[18px] h-[18px]"
+                            className="news-meta-icon"
                           />
                           {getReadTimeText(article.body)}
                         </span>

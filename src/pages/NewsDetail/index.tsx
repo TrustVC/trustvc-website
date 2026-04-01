@@ -172,7 +172,12 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
   }
 
   return (
-    <section className="w-full px-4 pt-[120px] pb-16 flex justify-center bg-transparent">
+    <section
+      className={clsx(
+        'news-detail-page w-full px-4 pt-[120px] pb-16 flex justify-center bg-transparent',
+        isDarkMode ? 'news-detail-page--dark' : 'news-detail-page--light'
+      )}
+    >
       <article className="w-full max-w-[1100px]">
         <nav
           className={clsx(
@@ -193,13 +198,7 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
 
         <header className="text-center max-w-3xl mx-auto">
           {article.featured && (
-            <div
-              className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-white text-xs font-bold"
-              style={{
-                background:
-                  'linear-gradient(105.36deg, #3C83F6 0%, #6467F2 100%)',
-              }}
-            >
+            <div className="news-featured-badge inline-flex items-center gap-1 px-2 py-1 rounded-full text-white text-xs font-bold">
               Featured
             </div>
           )}
@@ -305,12 +304,7 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
         </div>
 
         <div
-          className="mt-12 w-full rounded-2xl p-5 sm:p-7 border border-[#A9B2BB54] bg-cover bg-center"
-          style={{
-            background: 'linear-gradient(97.83deg, #686AD2 10%, #167EB0 90%)',
-            backgroundImage:
-              "url('/images/carousel/next_article.svg'), linear-gradient(97.83deg, #686AD2 10%, #167EB0 90%)",
-          }}
+          className="news-next-container mt-12 w-full rounded-2xl p-5 sm:p-7 border border-[#A9B2BB54] bg-cover bg-center"
         >
           <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
             <div className="md:col-span-4 lg:col-span-3">
@@ -321,7 +315,7 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
               {nextArticle?.slug?.current ? (
                 <Link
                   to={`/news-updates/${nextArticle.slug.current}`}
-                  className="block rounded-2xl overflow-hidden border border-[#A9B2BB54] bg-[#FFFFFFE5]"
+                  className="news-next-card block rounded-2xl overflow-hidden border border-[#A9B2BB54]"
                 >
                   <div className="flex flex-col">
                     {nextArticleImageUrl && (
@@ -333,11 +327,12 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
                         />
                         {nextArticle.categories?.[0]?.title && (
                           <div
-                            className={`absolute top-3 right-3 inline-flex items-center gap-1 px-3 py-1 rounded-full border text-xs font-semibold ${
+                            className={clsx(
+                              'absolute top-3 right-3 inline-flex items-center gap-1 px-3 py-1 rounded-full border text-xs font-semibold border-[#A9B2BB54]',
                               isDarkMode
-                                ? 'bg-transparent border-[#A9B2BB54] text-[#A9B2BB]'
-                                : 'bg-white/95 border-transparent text-[#3D444D]'
-                            }`}
+                                ? 'bg-[#1F1B45] text-[#A9B2BB]'
+                                : 'bg-[#DFE1FF] text-[#3D444D]'
+                            )}
                           >
                             {nextArticle.categories[0].title}
                           </div>
@@ -375,10 +370,20 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
                           {nextArticleReadTime}
                         </span>
                       </div>
-                      <div className="mt-2 text-2xl font-bold text-[#1E2026] leading-tight">
+                      <div
+                        className={clsx(
+                          'mt-2 text-2xl font-bold leading-tight',
+                          isDarkMode ? 'text-[#DEE4E9]' : 'text-[#1E2026]'
+                        )}
+                      >
                         {nextArticle.title}
                       </div>
-                      <div className="mt-2 text-base text-[#3D444D] line-clamp-2">
+                      <div
+                        className={clsx(
+                          'mt-2 text-base line-clamp-2',
+                          isDarkMode ? 'text-[#A9B2BB]' : 'text-[#3D444D]'
+                        )}
+                      >
                         {nextArticle.subtitle || getBodyText(nextArticle.body)}
                       </div>
                       <div className="mt-3 inline-flex items-center gap-1 text-sm font-bold text-[#5B5BB3]">
