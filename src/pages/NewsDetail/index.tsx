@@ -155,7 +155,7 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
           <h1
             className={clsx(
               'text-3xl font-bold',
-              isDarkMode ? 'text-[#E6EBFF]' : 'text-[#1E2026]'
+              isDarkMode ? 'text-[#DEE4E9]' : 'text-[#1E2026]'
             )}
           >
             Article not found
@@ -264,11 +264,12 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
                 {article.categories.map(cat => (
                   <span
                     key={cat.title}
-                    className={`inline-flex items-center gap-1 rounded-[9999px] px-[12px] py-[4px] text-xs font-semibold ${
+                    className={clsx(
+                      'inline-flex items-center gap-1 rounded-[9999px] px-[12px] py-[4px] text-xs font-semibold',
                       isDarkMode
                         ? 'bg-[#353157] text-[#C2C5F0]'
                         : 'bg-[#DFE1FF] text-[#3D444D]'
-                    }`}
+                    )}
                   >
                     {cat.title}
                   </span>
