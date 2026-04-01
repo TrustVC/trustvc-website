@@ -33,7 +33,7 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
   const panelTextClass = isDarkMode ? 'text-[#A9B2BB]' : 'text-[#5B6571]'
   const titleClass = clsx(
     'mt-3 text-3xl md:text-5xl font-bold leading-tight',
-    isDarkMode ? 'text-[#E6EBFF]' : 'text-[#1E2026]'
+    isDarkMode ? 'text-[#DEE4E9]' : 'text-[#1E2026]'
   )
   const subtitleClass = clsx(
     'mt-3 text-base md:text-lg',
@@ -98,14 +98,49 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
       <section className="w-full px-4 pt-[120px] pb-16 flex justify-center">
         <div className={clsx(metaCardClass, 'animate-pulse')}>
           <div className="mx-auto max-w-3xl space-y-4">
-            <div className={clsx('h-4 w-48 mx-auto rounded', isDarkMode ? 'bg-[#3D444D]' : 'bg-[#DEE4E9]')} />
-            <div className={clsx('h-10 w-3/4 mx-auto rounded', isDarkMode ? 'bg-[#3D444D]' : 'bg-[#DEE4E9]')} />
-            <div className={clsx('h-4 w-2/3 mx-auto rounded', isDarkMode ? 'bg-[#3D444D]' : 'bg-[#DEE4E9]')} />
-            <div className={clsx('mt-6 h-[260px] w-full rounded-2xl', isDarkMode ? 'bg-[#2A2F37]' : 'bg-[#EEF2F6]')} />
+            <div
+              className={clsx(
+                'h-4 w-48 mx-auto rounded',
+                isDarkMode ? 'bg-[#3D444D]' : 'bg-[#DEE4E9]'
+              )}
+            />
+            <div
+              className={clsx(
+                'h-10 w-3/4 mx-auto rounded',
+                isDarkMode ? 'bg-[#3D444D]' : 'bg-[#DEE4E9]'
+              )}
+            />
+            <div
+              className={clsx(
+                'h-4 w-2/3 mx-auto rounded',
+                isDarkMode ? 'bg-[#3D444D]' : 'bg-[#DEE4E9]'
+              )}
+            />
+            <div
+              className={clsx(
+                'mt-6 h-[260px] w-full rounded-2xl',
+                isDarkMode ? 'bg-[#2A2F37]' : 'bg-[#EEF2F6]'
+              )}
+            />
             <div className="space-y-3 pt-4">
-              <div className={clsx('h-3 w-full rounded', isDarkMode ? 'bg-[#3D444D]' : 'bg-[#DEE4E9]')} />
-              <div className={clsx('h-3 w-[92%] rounded', isDarkMode ? 'bg-[#3D444D]' : 'bg-[#DEE4E9]')} />
-              <div className={clsx('h-3 w-[88%] rounded', isDarkMode ? 'bg-[#3D444D]' : 'bg-[#DEE4E9]')} />
+              <div
+                className={clsx(
+                  'h-3 w-full rounded',
+                  isDarkMode ? 'bg-[#3D444D]' : 'bg-[#DEE4E9]'
+                )}
+              />
+              <div
+                className={clsx(
+                  'h-3 w-[92%] rounded',
+                  isDarkMode ? 'bg-[#3D444D]' : 'bg-[#DEE4E9]'
+                )}
+              />
+              <div
+                className={clsx(
+                  'h-3 w-[88%] rounded',
+                  isDarkMode ? 'bg-[#3D444D]' : 'bg-[#DEE4E9]'
+                )}
+              />
             </div>
           </div>
         </div>
@@ -117,7 +152,12 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
     return (
       <section className="w-full px-4 pt-[120px] pb-16 flex justify-center">
         <div className="w-full max-w-[1100px] text-center">
-          <h1 className={clsx('text-3xl font-bold', isDarkMode ? 'text-[#E6EBFF]' : 'text-[#1E2026]')}>
+          <h1
+            className={clsx(
+              'text-3xl font-bold',
+              isDarkMode ? 'text-[#E6EBFF]' : 'text-[#1E2026]'
+            )}
+          >
             Article not found
           </h1>
           <Link
@@ -135,7 +175,10 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
     <section className="w-full px-4 pt-[120px] pb-16 flex justify-center bg-transparent">
       <article className="w-full max-w-[1100px]">
         <nav
-          className={clsx('text-xs mb-6', isDarkMode ? 'text-[#808894]' : 'text-[#5B6571]')}
+          className={clsx(
+            'text-xs mb-6',
+            isDarkMode ? 'text-[#A9B2BB]' : 'text-[#5B6571]'
+          )}
           aria-label="Breadcrumb"
         >
           <Link to="/" className="hover:text-[#5B5BB3]">
@@ -160,14 +203,8 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
               Featured
             </div>
           )}
-          <h1 className={titleClass}>
-            {article.title}
-          </h1>
-          {subtitleText && (
-            <p className={subtitleClass}>
-              {subtitleText}
-            </p>
-          )}
+          <h1 className={titleClass}>{article.title}</h1>
+          {subtitleText && <p className={subtitleClass}>{subtitleText}</p>}
         </header>
 
         <div className="mt-8 grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -185,7 +222,12 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
                 alt={article.author?.name || 'Author'}
                 className="w-12 h-12 rounded-full object-cover"
               />
-              <div className={clsx('font-bold text-lg', isDarkMode ? 'text-[#A9B2BB]' : 'text-[#5B6571]')}>
+              <div
+                className={clsx(
+                  'font-bold text-lg',
+                  isDarkMode ? 'text-[#A9B2BB]' : 'text-[#5B6571]'
+                )}
+              >
                 {article.author?.name || 'Author Name'}
               </div>
             </div>
@@ -199,7 +241,7 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
                 src="/images/networks/clock.svg"
                 alt=""
                 aria-hidden="true"
-                className="w-3.5 h-3.5"
+                className="w-[18px] h-[18px]"
               />
               {articleReadTime}
             </div>
@@ -213,7 +255,7 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
                 src="/images/networks/calendar.svg"
                 alt=""
                 aria-hidden="true"
-                className="w-3.5 h-3.5"
+                className="w-[18px] h-[18px]"
               />
               {publishedDateLabel}
               {showUpdatedDate ? ` (Updated ${updatedDateLabel})` : ''}
@@ -223,10 +265,10 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
                 {article.categories.map(cat => (
                   <span
                     key={cat.title}
-                    className={`inline-flex items-center gap-1 rounded-[9999px] border border-[#A9B2BB54] px-[10.56px] py-[2.56px] text-xs font-semibold ${
+                    className={`inline-flex items-center gap-1 rounded-[9999px] px-[12px] py-[4px] text-xs font-semibold ${
                       isDarkMode
-                        ? 'bg-transparent text-[#5B6571]'
-                        : 'bg-white text-[#3D444D]'
+                        ? 'bg-[#353157] text-[#C2C5F0]'
+                        : 'bg-[#DFE1FF] text-[#3D444D]'
                     }`}
                   >
                     {cat.title}
@@ -293,7 +335,7 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
                           <div
                             className={`absolute top-3 right-3 inline-flex items-center gap-1 px-3 py-1 rounded-full border text-xs font-semibold ${
                               isDarkMode
-                                ? 'bg-transparent border-[#A9B2BB54] text-[#5B6571]'
+                                ? 'bg-transparent border-[#A9B2BB54] text-[#A9B2BB]'
                                 : 'bg-white/95 border-transparent text-[#3D444D]'
                             }`}
                           >
@@ -303,13 +345,18 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
                       </div>
                     )}
                     <div className="p-4 sm:p-5">
-                      <div className="flex flex-wrap items-center gap-4 text-xs text-[#5B6571] font-semibold">
+                      <div
+                        className={clsx(
+                          'flex flex-wrap items-center gap-4 text-xs font-semibold',
+                          isDarkMode ? 'text-[#A9B2BB]' : 'text-[#5B6571]'
+                        )}
+                      >
                         <span className="inline-flex items-center gap-1">
                           <img
                             src="/images/networks/calendar.svg"
                             alt=""
                             aria-hidden="true"
-                            className="w-3.5 h-3.5"
+                            className="w-[18px] h-[18px]"
                           />
                           {nextArticle.publishedAt
                             ? format(
@@ -323,7 +370,7 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
                             src="/images/networks/clock.svg"
                             alt=""
                             aria-hidden="true"
-                            className="w-3.5 h-3.5"
+                            className="w-[18px] h-[18px]"
                           />
                           {nextArticleReadTime}
                         </span>

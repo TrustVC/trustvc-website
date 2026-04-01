@@ -31,7 +31,9 @@ const News = ({ isDarkMode }: NewsProps) => {
 
   const shellSurfaceClass = clsx(
     'rounded-2xl overflow-hidden border',
-    isDarkMode ? 'bg-[#1E2026]/80 border-[#3D444D]' : 'bg-white/80 border-[#DEE4E9]'
+    isDarkMode
+      ? 'bg-[#1E2026]/80 border-[#3D444D]'
+      : 'bg-white/80 border-[#DEE4E9]'
   )
   const subTextClass = clsx(
     'mt-3 text-base sm:text-lg max-w-3xl mx-auto',
@@ -130,7 +132,14 @@ const News = ({ isDarkMode }: NewsProps) => {
                 <div className="p-5 md:p-8 flex flex-col justify-center">
                   <div className="flex flex-wrap items-center gap-3 text-xs mb-3">
                     {featuredArticle.categories?.[0]?.title && (
-                      <span className="news-category-chip inline-flex items-center gap-1 px-2 py-1 rounded-full border border-[#A9B2BB54]">
+                      <span
+                        className={clsx(
+                          'news-category-chip inline-flex items-center gap-1 px-[12px] py-[4px] rounded-full',
+                          isDarkMode
+                            ? 'bg-[#353157] text-[#C2C5F0]'
+                            : 'bg-[#DFE1FF] text-[#3D444D]'
+                        )}
+                      >
                         {featuredArticle.categories[0].title}
                       </span>
                     )}
@@ -139,7 +148,7 @@ const News = ({ isDarkMode }: NewsProps) => {
                         src="/images/networks/clock.svg"
                         alt=""
                         aria-hidden="true"
-                        className="w-3.5 h-3.5"
+                        className="w-[18px] h-[18px]"
                       />
                       {getReadTimeText(featuredArticle.body)}
                     </span>
@@ -148,7 +157,7 @@ const News = ({ isDarkMode }: NewsProps) => {
                         src="/images/networks/calendar.svg"
                         alt=""
                         aria-hidden="true"
-                        className="w-3.5 h-3.5"
+                        className="w-[18px] h-[18px]"
                       />
                       {featuredArticle.publishedAt
                         ? format(
@@ -158,10 +167,11 @@ const News = ({ isDarkMode }: NewsProps) => {
                         : 'Recent'}
                     </span>
                   </div>
-                  <h2 className={titleTextClass}>
-                    {featuredArticle.title}
-                  </h2>
-                  <p className={excerptTextClass} style={{ fontFamily: 'Avenir, Gilroy, sans-serif' }}>
+                  <h2 className={titleTextClass}>{featuredArticle.title}</h2>
+                  <p
+                    className={excerptTextClass}
+                    style={{ fontFamily: 'Avenir, Gilroy, sans-serif' }}
+                  >
                     {featuredArticle.subtitle ||
                       getBodyText(featuredArticle.body)}
                   </p>
@@ -214,9 +224,13 @@ const News = ({ isDarkMode }: NewsProps) => {
                               .map((category, index) => (
                                 <div
                                   key={`${article._id}-${category.title}-${index}`}
-                                  className="news-category-chip inline-flex items-center gap-1 px-3 py-1 rounded-full border bg-white/95 border-transparent"
+                                  className={clsx(
+                                    'news-category-chip inline-flex items-center gap-1 px-[12px] py-[4px] rounded-full',
+                                    isDarkMode
+                                      ? 'bg-[#1E2026] text-[#C2C9D0]'
+                                      : 'bg-[#DEE4E9] text-[#30333B]'
+                                  )}
                                 >
-
                                   {category.title}
                                 </div>
                               ))}
@@ -231,7 +245,7 @@ const News = ({ isDarkMode }: NewsProps) => {
                             src="/images/networks/calendar.svg"
                             alt=""
                             aria-hidden="true"
-                            className="w-3.5 h-3.5"
+                            className="w-[18px] h-[18px]"
                           />
                           {article.publishedAt
                             ? format(
@@ -245,14 +259,12 @@ const News = ({ isDarkMode }: NewsProps) => {
                             src="/images/networks/clock.svg"
                             alt=""
                             aria-hidden="true"
-                            className="w-3.5 h-3.5"
+                            className="w-[18px] h-[18px]"
                           />
                           {getReadTimeText(article.body)}
                         </span>
                       </div>
-                      <h3 className={cardTitleTextClass}>
-                        {article.title}
-                      </h3>
+                      <h3 className={cardTitleTextClass}>{article.title}</h3>
                       <p className={cardExcerptTextClass}>
                         {article.subtitle || getBodyText(article.body)}
                       </p>

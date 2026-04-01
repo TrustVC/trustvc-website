@@ -56,10 +56,10 @@ export const useNewsList = (): NewsListHookResult => {
   const featuredImageUrl: string | null = useMemo(
     () =>
       featuredArticle
-        ? getSanityImageUrl(featuredArticle.mainImage)
+        ? (getSanityImageUrl(featuredArticle.mainImage)
             ?.width(1200)
             .height(650)
-            .url() ?? null
+            .url() ?? null)
         : null,
     [featuredArticle]
   )
@@ -75,7 +75,10 @@ export const useNewsList = (): NewsListHookResult => {
       1,
       Math.ceil(window.innerHeight / GRID_CARD_ESTIMATED_HEIGHT)
     )
-    const initialCount = Math.min(articleGrid.length, rowsToFillViewport * columns)
+    const initialCount = Math.min(
+      articleGrid.length,
+      rowsToFillViewport * columns
+    )
     setVisibleCount(initialCount)
   }, [articleGrid])
 
@@ -93,7 +96,9 @@ export const useNewsList = (): NewsListHookResult => {
 
         setIsLoadingMore(true)
         timeoutId = window.setTimeout(() => {
-          setVisibleCount(prev => Math.min(prev + batchSize, articleGrid.length))
+          setVisibleCount(prev =>
+            Math.min(prev + batchSize, articleGrid.length)
+          )
           setIsLoadingMore(false)
         }, 350)
       },

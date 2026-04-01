@@ -14,7 +14,6 @@ const getReadTimeText = (body?: NewsArticle['body']) => {
   return `${minutes} min read`
 }
 
-
 export const useNewsDetail = (slug?: string): NewsDetailHookResult => {
   const [article, setArticle] = useState<NewsArticle | null>(null)
   const [nextArticle, setNextArticle] = useState<NewsArticle | null>(null)
@@ -48,7 +47,9 @@ export const useNewsDetail = (slug?: string): NewsDetailHookResult => {
         setArticle(data)
 
         if (data?.slug?.current && Array.isArray(list) && list.length) {
-          const idx = list.findIndex(a => a.slug?.current === data.slug?.current)
+          const idx = list.findIndex(
+            a => a.slug?.current === data.slug?.current
+          )
           if (idx >= 0 && idx < list.length - 1) {
             setNextArticle(list[idx + 1])
           } else {
@@ -71,45 +72,56 @@ export const useNewsDetail = (slug?: string): NewsDetailHookResult => {
     }
   }, [slug])
 
-  const subtitleText: string = useMemo(
-    () => article?.subtitle || '',
-    [article]
-  )
+  const subtitleText: string = useMemo(() => article?.subtitle || '', [article])
 
   const articleImageUrl: string | null = useMemo(
     () =>
       article
-        ? getSanityImageUrl(article.mainImage)?.width(1300).height(700).url() ?? null
+        ? (getSanityImageUrl(article.mainImage)
+            ?.width(1300)
+            .height(700)
+            .url() ?? null)
         : null,
     [article]
   )
   const nextArticleImageUrl: string | null = useMemo(
     () =>
       nextArticle
-        ? getSanityImageUrl(nextArticle.mainImage)?.width(600).height(320).url() ?? null
+        ? (getSanityImageUrl(nextArticle.mainImage)
+            ?.width(600)
+            .height(320)
+            .url() ?? null)
         : null,
     [nextArticle]
   )
   const authorImageUrl: string | null = useMemo(
     () =>
       article?.author?.image
-        ? getSanityImageUrl(article.author.image)?.width(96).height(96).url() ?? null
+        ? (getSanityImageUrl(article.author.image)
+            ?.width(96)
+            .height(96)
+            .url() ?? null)
         : null,
     [article]
   )
   const publishedDateLabel: string = useMemo(
     () =>
-      article?.publishedAt ? format(new Date(article.publishedAt), 'MMMM d, yyyy') : 'Recent',
+      article?.publishedAt
+        ? format(new Date(article.publishedAt), 'MMMM d, yyyy')
+        : 'Recent',
     [article?.publishedAt]
   )
   const updatedDateLabel: string | null = useMemo(
-    () => (article?.updatedAt ? format(new Date(article.updatedAt), 'MMMM d, yyyy') : null),
+    () =>
+      article?.updatedAt
+        ? format(new Date(article.updatedAt), 'MMMM d, yyyy')
+        : null,
     [article?.updatedAt]
   )
   const showUpdatedDate = Boolean(
     updatedDateLabel &&
-      article?.publishedAt &&
-      updatedDateLabel !== publishedDateLabel
+    article?.publishedAt &&
+    updatedDateLabel !== publishedDateLabel
   )
   const articleReadTime: string = useMemo(
     () => (article ? getReadTimeText(article.body) : '1 min read'),

@@ -113,6 +113,11 @@ body.dark-mode {
 
 .app-shell--news-dark {
   background-image: url('/backgrounds/bottom-backgound-grid.svg');
+  background-color: radial-gradient(
+    119.21% 84.7% at 50% 15.3%,
+    #000000 0%,
+    rgba(31, 27, 69, 0.33) 100%
+  );
   background-size:
     100% auto,
     cover;
@@ -138,15 +143,6 @@ body.dark-mode {
   line-height: 155%;
   letter-spacing: 0;
   vertical-align: middle;
-}
-
-.news-page--light .news-category-chip {
-  color: #3d444d;
-}
-
-.news-page--dark .news-category-chip {
-  color: #3d444d;
-  background-color: rgba(255, 255, 255, 0.95);
 }
 
 .news-page--light .news-meta-text {
