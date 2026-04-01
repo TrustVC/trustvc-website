@@ -30,7 +30,7 @@ export function AttachmentFileList({
             height="16"
             viewBox="0 0 16 16"
             fill="none"
-            aria-hidden
+            aria-hidden="true"
           >
             <path
               d="M2 4h12v9a1 1 0 01-1 1H3a1 1 0 01-1-1V4zM5 4V3a1 1 0 011-1h4a1 1 0 011 1v1M6 7v4M10 7v4"

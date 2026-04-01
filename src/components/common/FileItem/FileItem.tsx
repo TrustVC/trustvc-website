@@ -98,7 +98,13 @@ export function FileItem({ item, onRemove, isDarkMode }: FileItemProps) {
         className={`flex-shrink-0 p-1 rounded transition-colors ${isDarkMode ? 'hover:bg-white/10 text-neutral-50' : 'hover:bg-black/10 text-neutral-20'}`}
         aria-label={`Remove ${filename}`}
       >
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 16 16"
+          fill="none"
+          aria-hidden="true"
+        >
           <path
             d="M12 4L4 12M4 4l8 8"
             stroke="currentColor"

@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   getPresignedUrls,
   uploadToPresignedUrl,
@@ -14,7 +14,7 @@ import type { AttachmentItem } from '@/types/attachment'
 
 export type EnquiryType = '' | 'General_Enquiry' | 'OpenCerts' | 'TradeTrust'
 
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 function isValidEmail(value: string): boolean {
   return EMAIL_REGEX.test(value.trim())
 }
@@ -53,6 +53,7 @@ export const useContactForm = (options: UseContactFormOptions) => {
     attachments?: string
     recaptcha?: string
   }>({})
+  const uploadControllersRef = useRef<Map<string, AbortController>>(new Map())
 
   const fileInfoText = useMemo(() => getFileConstraintText(), [])
 
@@ -113,8 +114,16 @@ export const useContactForm = (options: UseContactFormOptions) => {
 
   const addFiles = useCallback(
     (newFiles: File[]) => {
-      const valid = newFiles.filter(isValidFileType)
-      const invalidCount = newFiles.length - valid.length
+      const nonEmpty = newFiles.filter(file => file.size > 0)
+      const emptyCount = newFiles.length - nonEmpty.length
+      const valid = nonEmpty.filter(isValidFileType)
+      const invalidCount = newFiles.length - emptyCount - valid.length
+      if (emptyCount > 0) {
+        setFieldErrors(prev => ({
+          ...prev,
+          attachments: 'Empty files are not allowed.',
+        }))
+      }
       if (invalidCount > 0) {
         const msg =
           'Some files were rejected. Only JPG, JPEG, and PNG files are allowed.'
@@ -153,6 +162,8 @@ export const useContactForm = (options: UseContactFormOptions) => {
   )
 
   const removeAttachment = useCallback((id: string) => {
+    uploadControllersRef.current.get(id)?.abort()
+    uploadControllersRef.current.delete(id)
     setAttachments(prev => {
       const toRemove = prev.find(a => a.id === id)
       const canRevoke = typeof globalThis.URL?.revokeObjectURL === 'function'
@@ -164,6 +175,8 @@ export const useContactForm = (options: UseContactFormOptions) => {
   }, [])
 
   const clearAllAttachments = useCallback(() => {
+    uploadControllersRef.current.forEach(controller => controller.abort())
+    uploadControllersRef.current.clear()
     setAttachments(prev => {
       const canRevoke = typeof globalThis.URL?.revokeObjectURL === 'function'
       if (canRevoke) {
@@ -177,6 +190,14 @@ export const useContactForm = (options: UseContactFormOptions) => {
     setFieldErrors(prev =>
       prev.attachments ? { ...prev, attachments: undefined } : prev
     )
+  }, [])
+
+  useEffect(() => {
+    const uploadControllers = uploadControllersRef.current
+    return () => {
+      uploadControllers.forEach(controller => controller.abort())
+      uploadControllers.clear()
+    }
   }, [])
 
   const handleDrag = useCallback((e: React.DragEvent) => {
@@ -332,7 +353,7 @@ export const useContactForm = (options: UseContactFormOptions) => {
         return
       }
 
-      const domain = globalThis.window?.location?.hostname ?? 'trustvc.io'
+      const domain = globalThis.window?.location?.hostname || ''
 
       try {
         setIsSubmitting(true)
@@ -356,18 +377,43 @@ export const useContactForm = (options: UseContactFormOptions) => {
               size: a.file.size,
             }))
             const presigned = await getPresignedUrls(files)
-            await Promise.all(
-              pendingItems.map((item, i) => {
-                const p = presigned[i]
-                if (!p) return Promise.resolve()
+            const presignedByFilename = presigned.reduce<
+              Record<string, typeof presigned>
+            >((acc, current) => {
+              if (!acc[current.filename]) acc[current.filename] = []
+              acc[current.filename].push(current)
+              return acc
+            }, {})
+
+            const uploadResults = await Promise.allSettled(
+              pendingItems.map(item => {
+                const candidateList = presignedByFilename[item.file.name] || []
+                const p = candidateList.shift()
+                if (!p) {
+                  setAttachmentStatus(item.id, {
+                    status: 'error',
+                    error: 'No upload URL was returned for this file.',
+                  })
+                  return Promise.reject(
+                    new Error('No upload URL was returned for this file.')
+                  )
+                }
                 setAttachmentStatus(item.id, {
                   status: 'uploading',
                   progress: 0,
                 })
-                return uploadToPresignedUrl(p.uploadUrl, item.file, percent => {
-                  setAttachmentStatus(item.id, { progress: percent })
-                })
+                const uploadController = new AbortController()
+                uploadControllersRef.current.set(item.id, uploadController)
+                return uploadToPresignedUrl(
+                  p.uploadUrl,
+                  item.file,
+                  percent => {
+                    setAttachmentStatus(item.id, { progress: percent })
+                  },
+                  { signal: uploadController.signal, timeoutMs: 30000 }
+                )
                   .then(() => {
+                    uploadControllersRef.current.delete(item.id)
                     setAttachmentStatus(item.id, {
                       status: 'uploaded',
                       progress: 100,
@@ -377,15 +423,25 @@ export const useContactForm = (options: UseContactFormOptions) => {
                     })
                   })
                   .catch(err => {
+                    uploadControllersRef.current.delete(item.id)
                     setAttachmentStatus(item.id, {
                       status: 'error',
                       error:
                         err instanceof Error ? err.message : 'Upload failed',
                     })
-                    throw err
+                    return Promise.reject(err)
                   })
               })
             )
+            const failedUploads = uploadResults.filter(
+              result => result.status === 'rejected'
+            )
+            if (failedUploads.length > 0) {
+              setSubmitError(
+                'Some files failed to upload. Please remove failed files and try again.'
+              )
+              return
+            }
             attachmentKeys = [
               ...attachmentKeys,
               ...presigned.map(p => ({ key: p.key, filename: p.filename })),

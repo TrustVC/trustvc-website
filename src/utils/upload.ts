@@ -45,13 +45,9 @@ export async function getPresignedUrls(
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ files }),
   })
-  const uploads = (res as { data?: { uploads: PresignUploadItem[] } }).data
-    ?.uploads
+  const uploads = res.data?.uploads
   if (!uploads) {
-    throw new Error(
-      (res as { error?: { message: string } }).error?.message ||
-        'Failed to get upload URLs'
-    )
+    throw new Error(res.error?.message || 'Failed to get upload URLs')
   }
   return uploads
 }
@@ -59,10 +55,35 @@ export async function getPresignedUrls(
 export async function uploadToPresignedUrl(
   uploadUrl: string,
   file: File,
-  onProgress?: (_percent: number) => void
+  onProgress?: (_percent: number) => void,
+  options?: { signal?: AbortSignal; timeoutMs?: number }
 ): Promise<void> {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest()
+    const timeoutMs = options?.timeoutMs ?? 30000
+    let settled = false
+
+    const fail = (error: Error) => {
+      if (settled) return
+      settled = true
+      reject(error)
+    }
+
+    const succeed = () => {
+      if (settled) return
+      settled = true
+      resolve()
+    }
+
+    const onAbortSignal = () => xhr.abort()
+    if (options?.signal) {
+      if (options.signal.aborted) {
+        fail(new Error('Upload aborted'))
+        return
+      }
+      options.signal.addEventListener('abort', onAbortSignal, { once: true })
+    }
+
     xhr.upload.addEventListener('progress', e => {
       if (e.lengthComputable && onProgress) {
         onProgress(Math.round((e.loaded / e.total) * 100))
@@ -71,14 +92,16 @@ export async function uploadToPresignedUrl(
     xhr.addEventListener('load', () => {
       if (xhr.status >= 200 && xhr.status < 300) {
         if (onProgress) onProgress(100)
-        resolve()
+        succeed()
       } else {
-        reject(new Error(`Upload failed: ${xhr.status}`))
+        fail(new Error(`Upload failed: ${xhr.status}`))
       }
     })
-    xhr.addEventListener('error', () => reject(new Error('Upload failed')))
-    xhr.addEventListener('abort', () => reject(new Error('Upload aborted')))
+    xhr.addEventListener('error', () => fail(new Error('Upload failed')))
+    xhr.addEventListener('abort', () => fail(new Error('Upload aborted')))
+    xhr.addEventListener('timeout', () => fail(new Error('Upload timed out')))
     xhr.open('PUT', uploadUrl)
+    xhr.timeout = timeoutMs
     xhr.setRequestHeader(
       'Content-Type',
       file.type || 'application/octet-stream'

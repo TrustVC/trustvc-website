@@ -1,5 +1,6 @@
 type FetchClientOptions = {
   baseUrl: string
+  timeoutMs?: number
 }
 
 interface ApiErrorBody {
@@ -26,18 +27,43 @@ export class FetchClientError extends Error {
   }
 }
 
-export const createFetchClient = ({ baseUrl }: FetchClientOptions) => {
+export const createFetchClient = ({
+  baseUrl,
+  timeoutMs,
+}: FetchClientOptions) => {
   const normalizedBaseUrl = baseUrl.replace(/\/$/, '')
+  const defaultTimeoutMs = timeoutMs ?? 15000
 
   const request = async <T>(path: string, init?: RequestInit): Promise<T> => {
-    const response = await fetch(`${normalizedBaseUrl}${path}`, init)
+    const controller = new AbortController()
+    const timeoutMs = defaultTimeoutMs
+    const timeoutId = globalThis.setTimeout(() => controller.abort(), timeoutMs)
+    const signal = init?.signal
+
+    if (signal) {
+      if (signal.aborted) controller.abort()
+      signal.addEventListener('abort', () => controller.abort(), { once: true })
+    }
+
+    const response = await fetch(`${normalizedBaseUrl}${path}`, {
+      ...init,
+      signal: controller.signal,
+    }).finally(() => {
+      globalThis.clearTimeout(timeoutId)
+    })
 
     const contentType = response.headers.get('content-type') || ''
-    const data = contentType.includes('application/json')
-      ? await response.json()
-      : null
+    let data: unknown = null
+    if (contentType.includes('application/json')) {
+      try {
+        data = await response.json()
+      } catch {
+        data = null
+      }
+    }
 
-    const errorBody = data as ApiErrorBody | null
+    const errorBody =
+      typeof data === 'object' && data !== null ? (data as ApiErrorBody) : null
     if (!response.ok || (errorBody && errorBody.success === false)) {
       const message =
         errorBody?.error?.message ||
