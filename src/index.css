@@ -338,7 +338,7 @@ body.dark-mode {
 .overlay-border-shadow {
   align-self: stretch;
   min-width: min(340px, 100%);
-  padding: 16px 0px;
+  padding: 16px 16px;
   border-radius: 16px;
   outline: 1px rgba(169, 178, 187, 0.33) solid;
   outline-offset: -1px;
@@ -659,6 +659,12 @@ body.dark-mode {
 .dropbox-area.drag-active {
   background: rgba(104, 106, 210, 0.1);
   outline: 2px #686ad2 dashed;
+}
+
+/* Home verify dropbox should span full container */
+.dropbox-area--home {
+  width: 100%;
+  max-width: none;
 }
 
 /* Frame Dropbox Text */
