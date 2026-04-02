@@ -524,6 +524,20 @@ body.dark-mode {
       );
   }
 
+  /* Override browser autofill white background and outline in dark mode */
+  .dark-mode input:-webkit-autofill,
+  .dark-mode input:-webkit-autofill:hover,
+  .dark-mode input:-webkit-autofill:focus,
+  .dark-mode textarea:-webkit-autofill,
+  .dark-mode textarea:-webkit-autofill:hover,
+  .dark-mode textarea:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0 1000px #000000 inset;
+    -webkit-text-fill-color: #dee4e9;
+    caret-color: #dee4e9;
+    outline: none !important;
+    border-color: rgb(49 45 45) !important;
+  }
+
   .contact-form-divider {
     background:
       linear-gradient(
