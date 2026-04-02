@@ -15,8 +15,6 @@ export const sanityClient = hasSanityConfig
       useCdn: true,
     })
   : null
-    })
-  : null
 
 const imageBuilder = hasSanityConfig ? imageUrlBuilder(sanityClient!) : null
 
