@@ -5,7 +5,7 @@
 @layer base {
   /* Gilroy Light */
   @font-face {
-    font-family: "Gilroy";
+    font-family: Gilroy;
     src:
       url('/fonts/GilroyLight/font.woff2') format('woff2'),
       url('/fonts/GilroyLight/font.woff') format('woff');
