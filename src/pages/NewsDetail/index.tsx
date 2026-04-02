@@ -432,7 +432,7 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
               <div className="mt-3 flex flex-wrap gap-2">
                 {article.categories.map(cat => (
                   <span
-                    key={cat._id || cat.title}
+                    key={cat.title || cat.title}
                     className={clsx(
                       'inline-flex items-center gap-1 rounded-[9999px] px-[12px] py-[4px] text-xs font-semibold',
                       isDarkMode

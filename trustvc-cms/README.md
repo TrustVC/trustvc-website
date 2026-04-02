@@ -47,8 +47,6 @@ npx sanity deploy
   - `VITE_SANITY_PROJECT_ID`
   - `VITE_SANITY_DATASET`
   - `VITE_SANITY_API_VERSION`
-  - Do not expose a read token in `VITE_*` variables.
-  - If a token is required, keep it server-side as `SANITY_READ_TOKEN` and call Sanity through a server-only endpoint.
 
 ## Schema Overview
 
