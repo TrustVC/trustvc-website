@@ -8,6 +8,12 @@ import {
 import { getSanityImageUrl } from '../lib/sanity/client'
 import type { NewsArticle, NewsDetailHookResult } from '../types/news'
 
+const safeFormatDate = (dateStr?: string, fallback = 'Recent'): string => {
+  if (!dateStr) return fallback
+  const d = new Date(dateStr)
+  return isNaN(d.getTime()) ? fallback : format(d, 'MMMM d, yyyy')
+}
+
 const getReadTimeText = (body?: NewsArticle['body']) => {
   const words = getBodyText(body).split(/\s+/).filter(Boolean).length
   const minutes = Math.max(1, Math.ceil(words / 200))
@@ -105,18 +111,16 @@ export const useNewsDetail = (slug?: string): NewsDetailHookResult => {
     [article]
   )
   const publishedDateLabel: string = useMemo(
-    () =>
-      article?.publishedAt
-        ? format(new Date(article.publishedAt), 'MMMM d, yyyy')
-        : 'Recent',
+    () => safeFormatDate(article?.publishedAt),
     [article?.publishedAt]
   )
   const updatedDateLabel: string | null = useMemo(
-    () =>
-      article?.updatedAt
-        ? format(new Date(article.updatedAt), 'MMMM d, yyyy')
-        : null,
+    () => (article?.updatedAt ? safeFormatDate(article.updatedAt, '') || null : null),
     [article?.updatedAt]
+  )
+  const nextPublishedDateLabel: string = useMemo(
+    () => safeFormatDate(nextArticle?.publishedAt),
+    [nextArticle?.publishedAt]
   )
   const showUpdatedDate = Boolean(
     updatedDateLabel &&
@@ -145,5 +149,6 @@ export const useNewsDetail = (slug?: string): NewsDetailHookResult => {
     showUpdatedDate,
     articleReadTime,
     nextArticleReadTime,
+    nextPublishedDateLabel,
   }
 }

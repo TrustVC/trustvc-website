@@ -71,6 +71,7 @@ export type NewsDetailHookResult = {
   showUpdatedDate: boolean
   articleReadTime: string
   nextArticleReadTime: string
+  nextPublishedDateLabel: string
 }
 
 export type NewsListHookResult = {

@@ -257,15 +257,13 @@ const News = ({ isDarkMode }: NewsProps) => {
                   ?.height(420)
                   ?.url()
 
-                return (
-                  <Link
-                    key={article._id}
-                    to={`/news-updates/${article.slug?.current || ''}`}
-                    className={clsx(
-                      'shadow-[0_8px_24px_rgba(104,106,210,0.15)] transition-transform hover:-translate-y-0.5',
-                      shellSurfaceClass
-                    )}
-                  >
+                const slug = article.slug?.current
+                const cardClassName = clsx(
+                  'shadow-[0_8px_24px_rgba(104,106,210,0.15)] transition-transform hover:-translate-y-0.5',
+                  shellSurfaceClass
+                )
+                const cardBody = (
+                  <>
                     {imageUrl && (
                       <div className="relative">
                         <img
@@ -324,17 +322,33 @@ const News = ({ isDarkMode }: NewsProps) => {
                       <p className={cardExcerptTextClass}>
                         {article.subtitle || getBodyText(article.body)}
                       </p>
-                      <span className="mt-3 inline-flex items-center gap-1 text-sm font-bold text-[#5B5BB3]">
-                        Read More
-                        <img
-                          src="/images/networks/forward.svg"
-                          alt=""
-                          aria-hidden="true"
-                          className="w-4 h-4"
-                        />
-                      </span>
+                      {slug && (
+                        <span className="mt-3 inline-flex items-center gap-1 text-sm font-bold text-[#5B5BB3]">
+                          Read More
+                          <img
+                            src="/images/networks/forward.svg"
+                            alt=""
+                            aria-hidden="true"
+                            className="w-4 h-4"
+                          />
+                        </span>
+                      )}
                     </div>
+                  </>
+                )
+
+                return slug ? (
+                  <Link
+                    key={article._id}
+                    to={`/news-updates/${slug}`}
+                    className={cardClassName}
+                  >
+                    {cardBody}
                   </Link>
+                ) : (
+                  <div key={article._id} className={cardClassName}>
+                    {cardBody}
+                  </div>
                 )
               })}
 

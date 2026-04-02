@@ -1,8 +1,8 @@
 import type React from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { format } from 'date-fns'
 import clsx from 'clsx'
 import { getBodyText } from '../../lib/sanity/news'
+import { getSanityImageUrl } from '../../lib/sanity/client'
 import type {
   NewsDetailHookResult,
   PortableTextBlock,
@@ -29,6 +29,7 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
     showUpdatedDate,
     articleReadTime,
     nextArticleReadTime,
+    nextPublishedDateLabel,
   }: NewsDetailHookResult = useNewsDetail(slug)
 
   const panelTextClass = isDarkMode ? 'text-[#A9B2BB]' : 'text-[#5B6571]'
@@ -105,23 +106,22 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
     )
 
     if (block._type === 'image') {
-      const ref = (block as unknown as { asset?: { _ref?: string } }).asset
-        ?._ref
-      if (!ref) return null
-      const SANITY_PROJECT_ID = 'your-project-id'
-      const SANITY_DATASET = 'production'
-      const filename = ref
-        .replace('image-', '')
-        .replace(/-(\w+)$/, '.$1')
-      const src = `https://cdn.sanity.io/images/${SANITY_PROJECT_ID}/${SANITY_DATASET}/${filename}`
+      const imageBlock = block as unknown as { asset?: { _ref?: string }; alt?: string }
+      const src = getSanityImageUrl({ asset: imageBlock.asset })?.width(900).url()
+      if (!src) return null
       return (
         <img
           key={key}
           src={src}
-          alt=""
+          alt={imageBlock.alt || ''}
           className="w-full rounded-xl"
         />
       )
+    }
+
+    if (block.listItem) {
+      // Individual list items are grouped by renderBlocks below; render the <li> here
+      return <li key={key}>{spans}</li>
     }
 
     switch (block.style) {
@@ -164,6 +164,34 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
       default:
         return <p key={key}>{spans}</p>
     }
+  }
+
+  // Groups consecutive list items into <ul>/<ol> wrappers
+  const renderBlocks = (blocks: PortableTextBlock[]) => {
+    const output: React.ReactNode[] = []
+    let i = 0
+    while (i < blocks.length) {
+      const block = blocks[i]
+      if (block.listItem) {
+        const listType = block.listItem
+        const groupKey = block._key || `list-${i}`
+        const items: React.ReactNode[] = []
+        while (i < blocks.length && blocks[i].listItem === listType) {
+          items.push(renderPortableTextBlock(blocks[i], i))
+          i++
+        }
+        const Tag = listType === 'number' ? 'ol' : 'ul'
+        output.push(
+          <Tag key={groupKey} className="list-disc list-inside space-y-1">
+            {items}
+          </Tag>
+        )
+      } else {
+        output.push(renderPortableTextBlock(block, i))
+        i++
+      }
+    }
+    return output
   }
 
   if (loading) {
@@ -422,9 +450,7 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
 
         <div className={articleBodyClass}>
           {article.body?.length ? (
-            article.body.map((block, blockIndex) =>
-              renderPortableTextBlock(block, blockIndex)
-            )
+            renderBlocks(article.body)
           ) : (
             <p>No content available yet.</p>
           )}
@@ -487,12 +513,7 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
                             aria-hidden="true"
                             className="w-[18px] h-[18px]"
                           />
-                          {nextArticle.publishedAt
-                            ? format(
-                                new Date(nextArticle.publishedAt),
-                                'MMMM d, yyyy'
-                              )
-                            : 'Recent'}
+                          {nextPublishedDateLabel}
                         </span>
                         <span className="inline-flex items-center gap-1">
                           <img
