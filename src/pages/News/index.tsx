@@ -76,10 +76,83 @@ const News = ({ isDarkMode }: NewsProps) => {
         </header>
 
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Suspense fallback={null}>
-              <ShimmerPostCards count={4} isDarkMode={isDarkMode} />
-            </Suspense>
+          <div className="space-y-4 animate-pulse">
+            {/* Featured card shimmer */}
+            <div
+              className={`rounded-2xl overflow-hidden border grid grid-cols-1 lg:grid-cols-2 lg:items-stretch shadow-[0_8px_32px_rgba(104,106,210,0.15)] ${
+                isDarkMode
+                  ? 'bg-[#1E2026]/80 border-[#3D444D]'
+                  : 'bg-white/80 border-[#DEE4E9]'
+              }`}
+            >
+              {/* Image side */}
+              <div
+                className={`min-h-[280px] md:min-h-[340px] ${
+                  isDarkMode ? 'bg-[#2A313B]' : 'bg-[#E6EBFF]'
+                }`}
+              />
+              {/* Content side */}
+              <div className="p-5 md:p-8 flex flex-col justify-center gap-3">
+                {/* Category chip + meta row */}
+                <div className="flex items-center gap-3">
+                  <div
+                    className={`h-5 w-24 rounded-full ${
+                      isDarkMode ? 'bg-[#36404D]' : 'bg-[#DCE3EA]'
+                    }`}
+                  />
+                  <div
+                    className={`h-4 w-20 rounded ${
+                      isDarkMode ? 'bg-[#36404D]' : 'bg-[#DCE3EA]'
+                    }`}
+                  />
+                  <div
+                    className={`h-4 w-24 rounded ${
+                      isDarkMode ? 'bg-[#36404D]' : 'bg-[#DCE3EA]'
+                    }`}
+                  />
+                </div>
+                {/* Title */}
+                <div
+                  className={`h-7 w-full rounded ${
+                    isDarkMode ? 'bg-[#36404D]' : 'bg-[#DCE3EA]'
+                  }`}
+                />
+                <div
+                  className={`h-7 w-4/5 rounded ${
+                    isDarkMode ? 'bg-[#36404D]' : 'bg-[#DCE3EA]'
+                  }`}
+                />
+                {/* Excerpt */}
+                <div
+                  className={`h-4 w-full rounded ${
+                    isDarkMode ? 'bg-[#36404D]' : 'bg-[#DCE3EA]'
+                  }`}
+                />
+                <div
+                  className={`h-4 w-full rounded ${
+                    isDarkMode ? 'bg-[#36404D]' : 'bg-[#DCE3EA]'
+                  }`}
+                />
+                <div
+                  className={`h-4 w-3/5 rounded ${
+                    isDarkMode ? 'bg-[#36404D]' : 'bg-[#DCE3EA]'
+                  }`}
+                />
+                {/* Button */}
+                <div
+                  className={`mt-2 h-9 w-40 rounded-lg ${
+                    isDarkMode ? 'bg-[#36404D]' : 'bg-[#DCE3EA]'
+                  }`}
+                />
+              </div>
+            </div>
+
+            {/* Grid card shimmers */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Suspense fallback={null}>
+                <ShimmerPostCards count={4} isDarkMode={isDarkMode} />
+              </Suspense>
+            </div>
           </div>
         ) : articles.length === 0 ? (
           <div
