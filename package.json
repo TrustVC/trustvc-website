@@ -20,6 +20,8 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "@sanity/client": "^7.20.0",
+    "@sanity/image-url": "^2.1.1",
     "@trustvc/decentralized-renderer-react-components": "^1.0.3",
     "@trustvc/trustvc": "^2.8.0",
     "clsx": "^2.1.1",
