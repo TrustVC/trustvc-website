@@ -72,7 +72,7 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
     if (marks.includes('em')) content = <em>{content}</em>
     if (marks.includes('code'))
       content = (
-        <code className="rounded bg-black/10 px-1 font-mono text-sm dark:bg-white/10">
+        <code className={`rounded px-1 font-mono text-sm ${isDarkMode ? 'bg-white/10' : 'bg-black/10'}`}>
           {content}
         </code>
       )
@@ -108,9 +108,12 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
       const ref = (block as unknown as { asset?: { _ref?: string } }).asset
         ?._ref
       if (!ref) return null
-      const src = `https://cdn.sanity.io/images/${ref
+      const SANITY_PROJECT_ID = 'your-project-id'
+      const SANITY_DATASET = 'production'
+      const filename = ref
         .replace('image-', '')
-        .replace(/-(\w+)$/, '.$1')}`
+        .replace(/-(\w+)$/, '.$1')
+      const src = `https://cdn.sanity.io/images/${SANITY_PROJECT_ID}/${SANITY_DATASET}/${filename}`
       return (
         <img
           key={key}
