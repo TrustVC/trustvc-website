@@ -77,7 +77,7 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
   const renderDropzone = () => (
     <div className="frame-dropbox">
       <div
-        className={`dropbox-area ${dragActive ? 'drag-active' : ''}`}
+        className={`dropbox-area dropbox-area--home ${dragActive ? 'drag-active' : ''}`}
         onDragEnter={handleDrag}
         onDragLeave={handleDrag}
         onDragOver={handleDrag}
@@ -128,7 +128,7 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
 
   const renderVerifying = () => (
     <div className="frame-dropbox">
-      <div className="dropbox-area dropbox-area--centered">
+      <div className="dropbox-area dropbox-area--home dropbox-area--centered">
         <Spinner label={`Verifying ${fileName}...`} size="medium" centered />
       </div>
     </div>

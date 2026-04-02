@@ -46,6 +46,43 @@
     font-style: normal;
     font-display: swap;
   }
+
+  /* Theme Variables */
+  :root {
+    --Neutral-33-90: #a9b2bb54;
+    --Primary3360: #686ad2;
+    --Primary-100-50: #7d80d7;
+    --Primary-100-60: #686ad2;
+    --Neutral-100-30: #3d444d;
+    --Neutral-100-10: #1e2026;
+    --text-secondary: #5b6571;
+    --primary-button-color: #5b5bb3;
+    --Alert-100-50: #b83152;
+    --Alert-100-110: #fddae2;
+
+    /* Base Colors - Light Mode */
+    --Base-66-Base-L1: rgba(255, 255, 255, 0.66);
+    --Base-66-Base-L2: rgba(30, 32, 38, 0.66);
+    --Base-33-Base-L1: rgba(255, 255, 255, 0.33);
+    --Base-33-Base-L2: rgba(30, 32, 38, 0.33);
+    --Base-100-Base-L1: #ffffff;
+    --base-100-base-l-2-c: rgba(222, 228, 233, 0.33);
+  }
+
+  .dark-mode {
+    /* Base Colors - Dark Mode */
+    --Base-66-Base-L1: rgba(255, 255, 255, 0.66);
+    --Base-66-Base-L2: rgba(30, 32, 38, 0.66);
+    --Base-33-Base-L2: rgba(30, 32, 38, 0.33);
+    --Base-100-Base-L1: #000000;
+    --base-100-base-l-2-c: rgba(30, 32, 38, 0.66);
+    --Primary-100-50: #7d80d7;
+    --Primary-100-60: #686ad2;
+    --Neutral-100-30: #a9b2bb;
+    --Neutral-100-10: #1e2026;
+    --primary-button-color: #7d80d7;
+    --Alert-100-110: #480418;
+  }
 }
 
 body {
@@ -322,14 +359,263 @@ body.dark-mode {
 
 /* Dark mode styles */
 .dark-mode .overlay-border-shadow {
+  outline: 1px rgba(61, 68, 77, 0.33) solid;
+}
+
+/* Contact form fields container (inner box) */
+.contact-form-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem; /* gap-5 equivalent */
+  padding: 1.5rem;
+  border-radius: 12px;
+}
+
+/* Typography Classes - Using Tailwind utilities */
+@layer components {
+  .submit-request-title {
+    font-family: 'Gilroy', sans-serif;
+    font-weight: 700;
+    vertical-align: middle;
+    font-size: 24px;
+    line-height: 133%;
+  }
+
+  .encountering-issues-text {
+    font-family: 'Avenir', sans-serif;
+    font-weight: 500;
+    vertical-align: middle;
+    font-size: 14px;
+    line-height: 155%;
+  }
+
+  .form-label {
+    font-family: 'Avenir', sans-serif;
+    font-weight: 500;
+    vertical-align: middle;
+    font-size: 18px;
+    line-height: 136%;
+  }
+
+  /* Field error text (email, enquiry, description, attachments) */
+  .field-error-text {
+    color: var(--Alert-100-50, #b83152);
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .field-error-text.field-error-with-icon {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .field-error-text .field-error-icon {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    margin-top: 0.125em;
+  }
+
+  /* Top-level form alert (API/config error and success) */
+  .form-alert-error,
+  .form-alert {
+    margin-top: 1rem;
+  }
+  .form-alert-error {
+    background: var(--Alert-100-110, #fddae2);
+    color: var(--Neutral-100-10, #1e2026);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+  }
+  .dark-mode .form-alert-error {
+    border-color: rgba(239, 68, 68, 0.3);
+    background: var(--Alert-100-110, #480418);
+    color: #dee4e9;
+  }
+
+  /* Contact Page Heading */
+  .contact-heading {
+    font-family: 'Gilroy', sans-serif;
+    font-weight: 800;
+    font-size: 40px;
+    line-height: 1.2;
+  }
+
+  @media (min-width: 640px) {
+    .contact-heading {
+      font-size: 48px;
+    }
+  }
+
+  .contact-heading-contact {
+    color: var(--Primary-100-60, #686ad2);
+  }
+
+  .contact-heading-us {
+    color: var(--Neutral-100-10, #1e2026);
+  }
+
+  .dark-mode .contact-heading-us {
+    color: #ffffff;
+  }
+
+  /* Contact Page Description */
+  .contact-description {
+    font-family: 'Avenir', sans-serif;
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 136%;
+    letter-spacing: normal;
+    text-align: center;
+    vertical-align: middle;
+    color: var(--Neutral-100-30, #3d444d);
+  }
+
+  .dark-mode .contact-description {
+    color: #ffffff;
+  }
+
+  /* Form Backgrounds - Using CSS variables for gradients */
+  .overlay-border-shadow {
+    background:
+      linear-gradient(
+        0deg,
+        var(--Base-66-Base-L1, rgba(255, 255, 255, 0.66)),
+        var(--Base-66-Base-L1, rgba(255, 255, 255, 0.66))
+      ),
+      linear-gradient(0deg, rgba(222, 228, 233, 0), rgba(222, 228, 233, 0));
+    box-shadow: 0px 8px 32px rgba(104, 106, 210, 0.33);
+  }
+
+  .dark-mode .overlay-border-shadow {
+    background:
+      linear-gradient(0deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)),
+      linear-gradient(
+        0deg,
+        var(--Base-66-Base-L2, rgba(30, 32, 38, 0.66)),
+        var(--Base-66-Base-L2, rgba(30, 32, 38, 0.66))
+      );
+    box-shadow: 0px 8px 32px 0px var(--Primary3360, #686ad2);
+  }
+
+  .contact-form-fields {
+    background:
+      linear-gradient(
+        0deg,
+        var(--Base-100-Base-L1, #ffffff),
+        var(--Base-100-Base-L1, #ffffff)
+      ),
+      linear-gradient(
+        0deg,
+        var(--base-100-base-l-2-c, rgba(222, 228, 233, 0.33)),
+        var(--base-100-base-l-2-c, rgba(222, 228, 233, 0.33))
+      );
+  }
+
+  .dark-mode .contact-form-fields {
+    background:
+      linear-gradient(
+        0deg,
+        var(--Base-100-Base-L1, #000000),
+        var(--Base-100-Base-L1, #000000)
+      ),
+      linear-gradient(
+        0deg,
+        var(--base-100-base-l-2-c, rgba(30, 32, 38, 0.66)),
+        var(--base-100-base-l-2-c, rgba(30, 32, 38, 0.66))
+      );
+  }
+
+  /* Override browser autofill white background and outline in dark mode */
+  .dark-mode input:-webkit-autofill,
+  .dark-mode input:-webkit-autofill:hover,
+  .dark-mode input:-webkit-autofill:focus,
+  .dark-mode textarea:-webkit-autofill,
+  .dark-mode textarea:-webkit-autofill:hover,
+  .dark-mode textarea:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0 1000px #000000 inset;
+    -webkit-text-fill-color: #dee4e9;
+    caret-color: #dee4e9;
+    outline: none !important;
+    border-color: rgb(45 44 44) !important;
+  }
+
+  .contact-form-divider {
+    background:
+      linear-gradient(
+        0deg,
+        var(--Base-66-Base-L1, rgba(255, 255, 255, 0.66)),
+        var(--Base-66-Base-L1, rgba(255, 255, 255, 0.66))
+      ),
+      linear-gradient(0deg, rgba(222, 228, 233, 0), rgba(222, 228, 233, 0));
+  }
+
+  .dark-mode .contact-form-divider {
+    background:
+      linear-gradient(0deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)),
+      linear-gradient(
+        0deg,
+        var(--Base-66-Base-L2, rgba(30, 32, 38, 0.66)),
+        var(--Base-66-Base-L2, rgba(30, 32, 38, 0.66))
+      );
+  }
+
+  /* Submit Button */
+  .submit-button {
+    background: var(--Primary-100-50, #7d80d7);
+    width: 383px;
+    max-width: 100%;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+    border-radius: 8px;
+    padding: 5px;
+    color: white;
+    font-size: 14px;
+    font-family: 'Gilroy', sans-serif;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .dark-mode .submit-button {
+    color: #000000;
+  }
+
+  .submit-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  .submit-button:hover:not(:disabled) {
+    opacity: 0.9;
+  }
+}
+
+/* Contact form divider */
+.contact-form-divider {
+  width: 100%;
+  border: 1px solid var(--Neutral-33-90, #a9b2bb54);
   background:
     linear-gradient(
       0deg,
-      rgba(30, 32, 38, 0.66) 0%,
-      rgba(30, 32, 38, 0.66) 100%
+      var(--Base-66-Base-L1, rgba(255, 255, 255, 0.66)),
+      var(--Base-66-Base-L1, rgba(255, 255, 255, 0.66))
     ),
-    rgba(0, 0, 0, 0);
-  outline: 1px rgba(61, 68, 77, 0.33) solid;
+    linear-gradient(0deg, rgba(222, 228, 233, 0), rgba(222, 228, 233, 0));
+}
+
+.dark-mode .contact-form-divider {
+  border-color: var(--Neutral-33-90, #a9b2bb54);
+  background:
+    linear-gradient(0deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)),
+    linear-gradient(
+      0deg,
+      var(--Base-66-Base-L2, rgba(30, 32, 38, 0.66)),
+      var(--Base-66-Base-L2, rgba(30, 32, 38, 0.66))
+    );
 }
 
 /* Frame Container */
@@ -355,36 +641,52 @@ body.dark-mode {
 /* Dropbox Area */
 .dropbox-area {
   align-self: stretch;
-  padding: 24px;
+  width: 960px;
+  max-width: 100%;
+  height: 164px;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px dashed #aaaee6;
   background:
     linear-gradient(
       0deg,
-      rgba(222, 228, 233, 0) 0%,
-      rgba(222, 228, 233, 0) 100%
+      var(--Base-33-Base-L1, rgba(255, 255, 255, 0.33)),
+      var(--Base-33-Base-L1, rgba(255, 255, 255, 0.33))
     ),
-    rgba(255, 255, 255, 0.33);
-  border-radius: 12px;
-  border: 1px dashed #aaaee6;
+    linear-gradient(0deg, rgba(222, 228, 233, 0), rgba(222, 228, 233, 0));
+  opacity: 1;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
 }
 
+@media (min-width: 640px) {
+  .dropbox-area {
+    padding: 24px;
+  }
+}
+
 .dark-mode .dropbox-area {
   background:
+    linear-gradient(0deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)),
     linear-gradient(
       0deg,
-      rgba(30, 32, 38, 0.33) 0%,
-      rgba(30, 32, 38, 0.33) 100%
-    ),
-    rgba(0, 0, 0, 0);
-  border: 1px dashed #403d7d;
+      var(--Base-33-Base-L2, rgba(30, 32, 38, 0.33)),
+      var(--Base-33-Base-L2, rgba(30, 32, 38, 0.33))
+    );
+  border-color: #403d7d;
 }
 
 .dropbox-area.drag-active {
   background: rgba(104, 106, 210, 0.1);
   outline: 2px #686ad2 dashed;
+}
+
+/* Home verify dropbox should span full container */
+.dropbox-area--home {
+  width: 100%;
+  max-width: none;
 }
 
 /* Frame Dropbox Text */
@@ -399,10 +701,11 @@ body.dark-mode {
 .dropbox-text {
   text-align: center;
   color: #3d444d;
-  font-size: 14px;
-  font-family: 'Gilroy', sans-serif;
+  font-family: 'Avenir', sans-serif;
   font-weight: 500;
-  line-height: 21.7px;
+  font-size: 14px;
+  line-height: 155%;
+  letter-spacing: 0%;
   word-wrap: break-word;
 }
 
@@ -513,7 +816,7 @@ body.dark-mode {
   display: flex;
   flex-direction: column;
   color: white;
-  font-size: 12px;
+  font-size: 14px;
   font-family: 'Gilroy', sans-serif;
   font-weight: 700;
   line-height: 19.8px;
@@ -537,10 +840,11 @@ body.dark-mode {
 .file-info-text {
   flex: 1 1 0;
   color: #5b6571;
-  font-size: 12px;
-  font-family: 'Gilroy', sans-serif;
+  font-family: 'Avenir', sans-serif;
   font-weight: 500;
-  line-height: 19.8px;
+  font-size: 12px;
+  line-height: 165%;
+  letter-spacing: 0%;
   word-wrap: break-word;
 }
 
