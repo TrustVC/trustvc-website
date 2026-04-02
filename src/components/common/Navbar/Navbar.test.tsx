@@ -6,10 +6,7 @@ import Navbar from './Navbar'
 describe('Navbar Component', () => {
   const mockSetIsDarkMode = vi.fn()
 
-  const renderNavbar = (
-    isDarkMode = false,
-    initialPath = '/'
-  ) =>
+  const renderNavbar = (isDarkMode = false, initialPath = '/') =>
     render(
       <MemoryRouter initialEntries={[initialPath]}>
         <Navbar isDarkMode={isDarkMode} setIsDarkMode={mockSetIsDarkMode} />
