@@ -66,16 +66,17 @@ describe('getBodyText', () => {
   })
 
   it('handles blocks with no children (returns empty string for that block)', () => {
-    const body = [
-      { children: undefined },
-      { children: [{ text: 'Content' }] },
-    ]
+    const body = [{ children: undefined }, { children: [{ text: 'Content' }] }]
     expect(getBodyText(body)).toBe('Content')
   })
 
   it('handles spans with undefined text (empty string, trimmed from output)', () => {
     // undefined || '' → '', joined with 'Hello' → ' Hello', then trim() → 'Hello'
-    const body = [{ children: [{ text: undefined as unknown as string }, { text: 'Hello' }] }]
+    const body = [
+      {
+        children: [{ text: undefined as unknown as string }, { text: 'Hello' }],
+      },
+    ]
     expect(getBodyText(body)).toBe('Hello')
   })
 
@@ -172,7 +173,9 @@ describe('fetchNewsArticles', () => {
   })
 
   it('keeps featured=false when article.featured is false and no featured category', async () => {
-    mockFetch.mockResolvedValue([makeArticle({ featured: false, categories: [{ title: 'General' }] })])
+    mockFetch.mockResolvedValue([
+      makeArticle({ featured: false, categories: [{ title: 'General' }] }),
+    ])
     mockState.isSanityConfigured = true
     mockState.sanityClient = { fetch: mockFetch }
     const [result] = await fetchNewsArticles()
@@ -222,8 +225,16 @@ describe('fetchNewsArticles', () => {
   // ── sorting ──
 
   it('places featured articles before non-featured ones', async () => {
-    const nonFeatured = makeArticle({ _id: 'b', featured: false, publishedAt: '2025-06-01T00:00:00Z' })
-    const featured = makeArticle({ _id: 'a', featured: true, publishedAt: '2025-01-01T00:00:00Z' })
+    const nonFeatured = makeArticle({
+      _id: 'b',
+      featured: false,
+      publishedAt: '2025-06-01T00:00:00Z',
+    })
+    const featured = makeArticle({
+      _id: 'a',
+      featured: true,
+      publishedAt: '2025-01-01T00:00:00Z',
+    })
     mockFetch.mockResolvedValue([nonFeatured, featured])
     mockState.isSanityConfigured = true
     mockState.sanityClient = { fetch: mockFetch }
@@ -233,8 +244,14 @@ describe('fetchNewsArticles', () => {
   })
 
   it('sorts by publishedAt descending within the same featured group', async () => {
-    const older = makeArticle({ _id: 'old', publishedAt: '2025-01-01T00:00:00Z' })
-    const newer = makeArticle({ _id: 'new', publishedAt: '2025-06-01T00:00:00Z' })
+    const older = makeArticle({
+      _id: 'old',
+      publishedAt: '2025-01-01T00:00:00Z',
+    })
+    const newer = makeArticle({
+      _id: 'new',
+      publishedAt: '2025-06-01T00:00:00Z',
+    })
     mockFetch.mockResolvedValue([older, newer])
     mockState.isSanityConfigured = true
     mockState.sanityClient = { fetch: mockFetch }
@@ -244,7 +261,10 @@ describe('fetchNewsArticles', () => {
   })
 
   it('puts articles with no publishedAt after dated articles in the same group', async () => {
-    const withDate = makeArticle({ _id: 'dated', publishedAt: '2025-01-01T00:00:00Z' })
+    const withDate = makeArticle({
+      _id: 'dated',
+      publishedAt: '2025-01-01T00:00:00Z',
+    })
     const noDate = makeArticle({ _id: 'nodated', publishedAt: undefined })
     mockFetch.mockResolvedValue([noDate, withDate])
     mockState.isSanityConfigured = true
@@ -255,8 +275,16 @@ describe('fetchNewsArticles', () => {
   })
 
   it('featured + newer date beats featured + older date', async () => {
-    const featuredOld = makeArticle({ _id: 'f-old', featured: true, publishedAt: '2024-01-01T00:00:00Z' })
-    const featuredNew = makeArticle({ _id: 'f-new', featured: true, publishedAt: '2025-06-01T00:00:00Z' })
+    const featuredOld = makeArticle({
+      _id: 'f-old',
+      featured: true,
+      publishedAt: '2024-01-01T00:00:00Z',
+    })
+    const featuredNew = makeArticle({
+      _id: 'f-new',
+      featured: true,
+      publishedAt: '2025-06-01T00:00:00Z',
+    })
     mockFetch.mockResolvedValue([featuredOld, featuredNew])
     mockState.isSanityConfigured = true
     mockState.sanityClient = { fetch: mockFetch }
@@ -304,7 +332,9 @@ describe('fetchNewsArticleBySlug', () => {
     mockState.isSanityConfigured = true
     mockState.sanityClient = { fetch: mockFetch }
     await fetchNewsArticleBySlug('my-article')
-    expect(mockFetch).toHaveBeenCalledWith(expect.any(String), { slug: 'my-article' })
+    expect(mockFetch).toHaveBeenCalledWith(expect.any(String), {
+      slug: 'my-article',
+    })
   })
 
   it('returns null when fetch resolves to null (article not found)', async () => {

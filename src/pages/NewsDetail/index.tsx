@@ -120,17 +120,23 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
             <div className="lg:col-span-4 space-y-4 p-1">
               {/* Author */}
               <div className="flex items-center gap-3">
-                <div className={`w-12 h-12 rounded-full flex-shrink-0 ${imgBg}`} />
+                <div
+                  className={`w-12 h-12 rounded-full flex-shrink-0 ${imgBg}`}
+                />
                 <div className={`h-5 w-32 rounded ${lineBg}`} />
               </div>
               {/* Clock row */}
               <div className="flex items-center gap-2">
-                <div className={`w-5 h-5 rounded-full flex-shrink-0 ${lineBg}`} />
+                <div
+                  className={`w-5 h-5 rounded-full flex-shrink-0 ${lineBg}`}
+                />
                 <div className={`h-4 w-24 rounded ${lineBg}`} />
               </div>
               {/* Calendar row */}
               <div className="flex items-center gap-2">
-                <div className={`w-5 h-5 rounded-full flex-shrink-0 ${lineBg}`} />
+                <div
+                  className={`w-5 h-5 rounded-full flex-shrink-0 ${lineBg}`}
+                />
                 <div className={`h-4 w-32 rounded ${lineBg}`} />
               </div>
               {/* Category chips */}
