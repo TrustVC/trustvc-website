@@ -16,7 +16,7 @@
 
   /* Gilroy Medium */
   @font-face {
-    font-family: "Gilroy";
+    font-family: 'Gilroy';
     src:
       url('/fonts/GilroyMedium/font.woff2') format('woff2'),
       url('/fonts/GilroyMedium/font.woff') format('woff');
@@ -27,7 +27,7 @@
 
   /* Gilroy Bold */
   @font-face {
-    font-family: "Gilroy";
+    font-family: 'Gilroy';
     src:
       url('/fonts/GilroyBold/font.woff2') format('woff2'),
       url('/fonts/GilroyBold/font.woff') format('woff');
@@ -38,7 +38,7 @@
 
   /* Gilroy ExtraBold */
   @font-face {
-    font-family: "Gilroy";
+    font-family: 'Gilroy';
     src:
       url('/fonts/GilroyExtraBold/font.woff2') format('woff2'),
       url('/fonts/GilroyExtraBold/font.woff') format('woff');
@@ -51,7 +51,7 @@
 body {
   margin: 0;
   font-family:
-    "Gilroy",
+    'Gilroy',
     -apple-system,
     BlinkMacSystemFont,
     'Segoe UI',
@@ -129,7 +129,7 @@ body.dark-mode {
 }
 
 .news-category-chip {
-  font-family: "Gilroy", sans-serif;
+  font-family: 'Gilroy', sans-serif;
   font-weight: 600;
   font-size: 12px;
   line-height: 16px;
@@ -138,7 +138,7 @@ body.dark-mode {
 }
 
 .news-meta-text {
-  font-family: "Gilroy", sans-serif;
+  font-family: 'Gilroy', sans-serif;
   font-weight: 700;
   font-size: 14px;
   line-height: 155%;
@@ -350,7 +350,7 @@ body.dark-mode {
   flex-wrap: wrap;
   color: #1e2026;
   font-size: 64px;
-  font-family: "Gilroy", sans-serif;
+  font-family: 'Gilroy', sans-serif;
   font-weight: 700;
   line-height: 71.68px;
 }
@@ -376,7 +376,7 @@ body.dark-mode {
   flex-direction: column;
   color: #3d444d;
   font-size: 18px;
-  font-family: "Gilroy", sans-serif;
+  font-family: 'Gilroy', sans-serif;
   font-weight: 500;
   line-height: 24.48px;
   margin: 0;
@@ -525,7 +525,7 @@ body.dark-mode {
   text-align: center;
   color: #3d444d;
   font-size: 14px;
-  font-family: "Gilroy", sans-serif;
+  font-family: 'Gilroy', sans-serif;
   font-weight: 500;
   line-height: 21.7px;
   word-wrap: break-word;
@@ -549,7 +549,7 @@ body.dark-mode {
   text-align: center;
   color: #3d444d;
   font-size: 14px;
-  font-family: "Gilroy", sans-serif;
+  font-family: 'Gilroy', sans-serif;
   font-weight: 500;
   line-height: 21.7px;
   word-wrap: break-word;
@@ -639,7 +639,7 @@ body.dark-mode {
   flex-direction: column;
   color: white;
   font-size: 12px;
-  font-family: "Gilroy", sans-serif;
+  font-family: 'Gilroy', sans-serif;
   font-weight: 700;
   line-height: 19.8px;
   word-wrap: break-word;
@@ -663,7 +663,7 @@ body.dark-mode {
   flex: 1 1 0;
   color: #5b6571;
   font-size: 12px;
-  font-family: "Gilroy", sans-serif;
+  font-family: 'Gilroy', sans-serif;
   font-weight: 500;
   line-height: 19.8px;
   word-wrap: break-word;
@@ -757,7 +757,7 @@ body.dark-mode {
   flex-direction: column;
   color: white;
   font-size: 24px;
-  font-family: "Gilroy", sans-serif;
+  font-family: 'Gilroy', sans-serif;
   font-weight: 700;
   line-height: 31.92px;
   word-wrap: break-word;
@@ -779,7 +779,7 @@ body.dark-mode {
   flex-direction: column;
   color: white;
   font-size: 14px;
-  font-family: "Gilroy", sans-serif;
+  font-family: 'Gilroy', sans-serif;
   font-weight: 500;
   line-height: 21.7px;
   word-wrap: break-word;
@@ -846,7 +846,7 @@ body.dark-mode {
   flex-direction: column;
   color: white;
   font-size: 18px;
-  font-family: "Gilroy", sans-serif;
+  font-family: 'Gilroy', sans-serif;
   font-weight: 700;
   line-height: 24.48px;
   word-wrap: break-word;
@@ -908,7 +908,7 @@ body.dark-mode {
 .spinner-label {
   text-align: center;
   font-size: 14px;
-  font-family: "Gilroy", sans-serif;
+  font-family: 'Gilroy', sans-serif;
   font-weight: 500;
   color: #3d444d;
 }
@@ -926,7 +926,7 @@ body.dark-mode {
   padding: 6px 16px;
   color: #5b5bb3;
   font-size: 13px;
-  font-family: "Gilroy", sans-serif;
+  font-family: 'Gilroy', sans-serif;
   font-weight: 700;
   cursor: pointer;
 }
@@ -936,7 +936,7 @@ body.dark-mode {
   text-align: center;
   color: #ef4444;
   font-size: 14px;
-  font-family: "Gilroy", sans-serif;
+  font-family: 'Gilroy', sans-serif;
   font-weight: 500;
 }
 
@@ -983,7 +983,7 @@ body.dark-mode {
 
 .nm-title {
   color: #1e2026;
-  font-family: "Gilroy", sans-serif;
+  font-family: 'Gilroy', sans-serif;
   font-weight: 700;
   line-height: 1.33;
   word-wrap: break-word;
@@ -1214,7 +1214,7 @@ body.dark-mode {
 .nm-tooltip-title {
   margin: 0;
   font-size: 13px;
-  font-family: "Gilroy", sans-serif;
+  font-family: 'Gilroy', sans-serif;
   font-weight: 700;
   color: #1e2026;
 }
@@ -1265,7 +1265,7 @@ body.dark-mode {
 
 .nm-btn-label {
   font-size: 14px;
-  font-family: "Gilroy", sans-serif;
+  font-family: 'Gilroy', sans-serif;
   font-weight: 700;
   line-height: 21.7px;
 }
@@ -1321,7 +1321,7 @@ body.dark-mode {
 .vr-network-label {
   color: #3d444d;
   font-size: 16px;
-  font-family: "Gilroy", sans-serif;
+  font-family: 'Gilroy', sans-serif;
   font-weight: 500;
   line-height: 20px;
   white-space: nowrap;
@@ -1441,7 +1441,7 @@ body.dark-mode {
 .vr-upload-btn-label {
   color: #5b5bb3;
   font-size: 14px;
-  font-family: "Gilroy", sans-serif;
+  font-family: 'Gilroy', sans-serif;
   font-weight: 700;
   line-height: 21.7px;
 }
@@ -1489,7 +1489,7 @@ body.dark-mode {
 .vr-issued-by-value {
   color: #1e2026;
   font-size: 16px;
-  font-family: "Gilroy", sans-serif;
+  font-family: 'Gilroy', sans-serif;
   font-weight: 700;
   line-height: 24.48px;
   word-break: break-all;
@@ -1529,7 +1529,7 @@ body.dark-mode {
 
 .vr-tag-text {
   font-size: 14px;
-  font-family: "Gilroy", sans-serif;
+  font-family: 'Gilroy', sans-serif;
   font-weight: 700;
   line-height: 21.7px;
 }
@@ -1602,7 +1602,7 @@ body.dark-mode {
 .vr-nft-link {
   color: #5b5bb3;
   font-size: 16px;
-  font-family: "Gilroy", sans-serif;
+  font-family: 'Gilroy', sans-serif;
   font-weight: 700;
   line-height: 24.48px;
   background: none;
@@ -1661,7 +1661,7 @@ body.dark-mode {
 .vr-title-col-name {
   color: #1e2026;
   font-size: 16px;
-  font-family: "Gilroy", sans-serif;
+  font-family: 'Gilroy', sans-serif;
   font-weight: 700;
   line-height: 24.48px;
 }
@@ -1707,7 +1707,7 @@ body.dark-mode {
   padding: 4px;
   color: #ffffff;
   font-size: 14px;
-  font-family: "Gilroy", sans-serif;
+  font-family: 'Gilroy', sans-serif;
   font-weight: 700;
   line-height: 21.7px;
 }
@@ -1758,7 +1758,7 @@ body.dark-mode {
   padding: 12px 16px;
   cursor: pointer;
   font-size: 16px;
-  font-family: "Gilroy", sans-serif;
+  font-family: 'Gilroy', sans-serif;
   font-weight: 700;
   color: #5b6571;
   white-space: nowrap;
@@ -1825,7 +1825,7 @@ body.dark-mode {
   display: block;
   font-size: 20px;
   font-weight: 700;
-  font-family: "Gilroy", sans-serif;
+  font-family: 'Gilroy', sans-serif;
   color: #1e2026;
   margin-bottom: 4px;
 }
@@ -1833,7 +1833,7 @@ body.dark-mode {
 .vr-doc-utility-detail {
   font-size: 14px;
   font-weight: 500;
-  font-family: 'Avenir', "Gilroy", sans-serif;
+  font-family: 'Avenir', 'Gilroy', sans-serif;
   color: #5b6571;
   word-break: break-all;
 }
@@ -1971,7 +1971,7 @@ body.dark-mode {
 }
 
 .vr-attachment-name {
-  font-family: "Gilroy", sans-serif;
+  font-family: 'Gilroy', sans-serif;
   font-size: 14px;
   font-weight: 700;
   color: #1e2026;
@@ -1981,7 +1981,7 @@ body.dark-mode {
 }
 
 .vr-attachment-type {
-  font-family: 'Avenir', "Gilroy", sans-serif;
+  font-family: 'Avenir', 'Gilroy', sans-serif;
   font-size: 12px;
   color: #5b6571;
 }
@@ -2263,7 +2263,7 @@ body.dark-mode {
 .ec-header-title {
   flex: 1;
   margin: 0;
-  font-family: "Gilroy", sans-serif;
+  font-family: 'Gilroy', sans-serif;
   font-weight: 700;
   font-size: 24px;
   line-height: 133%;

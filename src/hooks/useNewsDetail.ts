@@ -115,7 +115,8 @@ export const useNewsDetail = (slug?: string): NewsDetailHookResult => {
     [article?.publishedAt]
   )
   const updatedDateLabel: string | null = useMemo(
-    () => (article?.updatedAt ? safeFormatDate(article.updatedAt, '') || null : null),
+    () =>
+      article?.updatedAt ? safeFormatDate(article.updatedAt, '') || null : null,
     [article?.updatedAt]
   )
   const nextPublishedDateLabel: string = useMemo(

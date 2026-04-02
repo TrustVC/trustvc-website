@@ -73,7 +73,9 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
     if (marks.includes('em')) content = <em>{content}</em>
     if (marks.includes('code'))
       content = (
-        <code className={`rounded px-1 font-mono text-sm ${isDarkMode ? 'bg-white/10' : 'bg-black/10'}`}>
+        <code
+          className={`rounded px-1 font-mono text-sm ${isDarkMode ? 'bg-white/10' : 'bg-black/10'}`}
+        >
           {content}
         </code>
       )
@@ -106,8 +108,13 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
     )
 
     if (block._type === 'image') {
-      const imageBlock = block as unknown as { asset?: { _ref?: string }; alt?: string }
-      const src = getSanityImageUrl({ asset: imageBlock.asset })?.width(900).url()
+      const imageBlock = block as unknown as {
+        asset?: { _ref?: string }
+        alt?: string
+      }
+      const src = getSanityImageUrl({ asset: imageBlock.asset })
+        ?.width(900)
+        .url()
       if (!src) return null
       return (
         <img
