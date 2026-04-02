@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, Dispatch, SetStateAction } from 'react'
+import { useLocation } from 'react-router-dom'
 import Logo from '../Logo'
 
 interface NavbarProps {
@@ -10,6 +11,8 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isEcosystemOpen, setIsEcosystemOpen] = useState(false)
   const navRef = useRef<HTMLElement>(null)
+  const location = useLocation()
+  const isNewsActive = location.pathname.startsWith('/news-updates')
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -106,7 +109,15 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
               >
                 <div
                   className="px-1 py-1 text-center text-sm font-bold font-['Gilroy'] leading-snug"
-                  style={{ color: isDarkMode ? '#7D80D7' : '#5B5BB3' }}
+                  style={{
+                    color: isNewsActive
+                      ? isDarkMode
+                        ? '#808894'
+                        : '#5B6571'
+                      : isDarkMode
+                        ? '#7D80D7'
+                        : '#5B5BB3',
+                  }}
                 >
                   Home
                 </div>
@@ -273,7 +284,15 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
               >
                 <div
                   className="px-1 py-1 text-center text-sm font-bold font-['Gilroy'] leading-snug"
-                  style={{ color: isDarkMode ? '#808894' : '#5B6571' }}
+                  style={{
+                    color: isNewsActive
+                      ? isDarkMode
+                        ? '#7D80D7'
+                        : '#5B5BB3'
+                      : isDarkMode
+                        ? '#808894'
+                        : '#5B6571',
+                  }}
                 >
                   News &amp; Updates
                 </div>
@@ -388,7 +407,13 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
               href="/"
               className="px-4 py-3 text-left text-sm font-bold font-['Gilroy'] rounded-lg transition-colors duration-200"
               style={{
-                color: isDarkMode ? '#7D80D7' : '#5B5BB3',
+                color: isNewsActive
+                  ? isDarkMode
+                    ? '#808894'
+                    : '#5B6571'
+                  : isDarkMode
+                    ? '#7D80D7'
+                    : '#5B5BB3',
                 backgroundColor: 'transparent',
               }}
               onMouseEnter={e => {
@@ -530,7 +555,13 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
               href="/news-updates"
               className="px-4 py-3 text-left text-sm font-bold font-['Gilroy'] rounded-lg transition-colors duration-200"
               style={{
-                color: isDarkMode ? '#808894' : '#5B6571',
+                color: isNewsActive
+                  ? isDarkMode
+                    ? '#7D80D7'
+                    : '#5B5BB3'
+                  : isDarkMode
+                    ? '#808894'
+                    : '#5B6571',
                 backgroundColor: 'transparent',
               }}
               onMouseEnter={e => {

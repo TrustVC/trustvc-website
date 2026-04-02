@@ -1,16 +1,27 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
 import Navbar from './Navbar'
 
 describe('Navbar Component', () => {
   const mockSetIsDarkMode = vi.fn()
+
+  const renderNavbar = (
+    isDarkMode = false,
+    initialPath = '/'
+  ) =>
+    render(
+      <MemoryRouter initialEntries={[initialPath]}>
+        <Navbar isDarkMode={isDarkMode} setIsDarkMode={mockSetIsDarkMode} />
+      </MemoryRouter>
+    )
 
   beforeEach(() => {
     mockSetIsDarkMode.mockClear()
   })
 
   it('renders navbar with logo', () => {
-    render(<Navbar isDarkMode={false} setIsDarkMode={mockSetIsDarkMode} />)
+    renderNavbar()
 
     // Logo should be present
     const logos = screen.getAllByRole('link', { name: '' })
@@ -18,7 +29,7 @@ describe('Navbar Component', () => {
   })
 
   it('renders navigation links', () => {
-    render(<Navbar isDarkMode={false} setIsDarkMode={mockSetIsDarkMode} />)
+    renderNavbar()
 
     expect(screen.getByText('Home')).toBeInTheDocument()
     expect(screen.getByText('Ecosystem')).toBeInTheDocument()
@@ -27,14 +38,14 @@ describe('Navbar Component', () => {
   })
 
   it('renders Contact Us button', () => {
-    render(<Navbar isDarkMode={false} setIsDarkMode={mockSetIsDarkMode} />)
+    renderNavbar()
 
     const contactButtons = screen.getAllByText('Contact Us')
     expect(contactButtons.length).toBeGreaterThan(0)
   })
 
   it('toggles dark mode when sun icon is clicked', () => {
-    render(<Navbar isDarkMode={true} setIsDarkMode={mockSetIsDarkMode} />)
+    renderNavbar(true)
 
     // Find sun icon button (first theme toggle button)
     const themeButtons = screen.getAllByRole('button')
@@ -49,7 +60,7 @@ describe('Navbar Component', () => {
   })
 
   it('toggles dark mode when moon icon is clicked', () => {
-    render(<Navbar isDarkMode={false} setIsDarkMode={mockSetIsDarkMode} />)
+    renderNavbar()
 
     // Find moon icon button
     const themeButtons = screen.getAllByRole('button')
@@ -64,7 +75,7 @@ describe('Navbar Component', () => {
   })
 
   it('opens mobile menu when hamburger is clicked', () => {
-    render(<Navbar isDarkMode={false} setIsDarkMode={mockSetIsDarkMode} />)
+    renderNavbar()
 
     // Find hamburger button
     const hamburgerButton = screen
@@ -83,7 +94,7 @@ describe('Navbar Component', () => {
   })
 
   it('opens ecosystem dropdown on hover', () => {
-    render(<Navbar isDarkMode={false} setIsDarkMode={mockSetIsDarkMode} />)
+    renderNavbar()
 
     const ecosystemButtons = screen.getAllByText('Ecosystem')
     const desktopEcosystemButton = ecosystemButtons[0]
@@ -97,9 +108,7 @@ describe('Navbar Component', () => {
   })
 
   it('applies correct CSS classes for light mode', () => {
-    const { container } = render(
-      <Navbar isDarkMode={false} setIsDarkMode={mockSetIsDarkMode} />
-    )
+    const { container } = renderNavbar()
 
     const nav = container.querySelector('nav')
     expect(nav).toHaveClass('navbar-light')
@@ -107,9 +116,7 @@ describe('Navbar Component', () => {
   })
 
   it('applies correct CSS classes for dark mode', () => {
-    const { container } = render(
-      <Navbar isDarkMode={true} setIsDarkMode={mockSetIsDarkMode} />
-    )
+    const { container } = renderNavbar(true)
 
     const nav = container.querySelector('nav')
     expect(nav).toHaveClass('navbar-dark')
@@ -117,11 +124,44 @@ describe('Navbar Component', () => {
   })
 
   it('renders contact button with correct CSS class', () => {
-    const { container } = render(
-      <Navbar isDarkMode={false} setIsDarkMode={mockSetIsDarkMode} />
-    )
+    const { container } = renderNavbar()
 
     const contactButtons = container.querySelectorAll('.contact-button')
     expect(contactButtons.length).toBeGreaterThan(0)
+  })
+
+  it('shows News & Updates as active color on /news-updates route (light mode)', () => {
+    renderNavbar(false, '/news-updates')
+
+    const newsLink = screen.getByText('News & Updates')
+    expect(newsLink).toHaveStyle({ color: '#5B5BB3' })
+  })
+
+  it('shows News & Updates as active color on news detail route (light mode)', () => {
+    renderNavbar(false, '/news-updates/some-article-slug')
+
+    const newsLink = screen.getByText('News & Updates')
+    expect(newsLink).toHaveStyle({ color: '#5B5BB3' })
+  })
+
+  it('shows Home as inactive color on /news-updates route (light mode)', () => {
+    renderNavbar(false, '/news-updates')
+
+    const homeLink = screen.getByText('Home')
+    expect(homeLink).toHaveStyle({ color: '#5B6571' })
+  })
+
+  it('shows News & Updates as inactive color on home route (light mode)', () => {
+    renderNavbar(false, '/')
+
+    const newsLink = screen.getByText('News & Updates')
+    expect(newsLink).toHaveStyle({ color: '#5B6571' })
+  })
+
+  it('shows Home as active color on home route (light mode)', () => {
+    renderNavbar(false, '/')
+
+    const homeLink = screen.getByText('Home')
+    expect(homeLink).toHaveStyle({ color: '#5B5BB3' })
   })
 })
