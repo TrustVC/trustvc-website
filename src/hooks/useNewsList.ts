@@ -21,6 +21,7 @@ export const useNewsList = (): NewsListHookResult => {
   const [loading, setLoading] = useState(true)
   const [visibleCount, setVisibleCount] = useState(0)
   const [isLoadingMore, setIsLoadingMore] = useState(false)
+  const isLoadingMoreRef = useRef(false)
   const loadMoreAnchorRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
@@ -45,7 +46,7 @@ export const useNewsList = (): NewsListHookResult => {
     }
   }, [])
 
-  const featuredArticle = useMemo(() => articles[0], [articles])
+  const featuredArticle = useMemo(() => articles[0] ?? null, [articles])
   const articleGrid = useMemo(() => articles.slice(1), [articles])
   const visibleArticles = useMemo(
     () => articleGrid.slice(0, visibleCount),
@@ -83,7 +84,7 @@ export const useNewsList = (): NewsListHookResult => {
   }, [articleGrid])
 
   useEffect(() => {
-    if (!hasMoreArticles || isLoadingMore || !loadMoreAnchorRef.current) return
+    if (!hasMoreArticles || !loadMoreAnchorRef.current) return
 
     const columns = window.innerWidth >= 768 ? 2 : 1
     const batchSize = Math.max(columns, columns * 2)
@@ -92,13 +93,15 @@ export const useNewsList = (): NewsListHookResult => {
     const observer = new IntersectionObserver(
       entries => {
         const firstEntry = entries[0]
-        if (!firstEntry?.isIntersecting) return
+        if (!firstEntry?.isIntersecting || isLoadingMoreRef.current) return
 
+        isLoadingMoreRef.current = true
         setIsLoadingMore(true)
         timeoutId = window.setTimeout(() => {
           setVisibleCount(prev =>
             Math.min(prev + batchSize, articleGrid.length)
           )
+          isLoadingMoreRef.current = false
           setIsLoadingMore(false)
         }, 350)
       },
@@ -112,7 +115,7 @@ export const useNewsList = (): NewsListHookResult => {
       }
       observer.disconnect()
     }
-  }, [articleGrid.length, hasMoreArticles, isLoadingMore])
+  }, [articleGrid.length, hasMoreArticles])
 
   return {
     articles,

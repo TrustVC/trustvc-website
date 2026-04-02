@@ -62,6 +62,8 @@ describe('sanity/client — configured (both env vars set)', () => {
   beforeEach(() => {
     vi.stubEnv('VITE_SANITY_PROJECT_ID', 'test-project-id')
     vi.stubEnv('VITE_SANITY_DATASET', 'production')
+    vi.stubEnv('VITE_SANITY_API_VERSION', '')
+    vi.stubEnv('VITE_SANITY_READ_TOKEN', '')
     mockCreateClient.mockClear()
     mockImageUrlBuilder.mockClear()
     vi.resetModules()

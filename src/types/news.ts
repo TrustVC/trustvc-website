@@ -37,6 +37,8 @@ export interface PortableTextMarkDef {
 export interface PortableTextBlock {
   _type?: string
   _key?: string
+  style?: string
+  listItem?: string
   children?: PortableTextSpan[]
   markDefs?: PortableTextMarkDef[]
 }

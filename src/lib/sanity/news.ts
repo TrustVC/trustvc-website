@@ -1,8 +1,7 @@
-import groq from 'groq'
 import type { NewsArticle } from '../../types/news'
 import { isSanityConfigured, sanityClient } from './client'
 
-const NEWS_LIST_QUERY = groq`*[_type == "post"] | order(featured desc, publishedAt desc)[0...20]{
+const NEWS_LIST_QUERY = `*[_type == "post"] | order(featured desc, publishedAt desc){
   _id,
   title,
   subtitle,
@@ -17,7 +16,7 @@ const NEWS_LIST_QUERY = groq`*[_type == "post"] | order(featured desc, published
   categories[]->{title}
 }`
 
-const NEWS_DETAIL_QUERY = groq`*[_type == "post" && slug.current == $slug][0]{
+const NEWS_DETAIL_QUERY = `*[_type == "post" && slug.current == $slug][0]{
   _id,
   title,
   subtitle,

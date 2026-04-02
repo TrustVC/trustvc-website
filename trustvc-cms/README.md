@@ -5,21 +5,21 @@ This Studio powers the `News & Updates` experience in the website.
 ## Run the Studio
 
 ```bash
-cd sanity-admin
+cd trustvc-cms
 npm run dev
 ```
 
 ## Build and Preview
 
 ```bash
-cd sanity-admin
+cd trustvc-cms
 npm run build
 npm run preview
 ```
 
 ## Deployment Commands
 
-Run these from `sanity-admin`:
+Run these from `trustvc-cms`:
 
 ```bash
 # Login once (if not already authenticated)
@@ -38,8 +38,8 @@ npx sanity deploy
 ## Important Before Deploying
 
 - Confirm project mapping in:
-  - `sanity-admin/sanity.config.ts`
-  - `sanity-admin/sanity.cli.ts`
+  - `trustvc-cms/sanity.config.ts`
+  - `trustvc-cms/sanity.cli.ts`
 - Ensure the target dataset is correct (for example: `production`).
 - Run `npx sanity schema validate` before every deploy.
 - Publish content changes in Studio; drafts are not visible on public APIs.

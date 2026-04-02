@@ -1,3 +1,4 @@
+import type React from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { format } from 'date-fns'
 import clsx from 'clsx'
@@ -57,7 +58,6 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
     const marks = span.marks || []
     const key = span._key || `span-${index}`
 
-    const hasStrong = marks.includes('strong')
     const linkMarkKey = marks.find(mark =>
       block.markDefs?.some(def => def._key === mark && def._type === 'link')
     )
@@ -67,7 +67,15 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
         )
       : null
 
-    const content = hasStrong ? <strong>{text}</strong> : text
+    let content: React.ReactNode = text
+    if (marks.includes('strong')) content = <strong>{content}</strong>
+    if (marks.includes('em')) content = <em>{content}</em>
+    if (marks.includes('code'))
+      content = (
+        <code className="rounded bg-black/10 px-1 font-mono text-sm dark:bg-white/10">
+          {content}
+        </code>
+      )
 
     if (linkDef?.href) {
       const isExternal = /^https?:\/\//.test(linkDef.href)
@@ -85,6 +93,74 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
     }
 
     return <span key={key}>{content}</span>
+  }
+
+  const renderPortableTextBlock = (
+    block: PortableTextBlock,
+    blockIndex: number
+  ) => {
+    const key = block._key || `block-${blockIndex}`
+    const spans = (block.children || []).map((span, i) =>
+      renderPortableTextSpan(span, block, i)
+    )
+
+    if (block._type === 'image') {
+      const ref = (block as unknown as { asset?: { _ref?: string } }).asset
+        ?._ref
+      if (!ref) return null
+      const src = `https://cdn.sanity.io/images/${ref
+        .replace('image-', '')
+        .replace(/-(\w+)$/, '.$1')}`
+      return (
+        <img
+          key={key}
+          src={src}
+          alt=""
+          className="w-full rounded-xl"
+        />
+      )
+    }
+
+    switch (block.style) {
+      case 'h2':
+        return (
+          <h2
+            key={key}
+            className={clsx(
+              'text-2xl font-bold mt-6',
+              isDarkMode ? 'text-[#DEE4E9]' : 'text-[#1E2026]'
+            )}
+          >
+            {spans}
+          </h2>
+        )
+      case 'h3':
+        return (
+          <h3
+            key={key}
+            className={clsx(
+              'text-xl font-bold mt-5',
+              isDarkMode ? 'text-[#DEE4E9]' : 'text-[#1E2026]'
+            )}
+          >
+            {spans}
+          </h3>
+        )
+      case 'blockquote':
+        return (
+          <blockquote
+            key={key}
+            className={clsx(
+              'border-l-4 border-[#686AD2] pl-4 italic',
+              isDarkMode ? 'text-[#A9B2BB]' : 'text-[#3D444D]'
+            )}
+          >
+            {spans}
+          </blockquote>
+        )
+      default:
+        return <p key={key}>{spans}</p>
+    }
   }
 
   if (loading) {
@@ -270,7 +346,13 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
               className="lg:col-span-8 w-full rounded-2xl object-cover h-[240px] sm:h-[340px] lg:h-[420px]"
             />
           )}
-          <aside className={clsx('lg:col-span-4 p-1 h-fit', panelTextClass)}>
+          <aside
+            className={clsx(
+              'p-1 h-fit',
+              articleImageUrl ? 'lg:col-span-4' : 'lg:col-span-12',
+              panelTextClass
+            )}
+          >
             <div className="inline-flex items-center gap-3">
               <img
                 src={authorImageUrl || '/icons/profile-default.svg'}
@@ -337,15 +419,9 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
 
         <div className={articleBodyClass}>
           {article.body?.length ? (
-            article.body
-              .filter(block => block?._type === 'block')
-              .map((block, blockIndex) => (
-                <p key={block._key || `block-${blockIndex}`}>
-                  {(block.children || []).map((span, spanIndex) =>
-                    renderPortableTextSpan(span, block, spanIndex)
-                  )}
-                </p>
-              ))
+            article.body.map((block, blockIndex) =>
+              renderPortableTextBlock(block, blockIndex)
+            )
           ) : (
             <p>No content available yet.</p>
           )}

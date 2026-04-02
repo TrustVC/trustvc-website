@@ -170,7 +170,8 @@ const News = ({ isDarkMode }: NewsProps) => {
             {featuredArticle && (
               <article
                 className={clsx(
-                  'grid grid-cols-1 lg:grid-cols-2 lg:items-stretch shadow-[0_8px_32px_rgba(104,106,210,0.15)]',
+                  'grid grid-cols-1 lg:items-stretch shadow-[0_8px_32px_rgba(104,106,210,0.15)]',
+                  featuredImageUrl ? 'lg:grid-cols-2' : 'lg:grid-cols-1',
                   shellSurfaceClass
                 )}
               >
