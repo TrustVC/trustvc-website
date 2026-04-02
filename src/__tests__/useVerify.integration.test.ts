@@ -85,12 +85,12 @@ describe('verifyDocument — integration with real fixtures', () => {
     it('OA v2 DNS-DID', async () => {
       const { isValid } = await verify(oaDnsDidV2)
       expect(isValid).toBe(true)
-    })
+    }, 30000) // increase timeout for slow tests
 
     it('OA v3 DNS-DID', async () => {
       const { isValid } = await verify(oaDnsDidV3)
       expect(isValid).toBe(true)
-    })
+    }, 30000)
   })
 
   // ── W3C verifiable documents ───────────────────────────────────────────────
@@ -99,22 +99,22 @@ describe('verifyDocument — integration with real fixtures', () => {
     it('BBS2020 verifiable document', async () => {
       const { isValid } = await verify(w3cBbs2020VerifiableDoc)
       expect(isValid).toBe(true)
-    })
+    }, 30000)
 
     it('BBS2020 expired verifiable document', async () => {
       const { isValid } = await verify(w3cExpiredDoc)
       expect(isValid).toBe(true)
-    })
+    }, 30000)
 
     it('BBS2023 verifiable document', async () => {
       const { isValid } = await verify(w3cBbs2023VerifiableDoc)
       expect(isValid).toBe(true)
-    })
+    }, 30000)
 
     it('ECDSA verifiable document', async () => {
       const { isValid } = await verify(w3cEcdsaVerifiableDoc)
       expect(isValid).toBe(true)
-    })
+    }, 30000)
   })
 
   describe.skipIf(!getRpcUrl('101010'))(

@@ -36,7 +36,7 @@ describe('App Component', () => {
       </MemoryRouter>
     )
 
-    const app = document.querySelector('.min-h-screen')
+    const app = document.querySelector('.app-shell') // class change due to backgound diff in main screen and contact/news page
     expect(app).toBeInTheDocument()
   })
 
