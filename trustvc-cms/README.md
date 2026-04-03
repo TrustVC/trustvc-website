@@ -2,6 +2,32 @@
 
 This Studio powers the `News & Updates` experience in the website.
 
+## Studio Environment Variables
+
+`sanity.config.ts` and `sanity.cli.ts` both read three variables at build / dev
+time. Create a `trustvc-cms/.env` file (already in `.gitignore`) or export them
+in your shell before running any Studio command:
+
+```bash
+export SANITY_STUDIO_PROJECT_ID=tgb3bn8j
+export SANITY_STUDIO_DATASET=production
+export SANITY_STUDIO_APP_ID=vkns8j0arm4fut7w52a3bt20
+```
+
+| Variable | Used in | Purpose |
+|---|---|---|
+| `SANITY_STUDIO_PROJECT_ID` | `sanity.config.ts`, `sanity.cli.ts` | Sanity project to connect to |
+| `SANITY_STUDIO_DATASET` | `sanity.config.ts`, `sanity.cli.ts` | Dataset (e.g. `production`) |
+| `SANITY_STUDIO_APP_ID` | `sanity.cli.ts` | Hosted-studio app identifier |
+
+After setting them, validate the schema before running or deploying:
+
+```bash
+npx sanity schema validate
+```
+
+---
+
 ## Run the Studio
 
 ```bash
@@ -14,7 +40,7 @@ npm run dev
 ```bash
 cd trustvc-cms
 npm run build
-npm run preview
+npm run start
 ```
 
 ## Deployment Commands
@@ -99,7 +125,7 @@ Primary content type powering list and detail pages.
 Fields:
 
 - `title` (`string`, required, min 10, max 120)
-- `subtitle` (`text`, required, min 20, max 220)
+- `subtitle` (`text`, optional, min 20, max 220 when provided)
 - `slug` (`slug`, required, source: `title`, maxLength: 96)
 - `author` (`reference` -> `author`, required)
 - `mainImage` (`image`, required, hotspot enabled)
