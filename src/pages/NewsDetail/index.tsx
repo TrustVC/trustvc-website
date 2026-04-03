@@ -384,13 +384,10 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
               className="lg:col-span-8 w-full rounded-2xl object-cover h-[240px] sm:h-[340px] lg:h-[420px]"
             />
           )}
-          <aside
-            className={clsx(
-              'p-1 h-fit',
-              articleImageUrl ? 'lg:col-span-4' : 'lg:col-span-12',
-              panelTextClass
-            )}
-          >
+          {!articleImageUrl && (
+            <div className="hidden lg:block lg:col-span-8" aria-hidden="true" />
+          )}
+          <aside className={clsx('p-1 h-fit lg:col-span-4', panelTextClass)}>
             <div className="inline-flex items-center gap-3">
               <img
                 src={authorImageUrl || '/icons/profile-default.svg'}
@@ -443,8 +440,8 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
                     className={clsx(
                       'inline-flex items-center gap-1 rounded-[9999px] px-[12px] py-[4px] text-xs font-semibold',
                       isDarkMode
-                        ? 'bg-[`#353157`] text-[`#C2C5F0`]'
-                        : 'bg-[`#DFE1FF`] text-[`#3D444D`]'
+                        ? 'bg-[#1F1B45] text-[#C2C5F0]'
+                        : 'bg-[#DFE1FF] text-[#312D62]'
                     )}
                   >
                     {cat.title}
@@ -492,18 +489,21 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
                           alt={nextArticle.title}
                           className="w-full h-[190px] sm:h-[220px] object-cover"
                         />
-                        {nextArticle.categories?.[0]?.title && (
-                          <div
-                            className={clsx(
-                              'absolute top-3 right-3 inline-flex items-center gap-1 px-3 py-1 rounded-full border text-xs font-semibold border-[#A9B2BB54]',
-                              isDarkMode
-                                ? 'bg-[#1F1B45] text-[#A9B2BB]'
-                                : 'bg-[#DFE1FF] text-[#3D444D]'
-                            )}
-                          >
-                            {nextArticle.categories[0].title}
-                          </div>
-                        )}
+                        <div className="flex flex-wrap gap-2 w-[85%] justify-end absolute top-3 right-3">
+                          {nextArticle.categories?.map(cat => (
+                            <div
+                              key={cat.title || cat.title}
+                              className={clsx(
+                                'inline-flex items-center gap-1 px-3 py-1 rounded-full border text-xs font-semibold border-[#A9B2BB54]',
+                                isDarkMode
+                                  ? 'bg-[#1F1B45] text-[#A9B2BB]'
+                                  : 'bg-[#DFE1FF] text-[#3D444D]'
+                              )}
+                            >
+                              {cat.title}
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     )}
                     <div className="p-4 sm:p-5">
