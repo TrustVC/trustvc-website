@@ -1,15 +1,51 @@
+import { lazy, Suspense } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import clsx from 'clsx'
 import type { NewsDetailHookResult } from '../../types/news'
 import { useNewsDetail } from '../../hooks/useNewsDetail'
-import NewsDetailBody from './components/NewsDetailBody'
 import NewsDetailSidebar from './components/NewsDetailSidebar'
-import NewsNextArticleSection from './components/NewsNextArticleSection'
 import NewsDetailLoadingState from './components/NewsDetailLoadingState'
+
+const NewsDetailBody = lazy(() => import('./components/NewsDetailBody'))
+const NewsNextArticleSection = lazy(
+  () => import('./components/NewsNextArticleSection')
+)
 
 interface NewsDetailProps {
   isDarkMode: boolean
 }
+
+const ArticleBodyFallback = ({ isDarkMode }: { isDarkMode: boolean }) => (
+  <div
+    className={`mt-8 max-w-3xl mx-auto space-y-4 animate-pulse min-h-[200px] ${
+      isDarkMode ? 'text-[#A9B2BB]' : 'text-[#3D444D]'
+    }`}
+    aria-busy="true"
+    aria-label="Loading article"
+  >
+    <div
+      className={`h-4 rounded w-full ${isDarkMode ? 'bg-[#36404D]' : 'bg-[#DCE3EA]'}`}
+    />
+    <div
+      className={`h-4 rounded w-11/12 ${isDarkMode ? 'bg-[#36404D]' : 'bg-[#DCE3EA]'}`}
+    />
+    <div
+      className={`h-4 rounded w-full ${isDarkMode ? 'bg-[#36404D]' : 'bg-[#DCE3EA]'}`}
+    />
+    <div
+      className={`h-32 rounded-xl mt-6 ${isDarkMode ? 'bg-[#2A313B]' : 'bg-[#E6EBFF]'}`}
+    />
+  </div>
+)
+
+const NextArticleFallback = ({ isDarkMode }: { isDarkMode: boolean }) => (
+  <div
+    className={`news-next-container mt-12 w-full rounded-2xl p-5 sm:p-7 border border-[#A9B2BB54] animate-pulse min-h-[160px] ${
+      isDarkMode ? 'bg-[#1E2026]/40' : 'bg-white/40'
+    }`}
+    aria-hidden="true"
+  />
+)
 
 const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
   const { slug } = useParams<{ slug: string }>()
@@ -127,7 +163,9 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
           />
         </div>
 
-        <NewsDetailBody isDarkMode={isDarkMode} blocks={article.body} />
+        <Suspense fallback={<ArticleBodyFallback isDarkMode={isDarkMode} />}>
+          <NewsDetailBody isDarkMode={isDarkMode} blocks={article.body} />
+        </Suspense>
 
         <div className={footerMetaClass}>
           {article.source && (
@@ -138,13 +176,15 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
           )}
         </div>
 
-        <NewsNextArticleSection
-          isDarkMode={isDarkMode}
-          nextArticle={nextArticle}
-          nextArticleImageUrl={nextArticleImageUrl}
-          nextPublishedDateLabel={nextPublishedDateLabel}
-          nextArticleReadTime={nextArticleReadTime}
-        />
+        <Suspense fallback={<NextArticleFallback isDarkMode={isDarkMode} />}>
+          <NewsNextArticleSection
+            isDarkMode={isDarkMode}
+            nextArticle={nextArticle}
+            nextArticleImageUrl={nextArticleImageUrl}
+            nextPublishedDateLabel={nextPublishedDateLabel}
+            nextArticleReadTime={nextArticleReadTime}
+          />
+        </Suspense>
       </article>
     </section>
   )

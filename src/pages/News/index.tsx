@@ -1,13 +1,41 @@
+import { lazy, Suspense } from 'react'
 import clsx from 'clsx'
 import { useNewsList } from '../../hooks/useNewsList'
 import type { NewsListHookResult } from '../../types/news'
 import NewsHeader from './components/NewsHeader'
-import NewsLoadingState from './components/NewsLoadingState'
-import NewsArticlesContent from './components/NewsArticlesContent'
+
+const NewsLoadingState = lazy(() => import('./components/NewsLoadingState'))
+const NewsArticlesContent = lazy(
+  () => import('./components/NewsArticlesContent')
+)
 
 interface NewsProps {
   isDarkMode: boolean
 }
+
+const NewsListFallback = ({ isDarkMode }: { isDarkMode: boolean }) => (
+  <div
+    className={`space-y-4 animate-pulse rounded-2xl p-6 border ${
+      isDarkMode
+        ? 'border-[#3D444D] bg-[#1E2026]/50'
+        : 'border-[#DEE4E9] bg-white/50'
+    }`}
+    aria-busy="true"
+    aria-label="Loading content"
+  >
+    <div
+      className={`h-48 rounded-xl ${isDarkMode ? 'bg-[#2A313B]' : 'bg-[#E6EBFF]'}`}
+    />
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div
+        className={`h-52 rounded-xl ${isDarkMode ? 'bg-[#2A313B]' : 'bg-[#E6EBFF]'}`}
+      />
+      <div
+        className={`h-52 rounded-xl ${isDarkMode ? 'bg-[#2A313B]' : 'bg-[#E6EBFF]'}`}
+      />
+    </div>
+  </div>
+)
 
 const News = ({ isDarkMode }: NewsProps) => {
   const {
@@ -33,7 +61,9 @@ const News = ({ isDarkMode }: NewsProps) => {
         <NewsHeader isDarkMode={isDarkMode} />
 
         {loading ? (
-          <NewsLoadingState isDarkMode={isDarkMode} />
+          <Suspense fallback={<NewsListFallback isDarkMode={isDarkMode} />}>
+            <NewsLoadingState isDarkMode={isDarkMode} />
+          </Suspense>
         ) : articles.length === 0 ? (
           <div
             className={clsx(
@@ -46,17 +76,19 @@ const News = ({ isDarkMode }: NewsProps) => {
             No posts published yet.
           </div>
         ) : (
-          <NewsArticlesContent
-            isDarkMode={isDarkMode}
-            featuredArticle={featuredArticle}
-            featuredImageUrl={featuredImageUrl}
-            visibleArticles={visibleArticles}
-            articleGrid={articleGrid}
-            isLoadingMore={isLoadingMore}
-            hasMoreArticles={hasMoreArticles}
-            loadMoreAnchorRef={loadMoreAnchorRef}
-            getReadTimeText={getReadTimeText}
-          />
+          <Suspense fallback={<NewsListFallback isDarkMode={isDarkMode} />}>
+            <NewsArticlesContent
+              isDarkMode={isDarkMode}
+              featuredArticle={featuredArticle}
+              featuredImageUrl={featuredImageUrl}
+              visibleArticles={visibleArticles}
+              articleGrid={articleGrid}
+              isLoadingMore={isLoadingMore}
+              hasMoreArticles={hasMoreArticles}
+              loadMoreAnchorRef={loadMoreAnchorRef}
+              getReadTimeText={getReadTimeText}
+            />
+          </Suspense>
         )}
       </div>
     </section>
