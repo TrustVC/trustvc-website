@@ -17,8 +17,15 @@ export const InitialAddress = '0x0000000000000000000000000000000000000000'
 export const BurnAddress = '0x000000000000000000000000000000000000dEaD'
 
 export type AvailableBlockChains = 'ETH' | 'MATIC' | 'XDC' | 'FREE' | 'ASTRON'
+export const AvailableBlockChains: AvailableBlockChains[] = [
+  'ETH',
+  'MATIC',
+  'XDC',
+  'FREE',
+  'ASTRON',
+]
 
-type IChainInfo = Record<CHAIN_ID, chainInfo>
+type ChainInfo = Record<CHAIN_ID, chainInfo>
 
 export const CHAIN: Record<CHAIN_ID, AvailableBlockChains> = {
   [CHAIN_ID.local]: 'ETH',
@@ -34,7 +41,7 @@ export const CHAIN: Record<CHAIN_ID, AvailableBlockChains> = {
   [CHAIN_ID.astrontestnet]: 'ASTRON',
 }
 
-export const ChainInfo: IChainInfo = {
+export const ChainInfo: ChainInfo = {
   ...SUPPORTED_CHAINS,
   // Override or add local-specific chains if needed
   [CHAIN_ID.local]: {

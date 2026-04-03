@@ -217,6 +217,7 @@ export const ProviderContextProvider: FunctionComponent<
 
           newProvider = new ethers.providers.Web3Provider(injectedWeb3, 'any')
           const network = await newProvider.getNetwork()
+          setProvider(newProvider)
           if (!isSupportedNetwork(network.chainId, supportedChainInfoObjects)) {
             console.warn('User wallet is connected to an unsupported network')
             setCurrentChainId(undefined)

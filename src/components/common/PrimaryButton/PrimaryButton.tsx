@@ -5,7 +5,7 @@ type PrimaryButtonSharedProps = {
   className?: string
   labelClassName?: string
   textClassName?: string
-  onClick?: (event: MouseEvent<HTMLButtonElement | HTMLLabelElement>) => void
+  onClick?: () => void
   children: ReactNode
   icon?: ReactNode
   htmlFor?: string
@@ -15,54 +15,32 @@ type PrimaryButtonSharedProps = {
   'data-testid'?: string
 }
 
-type PrimaryButtonAsButtonProps = PrimaryButtonSharedProps & {
-  as?: 'button'
-  type?: 'button' | 'submit' | 'reset'
-  disabled?: boolean
-}
-
-type PrimaryButtonAsLabelProps = PrimaryButtonSharedProps & {
-  as: 'label'
-  htmlFor?: string
-  disabled?: boolean
-  type?: never
-}
-
-export type PrimaryButtonProps =
-  | PrimaryButtonAsButtonProps
-  | PrimaryButtonAsLabelProps
-
-const PrimaryButton = forwardRef<
-  HTMLButtonElement | HTMLLabelElement,
-  PrimaryButtonProps
->((props, ref) => {
-  const {
-    className = '',
-    labelClassName = '',
-    textClassName = '',
-    onClick,
-    children,
-    icon,
-    btnType = 'solid',
-    boundaryClassName = '',
-    'data-testid': dataTestId,
-  } = props
-
-  if (props.as === 'label') {
-    const isDisabled = props.disabled ?? false
+const PrimaryButton = ({
+  className = '',
+  labelClassName = '',
+  textClassName = '',
+  onClick,
+  children,
+  type = 'button',
+  disabled = false,
+  icon,
+  htmlFor,
+  as = 'button',
+  btnType = 'solid',
+  boundaryClassName = '',
+  'data-testid': dataTestId,
+}: PrimaryButtonProps) => {
+  if (as === 'label') {
     return (
       <label
-        ref={ref as Ref<HTMLLabelElement>}
-        htmlFor={isDisabled ? undefined : props.htmlFor}
+        htmlFor={htmlFor}
         className={clsx('standard-button-primary', className)}
-        onClick={isDisabled ? undefined : onClick}
-        aria-disabled={isDisabled}
+        onClick={onClick}
       >
         <div
           className={clsx(
             'button-boundary',
-            btnType === 'transparent' && 'button-boundary-transparent',
-            boundaryClassName
+            btnType === 'transparent' && 'button-boundary-transparent'
           )}
         >
           {icon && <div className="contextual-icon-frame">{icon}</div>}

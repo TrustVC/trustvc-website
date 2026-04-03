@@ -36,6 +36,7 @@ export const OverlayProvider: React.FC<OverlayProviderProps> = ({
   }
 
   const closeOverlay = () => {
+    console.log('closeOverlay called')
     setOverlayVisible(false)
     setOverlayContent(null)
   }
