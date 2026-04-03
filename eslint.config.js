@@ -7,7 +7,7 @@ import prettier from 'eslint-config-prettier'
 import tseslint from 'typescript-eslint'
 
 export default [
-  { ignores: ['dist', 'coverage', 'trustvc-cms'] },
+  { ignores: ['dist', 'coverage', 'scripts/**/*',  'trustvc-cms'] },
   {
     files: ['**/*.{js,jsx,ts,tsx}'],
     languageOptions: {

@@ -1,5 +1,6 @@
 import { Routes, Route } from 'react-router-dom'
 import Home from './pages/Home'
+import Contact from './pages/Contact'
 import NotFound from './pages/NotFound'
 import News from './pages/News'
 import NewsDetail from './pages/NewsDetail'
@@ -17,6 +18,7 @@ const AppRouter = ({ isDarkMode }: AppRouterProps) => {
         path="/news-updates/:slug"
         element={<NewsDetail isDarkMode={isDarkMode} />}
       />
+      <Route path="/contact" element={<Contact isDarkMode={isDarkMode} />} />
       <Route path="*" element={<NotFound isDarkMode={isDarkMode} />} />
     </Routes>
   )
