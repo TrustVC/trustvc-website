@@ -64,6 +64,12 @@ export const useNewsDetail = (slug?: string): NewsDetailHookResult => {
         } else {
           setNextArticle(null)
         }
+      } catch (err) {
+        if (isActive) {
+          setArticle(null)
+          setNextArticle(null)
+          console.error('[Sanity] useNewsDetail failed', err)
+        }
       } finally {
         if (isActive) {
           setLoading(false)

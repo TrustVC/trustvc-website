@@ -1,24 +1,24 @@
 import type { RefObject } from 'react'
 
 export interface SanitySlug {
-  current?: string
+  current: string
 }
 
 export interface SanityImageAssetRef {
-  _ref?: string
+  _ref: string
 }
 
 export interface SanityImage {
-  asset?: SanityImageAssetRef
+  asset: SanityImageAssetRef
 }
 
 export interface SanityAuthor {
-  name?: string
+  name: string
   image?: SanityImage
 }
 
 export interface SanityCategory {
-  title?: string
+  title: string
 }
 
 export interface PortableTextSpan {

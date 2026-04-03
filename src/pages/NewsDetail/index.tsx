@@ -189,7 +189,10 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
         }
         const Tag = listType === 'number' ? 'ol' : 'ul'
         output.push(
-          <Tag key={groupKey} className="list-disc list-inside space-y-1">
+          <Tag
+            key={groupKey}
+            className={`${listType === 'number' ? 'list-decimal' : 'list-disc'} list-inside space-y-1`}
+          >
             {items}
           </Tag>
         )
@@ -436,7 +439,7 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
               <div className="mt-3 flex flex-wrap gap-2">
                 {article.categories.map(cat => (
                   <span
-                    key={cat.title || cat.title}
+                    key={cat.title}
                     className={clsx(
                       'inline-flex items-center gap-1 rounded-[9999px] px-[12px] py-[4px] text-xs font-semibold',
                       isDarkMode
@@ -492,7 +495,7 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
                         <div className="flex flex-wrap gap-2 w-[85%] justify-end absolute top-3 right-3">
                           {nextArticle.categories?.map(cat => (
                             <div
-                              key={cat.title || cat.title}
+                              key={cat.title}
                               className={clsx(
                                 'inline-flex items-center gap-1 px-3 py-1 rounded-full border text-xs font-semibold border-[#A9B2BB54]',
                                 isDarkMode

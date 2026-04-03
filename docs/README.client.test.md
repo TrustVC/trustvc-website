@@ -1,6 +1,6 @@
 # Sanity Client — Test Coverage (`client.test.ts`)
 
-Tests for `src/lib/sanity/client.ts`, which creates the Sanity CMS client and the image URL builder used across the app.
+Tests for `src/lib/sanity/client.ts`, which creates the Sanity CMS client and the image URL builder (`createImageUrlBuilder`) used across the app.
 
 ---
 
@@ -53,4 +53,4 @@ Covers the happy path when `VITE_SANITY_PROJECT_ID` and `VITE_SANITY_DATASET` ar
 ## Notes
 
 - Each group stubs/resets `import.meta.env` values and calls `vi.resetModules()` so the module is re-evaluated with the new env state — this is necessary because the client is created at module load time.
-- `@sanity/client` and `@sanity/image-url` are fully mocked; no real network calls are made.
+- `@sanity/client` (`createClient`) and `@sanity/image-url` (`createImageUrlBuilder`) are fully mocked; no real network calls are made.

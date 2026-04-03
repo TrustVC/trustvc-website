@@ -219,12 +219,13 @@ const News = ({ isDarkMode }: NewsProps) => {
                         aria-hidden="true"
                         className="news-meta-icon"
                       />
-                      {featuredArticle.publishedAt
-                        ? format(
-                            new Date(featuredArticle.publishedAt),
-                            'MMMM d, yyyy'
-                          )
-                        : 'Recent'}
+                      {(() => {
+                        if (!featuredArticle.publishedAt) return 'Recent'
+                        const date = new Date(featuredArticle.publishedAt)
+                        return isNaN(date.getTime())
+                          ? 'Recent'
+                          : format(date, 'MMMM d, yyyy')
+                      })()}
                     </span>
                   </div>
                   <h2 className={titleTextClass}>{featuredArticle.title}</h2>
@@ -357,7 +358,7 @@ const News = ({ isDarkMode }: NewsProps) => {
                   <ShimmerPostCards
                     count={Math.min(
                       2,
-                      articleGrid.length - visibleArticles.length
+                      Math.max(0, articleGrid.length - visibleArticles.length)
                     )}
                     isDarkMode={isDarkMode}
                   />

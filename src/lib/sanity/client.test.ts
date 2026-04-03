@@ -1,7 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import type { SanityImage } from '../../types/news'
 
 const mockCreateClient = vi.hoisted(() => vi.fn(() => ({ fetch: vi.fn() })))
-const mockImageUrlBuilder = vi.hoisted(() =>
+const mockCreateImageUrlBuilder = vi.hoisted(() =>
   vi.fn(() => ({
     image: vi.fn(() => ({
       auto: vi.fn(() => 'mock-image-url'),
@@ -10,7 +11,9 @@ const mockImageUrlBuilder = vi.hoisted(() =>
 )
 
 vi.mock('@sanity/client', () => ({ createClient: mockCreateClient }))
-vi.mock('@sanity/image-url', () => ({ default: mockImageUrlBuilder }))
+vi.mock('@sanity/image-url', () => ({
+  createImageUrlBuilder: mockCreateImageUrlBuilder,
+}))
 
 describe('sanity/client — unconfigured (no env vars)', () => {
   beforeEach(() => {
@@ -54,7 +57,7 @@ describe('sanity/client — unconfigured (no env vars)', () => {
 
   it('getSanityImageUrl returns null for empty source object', async () => {
     const { getSanityImageUrl } = await import('./client')
-    expect(getSanityImageUrl({})).toBeNull()
+    expect(getSanityImageUrl({} as SanityImage)).toBeNull()
   })
 })
 
@@ -65,7 +68,7 @@ describe('sanity/client — configured (both env vars set)', () => {
     vi.stubEnv('VITE_SANITY_API_VERSION', '')
     vi.stubEnv('VITE_SANITY_READ_TOKEN', '')
     mockCreateClient.mockClear()
-    mockImageUrlBuilder.mockClear()
+    mockCreateImageUrlBuilder.mockClear()
     vi.resetModules()
   })
 
@@ -148,7 +151,7 @@ describe('sanity/client — configured (both env vars set)', () => {
 
   it('getSanityImageUrl calls imageBuilder.image with the source', async () => {
     const mockImage = vi.fn(() => ({ auto: vi.fn(() => 'url') }))
-    mockImageUrlBuilder.mockReturnValue({ image: mockImage })
+    mockCreateImageUrlBuilder.mockReturnValue({ image: mockImage })
     vi.resetModules()
     const { getSanityImageUrl } = await import('./client')
     const source = { asset: { _ref: 'image-xyz' } }
@@ -159,7 +162,7 @@ describe('sanity/client — configured (both env vars set)', () => {
   it('getSanityImageUrl calls .auto("format") on the image builder result', async () => {
     const mockAuto = vi.fn(() => 'formatted-url')
     const mockImage = vi.fn(() => ({ auto: mockAuto }))
-    mockImageUrlBuilder.mockReturnValue({ image: mockImage })
+    mockCreateImageUrlBuilder.mockReturnValue({ image: mockImage })
     vi.resetModules()
     const { getSanityImageUrl } = await import('./client')
     getSanityImageUrl({ asset: { _ref: 'image-xyz' } })

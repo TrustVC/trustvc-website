@@ -5,7 +5,7 @@
 @layer base {
   /* Gilroy Light */
   @font-face {
-    font-family: Gilroy;
+    font-family: 'Gilroy';
     src:
       url('/fonts/GilroyLight/font.woff2') format('woff2'),
       url('/fonts/GilroyLight/font.woff') format('woff');
@@ -167,7 +167,7 @@ body.dark-mode {
 
 .news-category-chip {
   font-family: 'Gilroy', sans-serif;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 12px;
   line-height: 16px;
   letter-spacing: 0;
@@ -209,7 +209,6 @@ body.dark-mode {
 }
 
 .news-next-container {
-  background: linear-gradient(97.83deg, #686ad2 10%, #167eb0 90%);
   background-image:
     url('/images/carousel/next_article.svg'),
     linear-gradient(97.83deg, #686ad2 10%, #167eb0 90%);

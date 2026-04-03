@@ -1,5 +1,5 @@
 import { createClient } from '@sanity/client'
-import imageUrlBuilder from '@sanity/image-url'
+import { createImageUrlBuilder } from '@sanity/image-url'
 import type { SanityImage } from '../../types/news'
 
 const projectId = import.meta.env.VITE_SANITY_PROJECT_ID
@@ -18,7 +18,9 @@ export const sanityClient = hasSanityConfig
     })
   : null
 
-const imageBuilder = hasSanityConfig ? imageUrlBuilder(sanityClient!) : null
+const imageBuilder = hasSanityConfig
+  ? createImageUrlBuilder(sanityClient!)
+  : null
 
 export const getSanityImageUrl = (source?: SanityImage) => {
   if (!source || !imageBuilder) return null
