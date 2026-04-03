@@ -6,7 +6,7 @@ import {
 import Overlay from '../common/Overlay'
 // import { ConnectToMagicLinkModelComponent } from '../ConnectToMagicLink'
 import { ConnectToMetamaskModelComponent } from '../ConnectToMetamask'
-import { Button, ButtonSize } from '../common/Button'
+// import { Button, ButtonSize } from '../common/Button'
 import PrimaryButton from '../common/PrimaryButton'
 
 const WALLET_TYPE_NAME: Partial<Record<SIGNER_TYPE, string>> = {
