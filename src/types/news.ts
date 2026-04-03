@@ -83,6 +83,6 @@ export type NewsListHookResult = {
   articleGrid: NewsArticle[]
   visibleArticles: NewsArticle[]
   hasMoreArticles: boolean
-  loadMoreAnchorRef: RefObject<HTMLDivElement | null>
+  loadMoreAnchorRef: RefObject<HTMLDivElement>
   getReadTimeText: (body?: NewsArticle['body']) => string
 }
