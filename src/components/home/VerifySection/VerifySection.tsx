@@ -8,6 +8,8 @@ import PrimaryButton from '../../common/PrimaryButton'
 import EndorsementChain from '../EndorsementChain'
 import { useEndorsementChain } from '../EndorsementChain/useEndorsementChain'
 import Spinner from '../../common/Spinner'
+import { useOverlayContext } from '../../common/contexts/OverlayContext'
+import ConnectToBlockchainModel from '../../ConnectToBlockchain'
 
 interface VerifySectionProps {
   isDarkMode: boolean
@@ -49,7 +51,10 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
     handleNetworkConfirm,
     handleNetworkCancel,
   } = useVerify()
-
+  const { showOverlay, closeOverlay } = useOverlayContext()
+  const handleConnectWallet = async () => {
+    showOverlay(<ConnectToBlockchainModel onClose={closeOverlay} />)
+  }
   // Fetch endorsement chain data only when file is verified as valid and transferable
   const isValidTransferable =
     verifyStatus === 'valid' && isTransferable === true
@@ -164,6 +169,7 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
                 getGroupStatus={getGroupStatus}
                 onReset={handleReset}
                 onViewEndorsementChain={handleShowEndorsementChain}
+                onConnectWallet={handleConnectWallet}
               />
             )}
 
