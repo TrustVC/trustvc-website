@@ -3,6 +3,8 @@ import { ReactNode } from 'react'
 
 interface PrimaryButtonProps {
   className?: string
+  labelClassName?: string
+  textClassName?: string
   onClick?: () => void
   children: ReactNode
   type?: 'button' | 'submit' | 'reset'
@@ -10,10 +12,15 @@ interface PrimaryButtonProps {
   icon?: ReactNode
   htmlFor?: string
   as?: 'button' | 'label'
+  btnType?: 'solid' | 'transparent'
+  boundaryClassName?: string
+  'data-testid'?: string
 }
 
 const PrimaryButton = ({
   className = '',
+  labelClassName = '',
+  textClassName = '',
   onClick,
   children,
   type = 'button',
@@ -21,41 +28,31 @@ const PrimaryButton = ({
   icon,
   htmlFor,
   as = 'button',
+  btnType = 'solid',
+  boundaryClassName = '',
+  'data-testid': dataTestId,
 }: PrimaryButtonProps) => {
-  const content = (
-    <div className="button-boundary">
-      <div className="button-padding" />
-      {icon && <div className="contextual-icon-frame">{icon}</div>}
-      <div className="text-frame">
-        <div className="button-label">{children}</div>
-      </div>
-      <div className="button-padding" />
-    </div>
-  )
-
   if (as === 'label') {
     return (
-      <div
-        className={clsx(
-          'standard-button-primary',
-          disabled && 'opacity-50 pointer-events-none',
-          className
-        )}
+      <label
+        htmlFor={htmlFor}
+        className={clsx('standard-button-primary', className)}
+        onClick={onClick}
       >
-        <label
-          htmlFor={disabled ? undefined : htmlFor}
-          className="button-boundary"
-          onClick={disabled ? undefined : onClick}
-          aria-disabled={disabled || undefined}
+        <div
+          className={clsx(
+            'button-boundary',
+            btnType === 'transparent' && 'button-boundary-transparent'
+          )}
         >
-          <div className="button-padding" />
           {icon && <div className="contextual-icon-frame">{icon}</div>}
-          <div className="text-frame">
-            <div className="button-label">{children}</div>
+          <div className={`text-frame ${textClassName}`}>
+            <div className={clsx('button-label', labelClassName)}>
+              {children}
+            </div>
           </div>
-          <div className="button-padding" />
-        </label>
-      </div>
+        </div>
+      </label>
     )
   }
 
@@ -65,8 +62,20 @@ const PrimaryButton = ({
       onClick={onClick}
       disabled={disabled}
       className={clsx('standard-button-primary', className)}
+      data-testid={dataTestId}
     >
-      {content}
+      <div
+        className={clsx(
+          'button-boundary',
+          btnType === 'transparent' && 'button-boundary-transparent',
+          boundaryClassName
+        )}
+      >
+        {icon && <div className="contextual-icon-frame">{icon}</div>}
+        <div className={`text-frame ${textClassName}`}>
+          <div className={clsx('button-label', labelClassName)}>{children}</div>
+        </div>
+      </div>
     </button>
   )
 }

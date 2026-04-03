@@ -5,6 +5,11 @@ import InvalidAttachmentsBanner from './InvalidAttachmentsBanner'
 import { makeExplorerAddressURL } from './useVerify'
 import { CheckCircle, CrossCircle } from '../../common/Icons'
 import { DocumentAttachment } from '../../../utils/helper'
+import Connected from '../../ConnectToBlockchain/Connected'
+import {
+  SIGNER_TYPE,
+  useProviderContext,
+} from '../../common/contexts/providerContext'
 
 interface VerifyResultProps {
   fileName: string
@@ -106,65 +111,76 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
     })
     setIsTooltipVisible(true)
   }
-
+  const { providerType, account } = useProviderContext()
   return (
     <div className="vr-container">
       {/* ── Network info card ── */}
       {networkName && (
         <div className="vr-network-card">
-          <span className="vr-network-label">Document verified on:</span>
-          <div className="vr-network-field-group">
-            <div className="vr-network-field">
-              <span className="vr-network-value">{networkName}</span>
-              <span className="vr-network-sep">
+          <div className="vr-network-frame">
+            <div className="vr-network-padded-frame">
+              <span className="vr-network-label">Document verified on:</span>
+            </div>
+            <div className="vr-network-field-group">
+              <div className="vr-network-field">
+                <span className="vr-network-value">{networkName}</span>
+                <span className="vr-network-sep">
+                  <svg
+                    width="8"
+                    height="32"
+                    viewBox="0 0 8 32"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path d="M4 4V28" stroke="#A9B2BB" strokeOpacity="0.33" />
+                  </svg>
+                </span>
                 <svg
-                  width="8"
-                  height="32"
-                  viewBox="0 0 8 32"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 16 16"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                   aria-hidden="true"
                 >
-                  <path d="M4 4V28" stroke="#A9B2BB" strokeOpacity="0.33" />
+                  <path
+                    d="M11.5899 5.41489C11.883 5.12235 12.3578 5.12189 12.6504 5.41489C12.9427 5.70787 12.9421 6.1828 12.6495 6.47543L8.54107 10.5799C8.53846 10.5827 8.53593 10.586 8.53325 10.5887C8.47743 10.6446 8.41231 10.686 8.34575 10.7205C8.29448 10.7471 8.24155 10.7681 8.18657 10.7821C7.93925 10.8447 7.66661 10.7825 7.47271 10.5897L3.35064 6.47641C3.05784 6.18398 3.05769 5.70903 3.34966 5.41586C3.64227 5.12276 4.11802 5.12231 4.41118 5.41489L7.93169 8.92563C7.97072 8.96456 8.03329 8.96455 8.07232 8.92563L11.5899 5.41489Z"
+                    fill="#5B6571"
+                  />
                 </svg>
-              </span>
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 16 16"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                aria-hidden="true"
+              </div>
+              <button
+                type="button"
+                className="vr-info-btn"
+                onMouseEnter={handleInfoMouseEnter}
+                onMouseLeave={() => setIsTooltipVisible(false)}
+                onFocus={handleInfoFocus}
+                onBlur={() => setIsTooltipVisible(false)}
+                aria-label="Network info"
               >
-                <path
-                  d="M11.5899 5.41489C11.883 5.12235 12.3578 5.12189 12.6504 5.41489C12.9427 5.70787 12.9421 6.1828 12.6495 6.47543L8.54107 10.5799C8.53846 10.5827 8.53593 10.586 8.53325 10.5887C8.47743 10.6446 8.41231 10.686 8.34575 10.7205C8.29448 10.7471 8.24155 10.7681 8.18657 10.7821C7.93925 10.8447 7.66661 10.7825 7.47271 10.5897L3.35064 6.47641C3.05784 6.18398 3.05769 5.70903 3.34966 5.41586C3.64227 5.12276 4.11802 5.12231 4.41118 5.41489L7.93169 8.92563C7.97072 8.96456 8.03329 8.96455 8.07232 8.92563L11.5899 5.41489Z"
-                  fill="#5B6571"
-                />
-              </svg>
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M12 2.25C17.3848 2.25 21.75 6.61522 21.75 12C21.75 17.3848 17.3848 21.75 12 21.75C6.61524 21.75 2.25 17.3848 2.25 12C2.25 6.61523 6.61524 2.25002 12 2.25ZM12 3.75C7.44366 3.75002 3.75 7.44366 3.75 12C3.75 16.5563 7.44366 20.25 12 20.25C16.5563 20.25 20.25 16.5563 20.25 12C20.25 7.44365 16.5563 3.75 12 3.75ZM12.0078 16.25C12.56 16.2502 13.0078 16.6978 13.0078 17.25V17.2578C13.0076 17.8098 12.5598 18.2576 12.0078 18.2578H12C11.4478 18.2578 11.0002 17.8099 11 17.2578V17.25L11.0049 17.1475C11.0562 16.6433 11.4823 16.25 12 16.25H12.0078ZM9.2207 6.7666C10.7693 5.41159 13.2317 5.41159 14.7803 6.7666C16.4068 8.19008 16.4068 10.5599 14.7803 11.9834C14.506 12.2234 14.204 12.4197 13.8867 12.5732C13.6008 12.7116 13.3576 12.8882 13.1982 13.0703C13.0442 13.2465 13 13.3879 13 13.5V14.25C13 14.8023 12.5523 15.25 12 15.25C11.4478 15.2499 11 14.8022 11 14.25V13.5C11 12.0709 12.1774 11.1792 13.0156 10.7734C13.179 10.6944 13.3293 10.5954 13.4629 10.4785C14.1791 9.8518 14.1791 8.8982 13.4629 8.27148C12.6683 7.57632 11.3316 7.57628 10.5371 8.27148C10.1215 8.63495 9.4896 8.59326 9.12598 8.17773C8.76231 7.7621 8.80509 7.13028 9.2207 6.7666Z"
+                    fill="currentColor"
+                  />
+                </svg>
+              </button>
             </div>
-            <button
-              type="button"
-              className="vr-info-btn"
-              onMouseEnter={handleInfoMouseEnter}
-              onMouseLeave={() => setIsTooltipVisible(false)}
-              onFocus={handleInfoFocus}
-              onBlur={() => setIsTooltipVisible(false)}
-              aria-label="Network info"
-            >
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                aria-hidden="true"
-              >
-                <path
-                  d="M12 2.25C17.3848 2.25 21.75 6.61522 21.75 12C21.75 17.3848 17.3848 21.75 12 21.75C6.61524 21.75 2.25 17.3848 2.25 12C2.25 6.61523 6.61524 2.25002 12 2.25ZM12 3.75C7.44366 3.75002 3.75 7.44366 3.75 12C3.75 16.5563 7.44366 20.25 12 20.25C16.5563 20.25 20.25 16.5563 20.25 12C20.25 7.44365 16.5563 3.75 12 3.75ZM12.0078 16.25C12.56 16.2502 13.0078 16.6978 13.0078 17.25V17.2578C13.0076 17.8098 12.5598 18.2576 12.0078 18.2578H12C11.4478 18.2578 11.0002 17.8099 11 17.2578V17.25L11.0049 17.1475C11.0562 16.6433 11.4823 16.25 12 16.25H12.0078ZM9.2207 6.7666C10.7693 5.41159 13.2317 5.41159 14.7803 6.7666C16.4068 8.19008 16.4068 10.5599 14.7803 11.9834C14.506 12.2234 14.204 12.4197 13.8867 12.5732C13.6008 12.7116 13.3576 12.8882 13.1982 13.0703C13.0442 13.2465 13 13.3879 13 13.5V14.25C13 14.8023 12.5523 15.25 12 15.25C11.4478 15.2499 11 14.8022 11 14.25V13.5C11 12.0709 12.1774 11.1792 13.0156 10.7734C13.179 10.6944 13.3293 10.5954 13.4629 10.4785C14.1791 9.8518 14.1791 8.8982 13.4629 8.27148C12.6683 7.57632 11.3316 7.57628 10.5371 8.27148C10.1215 8.63495 9.4896 8.59326 9.12598 8.17773C8.76231 7.7621 8.80509 7.13028 9.2207 6.7666Z"
-                  fill="currentColor"
-                />
-              </svg>
-            </button>
+          </div>
+
+          <div className="vr-network-frame">
+            {providerType === SIGNER_TYPE.METAMASK && account && (
+              <Connected
+                imgSrc="/images/wallet.png"
+                // openConnectToBlockchainModel={true}
+              />
+            )}
           </div>
         </div>
       )}
