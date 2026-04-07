@@ -15,6 +15,13 @@ export default defineConfig(({ mode }) => {
       'process.browser': true,
       ...(isTest ? {} : { 'process.version': JSON.stringify('v16.0.0') })
     },
+    build: {
+      commonjsOptions: {
+        // crypto-browserify → randomfill uses `exports.*`; without this,
+        // some CJS can leak into ESM chunks and throw "exports is not defined".
+        transformMixedEsModules: true,
+      },
+    },
     plugins: [
       react(),
       nodePolyfills({
@@ -26,7 +33,9 @@ export default defineConfig(({ mode }) => {
       alias: {
         'dotenv/config': path.resolve(__dirname, 'src/shims/dotenv-config.js'),
         'node-fetch': path.resolve(__dirname, 'src/shims/node-fetch.js'),
-         '@': fileURLToPath(new URL('./src', import.meta.url)),
+        // Pure ESM shim — avoids CJS `exports` in the browser bundle (crypto-browserify).
+        randomfill: path.resolve(__dirname, 'src/shims/randomfill-esm.js'),
+        '@': fileURLToPath(new URL('./src', import.meta.url)),
       },
     },
     test: {

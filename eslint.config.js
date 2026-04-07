@@ -7,7 +7,7 @@ import prettier from 'eslint-config-prettier'
 import tseslint from 'typescript-eslint'
 
 export default [
-  { ignores: ['dist', 'coverage', 'scripts/**/*'] },
+  { ignores: ['dist', 'coverage', 'scripts/**/*',  'trustvc-cms'] },
   {
     files: ['**/*.{js,jsx,ts,tsx}'],
     languageOptions: {
@@ -30,6 +30,7 @@ export default [
             'src/test/setup.js',
             'src/shims/dotenv-config.js',
             'src/shims/node-fetch.js',
+            'src/shims/randomfill-esm.js',
           ],
         },
       },
