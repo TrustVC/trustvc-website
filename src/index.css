@@ -2631,6 +2631,7 @@ p.small {
   padding: 12px 16px;
   border-width: 1px;
   border-radius: 12px 12px 0 0;
+  cursor: pointer;
   background:
     linear-gradient(
       0deg,
@@ -3023,6 +3024,11 @@ p.small {
   background: #4b5563;
 }
 
+.connect-metamask-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
 .connect-metamask-button-icon {
   width: 24px;
   height: 24px;
@@ -3050,6 +3056,13 @@ p.small {
   margin: 0;
 }
 
+.dark-mode .connect-metamask-button-text h3 {
+  background: #d1d5db;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
 .connect-metamask-button-boundary {
   min-width: 160px;
   gap: 6px;
@@ -3057,4 +3070,30 @@ p.small {
   border-radius: 12px;
   padding: 8px 12px;
   border-width: 1px;
+}
+
+.connect-metamask-loading-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: connect-metamask-spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+.connect-magic-status {
+  font-size: 14px;
+  color: #5b6571;
+}
+
+.dark-mode .connect-magic-status {
+  color: #9ca3af;
+}
+
+@keyframes connect-metamask-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }

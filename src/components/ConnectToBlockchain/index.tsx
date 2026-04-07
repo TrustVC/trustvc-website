@@ -5,8 +5,8 @@ import {
 } from '../common/contexts/providerContext'
 import Overlay from '../common/Overlay'
 import PrimaryButton from '../common/PrimaryButton'
-// import { ConnectToMagicLinkModelComponent } from '../ConnectToMagicLink'
 import { ConnectToMetamaskModelComponent } from '../ConnectToMetamask'
+import { ConnectToMagicLinkModelComponent } from '../ConnectToMagicLink'
 
 const WALLET_TYPE_NAME: Partial<Record<SIGNER_TYPE, string>> = {
   [SIGNER_TYPE.METAMASK]: 'Metamask',
@@ -159,13 +159,12 @@ const ConnectToBlockchainModel: React.FC<ConnectToBlockchainProps> = ({
                     handleContinue={handleContinue}
                   />
                 )}
-                {/* {selectedWalletType === SIGNER_TYPE.MAGIC && (
-              <ConnectToMagicLinkModelComponent
-                showOnNewConnectWarningMessage
-                nextStep={nextStep}
-                showNetworkSection={showNetworkSection}
-              />
-            )} */}
+                {selectedWalletType === SIGNER_TYPE.MAGIC && (
+                  <ConnectToMagicLinkModelComponent
+                    showOnNewConnectWarningMessage
+                    handleContinue={handleContinue}
+                  />
+                )}
               </div>
             </div>
           </div>

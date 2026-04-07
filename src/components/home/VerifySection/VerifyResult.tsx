@@ -170,12 +170,18 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
           </div>
 
           <div className="vr-network-frame">
-            {providerType === SIGNER_TYPE.METAMASK && account && (
-              <Connected
-                imgSrc="/images/wallet.png"
-                // openConnectToBlockchainModel={true}
-              />
-            )}
+            {account &&
+              (providerType === SIGNER_TYPE.METAMASK ||
+                providerType === SIGNER_TYPE.MAGIC) && (
+                <Connected
+                  imgSrc={
+                    providerType === SIGNER_TYPE.MAGIC
+                      ? '/images/magic_link.svg'
+                      : '/images/wallet.png'
+                  }
+                  openConnectToBlockchainModel={true}
+                />
+              )}
           </div>
         </div>
       )}

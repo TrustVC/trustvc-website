@@ -1,5 +1,6 @@
 import { ProviderDetails, utils, CHAIN_ID, chainInfo } from '@trustvc/trustvc'
 import { ethers, providers } from 'ethers'
+import { Magic } from 'magic-sdk'
 import React, {
   createContext,
   FunctionComponent,
@@ -18,7 +19,7 @@ import {
   isSupportedNetwork,
   walletSwitchChain,
 } from '../../../utils/chain-utils'
-// import { useMagicContext } from './MagicContext'
+import { MAGIC_API_KEY } from '../../../configs/env-config'
 
 export enum SIGNER_TYPE {
   IDENTITY = 'Identity', // Internal RPC to query only.
@@ -28,7 +29,6 @@ export enum SIGNER_TYPE {
 }
 
 const createProvider = (chainId: CHAIN_ID) => {
-  console.log('chainId', chainId)
   const url = ChainInfo[chainId].rpcUrl
   const opts: ProviderDetails = url
     ? { url }
@@ -41,7 +41,6 @@ const createProvider = (chainId: CHAIN_ID) => {
     ? new providers.JsonRpcProvider(url)
     : utils.generateProvider(opts)
 }
-console.log('here 1')
 
 // Utility function for use in non-react components that cannot get through hooks
 let currentProvider: providers.Provider | undefined = createProvider(
@@ -53,6 +52,7 @@ export const getCurrentProvider = (): providers.Provider | undefined =>
 export interface ProviderContextProps {
   providerType: SIGNER_TYPE
   upgradeToMetaMaskSigner: () => Promise<void>
+  upgradeToMagicSigner: () => Promise<void>
   changeNetwork: (chainId: CHAIN_ID) => void
   reloadNetwork: () => Promise<void>
   supportedChainInfoObjects: chainInfo[]
@@ -69,6 +69,8 @@ export const ProviderContext = createContext<ProviderContextProps>({
   providerType: SIGNER_TYPE.NONE,
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   upgradeToMetaMaskSigner: async () => {},
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  upgradeToMagicSigner: async () => {},
   // eslint-disable-next-line @typescript-eslint/no-empty-function,@typescript-eslint/no-unused-vars
   changeNetwork: async (_chainId: CHAIN_ID) => {},
   // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -111,15 +113,10 @@ export const ProviderContextProvider: FunctionComponent<
   defaultChainId,
   defaultProviderType = SIGNER_TYPE.NONE,
 }) => {
-  console.log('here 2')
   const defaultProvider = useRef(createProvider(defaultChainId))
-  // const {
-  //   magic,
-  //   changeMagicNetwork,
-  //   isLoggedIn: isMagicLoggedIn,
-  //   logoutMagicLink,
-  //   selectedNetwork: selectedMagicNetwork,
-  // } = useMagicContext()
+  const magicRef = useRef<Magic | null>(null)
+  const magicChainIdRef = useRef<CHAIN_ID | null>(null)
+  const [isMagicLoggedIn, setIsMagicLoggedIn] = useState(false)
 
   const [providerType, setProviderType] =
     useState<SIGNER_TYPE>(defaultProviderType)
@@ -139,6 +136,23 @@ export const ProviderContextProvider: FunctionComponent<
   const [networkChangeLoading, setNetworkChangeLoading] =
     useState<boolean>(false)
 
+  const getOrCreateMagic = useCallback((chainId: CHAIN_ID): Magic | null => {
+    if (!MAGIC_API_KEY) return null
+    const rpcUrl = ChainInfo[chainId]?.rpcUrl
+    if (!rpcUrl) return null
+    if (magicRef.current && magicChainIdRef.current !== chainId) {
+      magicRef.current = null
+      magicChainIdRef.current = null
+    }
+    if (!magicRef.current) {
+      magicRef.current = new Magic(MAGIC_API_KEY, {
+        network: { rpcUrl, chainId: Number(chainId) },
+      })
+      magicChainIdRef.current = chainId
+    }
+    return magicRef.current
+  }, [])
+
   const changeNetwork = async (chainId: CHAIN_ID) => {
     try {
       if (
@@ -146,6 +160,12 @@ export const ProviderContextProvider: FunctionComponent<
         providerType === SIGNER_TYPE.NONE
       ) {
         await walletSwitchChain(chainId)
+      }
+      if (providerType === SIGNER_TYPE.MAGIC) {
+        magicRef.current = null
+        magicChainIdRef.current = null
+        // Refresh Web3Provider immediately — effects still see stale `currentChainId` until setState flushes.
+        await updateProvider(SIGNER_TYPE.MAGIC, chainId)
       }
       setCurrentChainId(chainId)
 
@@ -174,7 +194,10 @@ export const ProviderContextProvider: FunctionComponent<
   }
 
   const updateProvider = useCallback(
-    async (_providerType: SIGNER_TYPE = providerType) => {
+    async (
+      _providerType: SIGNER_TYPE = providerType,
+      chainIdOverride?: CHAIN_ID
+    ) => {
       let newProvider: providers.Provider | undefined = undefined
 
       if (_providerType === SIGNER_TYPE.METAMASK) {
@@ -199,17 +222,33 @@ export const ProviderContextProvider: FunctionComponent<
           }
         }
       }
-      console.log('here 4')
-
+      const magicChainId = (chainIdOverride ??
+        currentChainId ??
+        defaultChainId) as CHAIN_ID
+      const magic = getOrCreateMagic(magicChainId)
+      if (_providerType === SIGNER_TYPE.MAGIC && magic?.rpcProvider) {
+        const chainMeta = getChainInfo(magicChainId)
+        // Tell ethers the chain so it does not rely on eth_chainId from a flaky RPC (avoids NETWORK_ERROR / noNetwork).
+        newProvider = new ethers.providers.Web3Provider(
+          magic.rpcProvider as unknown as providers.ExternalProvider,
+          { chainId: Number(magicChainId), name: chainMeta.name }
+        )
+        setProvider(newProvider)
+        setCurrentChainId(magicChainId)
+        return newProvider
+      }
       // fallback to internal default rpcUrl
-      newProvider = createProvider(currentChainId || defaultChainId)
+      const fallbackChainId = (chainIdOverride ??
+        currentChainId ??
+        defaultChainId) as CHAIN_ID
+      newProvider = createProvider(fallbackChainId)
       setProvider(newProvider)
       setProviderType(SIGNER_TYPE.IDENTITY)
       setAccount(undefined)
       return newProvider
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [currentChainId, defaultChainId, providerType]
+    [currentChainId, defaultChainId, providerType, supportedChainInfoObjects, getOrCreateMagic]
   )
 
   const updateSigner = useCallback(async () => {
@@ -232,7 +271,6 @@ export const ProviderContextProvider: FunctionComponent<
       setProviderOrSigner(provider)
     } catch (e) {
       setAccount(undefined)
-      console.log('here 5')
       setProviderOrSigner(createProvider(currentChainId!))
     }
     setNetworkChangeLoading(false)
@@ -259,12 +297,47 @@ export const ProviderContextProvider: FunctionComponent<
     }
   }
 
+  const initializeMagicSigner = async () => {
+    const chainId = (currentChainId || defaultChainId) as CHAIN_ID
+    const magic = getOrCreateMagic(chainId)
+    if (!magic) {
+      if (!MAGIC_API_KEY) {
+        throw new Error(
+          'Magic is not configured. Set VITE_MAGIC_API_KEY (publishable key) in .env and restart the app.'
+        )
+      }
+      throw new Error(
+        `No RPC URL for chain ${chainId}. Check ChainInfo configuration for this network.`
+      )
+    }
+    let alreadyLoggedIn = false
+    try {
+      alreadyLoggedIn = await magic.user.isLoggedIn()
+    } catch {
+      alreadyLoggedIn = false
+    }
+    if (alreadyLoggedIn) {
+      setIsMagicLoggedIn(true)
+    } else {
+      await magic.wallet.connectWithUI()
+      setIsMagicLoggedIn(true)
+    }
+    const magicMetadata = await (magic.user as any)?.getMetadata?.()
+    const magicAddress = magicMetadata?.publicAddress
+    if (magicAddress) {
+      setAccount(magicAddress)
+    }
+    setProviderType(SIGNER_TYPE.MAGIC)
+  }
+
   const upgradeToMetaMaskSigner = async () => {
-    console.log('upgradeToMetaMaskSigner')
-    // if (providerType === SIGNER_TYPE.METAMASK) return;
     await disconnectWallet(false)
-    console.log('disconnectWallet')
     return initializeMetaMaskSigner()
+  }
+
+  const upgradeToMagicSigner = async () => {
+    await disconnectWallet(false)
+    return initializeMagicSigner()
   }
 
   const reloadNetwork = async () => {
@@ -286,6 +359,15 @@ export const ProviderContextProvider: FunctionComponent<
         })
       } catch (error) {
         console.error('Error revoking wallet permissions:', error)
+      }
+    }
+    if (providerType === SIGNER_TYPE.MAGIC) {
+      try {
+        await magicRef.current?.user.logout()
+      } finally {
+        setIsMagicLoggedIn(false)
+        magicRef.current = null
+        magicChainIdRef.current = null
       }
     }
 
@@ -358,11 +440,43 @@ export const ProviderContextProvider: FunctionComponent<
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  useEffect(() => {
+    if (providerType === SIGNER_TYPE.NONE && isMagicLoggedIn) {
+      setProviderType(SIGNER_TYPE.MAGIC)
+    }
+  }, [providerType, isMagicLoggedIn])
+
+  useEffect(() => {
+    ;(async () => {
+      if (providerType !== SIGNER_TYPE.MAGIC || account) return
+      const magic = getOrCreateMagic((currentChainId || defaultChainId) as CHAIN_ID)
+      if (!magic) return
+      const magicMetadata = await (magic.user as any)?.getMetadata?.()
+      const magicAddress = magicMetadata?.publicAddress
+      if (magicAddress) {
+        setAccount(magicAddress)
+      }
+    })()
+  }, [providerType, account, currentChainId, defaultChainId, getOrCreateMagic])
+
+  useEffect(() => {
+    ;(async () => {
+      const magic = getOrCreateMagic((currentChainId || defaultChainId) as CHAIN_ID)
+      if (!magic) return
+      try {
+        setIsMagicLoggedIn(await magic.user.isLoggedIn())
+      } catch {
+        setIsMagicLoggedIn(false)
+      }
+    })()
+  }, [currentChainId, defaultChainId, getOrCreateMagic])
+
   return (
     <ProviderContext.Provider
       value={{
         providerType,
         upgradeToMetaMaskSigner,
+        upgradeToMagicSigner,
         changeNetwork,
         reloadNetwork,
         supportedChainInfoObjects,

@@ -31,8 +31,17 @@ export const GA_CONFIG_OPTION = {
   debug_mode: IS_DEVELOPMENT,
 }
 export { IS_MAINNET }
+
+const viteEnv = (
+  import.meta as ImportMeta & { env?: Record<string, string | undefined> }
+).env
+
+// Vite exposes only VITE_* via import.meta.env in the browser.
 export const MAGIC_API_KEY =
-  process.env.MAGIC_API_KEY || process.env.MAGIC_API_KEY_FALLBACK // dlt gmail fallback
+  viteEnv?.VITE_MAGIC_API_KEY ||
+  viteEnv?.VITE_MAGIC_API_KEY_FALLBACK ||
+  process.env.VITE_MAGIC_API_KEY ||
+  process.env.VITE_MAGIC_API_KEY_FALLBACK
 export { NETWORK, NETWORK_NAME }
 export const NETWORK_ID = IS_MAINNET ? '1' : '11155111'
 export const IS_TEST_ENV = process.env.NODE_ENV === 'test'
