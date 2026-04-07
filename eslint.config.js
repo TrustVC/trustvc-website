@@ -31,6 +31,7 @@ export default [
             'src/shims/dotenv-config.js',
             'src/shims/node-fetch.js',
             'src/shims/randomfill-esm.js',
+            'src/shims/randombytes-esm.js',
           ],
         },
       },
