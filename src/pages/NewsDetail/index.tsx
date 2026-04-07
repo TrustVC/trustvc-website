@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import clsx from 'clsx'
 import type { NewsDetailHookResult } from '../../types/news'
@@ -49,6 +49,10 @@ const NextArticleFallback = ({ isDarkMode }: { isDarkMode: boolean }) => (
 
 const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
   const { slug } = useParams<{ slug: string }>()
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
+  }, [slug])
+
   const {
     article,
     nextArticle,
