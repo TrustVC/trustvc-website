@@ -11,14 +11,22 @@ in your shell before running any Studio command:
 ```bash
 export SANITY_STUDIO_PROJECT_ID=tgb3bn8j
 export SANITY_STUDIO_DATASET=production
-export SANITY_STUDIO_APP_ID=vkns8j0arm4fut7w52a3bt20
 ```
 
 | Variable | Used in | Purpose |
 |---|---|---|
 | `SANITY_STUDIO_PROJECT_ID` | `sanity.config.ts`, `sanity.cli.ts` | Sanity project to connect to |
 | `SANITY_STUDIO_DATASET` | `sanity.config.ts`, `sanity.cli.ts` | Dataset (e.g. `production`) |
-| `SANITY_STUDIO_APP_ID` | `sanity.cli.ts` | Hosted-studio app identifier |
+
+### Deploy token (`SANITY_AUTH_TOKEN`)
+
+Interactive deploys use `npx sanity login`. In CI or any non-interactive shell, the CLI needs a token in **`SANITY_AUTH_TOKEN`** ([authorizing Studio deployments](https://www.sanity.io/docs/studio/deployment#h88071dd868bf)).
+
+1. Open [Sanity Manage](https://www.sanity.io/manage) → your project → **API** → **Tokens**.
+2. Add a token with a role that can deploy the hosted Studio (e.g. **Developer** or an equivalent custom role).
+3. Set `SANITY_AUTH_TOKEN` locally in `trustvc-cms/.env` (see `.env.example`) or as a secret in your pipeline.
+
+For this repo’s GitHub Action (`.github/workflows/deploy-sanity-studio.yml`), add a repository secret named **`SANITY_AUTH_TOKEN`** with that token, alongside `SANITY_STUDIO_PROJECT_ID`, `SANITY_STUDIO_DATASET`.
 
 After setting them, validate the schema before running or deploying:
 

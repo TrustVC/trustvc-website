@@ -11,8 +11,8 @@ const requireEnv = (value: string | undefined, name: 'projectId' | 'dataset') =>
   return value
 }
 
-const projectId = requireEnv(import.meta.env.SANITY_STUDIO_PROJECT_ID, 'projectId')
-const dataset = requireEnv(import.meta.env.SANITY_STUDIO_DATASET, 'dataset')
+const projectId = requireEnv(process.env.SANITY_STUDIO_PROJECT_ID, 'projectId')
+const dataset = requireEnv(process.env.SANITY_STUDIO_DATASET, 'dataset')
 
 export default defineConfig({
   name: 'default',

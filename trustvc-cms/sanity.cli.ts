@@ -11,9 +11,8 @@ const requireEnv = (
   return value
 }
 
-const projectId = requireEnv(import.meta.env.SANITY_STUDIO_PROJECT_ID, 'projectId')
-const dataset = requireEnv(import.meta.env.SANITY_STUDIO_DATASET, 'dataset')
-const appId = requireEnv(import.meta.env.SANITY_STUDIO_APP_ID, 'appId')
+const projectId = requireEnv(process.env.SANITY_STUDIO_PROJECT_ID, 'projectId')
+const dataset = requireEnv(process.env.SANITY_STUDIO_DATASET, 'dataset')
 
 export default defineCliConfig({
   api: {
@@ -26,6 +25,6 @@ export default defineCliConfig({
      * Learn more at https://www.sanity.io/docs/studio/latest-version-of-sanity#k47faf43faf56
      */
     autoUpdates: true,
-    appId,
+    token: process.env.SANITY_AUTH_TOKEN,
   }
 })
