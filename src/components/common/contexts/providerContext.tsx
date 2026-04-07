@@ -1,5 +1,6 @@
 import { ProviderDetails, utils, CHAIN_ID, chainInfo } from '@trustvc/trustvc'
 import { ethers, providers } from 'ethers'
+import { Magic } from 'magic-sdk'
 import React, {
   createContext,
   FunctionComponent,
@@ -41,6 +42,17 @@ const createProvider = (chainId: CHAIN_ID) => {
     ? new providers.JsonRpcProvider(url)
     : utils.generateProvider(opts)
 }
+
+const getMagicNetworkConfig = (chainId: CHAIN_ID) => {
+  const rpcUrl = ChainInfo[chainId]?.rpcUrl
+  if (!rpcUrl) {
+    throw new Error(`No RPC URL configured for chain ${chainId}`)
+  }
+  return {
+    rpcUrl,
+    chainId: Number(chainId),
+  }
+}
 console.log('here 1')
 
 // Utility function for use in non-react components that cannot get through hooks
@@ -53,6 +65,7 @@ export const getCurrentProvider = (): providers.Provider | undefined =>
 export interface ProviderContextProps {
   providerType: SIGNER_TYPE
   upgradeToMetaMaskSigner: () => Promise<void>
+  upgradeToMagicSigner: (email?: string) => Promise<void>
   changeNetwork: (chainId: CHAIN_ID) => void
   reloadNetwork: () => Promise<void>
   supportedChainInfoObjects: chainInfo[]
@@ -67,11 +80,9 @@ export interface ProviderContextProps {
 
 export const ProviderContext = createContext<ProviderContextProps>({
   providerType: SIGNER_TYPE.NONE,
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   upgradeToMetaMaskSigner: async () => {},
-  // eslint-disable-next-line @typescript-eslint/no-empty-function,@typescript-eslint/no-unused-vars
+  upgradeToMagicSigner: async (_email?: string) => {},
   changeNetwork: async (_chainId: CHAIN_ID) => {},
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   reloadNetwork: async () => {},
   supportedChainInfoObjects: [],
   currentChainId: undefined,
@@ -113,6 +124,7 @@ export const ProviderContextProvider: FunctionComponent<
 }) => {
   console.log('here 2')
   const defaultProvider = useRef(createProvider(defaultChainId))
+  const magicRef = useRef<Magic | null>(null)
   // const {
   //   magic,
   //   changeMagicNetwork,
@@ -199,6 +211,36 @@ export const ProviderContextProvider: FunctionComponent<
           }
         }
       }
+
+      if (_providerType === SIGNER_TYPE.MAGIC) {
+        if (!magicRef.current) {
+          const publishableKey = import.meta.env.VITE_MAGIC_PUBLISHABLE_KEY
+          if (!publishableKey) {
+            throw new Error(
+              'Magic publishable key is not configured. Please set VITE_MAGIC_PUBLISHABLE_KEY.'
+            )
+          }
+          const selectedChainId = (currentChainId || defaultChainId) as CHAIN_ID
+          const magicNetwork = getMagicNetworkConfig(selectedChainId)
+          magicRef.current = new Magic(publishableKey, {
+            network: magicNetwork,
+          })
+        }
+
+        newProvider = new ethers.providers.Web3Provider(
+          magicRef.current.rpcProvider as unknown as providers.ExternalProvider,
+          'any'
+        )
+        const network = await newProvider.getNetwork()
+        setProvider(newProvider)
+        if (!isSupportedNetwork(network.chainId, supportedChainInfoObjects)) {
+          console.warn('Magic wallet is connected to an unsupported network')
+          setCurrentChainId(undefined)
+          return
+        }
+        setCurrentChainId(network.chainId as unknown as CHAIN_ID)
+        return newProvider
+      }
       console.log('here 4')
 
       // fallback to internal default rpcUrl
@@ -230,7 +272,7 @@ export const ProviderContextProvider: FunctionComponent<
       }
       setAccount(undefined)
       setProviderOrSigner(provider)
-    } catch (e) {
+    } catch (_error) {
       setAccount(undefined)
       console.log('here 5')
       setProviderOrSigner(createProvider(currentChainId!))
@@ -259,12 +301,41 @@ export const ProviderContextProvider: FunctionComponent<
     }
   }
 
+  const initializeMagicSigner = async (email?: string) => {
+    const publishableKey = import.meta.env.VITE_MAGIC_PUBLISHABLE_KEY
+    if (!publishableKey) {
+      throw new Error(
+        'Magic publishable key is not configured. Please set VITE_MAGIC_PUBLISHABLE_KEY.'
+      )
+    }
+
+    const selectedChainId = (currentChainId || defaultChainId) as CHAIN_ID
+    if (!magicRef.current) {
+      const magicNetwork = getMagicNetworkConfig(selectedChainId)
+      magicRef.current = new Magic(publishableKey, {
+        network: magicNetwork,
+      })
+    }
+
+    const loginOptions = {
+      showUI: true,
+      ...(email?.trim() ? { email: email.trim() } : {}),
+    }
+    await magicRef.current.auth.loginWithEmailOTP(loginOptions as any)
+    setProviderType(SIGNER_TYPE.MAGIC)
+  }
+
   const upgradeToMetaMaskSigner = async () => {
     console.log('upgradeToMetaMaskSigner')
     // if (providerType === SIGNER_TYPE.METAMASK) return;
     await disconnectWallet(false)
     console.log('disconnectWallet')
     return initializeMetaMaskSigner()
+  }
+
+  const upgradeToMagicSigner = async (email?: string) => {
+    await disconnectWallet(false)
+    return initializeMagicSigner(email)
   }
 
   const reloadNetwork = async () => {
@@ -286,6 +357,14 @@ export const ProviderContextProvider: FunctionComponent<
         })
       } catch (error) {
         console.error('Error revoking wallet permissions:', error)
+      }
+    }
+
+    if (providerType === SIGNER_TYPE.MAGIC && magicRef.current) {
+      try {
+        await magicRef.current.user.logout()
+      } catch (error) {
+        console.error('Error logging out from Magic:', error)
       }
     }
 
@@ -347,11 +426,26 @@ export const ProviderContextProvider: FunctionComponent<
     if (providerType === SIGNER_TYPE.NONE) {
       ;(async () => {
         const metamask = await getMetaMaskWallet(false)
-        if (!metamask) return
+        if (metamask) {
+          const accounts = await metamask.listAccounts()
+          if (accounts.length > 0) {
+            setProviderType(SIGNER_TYPE.METAMASK)
+            return
+          }
+        }
 
-        const accounts = await metamask?.listAccounts()
-        if (accounts.length > 0) {
-          setProviderType(SIGNER_TYPE.METAMASK)
+        const publishableKey = import.meta.env.VITE_MAGIC_PUBLISHABLE_KEY
+        if (!publishableKey) return
+        if (!magicRef.current) {
+          const selectedChainId = (currentChainId || defaultChainId) as CHAIN_ID
+          const magicNetwork = getMagicNetworkConfig(selectedChainId)
+          magicRef.current = new Magic(publishableKey, {
+            network: magicNetwork,
+          })
+        }
+        const isMagicLoggedIn = await magicRef.current.user.isLoggedIn()
+        if (isMagicLoggedIn) {
+          setProviderType(SIGNER_TYPE.MAGIC)
         }
       })()
     }
@@ -363,6 +457,7 @@ export const ProviderContextProvider: FunctionComponent<
       value={{
         providerType,
         upgradeToMetaMaskSigner,
+        upgradeToMagicSigner,
         changeNetwork,
         reloadNetwork,
         supportedChainInfoObjects,
