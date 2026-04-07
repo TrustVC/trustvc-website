@@ -35,6 +35,8 @@ export default defineConfig(({ mode }) => {
         'node-fetch': path.resolve(__dirname, 'src/shims/node-fetch.js'),
         // Pure ESM shim — avoids CJS `exports` in the browser bundle (crypto-browserify).
         randomfill: path.resolve(__dirname, 'src/shims/randomfill-esm.js'),
+        'randomfill/browser': path.resolve(__dirname, 'src/shims/randomfill-esm.js'),
+        'randombytes/browser': path.resolve(__dirname, 'src/shims/randombytes-esm.js'),
         '@': fileURLToPath(new URL('./src', import.meta.url)),
       },
     },
