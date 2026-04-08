@@ -20,11 +20,7 @@ vi.mock('../components/common/contexts/providerContext', async () => {
 
 // Mock the Overlay component
 vi.mock('../components/common/Overlay', () => ({
-  default: ({ children }: any) => (
-    <div data-testid="overlay">
-      {children}
-    </div>
-  ),
+  default: ({ children }: any) => <div data-testid="overlay">{children}</div>,
 }))
 
 // Mock PrimaryButton component

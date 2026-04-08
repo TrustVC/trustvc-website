@@ -51,6 +51,11 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
   onConnectWallet,
 }) => {
   const showNftLinks = !!isTransferable
+  const magicIconSrc =
+    typeof document !== 'undefined' &&
+    document.body.classList.contains('dark-mode')
+      ? '/images/magic_link_dark.svg'
+      : '/images/magic_link.svg'
 
   const [isTooltipVisible, setIsTooltipVisible] = useState(false)
   const [tooltipPosition, setTooltipPosition] = useState({
@@ -176,7 +181,7 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
                 <Connected
                   imgSrc={
                     providerType === SIGNER_TYPE.MAGIC
-                      ? '/images/magic_link.svg'
+                      ? magicIconSrc
                       : '/images/wallet.png'
                   }
                   openConnectToBlockchainModel={true}

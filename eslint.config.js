@@ -7,7 +7,7 @@ import prettier from 'eslint-config-prettier'
 import tseslint from 'typescript-eslint'
 
 export default [
-  { ignores: ['dist', 'coverage'] },
+  { ignores: ['dist', 'coverage', 'trustvc-cms/dist'] },
   {
     files: ['**/*.{js,jsx,ts,tsx}'],
     languageOptions: {
@@ -61,6 +61,15 @@ export default [
         },
       ],
       'no-unused-vars': 'off',
+    },
+  },
+  {
+    files: [
+      'src/components/common/contexts/OverlayContext.tsx',
+      'src/components/common/contexts/providerContext.tsx',
+    ],
+    rules: {
+      'react-refresh/only-export-components': 'off',
     },
   },
 ]

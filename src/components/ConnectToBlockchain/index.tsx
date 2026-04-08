@@ -70,6 +70,11 @@ const ConnectToBlockchainHeader = ({
   setSelectedWalletType,
 }: ConnectToBlockchainHeaderProps) => {
   const { providerType, account } = useProviderContext()
+  const magicIconSrc =
+    typeof document !== 'undefined' &&
+    document.body.classList.contains('dark-mode')
+      ? '/images/magic_link_dark.svg'
+      : '/images/magic_link.svg'
   const WalletConnectMethods = [
     {
       walletType: SIGNER_TYPE.METAMASK,
@@ -85,7 +90,7 @@ const ConnectToBlockchainHeader = ({
       walletType: SIGNER_TYPE.MAGIC,
       'data-testid': 'connect-magic-header',
       walletIcon: (
-        <img src="/images/magic_link.svg" alt="MagicLink" className="w-6 h-6" />
+        <img src={magicIconSrc} alt="MagicLink" className="w-6 h-6" />
       ),
       isSelected: !!(selectedWalletType === SIGNER_TYPE.MAGIC),
       isConnected: !!(providerType === SIGNER_TYPE.MAGIC && account),

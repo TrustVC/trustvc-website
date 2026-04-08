@@ -1,5 +1,4 @@
 import React from 'react'
-import { useOverlayContext } from '../common/contexts/OverlayContext'
 import Connected from '../ConnectToBlockchain/Connected'
 // import { showDocumentTransferMessage } from '../UI/Overlay/OverlayContent'
 // import { NetworkContent } from '../NetworkSection/NetworkContent'
@@ -19,7 +18,7 @@ export interface ConnectToMetamaskModelProps {
 
 export const ConnectToMetamaskModelComponent = ({
   showOnNewConnectWarningMessage = false,
-  showNetworkSection = false,
+  showNetworkSection: _showNetworkSection = false,
   handleContinue,
 }: ConnectToMetamaskModelProps) => {
   const { providerType, account, disconnectWallet } = useProviderContext()
@@ -107,7 +106,6 @@ const ConnectToMetamask: React.FC<ConnectToMetamaskProps> = ({
   }
   const handleMetamaskError = (errorMesssage: string, errorCode: number) => {
     console.log('handleMetamaskError called:', errorMesssage, errorCode)
-    const isUserDeniedAccountAuthorization = errorCode === 4001
     // showOverlay(
     //   showDocumentTransferMessage(errorMesssage, {
     //     isSuccess: false,

@@ -77,6 +77,11 @@ const ConnectToMagicLink: React.FC = () => {
   const { account, providerType, upgradeToMagicSigner } = useProviderContext()
   const [errorMessage, setErrorMessage] = useState('')
   const [isConnecting, setIsConnecting] = useState(false)
+  const magicIconSrc =
+    typeof document !== 'undefined' &&
+    document.body.classList.contains('dark-mode')
+      ? '/images/magic_link_dark.svg'
+      : '/images/magic_link.svg'
 
   const handleConnectWallet = async () => {
     setErrorMessage('')
@@ -94,7 +99,7 @@ const ConnectToMagicLink: React.FC = () => {
     <div className="connect-metamask-container">
       {providerType === SIGNER_TYPE.MAGIC && account ? (
         <Connected
-          imgSrc="/images/magic_link.svg"
+          imgSrc={magicIconSrc}
           openConnectToBlockchainModel={false}
           withCardLayout={false}
         />
@@ -110,14 +115,18 @@ const ConnectToMagicLink: React.FC = () => {
             disabled={isConnecting}
           >
             <img
-              src="/images/magic_link.svg"
+              src={magicIconSrc}
               alt="Magic Link"
               className="connect-metamask-button-icon"
             />
-            <h3>{isConnecting ? 'Connecting...' : 'Connect with Magic Link'}</h3>
+            <h3>
+              {isConnecting ? 'Connecting...' : 'Connect with Magic Link'}
+            </h3>
           </PrimaryButton>
           {errorMessage && (
-            <p className="text-left text-sm text-red-500 mt-2">{errorMessage}</p>
+            <p className="text-left text-sm text-red-500 mt-2">
+              {errorMessage}
+            </p>
           )}
         </>
       )}

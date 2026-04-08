@@ -67,13 +67,13 @@ export interface ProviderContextProps {
 
 export const ProviderContext = createContext<ProviderContextProps>({
   providerType: SIGNER_TYPE.NONE,
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
+
   upgradeToMetaMaskSigner: async () => {},
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
+
   upgradeToMagicSigner: async () => {},
-  // eslint-disable-next-line @typescript-eslint/no-empty-function,@typescript-eslint/no-unused-vars
+
   changeNetwork: async (_chainId: CHAIN_ID) => {},
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
+
   reloadNetwork: async () => {},
   supportedChainInfoObjects: [],
   currentChainId: undefined,
@@ -247,8 +247,14 @@ export const ProviderContextProvider: FunctionComponent<
       setAccount(undefined)
       return newProvider
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [currentChainId, defaultChainId, providerType, supportedChainInfoObjects, getOrCreateMagic]
+
+    [
+      currentChainId,
+      defaultChainId,
+      providerType,
+      supportedChainInfoObjects,
+      getOrCreateMagic,
+    ]
   )
 
   const updateSigner = useCallback(async () => {
@@ -269,7 +275,7 @@ export const ProviderContextProvider: FunctionComponent<
       }
       setAccount(undefined)
       setProviderOrSigner(provider)
-    } catch (e) {
+    } catch {
       setAccount(undefined)
       setProviderOrSigner(createProvider(currentChainId!))
     }
@@ -449,7 +455,9 @@ export const ProviderContextProvider: FunctionComponent<
   useEffect(() => {
     ;(async () => {
       if (providerType !== SIGNER_TYPE.MAGIC || account) return
-      const magic = getOrCreateMagic((currentChainId || defaultChainId) as CHAIN_ID)
+      const magic = getOrCreateMagic(
+        (currentChainId || defaultChainId) as CHAIN_ID
+      )
       if (!magic) return
       const magicMetadata = await (magic.user as any)?.getMetadata?.()
       const magicAddress = magicMetadata?.publicAddress
@@ -461,7 +469,9 @@ export const ProviderContextProvider: FunctionComponent<
 
   useEffect(() => {
     ;(async () => {
-      const magic = getOrCreateMagic((currentChainId || defaultChainId) as CHAIN_ID)
+      const magic = getOrCreateMagic(
+        (currentChainId || defaultChainId) as CHAIN_ID
+      )
       if (!magic) return
       try {
         setIsMagicLoggedIn(await magic.user.isLoggedIn())
