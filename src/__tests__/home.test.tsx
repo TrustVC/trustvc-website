@@ -1,6 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { render, screen, within } from '@testing-library/react'
-import { MemoryRouter } from 'react-router-dom'
+import { render, screen, within } from './test-utils'
 
 import Home from '../pages/Home'
 import carouselData from '../data/carousel.json'
@@ -21,11 +20,7 @@ vi.mock('swiper/modules', () => ({
 }))
 
 const renderHome = (isDarkMode: boolean) =>
-  render(
-    <MemoryRouter>
-      <Home isDarkMode={isDarkMode} />
-    </MemoryRouter>
-  )
+  render(<Home isDarkMode={isDarkMode} />)
 
 describe('Home page', () => {
   it('renders hero and verify sections', () => {

@@ -2,6 +2,7 @@ import React from 'react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { renderHook, act, waitFor } from '@testing-library/react'
 import { useVerify, makeExplorerAddressURL } from './useVerify'
+import { DocumentProvider } from '../../common/contexts/DocumentContext'
 
 // ─── Mocks ────────────────────────────────────────────────────────────────────
 
@@ -25,44 +26,63 @@ if (!File.prototype.text) {
   }
 }
 
-vi.mock('@trustvc/trustvc', () => ({
-  verifyDocument: vi.fn(),
-  getChainId: vi.fn(),
-  isTransferableRecord: vi.fn(),
-  isDocumentRevokable: vi.fn(),
-  SUPPORTED_CHAINS: {
-    '1': {
-      rpcUrl: 'https://eth-mainnet.example.com',
-      explorerUrl: 'https://etherscan.io',
+vi.mock('@trustvc/trustvc', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@trustvc/trustvc')>()
+  
+  // Create mock chain info with all required properties
+  const createMockChainInfo = (id: string, name: string, rpcUrl: string, explorerUrl: string) => ({
+    id,
+    name,
+    label: name,
+    rpcUrl,
+    explorerUrl,
+    type: 'production' as const,
+    currency: 'ETH',
+    nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
+  })
+  
+  return {
+    ...actual,
+    verifyDocument: vi.fn(),
+    getChainId: vi.fn(),
+    isTransferableRecord: vi.fn(),
+    isDocumentRevokable: vi.fn(),
+    SUPPORTED_CHAINS: {
+      '1': createMockChainInfo('1', 'homestead', 'https://eth-mainnet.example.com', 'https://etherscan.io'),
+      '137': createMockChainInfo('137', 'matic', 'https://polygon.example.com', 'https://polygonscan.com'),
+      '50': createMockChainInfo('50', 'xdc', 'https://xdc-rpc.com', 'https://xdc-explorer.io'),
+      '101010': createMockChainInfo('101010', 'stability', 'https://stability-rpc.com', 'https://stability-explorer.io'),
+      '1338': createMockChainInfo('1338', 'astron', 'https://astron-rpc.com', 'https://astron-explorer.io'),
+      '11155111': createMockChainInfo('11155111', 'sepolia', 'https://sepolia-rpc.com', 'https://sepolia-explorer.io'),
+      '80002': createMockChainInfo('80002', 'amoy', 'https://amoy-rpc.com', 'https://amoy-explorer.io'),
+      '51': createMockChainInfo('51', 'xdcapothem', 'https://apothem-rpc.com', 'https://apothem-explorer.io'),
+      '20180427': createMockChainInfo('20180427', 'stabilitytestnet', 'https://stability-test-rpc.com', 'https://stability-test-explorer.io'),
+      '21002': createMockChainInfo('21002', 'astrontestnet', 'https://astron-test-rpc.com', 'https://astron-test-explorer.io'),
     },
-    '137': {
-      rpcUrl: 'https://polygon.example.com',
-      explorerUrl: 'https://polygonscan.com',
+    // Document type predicates used in getIssuerName / getDocumentTags
+    isWrappedV2Document: vi.fn().mockReturnValue(false),
+    isWrappedV3Document: vi.fn().mockReturnValue(false),
+    isRawV2Document: vi.fn().mockReturnValue(false),
+    isSignedWrappedV2Document: vi.fn().mockReturnValue(false),
+    isRawV3Document: vi.fn().mockReturnValue(false),
+    isSignedWrappedV3Document: vi.fn().mockReturnValue(false),
+    // Title escrow helpers used in detectTokenRegistryVersion
+    isTitleEscrowVersion: vi.fn().mockResolvedValue(false),
+    TitleEscrowInterface: { V4: 'V4', V5: 'V5' },
+    getTokenRegistryAddress: vi.fn().mockReturnValue(undefined),
+    getTokenId: vi.fn().mockReturnValue(undefined),
+    getDocumentData: vi.fn().mockReturnValue({ id: 'test-key-id' }),
+    // Namespace objects (only methods used in the source are stubbed)
+    utils: {},
+    v2: {},
+    v3: {},
+    vc: {
+      isSignedDocument: vi.fn().mockReturnValue(false),
+      isRawDocument: vi.fn().mockReturnValue(false),
+      isSignedDocumentV2_0: vi.fn().mockReturnValue(false),
     },
-  },
-  // Document type predicates used in getIssuerName / getDocumentTags
-  isWrappedV2Document: vi.fn().mockReturnValue(false),
-  isWrappedV3Document: vi.fn().mockReturnValue(false),
-  isRawV2Document: vi.fn().mockReturnValue(false),
-  isSignedWrappedV2Document: vi.fn().mockReturnValue(false),
-  isRawV3Document: vi.fn().mockReturnValue(false),
-  isSignedWrappedV3Document: vi.fn().mockReturnValue(false),
-  // Title escrow helpers used in detectTokenRegistryVersion
-  isTitleEscrowVersion: vi.fn().mockResolvedValue(false),
-  TitleEscrowInterface: { V4: 'V4', V5: 'V5' },
-  getTokenRegistryAddress: vi.fn().mockReturnValue(undefined),
-  getTokenId: vi.fn().mockReturnValue(undefined),
-  getDocumentData: vi.fn().mockReturnValue({ id: 'test-key-id' }),
-  // Namespace objects (only methods used in the source are stubbed)
-  utils: {},
-  v2: {},
-  v3: {},
-  vc: {
-    isSignedDocument: vi.fn().mockReturnValue(false),
-    isRawDocument: vi.fn().mockReturnValue(false),
-    isSignedDocumentV2_0: vi.fn().mockReturnValue(false),
-  },
-}))
+  }
+})
 
 import {
   verifyDocument,
@@ -95,6 +115,11 @@ const triggerFileInput = (
   } as unknown as React.ChangeEvent<HTMLInputElement>)
 }
 
+// Wrapper to provide DocumentContext to the hook
+const wrapper = ({ children }: { children: React.ReactNode }) => {
+  return React.createElement(DocumentProvider, null, children)
+}
+
 // ─── Tests ────────────────────────────────────────────────────────────────────
 
 describe('useVerify', () => {
@@ -107,7 +132,7 @@ describe('useVerify', () => {
 
   describe('initial state', () => {
     it('starts idle with empty fields', () => {
-      const { result } = renderHook(() => useVerify())
+      const { result } = renderHook(() => useVerify(), { wrapper })
       expect(result.current.verifyStatus).toBe('idle')
       expect(result.current.fileName).toBe('')
       expect(result.current.errorMessage).toBe('')
@@ -130,7 +155,7 @@ describe('useVerify', () => {
       vi.mocked(isTransferableRecord).mockReturnValue(false)
       vi.mocked(isDocumentRevokable).mockReturnValue(false)
 
-      const { result } = renderHook(() => useVerify())
+      const { result } = renderHook(() => useVerify(), { wrapper })
 
       await act(async () => {
         triggerFileInput(result, makeFile({ test: true }))
@@ -152,7 +177,7 @@ describe('useVerify', () => {
 
   describe('handleDrag', () => {
     it('sets dragActive true on dragenter', () => {
-      const { result } = renderHook(() => useVerify())
+      const { result } = renderHook(() => useVerify(), { wrapper })
       act(() => {
         result.current.handleDrag(makeDragEvent('dragenter'))
       })
@@ -160,7 +185,7 @@ describe('useVerify', () => {
     })
 
     it('sets dragActive true on dragover', () => {
-      const { result } = renderHook(() => useVerify())
+      const { result } = renderHook(() => useVerify(), { wrapper })
       act(() => {
         result.current.handleDrag(makeDragEvent('dragover'))
       })
@@ -168,7 +193,7 @@ describe('useVerify', () => {
     })
 
     it('sets dragActive false on dragleave', () => {
-      const { result } = renderHook(() => useVerify())
+      const { result } = renderHook(() => useVerify(), { wrapper })
       act(() => {
         result.current.handleDrag(makeDragEvent('dragenter'))
       })
@@ -179,7 +204,7 @@ describe('useVerify', () => {
     })
 
     it('calls preventDefault and stopPropagation', () => {
-      const { result } = renderHook(() => useVerify())
+      const { result } = renderHook(() => useVerify(), { wrapper })
       const event = makeDragEvent('dragenter')
       act(() => {
         result.current.handleDrag(event)
@@ -193,7 +218,7 @@ describe('useVerify', () => {
 
   describe('handleFileInput', () => {
     it('does nothing when no file is provided', () => {
-      const { result } = renderHook(() => useVerify())
+      const { result } = renderHook(() => useVerify(), { wrapper })
       act(() => {
         result.current.handleFileInput({
           target: { files: null, value: '' },
@@ -208,7 +233,7 @@ describe('useVerify', () => {
       vi.mocked(isTransferableRecord).mockReturnValue(false)
       vi.mocked(isDocumentRevokable).mockReturnValue(false)
 
-      const { result } = renderHook(() => useVerify())
+      const { result } = renderHook(() => useVerify(), { wrapper })
       await act(async () => {
         triggerFileInput(result, makeFile({ test: true }, 'my-doc.tt'))
       })
@@ -232,7 +257,7 @@ describe('useVerify', () => {
       vi.mocked(isTransferableRecord).mockReturnValue(false)
       vi.mocked(isDocumentRevokable).mockReturnValue(false)
 
-      const { result } = renderHook(() => useVerify())
+      const { result } = renderHook(() => useVerify(), { wrapper })
       await act(async () => {
         triggerFileInput(result, makeFile({ test: true }))
       })
@@ -256,7 +281,7 @@ describe('useVerify', () => {
       vi.mocked(isTransferableRecord).mockReturnValue(false)
       vi.mocked(isDocumentRevokable).mockReturnValue(false)
 
-      const { result } = renderHook(() => useVerify())
+      const { result } = renderHook(() => useVerify(), { wrapper })
       await act(async () => {
         triggerFileInput(result, makeFile({ test: true }))
       })
@@ -269,7 +294,7 @@ describe('useVerify', () => {
       vi.mocked(isTransferableRecord).mockReturnValue(false)
       vi.mocked(isDocumentRevokable).mockReturnValue(false)
 
-      const { result } = renderHook(() => useVerify())
+      const { result } = renderHook(() => useVerify(), { wrapper })
       await act(async () => {
         triggerFileInput(result, makeFile({ test: true }))
       })
@@ -277,7 +302,7 @@ describe('useVerify', () => {
     })
 
     it('sets error with SyntaxError message on invalid JSON', async () => {
-      const { result } = renderHook(() => useVerify())
+      const { result } = renderHook(() => useVerify(), { wrapper })
       const badFile = new File(['not { valid json'], 'bad.tt', {
         type: 'text/plain',
       })
@@ -296,7 +321,7 @@ describe('useVerify', () => {
       vi.mocked(isTransferableRecord).mockReturnValue(false)
       vi.mocked(isDocumentRevokable).mockReturnValue(false)
 
-      const { result } = renderHook(() => useVerify())
+      const { result } = renderHook(() => useVerify(), { wrapper })
       await act(async () => {
         triggerFileInput(result, makeFile({ test: true }))
       })
@@ -310,7 +335,7 @@ describe('useVerify', () => {
       vi.mocked(isTransferableRecord).mockReturnValue(false)
       vi.mocked(isDocumentRevokable).mockReturnValue(false)
 
-      const { result } = renderHook(() => useVerify())
+      const { result } = renderHook(() => useVerify(), { wrapper })
       await act(async () => {
         triggerFileInput(result, makeFile({ test: true }))
       })
@@ -325,7 +350,7 @@ describe('useVerify', () => {
       vi.mocked(isTransferableRecord).mockReturnValue(true)
       vi.mocked(isDocumentRevokable).mockReturnValue(false)
 
-      const { result } = renderHook(() => useVerify())
+      const { result } = renderHook(() => useVerify(), { wrapper })
       await act(async () => {
         triggerFileInput(result, makeFile({ test: true }, 'tr.tt'))
       })
@@ -340,7 +365,7 @@ describe('useVerify', () => {
       vi.mocked(isTransferableRecord).mockReturnValue(false)
       vi.mocked(isDocumentRevokable).mockReturnValue(true)
 
-      const { result } = renderHook(() => useVerify())
+      const { result } = renderHook(() => useVerify(), { wrapper })
       await act(async () => {
         triggerFileInput(result, makeFile({ test: true }))
       })
@@ -361,7 +386,7 @@ describe('useVerify', () => {
         },
       ])
 
-      const { result } = renderHook(() => useVerify())
+      const { result } = renderHook(() => useVerify(), { wrapper })
       await act(async () => {
         triggerFileInput(result, makeFile({ test: true }))
       })
@@ -384,7 +409,7 @@ describe('useVerify', () => {
       vi.mocked(isTransferableRecord).mockReturnValue(false)
       vi.mocked(isDocumentRevokable).mockReturnValue(false)
 
-      const { result } = renderHook(() => useVerify())
+      const { result } = renderHook(() => useVerify(), { wrapper })
       act(() => {
         result.current.handleDrag(makeDragEvent('dragenter'))
       })
@@ -400,7 +425,7 @@ describe('useVerify', () => {
     })
 
     it('does nothing when drop contains no files', () => {
-      const { result } = renderHook(() => useVerify())
+      const { result } = renderHook(() => useVerify(), { wrapper })
       act(() => {
         result.current.handleDrop(makeDragEvent('drop', []))
       })
@@ -416,7 +441,7 @@ describe('useVerify', () => {
       vi.mocked(isTransferableRecord).mockReturnValue(true)
       vi.mocked(isDocumentRevokable).mockReturnValue(false)
 
-      const { result } = renderHook(() => useVerify())
+      const { result } = renderHook(() => useVerify(), { wrapper })
       await act(async () => {
         triggerFileInput(result, makeFile({ test: true }, 'pending.tt'))
       })
@@ -437,7 +462,7 @@ describe('useVerify', () => {
 
   describe('handleNetworkConfirm', () => {
     it('does nothing when called with no pending document', async () => {
-      const { result } = renderHook(() => useVerify())
+      const { result } = renderHook(() => useVerify(), { wrapper })
       await act(async () => {
         result.current.handleNetworkConfirm('1')
       })
@@ -457,7 +482,7 @@ describe('useVerify', () => {
         },
       ])
 
-      const { result } = renderHook(() => useVerify())
+      const { result } = renderHook(() => useVerify(), { wrapper })
       await act(async () => {
         triggerFileInput(result, makeFile({ test: true }))
       })
@@ -484,7 +509,7 @@ describe('useVerify', () => {
         },
       ])
 
-      const { result } = renderHook(() => useVerify())
+      const { result } = renderHook(() => useVerify(), { wrapper })
       await act(async () => {
         triggerFileInput(result, makeFile({ test: true }))
       })
@@ -504,7 +529,7 @@ describe('useVerify', () => {
       vi.mocked(isDocumentRevokable).mockReturnValue(false)
       vi.mocked(verifyDocument).mockRejectedValue(new Error('Network timeout'))
 
-      const { result } = renderHook(() => useVerify())
+      const { result } = renderHook(() => useVerify(), { wrapper })
       await act(async () => {
         triggerFileInput(result, makeFile({ test: true }))
       })
@@ -535,7 +560,7 @@ describe('useVerify', () => {
       vi.mocked(isTransferableRecord).mockReturnValue(false)
       vi.mocked(isDocumentRevokable).mockReturnValue(false)
 
-      const { result } = renderHook(() => useVerify())
+      const { result } = renderHook(() => useVerify(), { wrapper })
       await act(async () => {
         triggerFileInput(result, makeFile({ test: true }))
       })
@@ -581,7 +606,7 @@ describe('useVerify', () => {
     })
 
     it('returns INVALID before any file has been verified', () => {
-      const { result } = renderHook(() => useVerify())
+      const { result } = renderHook(() => useVerify(), { wrapper })
       expect(result.current.getGroupStatus('DOCUMENT_INTEGRITY')).toBe(
         'INVALID'
       )
@@ -592,17 +617,17 @@ describe('useVerify', () => {
 
   describe('new state values', () => {
     it('starts with empty issuerName', () => {
-      const { result } = renderHook(() => useVerify())
+      const { result } = renderHook(() => useVerify(), { wrapper })
       expect(result.current.issuerName).toBe('')
     })
 
     it('starts with isTransferable false', () => {
-      const { result } = renderHook(() => useVerify())
+      const { result } = renderHook(() => useVerify(), { wrapper })
       expect(result.current.isTransferable).toBe(false)
     })
 
     it('starts with an empty tags array', () => {
-      const { result } = renderHook(() => useVerify())
+      const { result } = renderHook(() => useVerify(), { wrapper })
       expect(result.current.tags).toEqual([])
     })
 
@@ -618,7 +643,7 @@ describe('useVerify', () => {
       vi.mocked(isTransferableRecord).mockReturnValue(true)
       vi.mocked(isDocumentRevokable).mockReturnValue(false)
 
-      const { result } = renderHook(() => useVerify())
+      const { result } = renderHook(() => useVerify(), { wrapper })
       await act(async () => {
         triggerFileInput(result, makeFile({ test: true }))
       })
@@ -640,7 +665,7 @@ describe('useVerify', () => {
       vi.mocked(isTransferableRecord).mockReturnValue(false)
       vi.mocked(isDocumentRevokable).mockReturnValue(false)
 
-      const { result } = renderHook(() => useVerify())
+      const { result } = renderHook(() => useVerify(), { wrapper })
       await act(async () => {
         triggerFileInput(result, makeFile({ test: true }))
       })
@@ -662,7 +687,7 @@ describe('useVerify', () => {
       vi.mocked(isTransferableRecord).mockReturnValue(false)
       vi.mocked(isDocumentRevokable).mockReturnValue(false)
 
-      const { result } = renderHook(() => useVerify())
+      const { result } = renderHook(() => useVerify(), { wrapper })
       await act(async () => {
         triggerFileInput(result, makeFile({ test: true }))
       })

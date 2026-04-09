@@ -125,7 +125,6 @@ const ConnectToBlockchainModel: React.FC<ConnectToBlockchainProps> = ({
   )
 
   const handleContinue = () => {
-    console.log('handleContinue clicked!', nextStep)
     if (!nextStep) {
       onClose()
       return

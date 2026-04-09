@@ -29,7 +29,6 @@ export enum SIGNER_TYPE {
 }
 
 const createProvider = (chainId: CHAIN_ID) => {
-  console.log('chainId', chainId)
   const url = ChainInfo[chainId].rpcUrl
   const opts: ProviderDetails = url
     ? { url }
@@ -42,7 +41,6 @@ const createProvider = (chainId: CHAIN_ID) => {
     ? new providers.JsonRpcProvider(url)
     : utils.generateProvider(opts)
 }
-console.log('here 1')
 
 // Utility function for use in non-react components that cannot get through hooks
 let currentProvider: providers.Provider | undefined = createProvider(
@@ -112,7 +110,6 @@ export const ProviderContextProvider: FunctionComponent<
   defaultChainId,
   defaultProviderType = SIGNER_TYPE.NONE,
 }) => {
-  console.log('here 2')
   const defaultProvider = useRef(createProvider(defaultChainId))
   // const {
   //   magic,
@@ -200,7 +197,6 @@ export const ProviderContextProvider: FunctionComponent<
           }
         }
       }
-      console.log('here 4')
 
       // fallback to internal default rpcUrl
       newProvider = createProvider(currentChainId || defaultChainId)
@@ -242,14 +238,11 @@ export const ProviderContextProvider: FunctionComponent<
 
   const initializeMetaMaskSigner = async () => {
     try {
-      console.log('initializeMetaMaskSigner')
       const newProvider: ethers.providers.Web3Provider =
         (await getMetaMaskWallet())!
-      console.log('newProvider', newProvider)
       // Request to connect to MetaMask
       await newProvider.send('eth_requestAccounts', [])
       const chainInfo = getChainInfo(currentChainId ?? defaultChainId)
-      console.log('chainInfo', chainInfo)
       await walletSwitchChain(chainInfo.id)
 
       setProviderType(SIGNER_TYPE.METAMASK)
@@ -261,10 +254,8 @@ export const ProviderContextProvider: FunctionComponent<
   }
 
   const upgradeToMetaMaskSigner = async () => {
-    console.log('upgradeToMetaMaskSigner')
     // if (providerType === SIGNER_TYPE.METAMASK) return;
     await disconnectWallet(false)
-    console.log('disconnectWallet')
     return initializeMetaMaskSigner()
   }
 

@@ -27,7 +27,6 @@ export const ConnectToMetamaskModelComponent = ({
   const handleDisconnect = () => {
     disconnectWallet()
   }
-  console.log(providerType, account)
   return (
     <div className="frame">
       {providerType === SIGNER_TYPE.METAMASK && account && (
@@ -95,21 +94,12 @@ const ConnectToMetamask: React.FC<ConnectToMetamaskProps> = ({
   openConnectToBlockchainModel = false,
   withCardLayout = false,
 }) => {
-  console.log('ConnectToMetamask component rendered')
   const { upgradeToMetaMaskSigner, account, providerType } =
     useProviderContext()
 
   const handleConnectWallet = async () => {
-    console.log('handleConnectWallet clicked!')
-    console.log('upgradeToMetaMaskSigner function:', upgradeToMetaMaskSigner)
-    console.log(
-      'typeof upgradeToMetaMaskSigner:',
-      typeof upgradeToMetaMaskSigner
-    )
     try {
-      console.log('About to call upgradeToMetaMaskSigner...')
       await upgradeToMetaMaskSigner()
-      console.log('upgradeToMetaMaskSigner completed')
     } catch (error: any) {
       console.error('Error in handleConnectWallet:', error)
       handleMetamaskError(error.message, error.code)

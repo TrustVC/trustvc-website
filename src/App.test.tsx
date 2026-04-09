@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
-import { MemoryRouter } from 'react-router-dom'
+import { render, screen, fireEvent } from './__tests__/test-utils'
 import App from './App'
 
 describe('App Component', () => {
@@ -11,19 +10,11 @@ describe('App Component', () => {
   })
 
   it('renders without crashing', () => {
-    render(
-      <MemoryRouter>
-        <App />
-      </MemoryRouter>
-    )
+    render(<App />)
   })
 
   it('renders Navbar component', () => {
-    render(
-      <MemoryRouter>
-        <App />
-      </MemoryRouter>
-    )
+    render(<App />)
 
     // Check if navigation elements are present
     expect(screen.getByText('Home')).toBeInTheDocument()
@@ -31,11 +22,7 @@ describe('App Component', () => {
   })
 
   it('starts with light mode by default', () => {
-    const { container } = render(
-      <MemoryRouter>
-        <App />
-      </MemoryRouter>
-    )
+    const { container } = render(<App />)
 
     const nav = container.querySelector('.navbar-light')
     expect(nav).toBeInTheDocument()
@@ -43,11 +30,7 @@ describe('App Component', () => {
   })
 
   it('persists dark mode to localStorage', () => {
-    render(
-      <MemoryRouter>
-        <App />
-      </MemoryRouter>
-    )
+    render(<App />)
 
     // Find and click moon icon to enable dark mode
     const buttons = screen.getAllByRole('button')
@@ -67,11 +50,7 @@ describe('App Component', () => {
     // Set dark mode in localStorage
     localStorage.setItem('darkMode', 'true')
 
-    const { container } = render(
-      <MemoryRouter>
-        <App />
-      </MemoryRouter>
-    )
+    const { container } = render(<App />)
 
     // Check if navbar has dark mode class
     const nav = container.querySelector('.navbar-dark')
@@ -81,21 +60,15 @@ describe('App Component', () => {
   it('applies dark mode class on the document body', () => {
     localStorage.setItem('darkMode', 'true')
 
-    render(
-      <MemoryRouter>
-        <App />
-      </MemoryRouter>
-    )
+    render(<App />)
 
     expect(document.body.classList.contains('dark-mode')).toBe(true)
   })
 
   it('renders NotFound page for unknown routes', () => {
-    render(
-      <MemoryRouter initialEntries={['/unknown-route']}>
-        <App />
-      </MemoryRouter>
-    )
+    render(<App />, {
+      routerProps: { initialEntries: ['/unknown-route'] },
+    })
 
     expect(screen.getByText(/Page not found/i)).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /Back to Home/i })).toHaveAttribute(
