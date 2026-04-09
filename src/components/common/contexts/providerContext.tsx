@@ -80,7 +80,10 @@ export const ProviderContext = createContext<ProviderContextProps>({
   providerType: SIGNER_TYPE.NONE,
   upgradeToMetaMaskSigner: async () => {},
   changeNetwork: async (_chainId: CHAIN_ID) => {},
+<<<<<<< HEAD
   upgradeToMagicSigner: async () => {},
+=======
+>>>>>>> 828c4ca (fix: lint error)
   reloadNetwork: async () => {},
   supportedChainInfoObjects: [],
   currentChainId: undefined,

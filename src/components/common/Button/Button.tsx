@@ -1,9 +1,10 @@
-import React, {
+import {
   FunctionComponent,
   AnchorHTMLAttributes,
-  ButtonHTMLAttributes,
   LabelHTMLAttributes,
 } from 'react'
+import { ButtonSize, ButtonHeight } from './constants'
+import type { ButtonTradeTrust } from './types'
 
 interface GetSharedStylesButton {
   padding: string
@@ -14,29 +15,6 @@ const getSharedStylesButton = (shared: GetSharedStylesButton): string => {
   const { padding, height } = shared
 
   return `box-border transition-colors duration-200 ease-out cursor-pointer font-gilroy-bold border ${padding} ${height}`
-}
-
-export enum ButtonSize {
-  XS = 'XS',
-  SM = 'SM',
-  MD = 'MD',
-  LG = 'LG',
-  FLEX = 'FLEX', // Flexible width button
-}
-
-export enum ButtonHeight {
-  SM = 'min-h-8', // 2rem = 32px
-  MD = 'min-h-10', // 2.5rem = 40px
-  LG = 'min-h-12', // 3rem = 48px
-}
-
-export interface ButtonTradeTrust extends ButtonHTMLAttributes<HTMLButtonElement> {
-  size?: ButtonSize
-  height?: ButtonHeight
-  btnType?: 'solid' | 'transparent'
-  width?: string // Custom width (e.g., '300px', '100%')
-  as?: 'button' | 'label'
-  htmlFor?: string
 }
 
 interface AnchorTradeTrust extends AnchorHTMLAttributes<HTMLAnchorElement> {
