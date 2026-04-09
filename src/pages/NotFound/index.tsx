@@ -20,7 +20,7 @@ const NotFound = ({ isDarkMode }: NotFoundProps) => {
             isDarkMode ? 'text-neutral-40' : 'text-neutral-20'
           }`}
         >
-          The page you are looking for doesn't exist or has been moved.
+          The page you are looking for doesn’t exist or has been moved.
         </p>
         <Link
           to="/"
