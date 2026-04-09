@@ -10,6 +10,7 @@ import {
   SIGNER_TYPE,
   useProviderContext,
 } from '../../common/contexts/providerContext'
+import { DocumentAttachment } from '../../../utils/helper'
 
 interface VerifyResultProps {
   fileName: string
