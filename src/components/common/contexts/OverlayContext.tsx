@@ -8,10 +8,12 @@ interface OverlayContextType {
   setOverlayVisible: (visible: boolean) => void
 }
 
+// eslint-disable-next-line
 export const OverlayContext = createContext<OverlayContextType | undefined>(
   undefined
 )
 
+// eslint-disable-next-line
 export const useOverlayContext = (): OverlayContextType => {
   const context = useContext(OverlayContext)
   if (!context) {
