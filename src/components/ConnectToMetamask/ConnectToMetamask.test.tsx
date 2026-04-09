@@ -1,8 +1,6 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import ConnectToMetamask, {
-  ConnectToMetamaskModelComponent,
-} from './index'
+import ConnectToMetamask, { ConnectToMetamaskModelComponent } from './index'
 import { SIGNER_TYPE } from '../common/contexts/providerContext'
 
 // Mock dependencies
@@ -14,9 +12,7 @@ const mockUseProviderContext = vi.fn()
 const mockUseOverlayContext = vi.fn()
 
 vi.mock('../common/contexts/providerContext', async () => {
-  const actual = await vi.importActual(
-    '../common/contexts/providerContext'
-  )
+  const actual = await vi.importActual('../common/contexts/providerContext')
   return {
     ...actual,
     useProviderContext: () => mockUseProviderContext(),
@@ -41,8 +37,19 @@ vi.mock('../ConnectToBlockchain/Connected', () => ({
 
 // Mock PrimaryButton component
 vi.mock('../common/PrimaryButton', () => ({
-  default: ({ children, onClick, 'data-testid': testId, disabled, ...props }: any) => (
-    <button data-testid={testId} onClick={onClick} disabled={disabled} {...props}>
+  default: ({
+    children,
+    onClick,
+    'data-testid': testId,
+    disabled,
+    ...props
+  }: any) => (
+    <button
+      data-testid={testId}
+      onClick={onClick}
+      disabled={disabled}
+      {...props}
+    >
       {children}
     </button>
   ),
@@ -50,8 +57,19 @@ vi.mock('../common/PrimaryButton', () => ({
 
 // Mock Button component
 vi.mock('../common/Button', () => ({
-  Button: ({ children, onClick, 'data-testid': testId, disabled, ...props }: any) => (
-    <button data-testid={testId} onClick={onClick} disabled={disabled} {...props}>
+  Button: ({
+    children,
+    onClick,
+    'data-testid': testId,
+    disabled,
+    ...props
+  }: any) => (
+    <button
+      data-testid={testId}
+      onClick={onClick}
+      disabled={disabled}
+      {...props}
+    >
       {children}
     </button>
   ),
@@ -103,16 +121,22 @@ describe('ConnectToMetamask', () => {
     })
 
     it('applies custom className when provided', () => {
-      const { container } = render(<ConnectToMetamask className="custom-class" />)
+      const { container } = render(
+        <ConnectToMetamask className="custom-class" />
+      )
 
-      const connectContainer = container.querySelector('.connect-metamask-container')
+      const connectContainer = container.querySelector(
+        '.connect-metamask-container'
+      )
       expect(connectContainer).toHaveClass('custom-class')
     })
 
     it('renders with default className when not provided', () => {
       const { container } = render(<ConnectToMetamask />)
 
-      const connectContainer = container.querySelector('.connect-metamask-container')
+      const connectContainer = container.querySelector(
+        '.connect-metamask-container'
+      )
       expect(connectContainer).toBeInTheDocument()
     })
   })
@@ -326,7 +350,9 @@ describe('ConnectToMetamaskModelComponent', () => {
         />
       )
 
-      expect(screen.queryByTestId('disconnect-metamask')).not.toBeInTheDocument()
+      expect(
+        screen.queryByTestId('disconnect-metamask')
+      ).not.toBeInTheDocument()
     })
 
     it('does not show continue button when not connected', () => {
@@ -336,7 +362,9 @@ describe('ConnectToMetamaskModelComponent', () => {
         />
       )
 
-      expect(screen.queryByTestId('connect-blockchain-continue')).not.toBeInTheDocument()
+      expect(
+        screen.queryByTestId('connect-blockchain-continue')
+      ).not.toBeInTheDocument()
     })
   })
 
@@ -410,7 +438,9 @@ describe('ConnectToMetamaskModelComponent', () => {
         />
       )
 
-      expect(screen.queryByText(/You'll be logged out of MagicLink/)).not.toBeInTheDocument()
+      expect(
+        screen.queryByText(/You'll be logged out of MagicLink/)
+      ).not.toBeInTheDocument()
     })
 
     it('shows warning when connected to MagicLink and showOnNewConnectWarningMessage is true', () => {
@@ -427,7 +457,11 @@ describe('ConnectToMetamaskModelComponent', () => {
         />
       )
 
-      expect(screen.getByText(/You'll be logged out of MagicLink if you login with Metamask/)).toBeInTheDocument()
+      expect(
+        screen.getByText(
+          /You'll be logged out of MagicLink if you login with Metamask/
+        )
+      ).toBeInTheDocument()
     })
 
     it('displays warning icon', () => {
@@ -463,7 +497,9 @@ describe('ConnectToMetamaskModelComponent', () => {
         />
       )
 
-      expect(screen.queryByText(/You'll be logged out of MagicLink/)).not.toBeInTheDocument()
+      expect(
+        screen.queryByText(/You'll be logged out of MagicLink/)
+      ).not.toBeInTheDocument()
     })
 
     it('does not show warning when not connected to any wallet', () => {
@@ -480,7 +516,9 @@ describe('ConnectToMetamaskModelComponent', () => {
         />
       )
 
-      expect(screen.queryByText(/You'll be logged out of MagicLink/)).not.toBeInTheDocument()
+      expect(
+        screen.queryByText(/You'll be logged out of MagicLink/)
+      ).not.toBeInTheDocument()
     })
   })
 
@@ -531,7 +569,7 @@ describe('ConnectToMetamaskModelComponent', () => {
       )
 
       const continueButton = screen.getByTestId('connect-blockchain-continue')
-      
+
       expect(() => {
         fireEvent.click(continueButton)
       }).not.toThrow()
@@ -565,5 +603,4 @@ describe('ConnectToMetamaskModelComponent', () => {
       expect(screen.getByTestId('connectToMetamask')).toBeInTheDocument()
     })
   })
-
 })

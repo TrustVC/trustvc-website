@@ -13,9 +13,9 @@ import {
 } from './helper'
 
 // Mock @trustvc/trustvc
-vi.mock('@trustvc/trustvc', async (importOriginal) => {
+vi.mock('@trustvc/trustvc', async importOriginal => {
   const actual = await importOriginal<typeof import('@trustvc/trustvc')>()
-  
+
   // Create mock chain info with all required properties
   const createMockChainInfo = (id: string, name: string, rpcUrl: string) => ({
     id,
@@ -27,21 +27,41 @@ vi.mock('@trustvc/trustvc', async (importOriginal) => {
     currency: 'ETH',
     nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
   })
-  
+
   return {
     ...actual,
     SUPPORTED_CHAINS: {
       '1': createMockChainInfo('1', 'homestead', 'https://mainnet.infura.io'),
       '137': createMockChainInfo('137', 'matic', 'https://polygon-rpc.com'),
       '50': createMockChainInfo('50', 'xdc', 'https://xdc-rpc.com'),
-      '101010': createMockChainInfo('101010', 'stability', 'https://stability-rpc.com'),
+      '101010': createMockChainInfo(
+        '101010',
+        'stability',
+        'https://stability-rpc.com'
+      ),
       '1338': createMockChainInfo('1338', 'astron', 'https://astron-rpc.com'),
-      '11155111': createMockChainInfo('11155111', 'sepolia', 'https://sepolia-rpc.com'),
+      '11155111': createMockChainInfo(
+        '11155111',
+        'sepolia',
+        'https://sepolia-rpc.com'
+      ),
       '80002': createMockChainInfo('80002', 'amoy', 'https://amoy-rpc.com'),
       '51': createMockChainInfo('51', 'xdcapothem', 'https://apothem-rpc.com'),
-      '20180427': createMockChainInfo('20180427', 'stabilitytestnet', 'https://stability-test-rpc.com'),
-      '21002': createMockChainInfo('21002', 'astrontestnet', 'https://astron-test-rpc.com'),
-      '999': createMockChainInfo('999', 'unknown', 'https://undefined-key.io/undefined'),
+      '20180427': createMockChainInfo(
+        '20180427',
+        'stabilitytestnet',
+        'https://stability-test-rpc.com'
+      ),
+      '21002': createMockChainInfo(
+        '21002',
+        'astrontestnet',
+        'https://astron-test-rpc.com'
+      ),
+      '999': createMockChainInfo(
+        '999',
+        'unknown',
+        'https://undefined-key.io/undefined'
+      ),
     },
     vc: {
       isSignedDocument: vi.fn(() => false),
