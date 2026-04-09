@@ -24,7 +24,7 @@ export const Connected: React.FC<ConnectedProps> = ({
   const [displayedAccount, setDisplayedAccount] = useState('')
   const accountRef = useRef<HTMLHeadingElement>(null)
   const { account: contextAccount } = useProviderContext()
-  const { showOverlay } = useOverlayContext()
+  const { showOverlay, closeOverlay } = useOverlayContext()
   const account = accountProp || contextAccount
   const [isTooltipOpen, setIsTooltipOpen] = useState(false)
 
@@ -61,7 +61,7 @@ export const Connected: React.FC<ConnectedProps> = ({
 
   const handleActiveWalletClicked = async () => {
     if (openConnectToBlockchainModel) {
-      showOverlay(<ConnectToBlockchainModel onClose={() => {}} />)
+      showOverlay(<ConnectToBlockchainModel onClose={closeOverlay} />)
     } else if (account) {
       try {
         await navigator.clipboard.writeText(account)

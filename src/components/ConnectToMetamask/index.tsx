@@ -1,5 +1,4 @@
 import React from 'react'
-import { useOverlayContext } from '../common/contexts/OverlayContext'
 import Connected from '../ConnectToBlockchain/Connected'
 // import { showDocumentTransferMessage } from '../UI/Overlay/OverlayContent'
 // import { NetworkContent } from '../NetworkSection/NetworkContent'
@@ -9,6 +8,9 @@ import {
   SIGNER_TYPE,
   useProviderContext,
 } from '../common/contexts/providerContext'
+import { showDocumentTransferMessage } from '../common/Overlay/OverlayContent'
+import { useOverlayContext } from '../common/contexts/OverlayContext'
+import { Button, ButtonSize } from '../common/Button'
 
 export interface ConnectToMetamaskModelProps {
   showOnNewConnectWarningMessage: boolean
@@ -98,6 +100,7 @@ const ConnectToMetamask: React.FC<ConnectToMetamaskProps> = ({
   console.log('ConnectToMetamask component rendered')
   const { upgradeToMetaMaskSigner, account, providerType } =
     useProviderContext()
+  const { showOverlay } = useOverlayContext()
 
   const handleConnectWallet = async () => {
     console.log('handleConnectWallet clicked!')
@@ -118,12 +121,12 @@ const ConnectToMetamask: React.FC<ConnectToMetamaskProps> = ({
   const handleMetamaskError = (errorMesssage: string, errorCode: number) => {
     console.log('handleMetamaskError called:', errorMesssage, errorCode)
     const isUserDeniedAccountAuthorization = errorCode === 4001
-    // showOverlay(
-    //   showDocumentTransferMessage(errorMesssage, {
-    //     isSuccess: false,
-    //     isButtonMetamaskInstall: !isUserDeniedAccountAuthorization,
-    //   })
-    // ) // there is 2 type of errors that will be handled here, 1st = NO_METAMASK (error thrown from provider.tsx), 2nd = NO_USER_AUTHORIZATION (error from metamask extension itself).
+    showOverlay(
+      showDocumentTransferMessage(errorMesssage, {
+        isSuccess: false,
+        isButtonMetamaskInstall: !isUserDeniedAccountAuthorization,
+      })
+    ) // there is 2 type of errors that will be handled here, 1st = NO_METAMASK (error thrown from provider.tsx), 2nd = NO_USER_AUTHORIZATION (error from metamask extension itself).
   }
 
   return (
@@ -136,13 +139,12 @@ const ConnectToMetamask: React.FC<ConnectToMetamaskProps> = ({
         />
       ) : (
         <>
-          <PrimaryButton
-            className="connect-metamask-button"
+          <Button
+            className="connect-metamask-button connect-metamask-button-text connect-metamask-button-boundary"
             data-testid={'connectToMetamask'}
             onClick={handleConnectWallet}
             btnType="transparent"
-            labelClassName="connect-metamask-button-text"
-            boundaryClassName="connect-metamask-button-boundary"
+            size={ButtonSize.LG}
           >
             <img
               src="/images/wallet.png"
@@ -150,7 +152,7 @@ const ConnectToMetamask: React.FC<ConnectToMetamaskProps> = ({
               className="connect-metamask-button-icon"
             />
             <h3>Connect with Metamask</h3>
-          </PrimaryButton>
+          </Button>
         </>
       )}
     </div>

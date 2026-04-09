@@ -1,11 +1,11 @@
 import React from 'react'
 import Overlay from '../../common/Overlay'
-import PrimaryButton from '../../common/PrimaryButton'
 import { EndorsementChain } from '@trustvc/trustvc'
 import { format } from 'date-fns'
 import { EndorsementChainStatus } from './useEndorsementChain'
 import Spinner from '../../common/Spinner'
 import { TokenRegistryVersion } from '../VerifySection/useVerify'
+import { Button } from '../../common/Button'
 
 interface EndorsementChainProps {
   endorsementChain?: any
@@ -325,9 +325,9 @@ const EndorsementChainLayout: React.FC<EndorsementChainProps> = ({
         {/* Third Component - Footer Section */}
         <div className="footer-section">
           <div className="footer-subsection">
-            <PrimaryButton className="dismiss-btn" onClick={onReset}>
+            <Button className="dismiss-btn" onClick={onReset}>
               Dismiss
-            </PrimaryButton>
+            </Button>
           </div>
         </div>
       </div>

@@ -1,9 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
       colors: {
@@ -44,7 +41,10 @@ export default {
       },
       fontSize: {
         'submit-title': ['24px', { lineHeight: '133%', letterSpacing: '0%' }],
-        'encountering-text': ['14px', { lineHeight: '155%', letterSpacing: '0%' }],
+        'encountering-text': [
+          '14px',
+          { lineHeight: '155%', letterSpacing: '0%' },
+        ],
         'form-label': ['18px', { lineHeight: '136%', letterSpacing: '0%' }],
       },
       fontWeight: {
@@ -55,12 +55,18 @@ export default {
         'form-card-dark': '0px 8px 32px 0px #686AD2',
       },
       backgroundImage: {
-        'overlay-light': 'linear-gradient(0deg, rgba(255, 255, 255, 0.66), rgba(255, 255, 255, 0.66)), linear-gradient(0deg, rgba(222, 228, 233, 0), rgba(222, 228, 233, 0))',
-        'overlay-dark': 'linear-gradient(0deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)), linear-gradient(0deg, rgba(30, 32, 38, 0.66), rgba(30, 32, 38, 0.66))',
-        'form-fields-light': 'linear-gradient(0deg, #FFFFFF, #FFFFFF), linear-gradient(0deg, rgba(222, 228, 233, 0.33), rgba(222, 228, 233, 0.33))',
-        'form-fields-dark': 'linear-gradient(0deg, #000000, #000000), linear-gradient(0deg, rgba(30, 32, 38, 0.66), rgba(30, 32, 38, 0.66))',
-        'divider-light': 'linear-gradient(0deg, rgba(255, 255, 255, 0.66), rgba(255, 255, 255, 0.66)), linear-gradient(0deg, rgba(222, 228, 233, 0), rgba(222, 228, 233, 0))',
-        'divider-dark': 'linear-gradient(0deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)), linear-gradient(0deg, rgba(30, 32, 38, 0.66), rgba(30, 32, 38, 0.66))',
+        'overlay-light':
+          'linear-gradient(0deg, rgba(255, 255, 255, 0.66), rgba(255, 255, 255, 0.66)), linear-gradient(0deg, rgba(222, 228, 233, 0), rgba(222, 228, 233, 0))',
+        'overlay-dark':
+          'linear-gradient(0deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)), linear-gradient(0deg, rgba(30, 32, 38, 0.66), rgba(30, 32, 38, 0.66))',
+        'form-fields-light':
+          'linear-gradient(0deg, #FFFFFF, #FFFFFF), linear-gradient(0deg, rgba(222, 228, 233, 0.33), rgba(222, 228, 233, 0.33))',
+        'form-fields-dark':
+          'linear-gradient(0deg, #000000, #000000), linear-gradient(0deg, rgba(30, 32, 38, 0.66), rgba(30, 32, 38, 0.66))',
+        'divider-light':
+          'linear-gradient(0deg, rgba(255, 255, 255, 0.66), rgba(255, 255, 255, 0.66)), linear-gradient(0deg, rgba(222, 228, 233, 0), rgba(222, 228, 233, 0))',
+        'divider-dark':
+          'linear-gradient(0deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)), linear-gradient(0deg, rgba(30, 32, 38, 0.66), rgba(30, 32, 38, 0.66))',
       },
     },
   },
