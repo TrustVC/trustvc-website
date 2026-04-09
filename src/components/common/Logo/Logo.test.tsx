@@ -1,10 +1,15 @@
 import { describe, it, expect } from 'vitest'
 import { render } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
 import Logo from './Logo'
 
 describe('Logo Component', () => {
   it('renders logo with icon and text', () => {
-    const { container } = render(<Logo isDarkMode={false} />)
+    const { container } = render(
+      <MemoryRouter>
+        <Logo isDarkMode={false} />
+      </MemoryRouter>
+    )
 
     // Check if logo wrapper exists
     const logoWrapper = container.querySelector('.logo-wrapper')
@@ -16,7 +21,11 @@ describe('Logo Component', () => {
   })
 
   it('renders with light mode colors', () => {
-    const { container } = render(<Logo isDarkMode={false} />)
+    const { container } = render(
+      <MemoryRouter>
+        <Logo isDarkMode={false} />
+      </MemoryRouter>
+    )
 
     const logoText = container.querySelector('.logo-light')
     expect(logoText).toBeInTheDocument()
@@ -24,7 +33,11 @@ describe('Logo Component', () => {
   })
 
   it('renders with dark mode colors', () => {
-    const { container } = render(<Logo isDarkMode={true} />)
+    const { container } = render(
+      <MemoryRouter>
+        <Logo isDarkMode={true} />
+      </MemoryRouter>
+    )
 
     const logoText = container.querySelector('.logo-dark')
     expect(logoText).toBeInTheDocument()
@@ -32,15 +45,27 @@ describe('Logo Component', () => {
   })
 
   it('has a link to homepage', () => {
-    const { container } = render(<Logo isDarkMode={false} />)
+    const { container } = render(
+      <MemoryRouter>
+        <Logo isDarkMode={false} />
+      </MemoryRouter>
+    )
 
     const link = container.querySelector('a[href="/"]')
     expect(link).toBeInTheDocument()
   })
 
   it('generates unique gradient IDs', () => {
-    const { container: container1 } = render(<Logo isDarkMode={false} />)
-    const { container: container2 } = render(<Logo isDarkMode={false} />)
+    const { container: container1 } = render(
+      <MemoryRouter>
+        <Logo isDarkMode={false} />
+      </MemoryRouter>
+    )
+    const { container: container2 } = render(
+      <MemoryRouter>
+        <Logo isDarkMode={false} />
+      </MemoryRouter>
+    )
 
     const gradient1 = container1.querySelector('linearGradient')
     const gradient2 = container2.querySelector('linearGradient')

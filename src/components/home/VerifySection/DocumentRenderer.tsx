@@ -385,8 +385,11 @@ const SAFE_MIME_TYPES = new Set([
   'text/xml',
 ])
 
-const getSafeDownloadHref = (type: string, data: string): string => {
-  if (!data) return '#'
+const getSafeDownloadHref = (
+  type: string,
+  data: string
+): string | undefined => {
+  if (!data) return undefined
   const mimeType = SAFE_MIME_TYPES.has(type) ? type : 'application/octet-stream'
   return `data:${mimeType};base64,${data}`
 }
@@ -410,14 +413,27 @@ const AttachmentsPane: React.FC<{ attachments: DocumentAttachment[] }> = ({
             {att.data ? ` · ${formatFileSize(att.data)}` : ''}
           </span>
         </div>
-        <a
-          href={getSafeDownloadHref(att.type, att.data)}
-          download={att.filename}
-          className="vr-attachment-download"
-          aria-label={`Download ${att.filename}`}
-        >
-          <DownloadIcon />
-        </a>
+        {(() => {
+          const href = getSafeDownloadHref(att.type, att.data)
+          return href ? (
+            <a
+              href={href}
+              download={att.filename}
+              className="vr-attachment-download"
+              aria-label={`Download ${att.filename}`}
+            >
+              <DownloadIcon />
+            </a>
+          ) : (
+            <span
+              className="vr-attachment-download vr-attachment-download--disabled"
+              aria-label={`Download unavailable for ${att.filename}`}
+              aria-disabled="true"
+            >
+              <DownloadIcon />
+            </span>
+          )
+        })()}
       </div>
     ))}
   </div>

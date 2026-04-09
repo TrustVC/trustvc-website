@@ -365,7 +365,7 @@ export const useVerify = (): UseVerifyReturn => {
 
     setRawDocument(doc)
     setVerifiedChainId(chainId ?? '')
-    setVerifyStatus(isValid ? 'valid' : 'valid')
+    setVerifyStatus(isValid ? 'valid' : 'invalid')
   }
 
   const clearVerificationMetadata = () => {

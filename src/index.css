@@ -233,7 +233,7 @@ body.dark-mode {
   flex-wrap: wrap;
   color: #1e2026;
   font-size: 64px;
-  font-family: 'Gilroy', sans-serif;
+  font-family: Gilroy, sans-serif;
   font-weight: 700;
   line-height: 71.68px;
 }
@@ -259,7 +259,7 @@ body.dark-mode {
   flex-direction: column;
   color: #3d444d;
   font-size: 18px;
-  font-family: 'Gilroy', sans-serif;
+  font-family: Gilroy, sans-serif;
   font-weight: 500;
   line-height: 24.48px;
   margin: 0;
@@ -345,7 +345,7 @@ body.dark-mode {
 /* Typography Classes - Using Tailwind utilities */
 @layer components {
   .submit-request-title {
-    font-family: 'Gilroy', sans-serif;
+    font-family: Gilroy, sans-serif;
     font-weight: 700;
     vertical-align: middle;
     font-size: 24px;
@@ -353,7 +353,7 @@ body.dark-mode {
   }
 
   .encountering-issues-text {
-    font-family: 'Avenir', sans-serif;
+    font-family: Avenir, sans-serif;
     font-weight: 500;
     vertical-align: middle;
     font-size: 14px;
@@ -361,7 +361,7 @@ body.dark-mode {
   }
 
   .form-label {
-    font-family: 'Avenir', sans-serif;
+    font-family: Avenir, sans-serif;
     font-weight: 500;
     vertical-align: middle;
     font-size: 18px;
@@ -404,7 +404,7 @@ body.dark-mode {
 
   /* Contact Page Heading */
   .contact-heading {
-    font-family: 'Gilroy', sans-serif;
+    font-family: Gilroy, sans-serif;
     font-weight: 800;
     font-size: 40px;
     line-height: 1.2;
@@ -430,7 +430,7 @@ body.dark-mode {
 
   /* Contact Page Description */
   .contact-description {
-    font-family: 'Avenir', sans-serif;
+    font-family: Avenir, sans-serif;
     font-weight: 500;
     font-size: 18px;
     line-height: 136%;
@@ -541,7 +541,7 @@ body.dark-mode {
     padding: 5px;
     color: white;
     font-size: 14px;
-    font-family: 'Gilroy', sans-serif;
+    font-family: Gilroy, sans-serif;
     font-weight: 700;
     border: none;
     cursor: pointer;
@@ -672,7 +672,7 @@ body.dark-mode {
 .dropbox-text {
   text-align: center;
   color: #3d444d;
-  font-family: 'Avenir', sans-serif;
+  font-family: Avenir, sans-serif;
   font-weight: 500;
   font-size: 14px;
   line-height: 155%;
@@ -698,7 +698,7 @@ body.dark-mode {
   text-align: center;
   color: #3d444d;
   font-size: 14px;
-  font-family: 'Gilroy', sans-serif;
+  font-family: Gilroy, sans-serif;
   font-weight: 500;
   line-height: 21.7px;
   word-wrap: break-word;
@@ -788,7 +788,7 @@ body.dark-mode {
   flex-direction: column;
   color: white;
   font-size: 14px;
-  font-family: 'Gilroy', sans-serif;
+  font-family: Gilroy, sans-serif;
   font-weight: 700;
   line-height: 19.8px;
   word-wrap: break-word;
@@ -811,7 +811,7 @@ body.dark-mode {
 .file-info-text {
   flex: 1 1 0;
   color: #5b6571;
-  font-family: 'Avenir', sans-serif;
+  font-family: Avenir, sans-serif;
   font-weight: 500;
   font-size: 12px;
   line-height: 165%;
@@ -907,7 +907,7 @@ body.dark-mode {
   flex-direction: column;
   color: white;
   font-size: 24px;
-  font-family: 'Gilroy', sans-serif;
+  font-family: Gilroy, sans-serif;
   font-weight: 700;
   line-height: 31.92px;
   word-wrap: break-word;
@@ -929,7 +929,7 @@ body.dark-mode {
   flex-direction: column;
   color: white;
   font-size: 14px;
-  font-family: 'Gilroy', sans-serif;
+  font-family: Gilroy, sans-serif;
   font-weight: 500;
   line-height: 21.7px;
   word-wrap: break-word;
@@ -996,7 +996,7 @@ body.dark-mode {
   flex-direction: column;
   color: white;
   font-size: 18px;
-  font-family: 'Gilroy', sans-serif;
+  font-family: Gilroy, sans-serif;
   font-weight: 700;
   line-height: 24.48px;
   word-wrap: break-word;
@@ -1053,7 +1053,7 @@ body.dark-mode {
 .spinner-label {
   text-align: center;
   font-size: 14px;
-  font-family: 'Gilroy', sans-serif;
+  font-family: Gilroy, sans-serif;
   font-weight: 500;
   color: #3d444d;
 }
@@ -1071,7 +1071,7 @@ body.dark-mode {
   padding: 6px 16px;
   color: #5b5bb3;
   font-size: 13px;
-  font-family: 'Gilroy', sans-serif;
+  font-family: Gilroy, sans-serif;
   font-weight: 700;
   cursor: pointer;
 }
@@ -1081,7 +1081,7 @@ body.dark-mode {
   text-align: center;
   color: #ef4444;
   font-size: 14px;
-  font-family: 'Gilroy', sans-serif;
+  font-family: Gilroy, sans-serif;
   font-weight: 500;
 }
 
@@ -1128,7 +1128,7 @@ body.dark-mode {
 
 .nm-title {
   color: #1e2026;
-  font-family: 'Gilroy', sans-serif;
+  font-family: Gilroy, sans-serif;
   font-weight: 700;
   line-height: 1.33;
   word-wrap: break-word;
@@ -1141,7 +1141,7 @@ body.dark-mode {
   margin-top: 4px;
   color: #5b6571;
   font-size: 13px;
-  font-family: 'Avenir', sans-serif;
+  font-family: Avenir, sans-serif;
   font-weight: 500;
   word-break: break-all;
 }
@@ -1169,7 +1169,7 @@ body.dark-mode {
   flex: 1 1 0;
   text-align: center;
   color: #3d444d;
-  font-family: 'Avenir', sans-serif;
+  font-family: Avenir, sans-serif;
   font-weight: 500;
   line-height: 1.36;
   word-wrap: break-word;
@@ -1196,7 +1196,7 @@ body.dark-mode {
 .nm-label {
   color: #5b6571;
   font-size: 14px;
-  font-family: 'Avenir', sans-serif;
+  font-family: Avenir, sans-serif;
   font-weight: 500;
   line-height: 21.7px;
 }
@@ -1245,7 +1245,7 @@ body.dark-mode {
   text-align: left;
   color: #1e2026;
   font-size: 14px;
-  font-family: 'Avenir', sans-serif;
+  font-family: Avenir, sans-serif;
   font-weight: 500;
   line-height: 21.7px;
 }
@@ -1302,7 +1302,7 @@ body.dark-mode {
 .nm-group-header {
   padding: 6px 14px;
   font-size: 11px;
-  font-family: 'Avenir', sans-serif;
+  font-family: Avenir, sans-serif;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -1322,7 +1322,7 @@ body.dark-mode {
   gap: 8px;
   cursor: pointer;
   font-size: 14px;
-  font-family: 'Avenir', sans-serif;
+  font-family: Avenir, sans-serif;
   font-weight: 400;
   color: #1e2026;
   background: transparent;
@@ -1359,7 +1359,7 @@ body.dark-mode {
 .nm-tooltip-title {
   margin: 0;
   font-size: 13px;
-  font-family: 'Gilroy', sans-serif;
+  font-family: Gilroy, sans-serif;
   font-weight: 700;
   color: #1e2026;
 }
@@ -1370,7 +1370,7 @@ body.dark-mode {
 .nm-tooltip-body {
   margin: 8px 0 0;
   font-size: 13px;
-  font-family: 'Avenir', sans-serif;
+  font-family: Avenir, sans-serif;
   line-height: 1.5;
   color: #3d444d;
 }
@@ -1410,7 +1410,7 @@ body.dark-mode {
 
 .nm-btn-label {
   font-size: 14px;
-  font-family: 'Gilroy', sans-serif;
+  font-family: Gilroy, sans-serif;
   font-weight: 700;
   line-height: 21.7px;
 }
@@ -1466,7 +1466,7 @@ body.dark-mode {
 .vr-network-label {
   color: #3d444d;
   font-size: 16px;
-  font-family: 'Gilroy', sans-serif;
+  font-family: Gilroy, sans-serif;
   font-weight: 500;
   line-height: 20px;
   white-space: nowrap;
@@ -1505,7 +1505,7 @@ body.dark-mode {
   flex: 1 1 0;
   color: #1e2026;
   font-size: 14px;
-  font-family: 'Avenir', sans-serif;
+  font-family: Avenir, sans-serif;
   font-weight: 500;
   line-height: 21.7px;
   overflow: hidden;
@@ -1586,7 +1586,7 @@ body.dark-mode {
 .vr-upload-btn-label {
   color: #5b5bb3;
   font-size: 14px;
-  font-family: 'Gilroy', sans-serif;
+  font-family: Gilroy, sans-serif;
   font-weight: 700;
   line-height: 21.7px;
 }
@@ -1623,7 +1623,7 @@ body.dark-mode {
 .vr-issued-by-label {
   color: #5b6571;
   font-size: 16px;
-  font-family: 'Avenir', sans-serif;
+  font-family: Avenir, sans-serif;
   font-weight: 500;
   line-height: 24.48px;
 }
@@ -1634,7 +1634,7 @@ body.dark-mode {
 .vr-issued-by-value {
   color: #1e2026;
   font-size: 16px;
-  font-family: 'Gilroy', sans-serif;
+  font-family: Gilroy, sans-serif;
   font-weight: 700;
   line-height: 24.48px;
   word-break: break-all;
@@ -1674,7 +1674,7 @@ body.dark-mode {
 
 .vr-tag-text {
   font-size: 14px;
-  font-family: 'Gilroy', sans-serif;
+  font-family: Gilroy, sans-serif;
   font-weight: 700;
   line-height: 21.7px;
 }
@@ -1719,7 +1719,7 @@ body.dark-mode {
   flex: 1 1 0;
   color: #3d444d;
   font-size: 16px;
-  font-family: 'Avenir', sans-serif;
+  font-family: Avenir, sans-serif;
   font-weight: 500;
   line-height: 24.48px;
 }
@@ -1747,7 +1747,7 @@ body.dark-mode {
 .vr-nft-link {
   color: #5b5bb3;
   font-size: 16px;
-  font-family: 'Gilroy', sans-serif;
+  font-family: Gilroy, sans-serif;
   font-weight: 700;
   line-height: 24.48px;
   background: none;
@@ -1795,7 +1795,7 @@ body.dark-mode {
 .vr-title-col-label {
   color: #5b6571;
   font-size: 16px;
-  font-family: 'Avenir', sans-serif;
+  font-family: Avenir, sans-serif;
   font-weight: 500;
   line-height: 24.48px;
 }
@@ -1806,7 +1806,7 @@ body.dark-mode {
 .vr-title-col-name {
   color: #1e2026;
   font-size: 16px;
-  font-family: 'Gilroy', sans-serif;
+  font-family: Gilroy, sans-serif;
   font-weight: 700;
   line-height: 24.48px;
 }
@@ -1817,7 +1817,7 @@ body.dark-mode {
 .vr-title-col-addr {
   color: #006c99;
   font-size: 14px;
-  font-family: 'Avenir', sans-serif;
+  font-family: Avenir, sans-serif;
   font-weight: 500;
   line-height: 21.7px;
   word-break: break-all;
@@ -1852,7 +1852,7 @@ body.dark-mode {
   padding: 4px;
   color: #ffffff;
   font-size: 14px;
-  font-family: 'Gilroy', sans-serif;
+  font-family: Gilroy, sans-serif;
   font-weight: 700;
   line-height: 21.7px;
 }
@@ -1903,7 +1903,7 @@ body.dark-mode {
   padding: 12px 16px;
   cursor: pointer;
   font-size: 16px;
-  font-family: 'Gilroy', sans-serif;
+  font-family: Gilroy, sans-serif;
   font-weight: 700;
   color: #5b6571;
   white-space: nowrap;
@@ -1986,7 +1986,7 @@ body.dark-mode {
   display: block;
   font-size: 20px;
   font-weight: 700;
-  font-family: 'Gilroy', sans-serif;
+  font-family: Gilroy, sans-serif;
   color: #1e2026;
   margin-bottom: 4px;
 }
@@ -1994,7 +1994,7 @@ body.dark-mode {
 .vr-doc-utility-detail {
   font-size: 14px;
   font-weight: 500;
-  font-family: 'Avenir', 'Gilroy', sans-serif;
+  font-family: Avenir, Gilroy, sans-serif;
   color: #5b6571;
   word-break: break-all;
 }
@@ -2132,7 +2132,7 @@ body.dark-mode {
 }
 
 .vr-attachment-name {
-  font-family: 'Gilroy', sans-serif;
+  font-family: Gilroy, sans-serif;
   font-size: 14px;
   font-weight: 700;
   color: #1e2026;
@@ -2142,7 +2142,7 @@ body.dark-mode {
 }
 
 .vr-attachment-type {
-  font-family: 'Avenir', 'Gilroy', sans-serif;
+  font-family: Avenir, Gilroy, sans-serif;
   font-size: 12px;
   color: #5b6571;
 }
@@ -2170,6 +2170,12 @@ body.dark-mode {
   outline-offset: -2px;
 }
 
+.vr-attachment-download--disabled {
+  cursor: default;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
 /* Invalid Attachments Banner */
 .vr-invalid-banner {
   padding: 8px;
@@ -2195,7 +2201,7 @@ body.dark-mode {
 }
 
 .vr-invalid-banner-title {
-  font-family: 'Gilroy', sans-serif;
+  font-family: Gilroy, sans-serif;
   font-weight: 700;
   font-size: 16px;
   line-height: 20px;
@@ -2227,7 +2233,7 @@ body.dark-mode {
 }
 
 .vr-invalid-banner-toggle-label {
-  font-family: 'Gilroy', sans-serif;
+  font-family: Gilroy, sans-serif;
   font-weight: 700;
   font-size: 12px;
   line-height: 19.8px;
@@ -2252,7 +2258,7 @@ body.dark-mode {
   flex: 1 1 0;
   display: flex;
   flex-direction: column;
-  font-family: 'Avenir', sans-serif;
+  font-family: Avenir, sans-serif;
   font-size: 16px;
   line-height: 21.7px;
   color: #3d444d;
@@ -2275,7 +2281,7 @@ body.dark-mode {
 /* Dark mode — Invalid Attachments Banner */
 .dark-mode .vr-invalid-banner {
   background: #3b1111;
-  outline-color: rgba(48, 54, 61, 0.8);
+  border-color: rgba(48, 54, 61, 0.8);
 }
 
 .dark-mode .vr-invalid-banner-title {
@@ -2471,7 +2477,7 @@ body.dark-mode {
   color: #dee4e9;
 }
 .endorsement-chain .subheader {
-  font-family: 'Avenir', sans-serif;
+  font-family: Avenir, sans-serif;
   font-weight: 500;
   font-size: 12px;
   line-height: 165%;
@@ -2494,7 +2500,7 @@ body.dark-mode {
   color: #60636b;
 }
 .endorsement-chain .wallet-address {
-  font-family: 'Avenir', sans-serif;
+  font-family: Avenir, sans-serif;
   font-weight: 500;
   font-size: 14px;
   line-height: 155%;
@@ -2508,7 +2514,7 @@ body.dark-mode {
 }
 
 .endorsement-chain .remarks {
-  font-family: 'Avenir', sans-serif;
+  font-family: Avenir, sans-serif;
   font-weight: 500;
   font-size: 14px;
   line-height: 155%;
@@ -2522,7 +2528,7 @@ body.dark-mode {
   color: #60636b;
 }
 .endorsement-chain .organization {
-  font-family: 'Avenir', sans-serif;
+  font-family: Avenir, sans-serif;
   font-weight: 500;
   font-size: 14px;
   line-height: 155%;
@@ -2539,7 +2545,7 @@ body.dark-mode {
   height: 144.48px;
 }
 .endorsement-chain .date-frame {
-  font-family: 'Avenir', sans-serif;
+  font-family: Avenir, sans-serif;
   height: 36px;
   gap: 10px;
   padding: 8px;
@@ -2565,7 +2571,7 @@ body.dark-mode {
 .ec-header-title {
   flex: 1;
   margin: 0;
-  font-family: 'Gilroy', sans-serif;
+  font-family: Gilroy, sans-serif;
   font-weight: 700;
   font-size: 24px;
   line-height: 133%;
