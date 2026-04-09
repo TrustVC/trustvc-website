@@ -12,7 +12,6 @@ import { CHAIN_ID, chainInfo, encrypt } from '@trustvc/trustvc'
 export const getChainInfo = (chainId: CHAIN_ID): chainInfo => {
   const res = ChainInfo[chainId]
   // if (!res) throw new UnsupportedNetworkError(chainId)
-  console.log(res)
   return res
 }
 
@@ -26,10 +25,8 @@ export const getChainInfoFromNetworkName = (networkName: string): chainInfo => {
     .find(chainInfo => chainInfo.name === networkName)
   // if (!res) throw new UnsupportedNetworkError(networkName)
   if (!res) {
-    console.log(networkName)
     throw new Error('Network not supported')
   }
-  console.log(res)
   return res
 }
 

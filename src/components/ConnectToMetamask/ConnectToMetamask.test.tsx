@@ -1,12 +1,6 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-<<<<<<< HEAD
 import ConnectToMetamask, { ConnectToMetamaskModelComponent } from './index'
-=======
-import ConnectToMetamask, {
-  ConnectToMetamaskModelComponent,
-} from './index'
->>>>>>> 828c4ca (fix: lint error)
 import { SIGNER_TYPE } from '../common/contexts/providerContext'
 
 // Mock dependencies
@@ -18,13 +12,7 @@ const mockUseProviderContext = vi.fn()
 const mockUseOverlayContext = vi.fn()
 
 vi.mock('../common/contexts/providerContext', async () => {
-<<<<<<< HEAD
   const actual = await vi.importActual('../common/contexts/providerContext')
-=======
-  const actual = await vi.importActual(
-    '../common/contexts/providerContext'
-  )
->>>>>>> 828c4ca (fix: lint error)
   return {
     ...actual,
     useProviderContext: () => mockUseProviderContext(),
@@ -49,7 +37,6 @@ vi.mock('../ConnectToBlockchain/Connected', () => ({
 
 // Mock PrimaryButton component
 vi.mock('../common/PrimaryButton', () => ({
-<<<<<<< HEAD
   default: ({
     children,
     onClick,
@@ -63,10 +50,6 @@ vi.mock('../common/PrimaryButton', () => ({
       disabled={disabled}
       {...props}
     >
-=======
-  default: ({ children, onClick, 'data-testid': testId, disabled, ...props }: any) => (
-    <button data-testid={testId} onClick={onClick} disabled={disabled} {...props}>
->>>>>>> 828c4ca (fix: lint error)
       {children}
     </button>
   ),
@@ -74,7 +57,6 @@ vi.mock('../common/PrimaryButton', () => ({
 
 // Mock Button component
 vi.mock('../common/Button', () => ({
-<<<<<<< HEAD
   Button: ({
     children,
     onClick,
@@ -88,10 +70,6 @@ vi.mock('../common/Button', () => ({
       disabled={disabled}
       {...props}
     >
-=======
-  Button: ({ children, onClick, 'data-testid': testId, disabled, ...props }: any) => (
-    <button data-testid={testId} onClick={onClick} disabled={disabled} {...props}>
->>>>>>> 828c4ca (fix: lint error)
       {children}
     </button>
   ),
@@ -143,7 +121,6 @@ describe('ConnectToMetamask', () => {
     })
 
     it('applies custom className when provided', () => {
-<<<<<<< HEAD
       const { container } = render(
         <ConnectToMetamask className="custom-class" />
       )
@@ -151,24 +128,15 @@ describe('ConnectToMetamask', () => {
       const connectContainer = container.querySelector(
         '.connect-metamask-container'
       )
-=======
-      const { container } = render(<ConnectToMetamask className="custom-class" />)
-
-      const connectContainer = container.querySelector('.connect-metamask-container')
->>>>>>> 828c4ca (fix: lint error)
       expect(connectContainer).toHaveClass('custom-class')
     })
 
     it('renders with default className when not provided', () => {
       const { container } = render(<ConnectToMetamask />)
 
-<<<<<<< HEAD
       const connectContainer = container.querySelector(
         '.connect-metamask-container'
       )
-=======
-      const connectContainer = container.querySelector('.connect-metamask-container')
->>>>>>> 828c4ca (fix: lint error)
       expect(connectContainer).toBeInTheDocument()
     })
   })
@@ -230,8 +198,6 @@ describe('ConnectToMetamask', () => {
       })
     })
 
-<<<<<<< HEAD
-=======
     it('logs debug information when connecting', async () => {
       const consoleSpy = vi.spyOn(console, 'log')
       mockUpgradeToMetaMaskSigner.mockResolvedValue(undefined)
@@ -243,12 +209,15 @@ describe('ConnectToMetamask', () => {
 
       await waitFor(() => {
         expect(consoleSpy).toHaveBeenCalledWith('handleConnectWallet clicked!')
-        expect(consoleSpy).toHaveBeenCalledWith('About to call upgradeToMetaMaskSigner...')
-        expect(consoleSpy).toHaveBeenCalledWith('upgradeToMetaMaskSigner completed')
+        expect(consoleSpy).toHaveBeenCalledWith(
+          'About to call upgradeToMetaMaskSigner...'
+        )
+        expect(consoleSpy).toHaveBeenCalledWith(
+          'upgradeToMetaMaskSigner completed'
+        )
       })
     })
 
->>>>>>> 828c4ca (fix: lint error)
     it('handles successful connection', async () => {
       mockUpgradeToMetaMaskSigner.mockResolvedValue(undefined)
 
@@ -339,17 +308,16 @@ describe('ConnectToMetamask', () => {
   })
 
   describe('Component Lifecycle', () => {
-<<<<<<< HEAD
-=======
     it('logs component render', () => {
       const consoleSpy = vi.spyOn(console, 'log')
 
       render(<ConnectToMetamask />)
 
-      expect(consoleSpy).toHaveBeenCalledWith('ConnectToMetamask component rendered')
+      expect(consoleSpy).toHaveBeenCalledWith(
+        'ConnectToMetamask component rendered'
+      )
     })
 
->>>>>>> 828c4ca (fix: lint error)
     it('re-renders when provider context changes', () => {
       const { rerender } = render(<ConnectToMetamask />)
 
@@ -412,13 +380,9 @@ describe('ConnectToMetamaskModelComponent', () => {
         />
       )
 
-<<<<<<< HEAD
       expect(
         screen.queryByTestId('disconnect-metamask')
       ).not.toBeInTheDocument()
-=======
-      expect(screen.queryByTestId('disconnect-metamask')).not.toBeInTheDocument()
->>>>>>> 828c4ca (fix: lint error)
     })
 
     it('does not show continue button when not connected', () => {
@@ -428,13 +392,9 @@ describe('ConnectToMetamaskModelComponent', () => {
         />
       )
 
-<<<<<<< HEAD
       expect(
         screen.queryByTestId('connect-blockchain-continue')
       ).not.toBeInTheDocument()
-=======
-      expect(screen.queryByTestId('connect-blockchain-continue')).not.toBeInTheDocument()
->>>>>>> 828c4ca (fix: lint error)
     })
   })
 
@@ -508,13 +468,9 @@ describe('ConnectToMetamaskModelComponent', () => {
         />
       )
 
-<<<<<<< HEAD
       expect(
         screen.queryByText(/You'll be logged out of MagicLink/)
       ).not.toBeInTheDocument()
-=======
-      expect(screen.queryByText(/You'll be logged out of MagicLink/)).not.toBeInTheDocument()
->>>>>>> 828c4ca (fix: lint error)
     })
 
     it('shows warning when connected to MagicLink and showOnNewConnectWarningMessage is true', () => {
@@ -531,15 +487,11 @@ describe('ConnectToMetamaskModelComponent', () => {
         />
       )
 
-<<<<<<< HEAD
       expect(
         screen.getByText(
           /You'll be logged out of MagicLink if you login with Metamask/
         )
       ).toBeInTheDocument()
-=======
-      expect(screen.getByText(/You'll be logged out of MagicLink if you login with Metamask/)).toBeInTheDocument()
->>>>>>> 828c4ca (fix: lint error)
     })
 
     it('displays warning icon', () => {
@@ -575,13 +527,9 @@ describe('ConnectToMetamaskModelComponent', () => {
         />
       )
 
-<<<<<<< HEAD
       expect(
         screen.queryByText(/You'll be logged out of MagicLink/)
       ).not.toBeInTheDocument()
-=======
-      expect(screen.queryByText(/You'll be logged out of MagicLink/)).not.toBeInTheDocument()
->>>>>>> 828c4ca (fix: lint error)
     })
 
     it('does not show warning when not connected to any wallet', () => {
@@ -651,11 +599,7 @@ describe('ConnectToMetamaskModelComponent', () => {
       )
 
       const continueButton = screen.getByTestId('connect-blockchain-continue')
-<<<<<<< HEAD
 
-=======
-      
->>>>>>> 828c4ca (fix: lint error)
       expect(() => {
         fireEvent.click(continueButton)
       }).not.toThrow()
@@ -689,8 +633,6 @@ describe('ConnectToMetamaskModelComponent', () => {
       expect(screen.getByTestId('connectToMetamask')).toBeInTheDocument()
     })
   })
-<<<<<<< HEAD
-=======
 
   describe('Console Logging', () => {
     it('logs provider type and account', () => {
@@ -715,5 +657,4 @@ describe('ConnectToMetamaskModelComponent', () => {
       )
     })
   })
->>>>>>> 828c4ca (fix: lint error)
 })
