@@ -44,7 +44,6 @@ const News = ({ isDarkMode }: NewsProps) => {
     isLoadingMore,
     featuredArticle,
     featuredImageUrl,
-    articleGrid,
     visibleArticles,
     hasMoreArticles,
     loadMoreAnchorRef,
@@ -82,7 +81,6 @@ const News = ({ isDarkMode }: NewsProps) => {
               featuredArticle={featuredArticle}
               featuredImageUrl={featuredImageUrl}
               visibleArticles={visibleArticles}
-              articleGrid={articleGrid}
               isLoadingMore={isLoadingMore}
               hasMoreArticles={hasMoreArticles}
               loadMoreAnchorRef={loadMoreAnchorRef}

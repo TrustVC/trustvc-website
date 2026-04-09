@@ -1,9 +1,14 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { fetchNewsArticles, getBodyText } from '../lib/sanity/news'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import {
+  fetchLatestFeaturedNewsArticle,
+  fetchNewsArticleCount,
+  fetchNewsArticlesPage,
+  getBodyText,
+} from '../lib/sanity/news'
 import { getSanityImageUrl } from '../lib/sanity/client'
 import type { NewsArticle, NewsListHookResult } from '../types/news'
 
-const GRID_CARD_ESTIMATED_HEIGHT = 350
+const NEWS_PAGE_SIZE = 5
 
 const getReadTimeText = (body?: NewsArticle['body']) => {
   const words = getBodyText(body).split(/\s+/).filter(Boolean).length
@@ -18,20 +23,54 @@ const hasSlug = (
 
 export const useNewsList = (): NewsListHookResult => {
   const [articles, setArticles] = useState<NewsArticle[]>([])
+  const [featuredArticle, setFeaturedArticle] = useState<NewsArticle | null>(
+    null
+  )
   const [loading, setLoading] = useState(true)
-  const [visibleCount, setVisibleCount] = useState(0)
+  const [totalCount, setTotalCount] = useState(0)
   const [isLoadingMore, setIsLoadingMore] = useState(false)
   const isLoadingMoreRef = useRef(false)
   const loadMoreAnchorRef = useRef<HTMLDivElement | null>(null)
+
+  const loadNextPage = useCallback(
+    async (offset: number) => {
+      const nextBatch = (
+        await fetchNewsArticlesPage(
+          offset,
+          NEWS_PAGE_SIZE,
+          featuredArticle?._id
+        )
+      ).filter(hasSlug)
+      setArticles(prev => {
+        const existingIds = new Set(prev.map(article => article._id))
+        const deduped = nextBatch.filter(
+          article => !existingIds.has(article._id)
+        )
+        return [...prev, ...deduped]
+      })
+    },
+    [featuredArticle?._id]
+  )
 
   useEffect(() => {
     let isActive = true
 
     const load = async () => {
       try {
-        const data = await fetchNewsArticles()
+        const latestFeatured = await fetchLatestFeaturedNewsArticle()
         if (!isActive) return
-        setArticles(data.filter(hasSlug))
+        setFeaturedArticle(
+          latestFeatured && hasSlug(latestFeatured) ? latestFeatured : null
+        )
+
+        const featuredId = latestFeatured?._id
+        const [count, firstPage] = await Promise.all([
+          fetchNewsArticleCount(featuredId),
+          fetchNewsArticlesPage(0, NEWS_PAGE_SIZE, featuredId),
+        ])
+        if (!isActive) return
+        setTotalCount(count)
+        setArticles(firstPage.filter(hasSlug))
       } finally {
         if (isActive) {
           setLoading(false)
@@ -46,13 +85,9 @@ export const useNewsList = (): NewsListHookResult => {
     }
   }, [])
 
-  const featuredArticle = useMemo(() => articles[0] ?? null, [articles])
-  const articleGrid = useMemo(() => articles.slice(1), [articles])
-  const visibleArticles = useMemo(
-    () => articleGrid.slice(0, visibleCount),
-    [articleGrid, visibleCount]
-  )
-  const hasMoreArticles = visibleCount < articleGrid.length
+  const articleGrid = useMemo(() => articles, [articles])
+  const visibleArticles = articleGrid
+  const hasMoreArticles = articles.length < totalCount
 
   const featuredImageUrl: string | null = useMemo(
     () =>
@@ -66,28 +101,8 @@ export const useNewsList = (): NewsListHookResult => {
   )
 
   useEffect(() => {
-    if (!articleGrid.length) {
-      setVisibleCount(0)
-      return
-    }
-
-    const columns = window.innerWidth >= 768 ? 2 : 1
-    const rowsToFillViewport = Math.max(
-      1,
-      Math.ceil(window.innerHeight / GRID_CARD_ESTIMATED_HEIGHT)
-    )
-    const initialCount = Math.min(
-      articleGrid.length,
-      rowsToFillViewport * columns
-    )
-    setVisibleCount(initialCount)
-  }, [articleGrid])
-
-  useEffect(() => {
     if (!hasMoreArticles || !loadMoreAnchorRef.current) return
 
-    const columns = window.innerWidth >= 768 ? 2 : 1
-    const batchSize = Math.max(columns, columns * 2)
     let timeoutId: number | null = null
 
     const observer = new IntersectionObserver(
@@ -98,11 +113,10 @@ export const useNewsList = (): NewsListHookResult => {
         isLoadingMoreRef.current = true
         setIsLoadingMore(true)
         timeoutId = window.setTimeout(() => {
-          setVisibleCount(prev =>
-            Math.min(prev + batchSize, articleGrid.length)
-          )
-          isLoadingMoreRef.current = false
-          setIsLoadingMore(false)
+          loadNextPage(articles.length).finally(() => {
+            isLoadingMoreRef.current = false
+            setIsLoadingMore(false)
+          })
         }, 350)
       },
       { rootMargin: '200px 0px' }
@@ -115,7 +129,7 @@ export const useNewsList = (): NewsListHookResult => {
       }
       observer.disconnect()
     }
-  }, [articleGrid.length, hasMoreArticles])
+  }, [articles.length, hasMoreArticles, loadNextPage])
 
   return {
     articles,

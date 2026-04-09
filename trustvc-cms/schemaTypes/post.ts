@@ -9,7 +9,7 @@ export default defineType({
       name: 'title',
       title: 'Title',
       type: 'string',
-      validation: Rule => Rule.required().min(10).max(120),
+      validation: Rule => Rule.required(),
     }),
     defineField({
       name: 'subtitle',
@@ -17,7 +17,7 @@ export default defineType({
       description: 'Short summary shown below the title on list and detail pages.',
       type: 'text',
       rows: 3,
-      validation: Rule => Rule.min(20).max(220),
+      validation: Rule => Rule.max(220),
     }),
     defineField({
       name: 'slug',

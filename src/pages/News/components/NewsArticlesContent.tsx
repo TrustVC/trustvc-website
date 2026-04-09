@@ -12,7 +12,6 @@ interface NewsArticlesContentProps {
   featuredArticle: NewsArticle | null
   featuredImageUrl: string | null
   visibleArticles: NewsArticle[]
-  articleGrid: NewsArticle[]
   isLoadingMore: boolean
   hasMoreArticles: boolean
   loadMoreAnchorRef: RefObject<HTMLDivElement>
@@ -24,7 +23,6 @@ const NewsArticlesContent = ({
   featuredArticle,
   featuredImageUrl,
   visibleArticles,
-  articleGrid,
   isLoadingMore,
   hasMoreArticles,
   loadMoreAnchorRef,
@@ -238,13 +236,7 @@ const NewsArticlesContent = ({
         })}
 
         {isLoadingMore && (
-          <ShimmerPostCards
-            count={Math.min(
-              2,
-              Math.max(0, articleGrid.length - visibleArticles.length)
-            )}
-            isDarkMode={isDarkMode}
-          />
+          <ShimmerPostCards count={2} isDarkMode={isDarkMode} />
         )}
       </div>
 

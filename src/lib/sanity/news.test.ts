@@ -182,44 +182,44 @@ describe('fetchNewsArticles', () => {
     expect(result.featured).toBe(false)
   })
 
-  it('sets featured=true when categories contain "featured" (lowercase)', async () => {
+  it('keeps featured=false when categories contain "featured" but featured flag is false', async () => {
     mockFetch.mockResolvedValue([
       makeArticle({ featured: false, categories: [{ title: 'featured' }] }),
     ])
     mockState.isSanityConfigured = true
     mockState.sanityClient = { fetch: mockFetch }
     const [result] = await fetchNewsArticles()
-    expect(result.featured).toBe(true)
+    expect(result.featured).toBe(false)
   })
 
-  it('sets featured=true when categories contain "Featured" (title case)', async () => {
+  it('keeps featured=false when categories contain "Featured" but featured flag is false', async () => {
     mockFetch.mockResolvedValue([
       makeArticle({ featured: false, categories: [{ title: 'Featured' }] }),
     ])
     mockState.isSanityConfigured = true
     mockState.sanityClient = { fetch: mockFetch }
     const [result] = await fetchNewsArticles()
-    expect(result.featured).toBe(true)
+    expect(result.featured).toBe(false)
   })
 
-  it('sets featured=true when category title has surrounding whitespace', async () => {
+  it('keeps featured=false when category title has surrounding whitespace and featured flag is false', async () => {
     mockFetch.mockResolvedValue([
       makeArticle({ featured: false, categories: [{ title: '  FEATURED  ' }] }),
     ])
     mockState.isSanityConfigured = true
     mockState.sanityClient = { fetch: mockFetch }
     const [result] = await fetchNewsArticles()
-    expect(result.featured).toBe(true)
+    expect(result.featured).toBe(false)
   })
 
-  it('sets featured=true when article.featured is false but category matches', async () => {
+  it('keeps featured=false when article.featured is false even if category matches', async () => {
     mockFetch.mockResolvedValue([
       makeArticle({ featured: false, categories: [{ title: 'featured' }] }),
     ])
     mockState.isSanityConfigured = true
     mockState.sanityClient = { fetch: mockFetch }
     const [result] = await fetchNewsArticles()
-    expect(result.featured).toBe(true)
+    expect(result.featured).toBe(false)
   })
 
   // ── sorting ──
@@ -378,14 +378,14 @@ describe('fetchNewsArticleBySlug', () => {
     expect(result!.featured).toBe(true)
   })
 
-  it('normalizes featured=true from "featured" category', async () => {
+  it('keeps featured=false when "featured" category exists but featured flag is false', async () => {
     mockFetch.mockResolvedValue(
       makeArticle({ featured: false, categories: [{ title: 'Featured' }] })
     )
     mockState.isSanityConfigured = true
     mockState.sanityClient = { fetch: mockFetch }
     const result = await fetchNewsArticleBySlug('test-article')
-    expect(result!.featured).toBe(true)
+    expect(result!.featured).toBe(false)
   })
 
   it('keeps featured=false when neither flag nor category triggers it', async () => {
