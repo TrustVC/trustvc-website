@@ -20,6 +20,7 @@ import {
 } from '../../../utils/chain-utils'
 // import { useMagicContext } from './MagicContext'
 
+// eslint-disable-next-line
 export enum SIGNER_TYPE {
   IDENTITY = 'Identity', // Internal RPC to query only.
   METAMASK = 'Metamask',
@@ -47,6 +48,8 @@ console.log('here 1')
 let currentProvider: providers.Provider | undefined = createProvider(
   getChainInfoFromNetworkName(NETWORK_NAME).id
 )
+
+// eslint-disable-next-line
 export const getCurrentProvider = (): providers.Provider | undefined =>
   currentProvider
 
@@ -65,6 +68,7 @@ export interface ProviderContextProps {
   disconnectWallet: (disconnectOnly?: boolean) => Promise<void>
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const ProviderContext = createContext<ProviderContextProps>({
   providerType: SIGNER_TYPE.NONE,
   upgradeToMetaMaskSigner: async () => {},
@@ -377,5 +381,6 @@ export const ProviderContextProvider: FunctionComponent<
   )
 }
 
+// eslint-disable-next-line
 export const useProviderContext = (): ProviderContextProps =>
   useContext<ProviderContextProps>(ProviderContext)

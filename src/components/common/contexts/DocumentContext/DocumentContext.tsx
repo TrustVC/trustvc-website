@@ -46,6 +46,7 @@ export const DocumentProvider: React.FC<{ children: ReactNode }> = ({
   )
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useDocumentContext = (): DocumentContextValue => {
   const context = useContext(DocumentContext)
   if (!context) {
