@@ -289,8 +289,8 @@ export const addClassNameIfExist = (className?: string): string => {
  */
 export const getFileName = (filePath: string): string => {
   return (
-    filePath.match(/[A-Za-z0-9_\-\.]+\.[A-Za-z0-9]+$/)?.shift() ||
-    filePath.match(/[A-Za-z0-9_\-\.]+$/)?.shift() ||
+    filePath.match(/[A-Za-z0-9_.-]+\.[A-Za-z0-9]+$/)?.shift() ||
+    filePath.match(/[A-Za-z0-9_.-]+$/)?.shift() ||
     filePath
   )
 }
@@ -308,6 +308,7 @@ export const isExternalLink = (url: string): boolean => {
     const urlHostname = new URL(url).hostname
     return currentHostname !== urlHostname
   } catch (error) {
+    console.log(error)
     return false
   }
 }

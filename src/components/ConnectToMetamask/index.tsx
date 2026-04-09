@@ -9,7 +9,6 @@ import {
   useProviderContext,
 } from '../common/contexts/providerContext'
 // import { showDocumentTransferMessage } from '../common/Overlay/OverlayContent'
-import { useOverlayContext } from '../common/contexts/OverlayContext'
 import { Button, ButtonSize } from '../common/Button'
 
 export interface ConnectToMetamaskModelProps {
@@ -21,7 +20,6 @@ export interface ConnectToMetamaskModelProps {
 
 export const ConnectToMetamaskModelComponent = ({
   showOnNewConnectWarningMessage = false,
-  showNetworkSection = false,
   handleContinue,
 }: ConnectToMetamaskModelProps) => {
   const { providerType, account, disconnectWallet } = useProviderContext()
@@ -100,7 +98,6 @@ const ConnectToMetamask: React.FC<ConnectToMetamaskProps> = ({
   console.log('ConnectToMetamask component rendered')
   const { upgradeToMetaMaskSigner, account, providerType } =
     useProviderContext()
-  const { showOverlay } = useOverlayContext()
 
   const handleConnectWallet = async () => {
     console.log('handleConnectWallet clicked!')
@@ -120,7 +117,7 @@ const ConnectToMetamask: React.FC<ConnectToMetamaskProps> = ({
   }
   const handleMetamaskError = (errorMesssage: string, errorCode: number) => {
     console.log('handleMetamaskError called:', errorMesssage, errorCode)
-    const isUserDeniedAccountAuthorization = errorCode === 4001
+    // const isUserDeniedAccountAuthorization = errorCode === 4001
     // showOverlay(
     //   showDocumentTransferMessage(errorMesssage, {
     //     isSuccess: false,

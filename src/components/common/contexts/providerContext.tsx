@@ -67,11 +67,8 @@ export interface ProviderContextProps {
 
 export const ProviderContext = createContext<ProviderContextProps>({
   providerType: SIGNER_TYPE.NONE,
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   upgradeToMetaMaskSigner: async () => {},
-  // eslint-disable-next-line @typescript-eslint/no-empty-function,@typescript-eslint/no-unused-vars
   changeNetwork: async (_chainId: CHAIN_ID) => {},
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   reloadNetwork: async () => {},
   supportedChainInfoObjects: [],
   currentChainId: undefined,
@@ -232,7 +229,7 @@ export const ProviderContextProvider: FunctionComponent<
       setProviderOrSigner(provider)
     } catch (e) {
       setAccount(undefined)
-      console.log('here 5')
+      console.log(e)
       setProviderOrSigner(createProvider(currentChainId!))
     }
     setNetworkChangeLoading(false)

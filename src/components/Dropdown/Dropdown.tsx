@@ -154,7 +154,7 @@ export const Dropdown: FunctionComponent<DropdownProps> = ({
   );
 };
 
-interface DropdownItemProps {
+export interface DropdownItemProps {
   children?: React.ReactNode;
   onClick?: () => void;
   className?: string;
