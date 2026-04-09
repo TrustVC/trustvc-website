@@ -37,7 +37,11 @@ describe('InvalidAttachmentsBanner', () => {
       />
     )
     expect(screen.getByText('Show More')).toBeTruthy()
-    expect(screen.queryByText('There is a problem loading the following attachments:')).toBeNull()
+    expect(
+      screen.queryByText(
+        'There is a problem loading the following attachments:'
+      )
+    ).toBeNull()
   })
 
   it('expands on click to show attachment list', () => {
@@ -51,7 +55,9 @@ describe('InvalidAttachmentsBanner', () => {
     )
     fireEvent.click(screen.getByText('Show More'))
     expect(screen.getByText('Show Less')).toBeTruthy()
-    expect(screen.getByText('There is a problem loading the following attachments:')).toBeTruthy()
+    expect(
+      screen.getByText('There is a problem loading the following attachments:')
+    ).toBeTruthy()
     expect(screen.getByText('bad.pdf')).toBeTruthy()
     expect(screen.getByText('corrupt.png')).toBeTruthy()
   })

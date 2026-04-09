@@ -180,8 +180,7 @@ export const isValidAttachmentData = (
         const hasXref =
           binaryString.includes('xref') || binaryString.includes('/Root')
         const hasTrailer =
-          binaryString.includes('trailer') ||
-          binaryString.includes('startxref')
+          binaryString.includes('trailer') || binaryString.includes('startxref')
         if (!hasXref && !hasTrailer) return false
         return true
       } catch {

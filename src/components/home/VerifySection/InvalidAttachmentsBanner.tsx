@@ -1,10 +1,6 @@
 import React, { useState } from 'react'
 import { DocumentAttachment } from '../../../utils/helper'
-import {
-  ExclamationCircle,
-  ChevronUp,
-  ChevronDown,
-} from '../../common/Icons'
+import { ExclamationCircle, ChevronUp, ChevronDown } from '../../common/Icons'
 
 interface InvalidAttachmentsBannerProps {
   invalidAttachments: DocumentAttachment[]

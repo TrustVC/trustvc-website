@@ -7,7 +7,12 @@ interface OverlayProps {
   onClose?: () => void
 }
 
-const Overlay: React.FC<OverlayProps> = ({ children, className, ariaLabel, onClose }) => {
+const Overlay: React.FC<OverlayProps> = ({
+  children,
+  className,
+  ariaLabel,
+  onClose,
+}) => {
   const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
     // Only trigger onClose if clicking the overlay itself, not its children
     if (e.target === e.currentTarget && onClose) {

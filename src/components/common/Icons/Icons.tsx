@@ -95,7 +95,11 @@ export const DownloadIcon = () => (
   </svg>
 )
 
-export const ExclamationTriangle = ({ color = '#B83152' }: { color?: string }) => (
+export const ExclamationTriangle = ({
+  color = '#B83152',
+}: {
+  color?: string
+}) => (
   <svg
     width="24"
     height="24"

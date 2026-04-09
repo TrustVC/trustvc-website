@@ -2294,7 +2294,7 @@ body.dark-mode {
   background: rgba(255, 255, 255, 0.1);
 }
 
-.dark-mode .vr-invalid-banner svg path[fill="#661228"] {
+.dark-mode .vr-invalid-banner svg path[fill='#661228'] {
   fill: #fca5a5;
 }
 

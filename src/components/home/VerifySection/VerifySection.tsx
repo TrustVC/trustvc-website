@@ -73,7 +73,7 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
     if (!rawDocument) return []
     const attachments = getAttachments(rawDocument)
     return attachments.filter(
-      (att) =>
+      att =>
         typeof att.data === 'string' &&
         !isValidAttachmentData(att.data, att.type)
     )

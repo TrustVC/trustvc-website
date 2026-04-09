@@ -312,7 +312,11 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
 
       {/* Template Renderer */}
       {rawDocument ? (
-        <DocumentRenderer rawDocument={rawDocument} fileName={fileName} invalidAttachments={invalidAttachments} />
+        <DocumentRenderer
+          rawDocument={rawDocument}
+          fileName={fileName}
+          invalidAttachments={invalidAttachments}
+        />
       ) : null}
 
       {/* Tooltip */}

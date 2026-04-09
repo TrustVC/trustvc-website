@@ -22,7 +22,9 @@ describe('ChevronDownIcon', () => {
 
   it('applies className', () => {
     const { container } = render(<ChevronDownIcon className="test-class" />)
-    expect(container.querySelector('svg')?.classList.contains('test-class')).toBe(true)
+    expect(
+      container.querySelector('svg')?.classList.contains('test-class')
+    ).toBe(true)
   })
 
   it('passes through extra SVG props', () => {

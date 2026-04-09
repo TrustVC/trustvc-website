@@ -16,7 +16,9 @@ describe('UploadIcon', () => {
 
   it('applies className', () => {
     const { container } = render(<UploadIcon className="upload-icon" />)
-    expect(container.querySelector('svg')?.classList.contains('upload-icon')).toBe(true)
+    expect(
+      container.querySelector('svg')?.classList.contains('upload-icon')
+    ).toBe(true)
   })
 
   it('passes through extra SVG props', () => {

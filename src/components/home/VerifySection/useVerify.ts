@@ -253,7 +253,6 @@ const getDocumentTags = (
   return tags
 }
 
-
 const getDocumentData = (wrappedDocument: any) => {
   if (
     vc.isSignedDocument(wrappedDocument) ||

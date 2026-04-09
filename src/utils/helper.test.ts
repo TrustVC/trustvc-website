@@ -366,7 +366,9 @@ describe('isValidAttachmentData', () => {
   })
 
   it('returns false for non-PDF data with PDF mime type', () => {
-    const notPdf = btoa('this is not a pdf file and has enough content to pass length check')
+    const notPdf = btoa(
+      'this is not a pdf file and has enough content to pass length check'
+    )
     expect(isValidAttachmentData(notPdf, 'application/pdf')).toBe(false)
   })
 
