@@ -81,6 +81,7 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
     'mt-8 max-w-3xl mx-auto flex flex-wrap items-center justify-between gap-3 text-sm',
     isDarkMode ? 'text-[#A9B2BB]' : 'text-[#5B6571]'
   )
+  const showFeaturedBadge = Boolean(article?.featured)
 
   if (loading) {
     return <NewsDetailLoadingState isDarkMode={isDarkMode} />
@@ -135,7 +136,7 @@ const NewsDetail = ({ isDarkMode }: NewsDetailProps) => {
         </nav>
 
         <header className="text-center max-w-3xl mx-auto">
-          {article.featured && (
+          {showFeaturedBadge && (
             <div className="news-featured-badge inline-flex items-center gap-1 px-2 py-1 rounded-full text-white text-xs font-bold">
               Featured
             </div>

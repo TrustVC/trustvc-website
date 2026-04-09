@@ -16,7 +16,7 @@ const NEWS_LIST_QUERY = `*[_type == "post"] | order(publishedAt desc){
   categories[]->{title}
 }`
 
-const NEWS_LIST_PAGED_QUERY = `*[_type == "post" && (!defined($excludeId) || _id != $excludeId)] | order(publishedAt desc)[$offset...$end]{
+const NEWS_LIST_PAGED_QUERY = `*[_type == "post"] | order(publishedAt desc)[$offset...$end]{
   _id,
   title,
   subtitle,
@@ -31,22 +31,7 @@ const NEWS_LIST_PAGED_QUERY = `*[_type == "post" && (!defined($excludeId) || _id
   categories[]->{title}
 }`
 
-const NEWS_COUNT_QUERY = `count(*[_type == "post" && (!defined($excludeId) || _id != $excludeId)])`
-
-const LATEST_FEATURED_POST_QUERY = `*[_type == "post" && featured == true && defined(publishedAt)] | order(publishedAt desc, _updatedAt desc)[0]{
-  _id,
-  title,
-  subtitle,
-  "featured": coalesce(featured, false),
-  slug,
-  mainImage,
-  publishedAt,
-  "updatedAt": _updatedAt,
-  source,
-  body,
-  author->{name, image},
-  categories[]->{title}
-}`
+const NEWS_COUNT_QUERY = `count(*[_type == "post"])`
 
 const NEWS_DETAIL_QUERY = `*[_type == "post" && slug.current == $slug][0]{
   _id,
@@ -98,23 +83,20 @@ export const fetchLatestFeaturedNewsArticle = async () => {
   if (!isSanityConfigured || !sanityClient) return null
 
   try {
-    const data = await sanityClient.fetch<NewsArticle | null>(
-      LATEST_FEATURED_POST_QUERY
-    )
-    return data ? normalizeFeatured(data) : null
+    const data = await sanityClient.fetch<NewsArticle[]>(NEWS_LIST_QUERY)
+    const normalized = (data ?? []).map(normalizeFeatured)
+    return normalized.find(isFeaturedPost) ?? null
   } catch (err) {
     console.error('[Sanity] fetchLatestFeaturedNewsArticle failed', err)
     return null
   }
 }
 
-export const fetchNewsArticleCount = async (excludeId?: string) => {
+export const fetchNewsArticleCount = async () => {
   if (!isSanityConfigured || !sanityClient) return 0
 
   try {
-    const count = await sanityClient.fetch<number>(NEWS_COUNT_QUERY, {
-      excludeId,
-    })
+    const count = await sanityClient.fetch<number>(NEWS_COUNT_QUERY)
     return typeof count === 'number' ? count : 0
   } catch (err) {
     console.error('[Sanity] fetchNewsArticleCount failed', err)
@@ -122,11 +104,7 @@ export const fetchNewsArticleCount = async (excludeId?: string) => {
   }
 }
 
-export const fetchNewsArticlesPage = async (
-  offset: number,
-  limit: number,
-  excludeId?: string
-) => {
+export const fetchNewsArticlesPage = async (offset: number, limit: number) => {
   if (!isSanityConfigured || !sanityClient) return []
 
   const safeOffset = Math.max(0, offset)
@@ -138,7 +116,6 @@ export const fetchNewsArticlesPage = async (
       {
         offset: safeOffset,
         end: safeOffset + safeLimit,
-        excludeId,
       }
     )
     return (data ?? []).map(normalizeFeatured)

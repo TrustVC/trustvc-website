@@ -21,6 +21,8 @@ const hasSlug = (
 ): article is NewsArticle & { slug: { current: string } } =>
   Boolean(article.slug?.current)
 
+const normalizeId = (id?: string) => (id ? id.replace(/^drafts\./, '') : '')
+
 export const useNewsList = (): NewsListHookResult => {
   const [articles, setArticles] = useState<NewsArticle[]>([])
   const [featuredArticle, setFeaturedArticle] = useState<NewsArticle | null>(
@@ -28,19 +30,24 @@ export const useNewsList = (): NewsListHookResult => {
   )
   const [loading, setLoading] = useState(true)
   const [totalCount, setTotalCount] = useState(0)
+  const [fetchedCount, setFetchedCount] = useState(0)
   const [isLoadingMore, setIsLoadingMore] = useState(false)
   const isLoadingMoreRef = useRef(false)
   const loadMoreAnchorRef = useRef<HTMLDivElement | null>(null)
+  const featuredId = featuredArticle?._id
+  const featuredSlug = featuredArticle?.slug?.current
 
   const loadNextPage = useCallback(
     async (offset: number) => {
-      const nextBatch = (
-        await fetchNewsArticlesPage(
-          offset,
-          NEWS_PAGE_SIZE,
-          featuredArticle?._id
-        )
-      ).filter(hasSlug)
+      const nextBatchRaw = await fetchNewsArticlesPage(offset, NEWS_PAGE_SIZE)
+      setFetchedCount(prev => prev + nextBatchRaw.length)
+      const normalizedFeaturedId = normalizeId(featuredId)
+      const nextBatch = nextBatchRaw.filter(
+        article =>
+          hasSlug(article) &&
+          normalizeId(article._id) !== normalizedFeaturedId &&
+          article.slug?.current !== featuredSlug
+      )
       setArticles(prev => {
         const existingIds = new Set(prev.map(article => article._id))
         const deduped = nextBatch.filter(
@@ -49,7 +56,7 @@ export const useNewsList = (): NewsListHookResult => {
         return [...prev, ...deduped]
       })
     },
-    [featuredArticle?._id]
+    [featuredId, featuredSlug]
   )
 
   useEffect(() => {
@@ -63,14 +70,21 @@ export const useNewsList = (): NewsListHookResult => {
           latestFeatured && hasSlug(latestFeatured) ? latestFeatured : null
         )
 
-        const featuredId = latestFeatured?._id
         const [count, firstPage] = await Promise.all([
-          fetchNewsArticleCount(featuredId),
-          fetchNewsArticlesPage(0, NEWS_PAGE_SIZE, featuredId),
+          fetchNewsArticleCount(),
+          fetchNewsArticlesPage(0, NEWS_PAGE_SIZE),
         ])
         if (!isActive) return
         setTotalCount(count)
-        setArticles(firstPage.filter(hasSlug))
+        setFetchedCount(firstPage.length)
+        const featuredSlugFromLatest = latestFeatured?.slug?.current
+        setArticles(
+          firstPage.filter(
+            article =>
+              hasSlug(article) &&
+              article.slug?.current !== featuredSlugFromLatest
+          )
+        )
       } finally {
         if (isActive) {
           setLoading(false)
@@ -87,7 +101,7 @@ export const useNewsList = (): NewsListHookResult => {
 
   const articleGrid = useMemo(() => articles, [articles])
   const visibleArticles = articleGrid
-  const hasMoreArticles = articles.length < totalCount
+  const hasMoreArticles = fetchedCount < totalCount
 
   const featuredImageUrl: string | null = useMemo(
     () =>
@@ -113,7 +127,7 @@ export const useNewsList = (): NewsListHookResult => {
         isLoadingMoreRef.current = true
         setIsLoadingMore(true)
         timeoutId = window.setTimeout(() => {
-          loadNextPage(articles.length).finally(() => {
+          loadNextPage(fetchedCount).finally(() => {
             isLoadingMoreRef.current = false
             setIsLoadingMore(false)
           })
@@ -129,7 +143,7 @@ export const useNewsList = (): NewsListHookResult => {
       }
       observer.disconnect()
     }
-  }, [articles.length, hasMoreArticles, loadNextPage])
+  }, [fetchedCount, hasMoreArticles, loadNextPage])
 
   return {
     articles,

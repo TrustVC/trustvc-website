@@ -3,6 +3,7 @@ import { format } from 'date-fns'
 import {
   fetchNewsArticleBySlug,
   fetchNewsArticles,
+  fetchLatestFeaturedNewsArticle,
   getBodyText,
 } from '../lib/sanity/news'
 import { getSanityImageUrl } from '../lib/sanity/client'
@@ -43,14 +44,21 @@ export const useNewsDetail = (slug?: string): NewsDetailHookResult => {
       }
 
       try {
-        const [data, list] = await Promise.all([
+        const [data, list, latestFeatured] = await Promise.all([
           fetchNewsArticleBySlug(slug),
           fetchNewsArticles(),
+          fetchLatestFeaturedNewsArticle(),
         ])
 
         if (!isActive) return
 
-        setArticle(data)
+        const featuredSlug = latestFeatured?.slug?.current
+        const isFeaturedBySlug = Boolean(
+          data?.slug?.current &&
+          featuredSlug &&
+          data.slug.current === featuredSlug
+        )
+        setArticle(data ? { ...data, featured: isFeaturedBySlug } : null)
 
         if (data?.slug?.current && Array.isArray(list) && list.length) {
           const idx = list.findIndex(
