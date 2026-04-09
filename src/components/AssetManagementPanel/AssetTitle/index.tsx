@@ -1,0 +1,32 @@
+import { useIdentifierResolver } from '@govtechsg/address-identity-resolver'
+import React, { FunctionComponent } from 'react'
+import { AddressInfo } from '../../common/AddressInfo'
+// import { AddressInfo } from "../../AddressInfo";
+
+interface AssetTitleProps {
+  role: string
+  address: string
+  children?: React.ReactNode
+}
+
+export const AssetTitle: FunctionComponent<AssetTitleProps> = ({
+  role,
+  address,
+  children,
+}) => {
+  const { identityName, identityResolvedBy, identitySource } =
+    useIdentifierResolver(address)
+
+  return (
+    <>
+      <AddressInfo
+        title={role}
+        name={identityName}
+        resolvedBy={identityResolvedBy}
+        source={identitySource || ''}
+      >
+        {children}
+      </AddressInfo>
+    </>
+  )
+}

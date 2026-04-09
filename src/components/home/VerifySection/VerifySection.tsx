@@ -4,13 +4,13 @@ import { useVerify } from './useVerify'
 import NetworkModal from './NetworkModal'
 import VerifyResult from './VerifyResult'
 import VerifyError from './VerifyError'
-import PrimaryButton from '../../common/PrimaryButton'
 import EndorsementChain from '../EndorsementChain'
 import { useEndorsementChain } from '../EndorsementChain/useEndorsementChain'
 import Spinner from '../../common/Spinner'
 import { getAttachments, isValidAttachmentData } from '../../../utils/helper'
 import { useOverlayContext } from '../../common/contexts/OverlayContext'
 import ConnectToBlockchainModel from '../../ConnectToBlockchain'
+import PrimaryButton from '../../common/PrimaryButton'
 
 interface VerifySectionProps {
   isDarkMode: boolean
@@ -173,6 +173,7 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
                 fileName={fileName}
                 networkName={networkName}
                 chainId={verifiedChainId}
+                tokenId={tokenId}
                 issuer={issuerName}
                 isTransferable={isTransferable}
                 tokenRegistryAddress={tokenRegistryAddress}

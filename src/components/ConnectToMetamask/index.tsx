@@ -96,6 +96,7 @@ const ConnectToMetamask: React.FC<ConnectToMetamaskProps> = ({
 }) => {
   const { upgradeToMetaMaskSigner, account, providerType } =
     useProviderContext()
+  const { showOverlay } = useOverlayContext()
 
   const handleConnectWallet = async () => {
     try {
