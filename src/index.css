@@ -3102,7 +3102,6 @@ p.small {
   border-color: var(--Neutral-33-90, #3d444d54);
 }
 
-<<<<<<< HEAD
 .dropdown-btn-frame {
   width: 100%;
   min-width: 187px;
@@ -3299,8 +3298,6 @@ p.small {
   z-index: 4;
 }
 
-=======
->>>>>>> 2aa7689 (feat: blockchain connect modal)
 .dark-mode #connect-blockchain .header .tab h4 {
   background: #dee4e9;
   -webkit-background-clip: text;
@@ -3666,7 +3663,6 @@ p.small {
 }
 
 .dark-mode .connect-metamask-button {
-<<<<<<< HEAD
   background: #1e2026;
   border: 1px solid var(--Neutral-33-90, #3d444d54);
 }
@@ -3675,13 +3671,6 @@ p.small {
   background: rgba(125, 128, 215, 0.1);
   border: 1px solid var(--Neutral-33-90, #3d444d54);
   opacity: 0.9;
-=======
-  background: #374151;
-}
-
-.dark-mode .connect-metamask-button:hover {
-  background: #4b5563;
->>>>>>> 2aa7689 (feat: blockchain connect modal)
 }
 
 .connect-metamask-button-icon {
@@ -3710,13 +3699,10 @@ p.small {
   background-clip: text;
   margin: 0;
 }
-<<<<<<< HEAD
 .dark-mode .connect-metamask-button-text h3 {
   background: #dee4e9;
   -webkit-background-clip: text;
 }
-=======
->>>>>>> 2aa7689 (feat: blockchain connect modal)
 
 .connect-metamask-button-boundary {
   min-width: 160px;
@@ -3726,7 +3712,6 @@ p.small {
   padding: 8px 12px;
   border-width: 1px;
 }
-<<<<<<< HEAD
 
 /* action form  */
 .action-form-frame {
@@ -4018,5 +4003,3 @@ p.small {
   flex-grow: 1;
   z-index: 2;
 }
-=======
->>>>>>> 2aa7689 (feat: blockchain connect modal)

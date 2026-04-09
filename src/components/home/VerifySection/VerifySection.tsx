@@ -11,9 +11,6 @@ import Spinner from '../../common/Spinner'
 import { getAttachments, isValidAttachmentData } from '../../../utils/helper'
 import { useOverlayContext } from '../../common/contexts/OverlayContext'
 import ConnectToBlockchainModel from '../../ConnectToBlockchain'
-import { getAttachments, isValidAttachmentData } from '../../../utils/helper'
-import { useOverlayContext } from '../../common/contexts/OverlayContext'
-import ConnectToBlockchainModel from '../../ConnectToBlockchain'
 
 interface VerifySectionProps {
   isDarkMode: boolean
