@@ -1,6 +1,11 @@
+import React from 'react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
 import Navbar from './Navbar'
+
+const renderWithRouter = (ui: React.ReactElement) =>
+  render(<MemoryRouter>{ui}</MemoryRouter>)
 
 describe('Navbar Component', () => {
   const mockSetIsDarkMode = vi.fn()
@@ -10,7 +15,9 @@ describe('Navbar Component', () => {
   })
 
   it('renders navbar with logo', () => {
-    render(<Navbar isDarkMode={false} setIsDarkMode={mockSetIsDarkMode} />)
+    renderWithRouter(
+      <Navbar isDarkMode={false} setIsDarkMode={mockSetIsDarkMode} />
+    )
 
     // Logo should be present
     const logos = screen.getAllByRole('link', { name: '' })
@@ -18,7 +25,9 @@ describe('Navbar Component', () => {
   })
 
   it('renders navigation links', () => {
-    render(<Navbar isDarkMode={false} setIsDarkMode={mockSetIsDarkMode} />)
+    renderWithRouter(
+      <Navbar isDarkMode={false} setIsDarkMode={mockSetIsDarkMode} />
+    )
 
     expect(screen.getByText('Home')).toBeInTheDocument()
     expect(screen.getByText('Ecosystem')).toBeInTheDocument()
@@ -27,14 +36,18 @@ describe('Navbar Component', () => {
   })
 
   it('renders Contact Us button', () => {
-    render(<Navbar isDarkMode={false} setIsDarkMode={mockSetIsDarkMode} />)
+    renderWithRouter(
+      <Navbar isDarkMode={false} setIsDarkMode={mockSetIsDarkMode} />
+    )
 
     const contactButtons = screen.getAllByText('Contact Us')
     expect(contactButtons.length).toBeGreaterThan(0)
   })
 
   it('toggles dark mode when sun icon is clicked', () => {
-    render(<Navbar isDarkMode={true} setIsDarkMode={mockSetIsDarkMode} />)
+    renderWithRouter(
+      <Navbar isDarkMode={true} setIsDarkMode={mockSetIsDarkMode} />
+    )
 
     // Find sun icon button (first theme toggle button)
     const themeButtons = screen.getAllByRole('button')
@@ -42,14 +55,15 @@ describe('Navbar Component', () => {
       btn.querySelector('svg path[d*="M12 19.3755"]')
     )
 
-    if (sunButton) {
-      fireEvent.click(sunButton)
-      expect(mockSetIsDarkMode).toHaveBeenCalledWith(false)
-    }
+    expect(sunButton).toBeDefined()
+    fireEvent.click(sunButton!)
+    expect(mockSetIsDarkMode).toHaveBeenCalledWith(false)
   })
 
   it('toggles dark mode when moon icon is clicked', () => {
-    render(<Navbar isDarkMode={false} setIsDarkMode={mockSetIsDarkMode} />)
+    renderWithRouter(
+      <Navbar isDarkMode={false} setIsDarkMode={mockSetIsDarkMode} />
+    )
 
     // Find moon icon button
     const themeButtons = screen.getAllByRole('button')
@@ -57,33 +71,33 @@ describe('Navbar Component', () => {
       btn.querySelector('svg path[d*="M10.0762"]')
     )
 
-    if (moonButton) {
-      fireEvent.click(moonButton)
-      expect(mockSetIsDarkMode).toHaveBeenCalledWith(true)
-    }
+    expect(moonButton).toBeDefined()
+    fireEvent.click(moonButton!)
+    expect(mockSetIsDarkMode).toHaveBeenCalledWith(true)
   })
 
   it('opens mobile menu when hamburger is clicked', () => {
-    render(<Navbar isDarkMode={false} setIsDarkMode={mockSetIsDarkMode} />)
+    renderWithRouter(
+      <Navbar isDarkMode={false} setIsDarkMode={mockSetIsDarkMode} />
+    )
 
     // Find hamburger button
     const hamburgerButton = screen
       .getAllByRole('button')
       .find(btn => btn.querySelector('svg path[d*="M20.1694 16.75"]'))
 
-    expect(hamburgerButton).toBeInTheDocument()
+    expect(hamburgerButton).toBeDefined()
+    fireEvent.click(hamburgerButton!)
 
-    if (hamburgerButton) {
-      fireEvent.click(hamburgerButton)
-
-      // Mobile menu should appear with navigation items
-      const homeLinks = screen.getAllByText('Home')
-      expect(homeLinks.length).toBeGreaterThan(1) // Desktop + Mobile
-    }
+    // Mobile menu should appear with navigation items
+    const homeLinks = screen.getAllByText('Home')
+    expect(homeLinks.length).toBeGreaterThan(1) // Desktop + Mobile
   })
 
   it('opens ecosystem dropdown on hover', () => {
-    render(<Navbar isDarkMode={false} setIsDarkMode={mockSetIsDarkMode} />)
+    renderWithRouter(
+      <Navbar isDarkMode={false} setIsDarkMode={mockSetIsDarkMode} />
+    )
 
     const ecosystemButtons = screen.getAllByText('Ecosystem')
     const desktopEcosystemButton = ecosystemButtons[0]
@@ -97,7 +111,7 @@ describe('Navbar Component', () => {
   })
 
   it('applies correct CSS classes for light mode', () => {
-    const { container } = render(
+    const { container } = renderWithRouter(
       <Navbar isDarkMode={false} setIsDarkMode={mockSetIsDarkMode} />
     )
 
@@ -107,7 +121,7 @@ describe('Navbar Component', () => {
   })
 
   it('applies correct CSS classes for dark mode', () => {
-    const { container } = render(
+    const { container } = renderWithRouter(
       <Navbar isDarkMode={true} setIsDarkMode={mockSetIsDarkMode} />
     )
 
@@ -117,7 +131,7 @@ describe('Navbar Component', () => {
   })
 
   it('renders contact button with correct CSS class', () => {
-    const { container } = render(
+    const { container } = renderWithRouter(
       <Navbar isDarkMode={false} setIsDarkMode={mockSetIsDarkMode} />
     )
 

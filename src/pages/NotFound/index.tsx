@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 interface NotFoundProps {
   isDarkMode: boolean
 }
@@ -20,12 +22,12 @@ const NotFound = ({ isDarkMode }: NotFoundProps) => {
         >
           The page you are looking for doesn’t exist or has been moved.
         </p>
-        <a
-          href="/"
+        <Link
+          to="/"
           className="inline-flex mt-8 px-6 py-3 rounded-full font-bold bg-primary-60 text-white hover:opacity-90"
         >
           Back to Home
-        </a>
+        </Link>
       </div>
     </div>
   )

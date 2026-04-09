@@ -161,35 +161,6 @@ body.dark-mode {
     rgba(30, 32, 38, 1);
 }
 
-.navbar-content {
-  width: 100%;
-  height: 72px;
-  padding: 0.5rem;
-  border-radius: 1rem;
-  backdrop-filter: blur(12px);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.navbar-content-light {
-  background:
-    linear-gradient(
-      0deg,
-      rgba(222, 228, 233, 1) 0%,
-      rgba(222, 228, 233, 1) 100%
-    ),
-    rgba(255, 255, 255, 1);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.navbar-content-dark {
-  background:
-    linear-gradient(0deg, rgba(30, 32, 38, 1) 0%, rgba(30, 32, 38, 1) 100%),
-    rgba(30, 32, 38, 1);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
 .logo-wrapper {
   display: flex;
   align-items: flex-end;
@@ -262,7 +233,7 @@ body.dark-mode {
   flex-wrap: wrap;
   color: #1e2026;
   font-size: 64px;
-  font-family: 'Gilroy', sans-serif;
+  font-family: Gilroy, sans-serif;
   font-weight: 700;
   line-height: 71.68px;
 }
@@ -288,7 +259,7 @@ body.dark-mode {
   flex-direction: column;
   color: #3d444d;
   font-size: 18px;
-  font-family: 'Gilroy', sans-serif;
+  font-family: Gilroy, sans-serif;
   font-weight: 500;
   line-height: 24.48px;
   margin: 0;
@@ -374,7 +345,7 @@ body.dark-mode {
 /* Typography Classes - Using Tailwind utilities */
 @layer components {
   .submit-request-title {
-    font-family: 'Gilroy', sans-serif;
+    font-family: Gilroy, sans-serif;
     font-weight: 700;
     vertical-align: middle;
     font-size: 24px;
@@ -382,7 +353,7 @@ body.dark-mode {
   }
 
   .encountering-issues-text {
-    font-family: 'Avenir', sans-serif;
+    font-family: Avenir, sans-serif;
     font-weight: 500;
     vertical-align: middle;
     font-size: 14px;
@@ -390,7 +361,7 @@ body.dark-mode {
   }
 
   .form-label {
-    font-family: 'Avenir', sans-serif;
+    font-family: Avenir, sans-serif;
     font-weight: 500;
     vertical-align: middle;
     font-size: 18px;
@@ -433,7 +404,7 @@ body.dark-mode {
 
   /* Contact Page Heading */
   .contact-heading {
-    font-family: 'Gilroy', sans-serif;
+    font-family: Gilroy, sans-serif;
     font-weight: 800;
     font-size: 40px;
     line-height: 1.2;
@@ -459,7 +430,7 @@ body.dark-mode {
 
   /* Contact Page Description */
   .contact-description {
-    font-family: 'Avenir', sans-serif;
+    font-family: Avenir, sans-serif;
     font-weight: 500;
     font-size: 18px;
     line-height: 136%;
@@ -570,7 +541,7 @@ body.dark-mode {
     padding: 5px;
     color: white;
     font-size: 14px;
-    font-family: 'Gilroy', sans-serif;
+    font-family: Gilroy, sans-serif;
     font-weight: 700;
     border: none;
     cursor: pointer;
@@ -701,7 +672,7 @@ body.dark-mode {
 .dropbox-text {
   text-align: center;
   color: #3d444d;
-  font-family: 'Avenir', sans-serif;
+  font-family: Avenir, sans-serif;
   font-weight: 500;
   font-size: 14px;
   line-height: 155%;
@@ -727,7 +698,7 @@ body.dark-mode {
   text-align: center;
   color: #3d444d;
   font-size: 14px;
-  font-family: 'Gilroy', sans-serif;
+  font-family: Gilroy, sans-serif;
   font-weight: 500;
   line-height: 21.7px;
   word-wrap: break-word;
@@ -817,7 +788,7 @@ body.dark-mode {
   flex-direction: column;
   color: white;
   font-size: 14px;
-  font-family: 'Gilroy', sans-serif;
+  font-family: Gilroy, sans-serif;
   font-weight: 700;
   line-height: 19.8px;
   word-wrap: break-word;
@@ -840,7 +811,7 @@ body.dark-mode {
 .file-info-text {
   flex: 1 1 0;
   color: #5b6571;
-  font-family: 'Avenir', sans-serif;
+  font-family: Avenir, sans-serif;
   font-weight: 500;
   font-size: 12px;
   line-height: 165%;
@@ -936,7 +907,7 @@ body.dark-mode {
   flex-direction: column;
   color: white;
   font-size: 24px;
-  font-family: 'Gilroy', sans-serif;
+  font-family: Gilroy, sans-serif;
   font-weight: 700;
   line-height: 31.92px;
   word-wrap: break-word;
@@ -958,7 +929,7 @@ body.dark-mode {
   flex-direction: column;
   color: white;
   font-size: 14px;
-  font-family: 'Gilroy', sans-serif;
+  font-family: Gilroy, sans-serif;
   font-weight: 500;
   line-height: 21.7px;
   word-wrap: break-word;
@@ -1025,7 +996,7 @@ body.dark-mode {
   flex-direction: column;
   color: white;
   font-size: 18px;
-  font-family: 'Gilroy', sans-serif;
+  font-family: Gilroy, sans-serif;
   font-weight: 700;
   line-height: 24.48px;
   word-wrap: break-word;
@@ -1042,11 +1013,6 @@ body.dark-mode {
   justify-content: center;
   min-height: 140px;
   gap: 12px;
-}
-
-.dropbox-area--result {
-  align-items: stretch;
-  gap: 16px;
 }
 
 /* Spinner */
@@ -1087,7 +1053,7 @@ body.dark-mode {
 .spinner-label {
   text-align: center;
   font-size: 14px;
-  font-family: 'Gilroy', sans-serif;
+  font-family: Gilroy, sans-serif;
   font-weight: 500;
   color: #3d444d;
 }
@@ -1105,7 +1071,7 @@ body.dark-mode {
   padding: 6px 16px;
   color: #5b5bb3;
   font-size: 13px;
-  font-family: 'Gilroy', sans-serif;
+  font-family: Gilroy, sans-serif;
   font-weight: 700;
   cursor: pointer;
 }
@@ -1115,7 +1081,7 @@ body.dark-mode {
   text-align: center;
   color: #ef4444;
   font-size: 14px;
-  font-family: 'Gilroy', sans-serif;
+  font-family: Gilroy, sans-serif;
   font-weight: 500;
 }
 
@@ -1162,7 +1128,7 @@ body.dark-mode {
 
 .nm-title {
   color: #1e2026;
-  font-family: 'Gilroy', sans-serif;
+  font-family: Gilroy, sans-serif;
   font-weight: 700;
   line-height: 1.33;
   word-wrap: break-word;
@@ -1175,7 +1141,7 @@ body.dark-mode {
   margin-top: 4px;
   color: #5b6571;
   font-size: 13px;
-  font-family: 'Avenir', sans-serif;
+  font-family: Avenir, sans-serif;
   font-weight: 500;
   word-break: break-all;
 }
@@ -1203,7 +1169,7 @@ body.dark-mode {
   flex: 1 1 0;
   text-align: center;
   color: #3d444d;
-  font-family: 'Avenir', sans-serif;
+  font-family: Avenir, sans-serif;
   font-weight: 500;
   line-height: 1.36;
   word-wrap: break-word;
@@ -1230,7 +1196,7 @@ body.dark-mode {
 .nm-label {
   color: #5b6571;
   font-size: 14px;
-  font-family: 'Avenir', sans-serif;
+  font-family: Avenir, sans-serif;
   font-weight: 500;
   line-height: 21.7px;
 }
@@ -1279,7 +1245,7 @@ body.dark-mode {
   text-align: left;
   color: #1e2026;
   font-size: 14px;
-  font-family: 'Avenir', sans-serif;
+  font-family: Avenir, sans-serif;
   font-weight: 500;
   line-height: 21.7px;
 }
@@ -1336,7 +1302,7 @@ body.dark-mode {
 .nm-group-header {
   padding: 6px 14px;
   font-size: 11px;
-  font-family: 'Avenir', sans-serif;
+  font-family: Avenir, sans-serif;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -1356,7 +1322,7 @@ body.dark-mode {
   gap: 8px;
   cursor: pointer;
   font-size: 14px;
-  font-family: 'Avenir', sans-serif;
+  font-family: Avenir, sans-serif;
   font-weight: 400;
   color: #1e2026;
   background: transparent;
@@ -1393,7 +1359,7 @@ body.dark-mode {
 .nm-tooltip-title {
   margin: 0;
   font-size: 13px;
-  font-family: 'Gilroy', sans-serif;
+  font-family: Gilroy, sans-serif;
   font-weight: 700;
   color: #1e2026;
 }
@@ -1404,7 +1370,7 @@ body.dark-mode {
 .nm-tooltip-body {
   margin: 8px 0 0;
   font-size: 13px;
-  font-family: 'Avenir', sans-serif;
+  font-family: Avenir, sans-serif;
   line-height: 1.5;
   color: #3d444d;
 }
@@ -1444,7 +1410,7 @@ body.dark-mode {
 
 .nm-btn-label {
   font-size: 14px;
-  font-family: 'Gilroy', sans-serif;
+  font-family: Gilroy, sans-serif;
   font-weight: 700;
   line-height: 21.7px;
 }
@@ -1500,7 +1466,7 @@ body.dark-mode {
 .vr-network-label {
   color: #3d444d;
   font-size: 16px;
-  font-family: 'Gilroy', sans-serif;
+  font-family: Gilroy, sans-serif;
   font-weight: 500;
   line-height: 20px;
   white-space: nowrap;
@@ -1539,7 +1505,7 @@ body.dark-mode {
   flex: 1 1 0;
   color: #1e2026;
   font-size: 14px;
-  font-family: 'Avenir', sans-serif;
+  font-family: Avenir, sans-serif;
   font-weight: 500;
   line-height: 21.7px;
   overflow: hidden;
@@ -1620,7 +1586,7 @@ body.dark-mode {
 .vr-upload-btn-label {
   color: #5b5bb3;
   font-size: 14px;
-  font-family: 'Gilroy', sans-serif;
+  font-family: Gilroy, sans-serif;
   font-weight: 700;
   line-height: 21.7px;
 }
@@ -1657,7 +1623,7 @@ body.dark-mode {
 .vr-issued-by-label {
   color: #5b6571;
   font-size: 16px;
-  font-family: 'Avenir', sans-serif;
+  font-family: Avenir, sans-serif;
   font-weight: 500;
   line-height: 24.48px;
 }
@@ -1668,7 +1634,7 @@ body.dark-mode {
 .vr-issued-by-value {
   color: #1e2026;
   font-size: 16px;
-  font-family: 'Gilroy', sans-serif;
+  font-family: Gilroy, sans-serif;
   font-weight: 700;
   line-height: 24.48px;
   word-break: break-all;
@@ -1708,7 +1674,7 @@ body.dark-mode {
 
 .vr-tag-text {
   font-size: 14px;
-  font-family: 'Gilroy', sans-serif;
+  font-family: Gilroy, sans-serif;
   font-weight: 700;
   line-height: 21.7px;
 }
@@ -1753,7 +1719,7 @@ body.dark-mode {
   flex: 1 1 0;
   color: #3d444d;
   font-size: 16px;
-  font-family: 'Avenir', sans-serif;
+  font-family: Avenir, sans-serif;
   font-weight: 500;
   line-height: 24.48px;
 }
@@ -1781,7 +1747,7 @@ body.dark-mode {
 .vr-nft-link {
   color: #5b5bb3;
   font-size: 16px;
-  font-family: 'Gilroy', sans-serif;
+  font-family: Gilroy, sans-serif;
   font-weight: 700;
   line-height: 24.48px;
   background: none;
@@ -1829,7 +1795,7 @@ body.dark-mode {
 .vr-title-col-label {
   color: #5b6571;
   font-size: 16px;
-  font-family: 'Avenir', sans-serif;
+  font-family: Avenir, sans-serif;
   font-weight: 500;
   line-height: 24.48px;
 }
@@ -1840,7 +1806,7 @@ body.dark-mode {
 .vr-title-col-name {
   color: #1e2026;
   font-size: 16px;
-  font-family: 'Gilroy', sans-serif;
+  font-family: Gilroy, sans-serif;
   font-weight: 700;
   line-height: 24.48px;
 }
@@ -1851,7 +1817,7 @@ body.dark-mode {
 .vr-title-col-addr {
   color: #006c99;
   font-size: 14px;
-  font-family: 'Avenir', sans-serif;
+  font-family: Avenir, sans-serif;
   font-weight: 500;
   line-height: 21.7px;
   word-break: break-all;
@@ -1886,7 +1852,7 @@ body.dark-mode {
   padding: 4px;
   color: #ffffff;
   font-size: 14px;
-  font-family: 'Gilroy', sans-serif;
+  font-family: Gilroy, sans-serif;
   font-weight: 700;
   line-height: 21.7px;
 }
@@ -1937,7 +1903,7 @@ body.dark-mode {
   padding: 12px 16px;
   cursor: pointer;
   font-size: 16px;
-  font-family: 'Gilroy', sans-serif;
+  font-family: Gilroy, sans-serif;
   font-weight: 700;
   color: #5b6571;
   white-space: nowrap;
@@ -1974,6 +1940,22 @@ body.dark-mode {
   z-index: 1;
 }
 
+.vr-template-tab--invalid {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.vr-template-tab--invalid svg {
+  flex-shrink: 0;
+}
+
+.vr-template-tab--invalid span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
 .vr-renderer-section {
   border-radius: 12px;
   overflow: hidden;
@@ -2004,7 +1986,7 @@ body.dark-mode {
   display: block;
   font-size: 20px;
   font-weight: 700;
-  font-family: 'Gilroy', sans-serif;
+  font-family: Gilroy, sans-serif;
   color: #1e2026;
   margin-bottom: 4px;
 }
@@ -2012,7 +1994,7 @@ body.dark-mode {
 .vr-doc-utility-detail {
   font-size: 14px;
   font-weight: 500;
-  font-family: 'Avenir', 'Gilroy', sans-serif;
+  font-family: Avenir, Gilroy, sans-serif;
   color: #5b6571;
   word-break: break-all;
 }
@@ -2150,7 +2132,7 @@ body.dark-mode {
 }
 
 .vr-attachment-name {
-  font-family: 'Gilroy', sans-serif;
+  font-family: Gilroy, sans-serif;
   font-size: 14px;
   font-weight: 700;
   color: #1e2026;
@@ -2160,7 +2142,7 @@ body.dark-mode {
 }
 
 .vr-attachment-type {
-  font-family: 'Avenir', 'Gilroy', sans-serif;
+  font-family: Avenir, Gilroy, sans-serif;
   font-size: 12px;
   color: #5b6571;
 }
@@ -2188,6 +2170,140 @@ body.dark-mode {
   outline-offset: -2px;
 }
 
+.vr-attachment-download--disabled {
+  cursor: default;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* Invalid Attachments Banner */
+.vr-invalid-banner {
+  padding: 8px;
+  background: #fddae2;
+  border-radius: 12px;
+  border: 1px solid rgba(169, 178, 187, 0.33);
+  display: flex;
+  flex-direction: column;
+}
+
+.vr-invalid-banner-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px;
+}
+
+.vr-invalid-banner-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.vr-invalid-banner-title {
+  font-family: Gilroy, sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 20px;
+  color: #1e2026;
+}
+
+.vr-invalid-banner-toggle {
+  appearance: none;
+  background: none;
+  border: none;
+  padding: 2px;
+  cursor: pointer;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  min-height: 32px;
+  gap: 4px;
+}
+
+.vr-invalid-banner-toggle:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.vr-invalid-banner-toggle:focus-visible {
+  outline: 2px solid #5b5bb3;
+  outline-offset: 2px;
+}
+
+.vr-invalid-banner-toggle-label {
+  font-family: Gilroy, sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 19.8px;
+  color: #5b5bb3;
+  white-space: nowrap;
+}
+
+.vr-invalid-banner-body {
+  padding: 8px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.vr-invalid-banner-spacer {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.vr-invalid-banner-text {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  font-family: Avenir, sans-serif;
+  font-size: 16px;
+  line-height: 21.7px;
+  color: #3d444d;
+}
+
+.vr-invalid-banner-desc {
+  font-weight: 500;
+}
+
+.vr-invalid-banner-list {
+  margin: 4px 0 0;
+  padding-left: 20px;
+  list-style: disc;
+}
+
+.vr-invalid-banner-file {
+  font-weight: 800;
+}
+
+/* Dark mode — Invalid Attachments Banner */
+.dark-mode .vr-invalid-banner {
+  background: #3b1111;
+  border-color: rgba(48, 54, 61, 0.8);
+}
+
+.dark-mode .vr-invalid-banner-title {
+  color: #fca5a5;
+}
+
+.dark-mode .vr-invalid-banner-desc {
+  color: #d1d5db;
+}
+
+.dark-mode .vr-invalid-banner-file {
+  color: #fca5a5;
+}
+
+.dark-mode .vr-invalid-banner-toggle:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.dark-mode .vr-invalid-banner svg path[fill='#661228'] {
+  fill: #fca5a5;
+}
+
 /* Dark mode — Template Renderer */
 .dark-mode .vr-template-tab {
   background: #21262d;
@@ -2204,6 +2320,18 @@ body.dark-mode {
   color: #e6edf3;
   border-color: rgba(48, 54, 61, 0.8);
   border-bottom-color: #1c2128;
+}
+
+.dark-mode .vr-template-tab--invalid svg path {
+  fill: #f87171;
+}
+
+.dark-mode .vr-template-tab--active.vr-template-tab--invalid svg path {
+  fill: #ef4444;
+}
+
+.dark-mode .vr-invalid-banner-toggle svg path {
+  fill: #a78bfa;
 }
 
 .dark-mode .vr-renderer-section {
@@ -2295,7 +2423,7 @@ body.dark-mode {
   border-radius: 16px;
   opacity: 1;
   border: 1px solid var(--Neutral-33-90, #a9b2bb54);
-  box-shadow: 0px 8px 32px 0px var(--Primary3360);
+  box-shadow: 0px 8px 32px 0px rgba(104, 106, 210, 0.33);
   background:
     linear-gradient(
       0deg,
@@ -2320,7 +2448,7 @@ body.dark-mode {
       var(--Base-66-Base-L2, rgba(30, 32, 38, 0.66))
     );
   border: 1px solid var(--Neutral-33-90, #3d444d54);
-  box-shadow: 0px 8px 32px 0px var(--Primary3360);
+  box-shadow: 0px 8px 32px 0px rgba(104, 106, 210, 0.33);
 }
 
 /* Header Section */
@@ -2349,7 +2477,7 @@ body.dark-mode {
   color: #dee4e9;
 }
 .endorsement-chain .subheader {
-  font-family: 'Avenir', sans-serif;
+  font-family: Avenir, sans-serif;
   font-weight: 500;
   font-size: 12px;
   line-height: 165%;
@@ -2372,20 +2500,21 @@ body.dark-mode {
   color: #60636b;
 }
 .endorsement-chain .wallet-address {
-  font-family: 'Avenir', sans-serif;
+  font-family: Avenir, sans-serif;
   font-weight: 500;
   font-size: 14px;
   line-height: 155%;
   letter-spacing: 0%;
   vertical-align: middle;
   color: #5b5bb3;
-  overflow-wrap: break-word;
+  overflow-wrap: anywhere;
+  word-break: break-all;
   min-height: 22px;
   flex-shrink: 0;
 }
 
 .endorsement-chain .remarks {
-  font-family: 'Avenir', sans-serif;
+  font-family: Avenir, sans-serif;
   font-weight: 500;
   font-size: 14px;
   line-height: 155%;
@@ -2399,7 +2528,7 @@ body.dark-mode {
   color: #60636b;
 }
 .endorsement-chain .organization {
-  font-family: 'Avenir', sans-serif;
+  font-family: Avenir, sans-serif;
   font-weight: 500;
   font-size: 14px;
   line-height: 155%;
@@ -2416,7 +2545,7 @@ body.dark-mode {
   height: 144.48px;
 }
 .endorsement-chain .date-frame {
-  font-family: 'Avenir', sans-serif;
+  font-family: Avenir, sans-serif;
   height: 36px;
   gap: 10px;
   padding: 8px;
@@ -2442,7 +2571,7 @@ body.dark-mode {
 .ec-header-title {
   flex: 1;
   margin: 0;
-  font-family: 'Gilroy', sans-serif;
+  font-family: Gilroy, sans-serif;
   font-weight: 700;
   font-size: 24px;
   line-height: 133%;
@@ -2589,7 +2718,7 @@ body.dark-mode {
 
 /* Column */
 .entity-content-body .column {
-  min-width: 240px;
+  min-width: 0;
   border-radius: 8px;
   padding: 8px;
   opacity: 1;
@@ -2617,15 +2746,6 @@ body.dark-mode {
     min-width: auto;
     flex: 1;
   }
-}
-
-/* Chronology Chain */
-.chronology-chain {
-  width: 24px;
-  height: 160px;
-  padding-right: 8px;
-  padding-left: 8px;
-  gap: 0;
 }
 
 /* Line Design Component */

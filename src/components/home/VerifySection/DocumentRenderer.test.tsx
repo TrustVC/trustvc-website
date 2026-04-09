@@ -4,8 +4,8 @@ import DocumentRenderer from './DocumentRenderer'
 
 // Mock FrameConnector
 vi.mock('@trustvc/decentralized-renderer-react-components', () => ({
-  FrameConnector: vi.fn(({ style }: any) => (
-    <div data-testid="frame-connector" style={style} />
+  FrameConnector: vi.fn(({ style, source }: any) => (
+    <div data-testid="frame-connector" style={style} data-source={source} />
   )),
   renderDocument: vi.fn(() => ({ type: 'RENDER_DOCUMENT' })),
   selectTemplate: vi.fn((id: string) => ({
@@ -67,10 +67,20 @@ describe('DocumentRenderer', () => {
     vi.mocked(helperModule.getAttachments).mockReturnValue([])
   })
 
-  it('renders nothing when no templateSource', () => {
-    vi.mocked(helperModule.getTemplateSourceUrl).mockReturnValue(undefined)
-    const { container } = render(<DocumentRenderer {...defaultProps} />)
+  it('renders nothing when no rawDocument', () => {
+    const { container } = render(
+      <DocumentRenderer rawDocument={undefined as any} fileName="test.json" />
+    )
     expect(container.innerHTML).toBe('')
+  })
+
+  it('falls back to default template source when getTemplateSourceUrl returns undefined', () => {
+    vi.mocked(helperModule.getTemplateSourceUrl).mockReturnValue(undefined)
+    render(<DocumentRenderer {...defaultProps} />)
+    const frame = screen.getByTestId('frame-connector')
+    expect(frame.getAttribute('data-source')).toBe(
+      'https://generic-templates.tradetrust.io/'
+    )
   })
 
   it('renders FrameConnector when templateSource exists', () => {

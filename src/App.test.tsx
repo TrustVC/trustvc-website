@@ -7,6 +7,7 @@ describe('App Component', () => {
   beforeEach(() => {
     // Clear localStorage before each test
     localStorage.clear()
+    document.body.classList.remove('dark-mode')
   })
 
   it('renders without crashing', () => {
@@ -30,14 +31,15 @@ describe('App Component', () => {
   })
 
   it('starts with light mode by default', () => {
-    render(
+    const { container } = render(
       <MemoryRouter>
         <App />
       </MemoryRouter>
     )
 
-    const app = document.querySelector('.min-h-screen')
-    expect(app).toBeInTheDocument()
+    const nav = container.querySelector('.navbar-light')
+    expect(nav).toBeInTheDocument()
+    expect(document.body.classList.contains('dark-mode')).toBe(false)
   })
 
   it('persists dark mode to localStorage', () => {
@@ -53,9 +55,12 @@ describe('App Component', () => {
       btn.querySelector('svg path[d*="M10.0762"]')
     )
 
-    expect(moonButton).toBeTruthy()
-    fireEvent.click(moonButton as HTMLButtonElement)
-    expect(localStorage.getItem('darkMode')).toBe('true')
+    expect(moonButton).toBeDefined()
+    fireEvent.click(moonButton!)
+
+    // Check localStorage
+    const savedMode = localStorage.getItem('darkMode')
+    expect(savedMode).toBe('true')
   })
 
   it('loads dark mode from localStorage', () => {

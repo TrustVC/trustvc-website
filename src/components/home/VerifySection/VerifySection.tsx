@@ -8,6 +8,7 @@ import PrimaryButton from '../../common/PrimaryButton'
 import EndorsementChain from '../EndorsementChain'
 import { useEndorsementChain } from '../EndorsementChain/useEndorsementChain'
 import Spinner from '../../common/Spinner'
+import { getAttachments, isValidAttachmentData } from '../../../utils/helper'
 
 interface VerifySectionProps {
   isDarkMode: boolean
@@ -67,6 +68,17 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
     verifiedChainId: isValidTransferable ? verifiedChainId : undefined,
     keyId: isValidTransferable ? keyId : undefined,
   })
+
+  const invalidAttachments = React.useMemo(() => {
+    if (!rawDocument) return []
+    const attachments = getAttachments(rawDocument)
+    return attachments.filter(
+      att =>
+        typeof att.data !== 'string' ||
+        !att.data ||
+        !isValidAttachmentData(att.data, att.type)
+    )
+  }, [rawDocument])
 
   const networkName = verifiedChainId
     ? (CHAIN_NAMES[verifiedChainId] ?? `Chain ${verifiedChainId}`)
@@ -161,6 +173,7 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
                 tokenRegistryAddress={tokenRegistryAddress}
                 tags={tags}
                 rawDocument={rawDocument}
+                invalidAttachments={invalidAttachments}
                 getGroupStatus={getGroupStatus}
                 onReset={handleReset}
                 onViewEndorsementChain={handleShowEndorsementChain}

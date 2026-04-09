@@ -9,6 +9,7 @@ import {
   getAttachments,
   formatFileSize,
   getFileExtension,
+  isValidAttachmentData,
 } from './helper'
 
 // Mock @trustvc/trustvc
@@ -339,5 +340,45 @@ describe('getAttachments', () => {
     vi.mocked(trustvc.isWrappedV2Document).mockReturnValue(true)
     vi.mocked(trustvc.getDataV2).mockReturnValue({} as any)
     expect(getAttachments({})).toEqual([])
+  })
+})
+
+describe('isValidAttachmentData', () => {
+  it('returns true for valid base64 string', () => {
+    const validBase64 = btoa('hello world')
+    expect(isValidAttachmentData(validBase64)).toBe(true)
+  })
+
+  it('returns false for invalid base64 string', () => {
+    expect(isValidAttachmentData('not-valid-base64!!!')).toBe(false)
+  })
+
+  it('returns false for empty string', () => {
+    expect(isValidAttachmentData('')).toBe(false)
+  })
+
+  it('returns true for valid PDF base64', () => {
+    // Create a minimal valid PDF structure that round-trips cleanly through btoa/atob
+    const pdfContent =
+      '%PDF-1.4 1 0 obj << /Type /Catalog /Root 1 0 R >> endobj xref 0 1 trailer << >> startxref 0 %%EOF padding to make it long enough for validation checks'
+    const validPdf = btoa(pdfContent)
+    expect(isValidAttachmentData(validPdf, 'application/pdf')).toBe(true)
+  })
+
+  it('returns false for non-PDF data with PDF mime type', () => {
+    const notPdf = btoa(
+      'this is not a pdf file and has enough content to pass length check'
+    )
+    expect(isValidAttachmentData(notPdf, 'application/pdf')).toBe(false)
+  })
+
+  it('returns false for PDF too short', () => {
+    const shortPdf = btoa('%PDF-1.4\nshort')
+    expect(isValidAttachmentData(shortPdf, 'application/pdf')).toBe(false)
+  })
+
+  it('returns true for non-PDF mime types with valid base64', () => {
+    const validBase64 = btoa('some image data here')
+    expect(isValidAttachmentData(validBase64, 'image/png')).toBe(true)
   })
 })

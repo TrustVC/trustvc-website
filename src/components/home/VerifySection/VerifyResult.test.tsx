@@ -175,8 +175,6 @@ describe('VerifyResult', () => {
     })
 
     it('does not render tags section when tags prop is absent', () => {
-      render(<VerifyResult {...defaultProps} />)
-      // No tag chips rendered
       const { container } = render(<VerifyResult {...defaultProps} />)
       expect(container.querySelector('.vr-issue-tags')).not.toBeInTheDocument()
     })

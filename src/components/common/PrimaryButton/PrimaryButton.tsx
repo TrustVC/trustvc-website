@@ -35,8 +35,19 @@ const PrimaryButton = ({
 
   if (as === 'label') {
     return (
-      <div className={clsx('standard-button-primary', className)}>
-        <label htmlFor={htmlFor} className="button-boundary" onClick={onClick}>
+      <div
+        className={clsx(
+          'standard-button-primary',
+          disabled && 'opacity-50 pointer-events-none',
+          className
+        )}
+      >
+        <label
+          htmlFor={disabled ? undefined : htmlFor}
+          className="button-boundary"
+          onClick={disabled ? undefined : onClick}
+          aria-disabled={disabled || undefined}
+        >
           <div className="button-padding" />
           {icon && <div className="contextual-icon-frame">{icon}</div>}
           <div className="text-frame">
