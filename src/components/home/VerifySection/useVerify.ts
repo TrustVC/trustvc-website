@@ -19,6 +19,7 @@ import {
   getDocumentData as getDocumentDataFromWrappedDocument,
 } from '@trustvc/trustvc'
 import { toErrorMessage, getRpcUrl } from '../../../utils/helper'
+import { useDocumentContext } from '../../common/contexts/DocumentContext'
 
 export type VerifyStatus =
   | 'idle'
@@ -275,6 +276,12 @@ export const makeExplorerAddressURL = (
 
 export const useVerify = (): UseVerifyReturn => {
   const verificationIdRef = useRef(0)
+  const {
+    setKeyId: setKeyIdContext,
+    setTokenRegistryVersion: setTokenRegistryVersionContext,
+    setTokenId: setTokenIdContext,
+    setTokenRegistryAddress: setTokenRegistryAddressContext,
+  } = useDocumentContext()
   const [verifyStatus, setVerifyStatus] = useState<VerifyStatus>('idle')
   const [fragments, setFragments] = useState<VerificationFragment[]>([])
   const [fileName, setFileName] = useState('')
@@ -333,13 +340,17 @@ export const useVerify = (): UseVerifyReturn => {
       ? getTokenRegistryAddress(doc as any)
       : undefined
     setTokenRegistryAddress(registryAddress)
+    setTokenRegistryAddressContext(registryAddress || null)
 
+    //add code to fetch TokenId , keyId from the document
     const _keyId = getDocumentData(doc as any)?.id
     setKeyId(_keyId)
+    setKeyIdContext(_keyId || null)
 
     if (transferable) {
       const _tokenId = getTokenId(doc as any)
       setTokenId(_tokenId)
+      setTokenIdContext(_tokenId || null)
     }
 
     // Detect token registry version (async)
@@ -358,6 +369,7 @@ export const useVerify = (): UseVerifyReturn => {
     if (isStale()) return
 
     setTokenRegistryVersion(trVersion)
+    setTokenRegistryVersionContext(trVersion)
 
     // Compute document tags
     const documentTags = getDocumentTags(doc, trVersion)
