@@ -69,6 +69,10 @@ export default {
           'linear-gradient(0deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)), linear-gradient(0deg, rgba(30, 32, 38, 0.66), rgba(30, 32, 38, 0.66))',
       },
     },
+    alert: {
+      20: '#661228',
+      50: '#B83152',
+    },
   },
   plugins: [],
 }
