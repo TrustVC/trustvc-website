@@ -17,6 +17,7 @@ interface AllTheProvidersProps {
   routerProps?: MemoryRouterProps
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 const AllTheProviders: React.FC<AllTheProvidersProps> = ({
   children,
   routerProps,
@@ -49,5 +50,6 @@ const customRender = (ui: ReactElement, options?: CustomRenderOptions) => {
   })
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export * from '@testing-library/react'
 export { customRender as render }
