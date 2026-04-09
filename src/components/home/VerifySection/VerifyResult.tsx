@@ -178,7 +178,7 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
             {providerType === SIGNER_TYPE.METAMASK && account && (
               <Connected
                 imgSrc="/images/wallet.png"
-                // openConnectToBlockchainModel={true}
+                openConnectToBlockchainModel={true}
               />
             )}
           </div>
