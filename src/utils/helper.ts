@@ -152,6 +152,49 @@ export const formatFileSize = (base64Data: string): string => {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
 }
 
+const isValidBase64 = (str: string): boolean => {
+  try {
+    if (!str) return false
+    const base64Regex = /^[A-Za-z0-9+/]*={0,2}$/
+    if (!base64Regex.test(str)) return false
+    const decoded = atob(str)
+    const reencoded = btoa(decoded)
+    return reencoded === str
+  } catch {
+    return false
+  }
+}
+
+export const isValidAttachmentData = (
+  str: string,
+  mimeType?: string
+): boolean => {
+  try {
+    if (!isValidBase64(str)) return false
+
+    if (mimeType === 'application/pdf') {
+      try {
+        const binaryString = atob(str)
+        if (!binaryString.startsWith('%PDF-')) return false
+        if (binaryString.length < 100) return false
+        const hasXref =
+          binaryString.includes('xref') || binaryString.includes('/Root')
+        const hasTrailer =
+          binaryString.includes('trailer') ||
+          binaryString.includes('startxref')
+        if (!hasXref && !hasTrailer) return false
+        return true
+      } catch {
+        return false
+      }
+    }
+
+    return true
+  } catch {
+    return false
+  }
+}
+
 export const getFileExtension = (
   filename: string,
   mimeType: string
@@ -160,6 +203,7 @@ export const getFileExtension = (
     const ext = filename.split('.').pop()?.toUpperCase()
     if (ext && ext !== filename.toUpperCase()) return ext
   }
+  if (!mimeType) return 'FILE'
   if (mimeType.includes('pdf')) return 'PDF'
   if (mimeType.includes('png')) return 'PNG'
   if (mimeType.includes('jpeg') || mimeType.includes('jpg')) return 'JPG'

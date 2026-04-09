@@ -42,10 +42,9 @@ describe('Navbar Component', () => {
       btn.querySelector('svg path[d*="M12 19.3755"]')
     )
 
-    if (sunButton) {
-      fireEvent.click(sunButton)
-      expect(mockSetIsDarkMode).toHaveBeenCalledWith(false)
-    }
+    expect(sunButton).toBeDefined()
+    fireEvent.click(sunButton!)
+    expect(mockSetIsDarkMode).toHaveBeenCalledWith(false)
   })
 
   it('toggles dark mode when moon icon is clicked', () => {
@@ -57,10 +56,9 @@ describe('Navbar Component', () => {
       btn.querySelector('svg path[d*="M10.0762"]')
     )
 
-    if (moonButton) {
-      fireEvent.click(moonButton)
-      expect(mockSetIsDarkMode).toHaveBeenCalledWith(true)
-    }
+    expect(moonButton).toBeDefined()
+    fireEvent.click(moonButton!)
+    expect(mockSetIsDarkMode).toHaveBeenCalledWith(true)
   })
 
   it('opens mobile menu when hamburger is clicked', () => {
@@ -71,15 +69,12 @@ describe('Navbar Component', () => {
       .getAllByRole('button')
       .find(btn => btn.querySelector('svg path[d*="M20.1694 16.75"]'))
 
-    expect(hamburgerButton).toBeInTheDocument()
+    expect(hamburgerButton).toBeDefined()
+    fireEvent.click(hamburgerButton!)
 
-    if (hamburgerButton) {
-      fireEvent.click(hamburgerButton)
-
-      // Mobile menu should appear with navigation items
-      const homeLinks = screen.getAllByText('Home')
-      expect(homeLinks.length).toBeGreaterThan(1) // Desktop + Mobile
-    }
+    // Mobile menu should appear with navigation items
+    const homeLinks = screen.getAllByText('Home')
+    expect(homeLinks.length).toBeGreaterThan(1) // Desktop + Mobile
   })
 
   it('opens ecosystem dropdown on hover', () => {

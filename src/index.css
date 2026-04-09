@@ -161,35 +161,6 @@ body.dark-mode {
     rgba(30, 32, 38, 1);
 }
 
-.navbar-content {
-  width: 100%;
-  height: 72px;
-  padding: 0.5rem;
-  border-radius: 1rem;
-  backdrop-filter: blur(12px);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.navbar-content-light {
-  background:
-    linear-gradient(
-      0deg,
-      rgba(222, 228, 233, 1) 0%,
-      rgba(222, 228, 233, 1) 100%
-    ),
-    rgba(255, 255, 255, 1);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.navbar-content-dark {
-  background:
-    linear-gradient(0deg, rgba(30, 32, 38, 1) 0%, rgba(30, 32, 38, 1) 100%),
-    rgba(30, 32, 38, 1);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
 .logo-wrapper {
   display: flex;
   align-items: flex-end;
@@ -1042,11 +1013,6 @@ body.dark-mode {
   justify-content: center;
   min-height: 140px;
   gap: 12px;
-}
-
-.dropbox-area--result {
-  align-items: stretch;
-  gap: 16px;
 }
 
 /* Spinner */
@@ -1974,6 +1940,22 @@ body.dark-mode {
   z-index: 1;
 }
 
+.vr-template-tab--invalid {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.vr-template-tab--invalid svg {
+  flex-shrink: 0;
+}
+
+.vr-template-tab--invalid span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
 .vr-renderer-section {
   border-radius: 12px;
   overflow: hidden;
@@ -2188,6 +2170,134 @@ body.dark-mode {
   outline-offset: -2px;
 }
 
+/* Invalid Attachments Banner */
+.vr-invalid-banner {
+  padding: 8px;
+  background: #fddae2;
+  border-radius: 12px;
+  border: 1px solid rgba(169, 178, 187, 0.33);
+  display: flex;
+  flex-direction: column;
+}
+
+.vr-invalid-banner-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px;
+}
+
+.vr-invalid-banner-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.vr-invalid-banner-title {
+  font-family: 'Gilroy', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 20px;
+  color: #1e2026;
+}
+
+.vr-invalid-banner-toggle {
+  appearance: none;
+  background: none;
+  border: none;
+  padding: 2px;
+  cursor: pointer;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  min-height: 32px;
+  gap: 4px;
+}
+
+.vr-invalid-banner-toggle:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.vr-invalid-banner-toggle:focus-visible {
+  outline: 2px solid #5b5bb3;
+  outline-offset: 2px;
+}
+
+.vr-invalid-banner-toggle-label {
+  font-family: 'Gilroy', sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 19.8px;
+  color: #5b5bb3;
+  white-space: nowrap;
+}
+
+.vr-invalid-banner-body {
+  padding: 8px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.vr-invalid-banner-spacer {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.vr-invalid-banner-text {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Avenir', sans-serif;
+  font-size: 16px;
+  line-height: 21.7px;
+  color: #3d444d;
+}
+
+.vr-invalid-banner-desc {
+  font-weight: 500;
+}
+
+.vr-invalid-banner-list {
+  margin: 4px 0 0;
+  padding-left: 20px;
+  list-style: disc;
+}
+
+.vr-invalid-banner-file {
+  font-weight: 800;
+}
+
+/* Dark mode — Invalid Attachments Banner */
+.dark-mode .vr-invalid-banner {
+  background: #3b1111;
+  outline-color: rgba(48, 54, 61, 0.8);
+}
+
+.dark-mode .vr-invalid-banner-title {
+  color: #fca5a5;
+}
+
+.dark-mode .vr-invalid-banner-desc {
+  color: #d1d5db;
+}
+
+.dark-mode .vr-invalid-banner-file {
+  color: #fca5a5;
+}
+
+.dark-mode .vr-invalid-banner-toggle:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.dark-mode .vr-invalid-banner svg path[fill="#661228"] {
+  fill: #fca5a5;
+}
+
 /* Dark mode — Template Renderer */
 .dark-mode .vr-template-tab {
   background: #21262d;
@@ -2204,6 +2314,18 @@ body.dark-mode {
   color: #e6edf3;
   border-color: rgba(48, 54, 61, 0.8);
   border-bottom-color: #1c2128;
+}
+
+.dark-mode .vr-template-tab--invalid svg path {
+  fill: #f87171;
+}
+
+.dark-mode .vr-template-tab--active.vr-template-tab--invalid svg path {
+  fill: #ef4444;
+}
+
+.dark-mode .vr-invalid-banner-toggle svg path {
+  fill: #a78bfa;
 }
 
 .dark-mode .vr-renderer-section {
@@ -2295,7 +2417,7 @@ body.dark-mode {
   border-radius: 16px;
   opacity: 1;
   border: 1px solid var(--Neutral-33-90, #a9b2bb54);
-  box-shadow: 0px 8px 32px 0px var(--Primary3360);
+  box-shadow: 0px 8px 32px 0px rgba(104, 106, 210, 0.33);
   background:
     linear-gradient(
       0deg,
@@ -2320,7 +2442,7 @@ body.dark-mode {
       var(--Base-66-Base-L2, rgba(30, 32, 38, 0.66))
     );
   border: 1px solid var(--Neutral-33-90, #3d444d54);
-  box-shadow: 0px 8px 32px 0px var(--Primary3360);
+  box-shadow: 0px 8px 32px 0px rgba(104, 106, 210, 0.33);
 }
 
 /* Header Section */
@@ -2379,7 +2501,8 @@ body.dark-mode {
   letter-spacing: 0%;
   vertical-align: middle;
   color: #5b5bb3;
-  overflow-wrap: break-word;
+  overflow-wrap: anywhere;
+  word-break: break-all;
   min-height: 22px;
   flex-shrink: 0;
 }
@@ -2589,7 +2712,7 @@ body.dark-mode {
 
 /* Column */
 .entity-content-body .column {
-  min-width: 240px;
+  min-width: 0;
   border-radius: 8px;
   padding: 8px;
   opacity: 1;
@@ -2617,15 +2740,6 @@ body.dark-mode {
     min-width: auto;
     flex: 1;
   }
-}
-
-/* Chronology Chain */
-.chronology-chain {
-  width: 24px;
-  height: 160px;
-  padding-right: 8px;
-  padding-left: 8px;
-  gap: 0;
 }
 
 /* Line Design Component */

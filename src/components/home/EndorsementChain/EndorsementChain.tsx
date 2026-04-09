@@ -236,7 +236,7 @@ const EndorsementChainLayout: React.FC<EndorsementChainProps> = ({
   const { status, errorMessage } = endorsementChainStatus ?? {}
 
   return (
-    <Overlay>
+    <Overlay ariaLabel="Endorsement Chain">
       <div
         className={`endorsement-chain ${isDarkMode ? 'dark-mode' : ''} ${status === 'loading' ? 'is-loading' : ''}`}
       >

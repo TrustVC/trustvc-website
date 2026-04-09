@@ -67,10 +67,17 @@ describe('DocumentRenderer', () => {
     vi.mocked(helperModule.getAttachments).mockReturnValue([])
   })
 
-  it('renders nothing when no templateSource', () => {
-    vi.mocked(helperModule.getTemplateSourceUrl).mockReturnValue(undefined)
-    const { container } = render(<DocumentRenderer {...defaultProps} />)
+  it('renders nothing when no rawDocument', () => {
+    const { container } = render(
+      <DocumentRenderer rawDocument={undefined as any} fileName="test.json" />
+    )
     expect(container.innerHTML).toBe('')
+  })
+
+  it('falls back to default template source when getTemplateSourceUrl returns undefined', () => {
+    vi.mocked(helperModule.getTemplateSourceUrl).mockReturnValue(undefined)
+    render(<DocumentRenderer {...defaultProps} />)
+    expect(screen.getByTestId('frame-connector')).toBeTruthy()
   })
 
   it('renders FrameConnector when templateSource exists', () => {

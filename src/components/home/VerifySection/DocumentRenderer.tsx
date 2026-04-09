@@ -21,6 +21,7 @@ import {
   PrinterIcon,
   DownloadIcon,
   FileIcon,
+  ExclamationTriangle,
 } from '../../common/Icons'
 
 interface TemplateTab {
@@ -33,11 +34,15 @@ const SCROLLBAR_WIDTH = 20
 interface DocumentRendererProps {
   rawDocument: unknown
   fileName: string
+  invalidAttachments?: DocumentAttachment[]
 }
+
+const DEFAULT_TEMPLATE_SOURCE = 'https://generic-templates.tradetrust.io/'
 
 const DocumentRenderer: React.FC<DocumentRendererProps> = ({
   rawDocument,
   fileName,
+  invalidAttachments = [],
 }) => {
   const toFrame = useRef<any>()
   const [templates, setTemplates] = useState<TemplateTab[]>([])
@@ -47,12 +52,20 @@ const DocumentRenderer: React.FC<DocumentRendererProps> = ({
   const [qrCodePopover, setQrCodePopover] = useState(false)
   const qrWrapperRef = useRef<HTMLDivElement>(null)
 
+  // Reset renderer state when document changes
+  useEffect(() => {
+    setIsRendererReady(false)
+    setTemplates([])
+    setSelectedTemplate('')
+  }, [rawDocument])
+
   const document = useMemo(
     () => (rawDocument ? getOpenAttestationData(rawDocument) : undefined),
     [rawDocument]
   )
+
   const templateSource = useMemo(
-    () => (rawDocument ? getTemplateSourceUrl(rawDocument) : undefined),
+    () => (rawDocument ? (getTemplateSourceUrl(rawDocument) ?? DEFAULT_TEMPLATE_SOURCE) : undefined),
     [rawDocument]
   )
   const qrCodeUrl = useMemo(
@@ -62,6 +75,11 @@ const DocumentRenderer: React.FC<DocumentRendererProps> = ({
   const attachments = useMemo(
     () => (rawDocument ? getAttachments(rawDocument) : []),
     [rawDocument]
+  )
+
+  const invalidFilenames = useMemo(
+    () => new Set(invalidAttachments.map((a) => a.filename)),
+    [invalidAttachments]
   )
 
   const onConnected = useCallback(
@@ -98,9 +116,11 @@ const DocumentRenderer: React.FC<DocumentRendererProps> = ({
 
   useEffect(() => {
     if (toFrame.current && document) {
-      toFrame.current(renderDocument({ document }))
+      toFrame.current(
+        renderDocument({ document, rawDocument: rawDocument as any })
+      )
     }
-  }, [document])
+  }, [document, rawDocument])
 
   useEffect(() => {
     if (
@@ -159,18 +179,23 @@ const DocumentRenderer: React.FC<DocumentRendererProps> = ({
         style={{ display: isRendererReady ? undefined : 'none' }}
       >
         <div className="vr-template-tabs" role="tablist">
-          {templates.map(({ id, label }) => (
-            <button
-              key={id}
-              id={`tab-${id}`}
-              role="tab"
-              aria-selected={id === selectedTemplate}
-              className={`vr-template-tab ${id === selectedTemplate ? 'vr-template-tab--active' : ''}`}
-              onClick={() => setSelectedTemplate(id)}
-            >
-              <span>{label}</span>
-            </button>
-          ))}
+          {templates.map(({ id, label }) => {
+            const isInvalid = invalidFilenames.has(label)
+            const isActive = id === selectedTemplate
+            return (
+              <button
+                key={id}
+                id={`tab-${id}`}
+                role="tab"
+                aria-selected={isActive}
+                className={`vr-template-tab ${isActive ? 'vr-template-tab--active' : ''}${isInvalid ? ' vr-template-tab--invalid' : ''}`}
+                onClick={() => setSelectedTemplate(id)}
+              >
+                {isInvalid && <ExclamationTriangle color={isActive ? '#B83152' : '#5B6571'} />}
+                <span>{label}</span>
+              </button>
+            )
+          })}
           {attachments.length > 0 && (
             <button
               id="tab-attachments"
@@ -241,7 +266,7 @@ const DocumentRenderer: React.FC<DocumentRendererProps> = ({
                       </div>
                     </button>
                     {qrCodePopover && (
-                      <div className="vr-qr-popover">
+                      <div className="vr-qr-popover" role="tooltip" aria-label="QR code">
                         <QRCodeSVG
                           value={qrCodeUrl}
                           level="H"
@@ -274,8 +299,6 @@ const DocumentRenderer: React.FC<DocumentRendererProps> = ({
                 {downloadHref && (
                   <a
                     download={fileName || 'document'}
-                    target="_blank"
-                    rel="noopener noreferrer"
                     href={downloadHref}
                     className="vr-doc-utility-btn"
                     aria-label="Download document"
@@ -352,6 +375,7 @@ const SAFE_MIME_TYPES = new Set([
 ])
 
 const getSafeDownloadHref = (type: string, data: string): string => {
+  if (!data) return '#'
   const mimeType = SAFE_MIME_TYPES.has(type) ? type : 'application/octet-stream'
   return `data:${mimeType};base64,${data}`
 }
