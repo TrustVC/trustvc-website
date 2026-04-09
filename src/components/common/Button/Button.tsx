@@ -1,10 +1,9 @@
-import {
+import React, {
   FunctionComponent,
   AnchorHTMLAttributes,
+  ButtonHTMLAttributes,
   LabelHTMLAttributes,
 } from 'react'
-import { ButtonSize, ButtonHeight } from './constants'
-import type { ButtonTradeTrust } from './types'
 
 interface GetSharedStylesButton {
   padding: string
@@ -17,12 +16,27 @@ const getSharedStylesButton = (shared: GetSharedStylesButton): string => {
   return `box-border transition-colors duration-200 ease-out cursor-pointer font-gilroy-bold border ${padding} ${height}`
 }
 
-const sharedSizeStyles = {
-  [ButtonSize.XS]: 'px-0.5',
-  [ButtonSize.SM]: 'p-0.5',
-  [ButtonSize.MD]: 'p-[5px]',
-  [ButtonSize.LG]: 'p-2',
-  [ButtonSize.FLEX]: 'p-[5px]',
+export enum ButtonSize {
+  XS = 'XS',
+  SM = 'SM',
+  MD = 'MD',
+  LG = 'LG',
+  FLEX = 'FLEX', // Flexible width button
+}
+
+export enum ButtonHeight {
+  SM = 'min-h-8', // 2rem = 32px
+  MD = 'min-h-10', // 2.5rem = 40px
+  LG = 'min-h-12', // 3rem = 48px
+}
+
+export interface ButtonTradeTrust extends ButtonHTMLAttributes<HTMLButtonElement> {
+  size?: ButtonSize
+  height?: ButtonHeight
+  btnType?: 'solid' | 'transparent'
+  width?: string // Custom width (e.g., '300px', '100%')
+  as?: 'button' | 'label'
+  htmlFor?: string
 }
 
 interface AnchorTradeTrust extends AnchorHTMLAttributes<HTMLAnchorElement> {
@@ -74,7 +88,7 @@ export const Button: FunctionComponent<ButtonTradeTrust> = ({
         disabled ? '!cursor-not-allowed !text-white !opacity-33' : ''
       }`}
       style={width ? { width, ...props.style } : props.style}
-      type="button"
+      type="submit"
       disabled={disabled}
       {...props}
     >
@@ -134,11 +148,11 @@ export const ButtonIcon: FunctionComponent<ButtonTradeTrust> = ({
 
   const { style: propsStyle, ...restProps } = props
 
-  // Create style object with width
+  // Create style object with width having !important via CSS custom property
   const buttonStyle = width
     ? {
         ...propsStyle,
-        width,
+        width: `${width} !important`,
         minWidth: width,
         maxWidth: width,
       }
@@ -151,7 +165,7 @@ export const ButtonIcon: FunctionComponent<ButtonTradeTrust> = ({
         disabled ? '!cursor-not-allowed !text-white !opacity-33' : ''
       }`}
       style={buttonStyle}
-      type="button"
+      type="submit"
       disabled={disabled}
     >
       {children}
@@ -166,14 +180,11 @@ export const LinkButton: FunctionComponent<AnchorTradeTrust> = ({
   height = ButtonHeight.MD,
   ...props
 }) => {
-  const shared = getSharedStylesButton({
-    padding: sharedSizeStyles[size],
-    height,
-  })
+  const shared = getSharedStylesButton({ padding: size, height })
 
   return (
     <a
-      className={`block ${shared} ${className || ''}`}
+      className={`block ${shared} ${className}`}
       rel="noopener noreferrer"
       {...props}
     >
@@ -189,13 +200,10 @@ export const LabelButton: FunctionComponent<LabelTradeTrust> = ({
   height = ButtonHeight.MD,
   ...props
 }) => {
-  const shared = getSharedStylesButton({
-    padding: sharedSizeStyles[size],
-    height,
-  })
+  const shared = getSharedStylesButton({ padding: size, height })
 
   return (
-    <label className={`block ${shared} ${className || ''}`} {...props}>
+    <label className={`block ${shared} ${className}`} {...props}>
       {children}
     </label>
   )

@@ -8,7 +8,8 @@ import {
   SIGNER_TYPE,
   useProviderContext,
 } from '../common/contexts/providerContext'
-// import { showDocumentTransferMessage } from '../common/Overlay/OverlayContent'
+import { showDocumentTransferMessage } from '../common/Overlay/OverlayContent'
+import { useOverlayContext } from '../common/contexts/OverlayContext'
 import { Button, ButtonSize } from '../common/Button'
 
 export interface ConnectToMetamaskModelProps {
@@ -96,6 +97,7 @@ const ConnectToMetamask: React.FC<ConnectToMetamaskProps> = ({
 }) => {
   const { upgradeToMetaMaskSigner, account, providerType } =
     useProviderContext()
+  const { showOverlay } = useOverlayContext()
 
   const handleConnectWallet = async () => {
     try {
@@ -108,12 +110,12 @@ const ConnectToMetamask: React.FC<ConnectToMetamaskProps> = ({
   const handleMetamaskError = (errorMesssage: string, errorCode: number) => {
     console.log('handleMetamaskError called:', errorMesssage, errorCode)
     const isUserDeniedAccountAuthorization = errorCode === 4001
-    // showOverlay(
-    //   showDocumentTransferMessage(errorMesssage, {
-    //     isSuccess: false,
-    //     isButtonMetamaskInstall: !isUserDeniedAccountAuthorization,
-    //   })
-    // ) // there is 2 type of errors that will be handled here, 1st = NO_METAMASK (error thrown from provider.tsx), 2nd = NO_USER_AUTHORIZATION (error from metamask extension itself).
+    showOverlay(
+      showDocumentTransferMessage(errorMesssage, {
+        isSuccess: false,
+        isButtonMetamaskInstall: !isUserDeniedAccountAuthorization,
+      })
+    ) // there is 2 type of errors that will be handled here, 1st = NO_METAMASK (error thrown from provider.tsx), 2nd = NO_USER_AUTHORIZATION (error from metamask extension itself).
   }
 
   return (
