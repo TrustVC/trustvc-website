@@ -65,7 +65,10 @@ const DocumentRenderer: React.FC<DocumentRendererProps> = ({
   )
 
   const templateSource = useMemo(
-    () => (rawDocument ? (getTemplateSourceUrl(rawDocument) ?? DEFAULT_TEMPLATE_SOURCE) : undefined),
+    () =>
+      rawDocument
+        ? (getTemplateSourceUrl(rawDocument) ?? DEFAULT_TEMPLATE_SOURCE)
+        : undefined,
     [rawDocument]
   )
   const qrCodeUrl = useMemo(
@@ -78,7 +81,7 @@ const DocumentRenderer: React.FC<DocumentRendererProps> = ({
   )
 
   const invalidFilenames = useMemo(
-    () => new Set(invalidAttachments.map((a) => a.filename)),
+    () => new Set(invalidAttachments.map(a => a.filename)),
     [invalidAttachments]
   )
 
@@ -191,7 +194,11 @@ const DocumentRenderer: React.FC<DocumentRendererProps> = ({
                 className={`vr-template-tab ${isActive ? 'vr-template-tab--active' : ''}${isInvalid ? ' vr-template-tab--invalid' : ''}`}
                 onClick={() => setSelectedTemplate(id)}
               >
-                {isInvalid && <ExclamationTriangle color={isActive ? '#B83152' : '#5B6571'} />}
+                {isInvalid && (
+                  <ExclamationTriangle
+                    color={isActive ? '#B83152' : '#5B6571'}
+                  />
+                )}
                 <span>{label}</span>
               </button>
             )
@@ -266,7 +273,11 @@ const DocumentRenderer: React.FC<DocumentRendererProps> = ({
                       </div>
                     </button>
                     {qrCodePopover && (
-                      <div className="vr-qr-popover" role="tooltip" aria-label="QR code">
+                      <div
+                        className="vr-qr-popover"
+                        role="tooltip"
+                        aria-label="QR code"
+                      >
                         <QRCodeSVG
                           value={qrCodeUrl}
                           level="H"
