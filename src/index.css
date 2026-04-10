@@ -3470,7 +3470,6 @@ p.small {
   opacity: 1;
   border-radius: 12px;
   padding: 8px 12px;
-  border-width: 1px;
   margin-left: auto;
   display: flex;
   align-items: center;
@@ -3479,10 +3478,10 @@ p.small {
   user-select: none;
   /* Button reset styles */
   background: none;
-  border: 1px solid transparent;
   font: inherit;
   text-align: left;
-  width: auto;
+  width: 100%;
+  border: 1px solid var(--Neutral-33-90, #a9b2bb54);
 }
 @media (max-width: 768px) {
   .connected-wallet-container {
@@ -3735,7 +3734,6 @@ p.small {
   padding: 8px;
   gap: 8px;
   opacity: 1;
-  border-radius: 8px;
 
   /* TrustVC/Surface/Base/BG/Cavity */
   background:
