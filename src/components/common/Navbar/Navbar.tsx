@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, Dispatch, SetStateAction } from 'react'
+import { Link } from 'react-router-dom'
 import Logo from '../Logo'
 
 interface NavbarProps {
@@ -89,8 +90,8 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
           {/* Navigation Tabs */}
           <div className="flex items-center">
             <div className="p-2">
-              <a
-                href="/"
+              <Link
+                to="/"
                 className="min-w-[40px] min-h-[40px] flex items-center justify-center px-1 py-[5px] rounded-lg transition-colors duration-200 hover:bg-opacity-10"
                 style={{
                   backgroundColor: 'transparent',
@@ -110,7 +111,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
                 >
                   Home
                 </div>
-              </a>
+              </Link>
             </div>
             <div className="p-2 relative">
               <button
@@ -176,8 +177,8 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
                   onMouseLeave={() => setIsEcosystemOpen(false)}
                 >
                   <div className="py-2">
-                    <a
-                      href="/"
+                    <Link
+                      to="/"
                       className="block px-4 py-2 text-sm font-medium font-['Gilroy'] transition-colors duration-200"
                       style={{
                         color: isDarkMode ? '#AAAEE6' : '#403D7D',
@@ -192,9 +193,9 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
                       }}
                     >
                       Placeholder
-                    </a>
-                    <a
-                      href="/"
+                    </Link>
+                    <Link
+                      to="/"
                       className="block px-4 py-2 text-sm font-medium font-['Gilroy'] transition-colors duration-200"
                       style={{
                         color: isDarkMode ? '#AAAEE6' : '#403D7D',
@@ -209,9 +210,9 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
                       }}
                     >
                       Placeholder
-                    </a>
-                    <a
-                      href="/"
+                    </Link>
+                    <Link
+                      to="/"
                       className="block px-4 py-2 text-sm font-medium font-['Gilroy'] transition-colors duration-200"
                       style={{
                         color: isDarkMode ? '#AAAEE6' : '#403D7D',
@@ -226,14 +227,14 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
                       }}
                     >
                       Placeholder
-                    </a>
+                    </Link>
                   </div>
                 </div>
               )}
             </div>
             <div className="p-2">
-              <a
-                href="/"
+              <Link
+                to="/"
                 className="min-w-[40px] min-h-[40px] flex items-center justify-center px-1 py-[5px] rounded-lg transition-colors duration-200"
                 style={{
                   backgroundColor: 'transparent',
@@ -253,11 +254,11 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
                 >
                   Gallery
                 </div>
-              </a>
+              </Link>
             </div>
             <div className="p-2">
-              <a
-                href="/"
+              <Link
+                to="/"
                 className="min-w-[40px] min-h-[40px] flex items-center justify-center px-1 py-[5px] rounded-lg transition-colors duration-200"
                 style={{
                   backgroundColor: 'transparent',
@@ -277,7 +278,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
                 >
                   News &amp; Updates
                 </div>
-              </a>
+              </Link>
             </div>
           </div>
 
@@ -354,14 +355,14 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
               </div>
             </div>
             <div className="w-[141px] p-1">
-              <a
-                href="/"
+              <Link
+                to="/contact"
                 className="contact-button w-full min-h-[48px] px-2 py-2 rounded-full overflow-hidden flex items-center justify-center"
               >
                 <div className="px-2 py-1 text-center text-white text-lg font-bold font-['Gilroy'] leading-normal">
                   Contact Us
                 </div>
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -384,8 +385,8 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
           }}
         >
           <div className="flex flex-col p-4 space-y-2">
-            <a
-              href="/"
+            <Link
+              to="/"
               className="px-4 py-3 text-left text-sm font-bold font-['Gilroy'] rounded-lg transition-colors duration-200"
               style={{
                 color: isDarkMode ? '#7D80D7' : '#5B5BB3',
@@ -401,7 +402,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
               }}
             >
               Home
-            </a>
+            </Link>
             <div>
               <button
                 type="button"
@@ -451,8 +452,8 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
                   role="menu"
                   className="ml-4 mt-2 space-y-1"
                 >
-                  <a
-                    href="/"
+                  <Link
+                    to="/"
                     className="block px-4 py-2 text-left text-sm font-medium font-['Gilroy'] rounded-lg transition-colors duration-200"
                     style={{
                       color: isDarkMode ? '#AAAEE6' : '#403D7D',
@@ -468,9 +469,9 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
                     }}
                   >
                     Placeholder
-                  </a>
-                  <a
-                    href="/"
+                  </Link>
+                  <Link
+                    to="/"
                     className="block px-4 py-2 text-left text-sm font-medium font-['Gilroy'] rounded-lg transition-colors duration-200"
                     style={{
                       color: isDarkMode ? '#AAAEE6' : '#403D7D',
@@ -486,9 +487,9 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
                     }}
                   >
                     Placeholder
-                  </a>
-                  <a
-                    href="/"
+                  </Link>
+                  <Link
+                    to="/"
                     className="block px-4 py-2 text-left text-sm font-medium font-['Gilroy'] rounded-lg transition-colors duration-200"
                     style={{
                       color: isDarkMode ? '#AAAEE6' : '#403D7D',
@@ -504,12 +505,12 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
                     }}
                   >
                     Placeholder
-                  </a>
+                  </Link>
                 </div>
               )}
             </div>
-            <a
-              href="/"
+            <Link
+              to="/"
               className="px-4 py-3 text-left text-sm font-bold font-['Gilroy'] rounded-lg transition-colors duration-200"
               style={{
                 color: isDarkMode ? '#808894' : '#5B6571',
@@ -525,9 +526,9 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
               }}
             >
               Gallery
-            </a>
-            <a
-              href="/"
+            </Link>
+            <Link
+              to="/"
               className="px-4 py-3 text-left text-sm font-bold font-['Gilroy'] rounded-lg transition-colors duration-200"
               style={{
                 color: isDarkMode ? '#808894' : '#5B6571',
@@ -543,7 +544,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
               }}
             >
               News &amp; Updates
-            </a>
+            </Link>
             {/* Theme Toggle in Mobile */}
             <div className="flex items-center gap-2 px-2 py-3">
               {/* Sun Icon */}
@@ -619,12 +620,12 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
                   : 'rgba(0, 0, 0, 0.1)',
               }}
             >
-              <a
-                href="/"
+              <Link
+                to="/contact"
                 className="contact-button w-full px-6 py-3 rounded-full text-white text-lg font-bold font-['Gilroy'] block text-center"
               >
                 Contact Us
-              </a>
+              </Link>
             </div>
           </div>
         </div>

@@ -7,7 +7,7 @@ interface VerifyErrorProps {
 
 const VerifyError: React.FC<VerifyErrorProps> = ({ errorMessage, onReset }) => (
   <div className="frame-dropbox">
-    <div className="dropbox-area dropbox-area--centered">
+    <div className="dropbox-area dropbox-area--home dropbox-area--centered">
       <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
         <circle cx="16" cy="16" r="16" fill="#ef4444" />
         <path

@@ -8,6 +8,8 @@ import {
   SIGNER_TYPE,
   useProviderContext,
 } from '../common/contexts/providerContext'
+// import { showDocumentTransferMessage } from '../common/Overlay/OverlayContent'
+import { Button, ButtonSize } from '../common/Button'
 
 export interface ConnectToMetamaskModelProps {
   showOnNewConnectWarningMessage: boolean
@@ -18,7 +20,6 @@ export interface ConnectToMetamaskModelProps {
 
 export const ConnectToMetamaskModelComponent = ({
   showOnNewConnectWarningMessage = false,
-  showNetworkSection: _showNetworkSection = false,
   handleContinue,
 }: ConnectToMetamaskModelProps) => {
   const { providerType, account, disconnectWallet } = useProviderContext()
@@ -106,6 +107,7 @@ const ConnectToMetamask: React.FC<ConnectToMetamaskProps> = ({
   }
   const handleMetamaskError = (errorMesssage: string, errorCode: number) => {
     console.log('handleMetamaskError called:', errorMesssage, errorCode)
+    // const isUserDeniedAccountAuthorization = errorCode === 4001
     // showOverlay(
     //   showDocumentTransferMessage(errorMesssage, {
     //     isSuccess: false,
@@ -124,13 +126,12 @@ const ConnectToMetamask: React.FC<ConnectToMetamaskProps> = ({
         />
       ) : (
         <>
-          <PrimaryButton
-            className="connect-metamask-button"
+          <Button
+            className="connect-metamask-button connect-metamask-button-text connect-metamask-button-boundary"
             data-testid={'connectToMetamask'}
             onClick={handleConnectWallet}
             btnType="transparent"
-            labelClassName="connect-metamask-button-text"
-            boundaryClassName="connect-metamask-button-boundary"
+            size={ButtonSize.LG}
           >
             <img
               src="/images/wallet.png"
@@ -138,7 +139,7 @@ const ConnectToMetamask: React.FC<ConnectToMetamaskProps> = ({
               className="connect-metamask-button-icon"
             />
             <h3>Connect with Metamask</h3>
-          </PrimaryButton>
+          </Button>
         </>
       )}
     </div>

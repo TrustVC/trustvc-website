@@ -31,17 +31,11 @@ export const GA_CONFIG_OPTION = {
   debug_mode: IS_DEVELOPMENT,
 }
 export { IS_MAINNET }
-
-const viteEnv = (
-  import.meta as ImportMeta & { env?: Record<string, string | undefined> }
-).env
-
-// Vite exposes only VITE_* via import.meta.env in the browser.
+// Vite exposes only VITE_* via import.meta.env; `process.env` is stubbed in vite.config.js.
 export const MAGIC_API_KEY =
-  viteEnv?.VITE_MAGIC_API_KEY ||
-  viteEnv?.VITE_MAGIC_API_KEY_FALLBACK ||
-  process.env.VITE_MAGIC_API_KEY ||
-  process.env.VITE_MAGIC_API_KEY_FALLBACK
+  (import.meta.env?.VITE_MAGIC_API_KEY as string | undefined) ||
+  (import.meta.env?.VITE_MAGIC_API_KEY_FALLBACK as string | undefined) ||
+  ''
 export { NETWORK, NETWORK_NAME }
 export const NETWORK_ID = IS_MAINNET ? '1' : '11155111'
 export const IS_TEST_ENV = process.env.NODE_ENV === 'test'

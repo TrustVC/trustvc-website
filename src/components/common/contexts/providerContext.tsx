@@ -46,6 +46,7 @@ const createProvider = (chainId: CHAIN_ID) => {
 let currentProvider: providers.Provider | undefined = createProvider(
   getChainInfoFromNetworkName(NETWORK_NAME).id
 )
+
 export const getCurrentProvider = (): providers.Provider | undefined =>
   currentProvider
 
@@ -67,13 +68,9 @@ export interface ProviderContextProps {
 
 export const ProviderContext = createContext<ProviderContextProps>({
   providerType: SIGNER_TYPE.NONE,
-
   upgradeToMetaMaskSigner: async () => {},
-
-  upgradeToMagicSigner: async () => {},
-
   changeNetwork: async (_chainId: CHAIN_ID) => {},
-
+  upgradeToMagicSigner: async () => {},
   reloadNetwork: async () => {},
   supportedChainInfoObjects: [],
   currentChainId: undefined,
@@ -275,8 +272,9 @@ export const ProviderContextProvider: FunctionComponent<
       }
       setAccount(undefined)
       setProviderOrSigner(provider)
-    } catch {
+    } catch (e) {
       setAccount(undefined)
+      console.log(e)
       setProviderOrSigner(createProvider(currentChainId!))
     }
     setNetworkChangeLoading(false)
@@ -285,14 +283,11 @@ export const ProviderContextProvider: FunctionComponent<
 
   const initializeMetaMaskSigner = async () => {
     try {
-      console.log('initializeMetaMaskSigner')
       const newProvider: ethers.providers.Web3Provider =
         (await getMetaMaskWallet())!
-      console.log('newProvider', newProvider)
       // Request to connect to MetaMask
       await newProvider.send('eth_requestAccounts', [])
       const chainInfo = getChainInfo(currentChainId ?? defaultChainId)
-      console.log('chainInfo', chainInfo)
       await walletSwitchChain(chainInfo.id)
 
       setProviderType(SIGNER_TYPE.METAMASK)
@@ -336,14 +331,17 @@ export const ProviderContextProvider: FunctionComponent<
     setProviderType(SIGNER_TYPE.MAGIC)
   }
 
-  const upgradeToMetaMaskSigner = async () => {
-    await disconnectWallet(false)
-    return initializeMetaMaskSigner()
-  }
-
   const upgradeToMagicSigner = async () => {
     await disconnectWallet(false)
+    await updateProvider(SIGNER_TYPE.MAGIC)
     return initializeMagicSigner()
+  }
+
+  const upgradeToMetaMaskSigner = async () => {
+    // if (providerType === SIGNER_TYPE.METAMASK) return;
+    await disconnectWallet(false)
+    await updateProvider(SIGNER_TYPE.METAMASK)
+    return initializeMetaMaskSigner()
   }
 
   const reloadNetwork = async () => {

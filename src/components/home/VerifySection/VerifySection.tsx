@@ -8,6 +8,7 @@ import PrimaryButton from '../../common/PrimaryButton'
 import EndorsementChain from '../EndorsementChain'
 import { useEndorsementChain } from '../EndorsementChain/useEndorsementChain'
 import Spinner from '../../common/Spinner'
+import { getAttachments, isValidAttachmentData } from '../../../utils/helper'
 import { useOverlayContext } from '../../common/contexts/OverlayContext'
 import ConnectToBlockchainModel from '../../ConnectToBlockchain'
 
@@ -73,6 +74,17 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
     keyId: isValidTransferable ? keyId : undefined,
   })
 
+  const invalidAttachments = React.useMemo(() => {
+    if (!rawDocument) return []
+    const attachments = getAttachments(rawDocument)
+    return attachments.filter(
+      att =>
+        typeof att.data !== 'string' ||
+        !att.data ||
+        !isValidAttachmentData(att.data, att.type)
+    )
+  }, [rawDocument])
+
   const networkName = verifiedChainId
     ? (CHAIN_NAMES[verifiedChainId] ?? `Chain ${verifiedChainId}`)
     : undefined
@@ -82,7 +94,7 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
   const renderDropzone = () => (
     <div className="frame-dropbox">
       <div
-        className={`dropbox-area ${dragActive ? 'drag-active' : ''}`}
+        className={`dropbox-area dropbox-area--home ${dragActive ? 'drag-active' : ''}`}
         onDragEnter={handleDrag}
         onDragLeave={handleDrag}
         onDragOver={handleDrag}
@@ -133,7 +145,7 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
 
   const renderVerifying = () => (
     <div className="frame-dropbox">
-      <div className="dropbox-area dropbox-area--centered">
+      <div className="dropbox-area dropbox-area--home dropbox-area--centered">
         <Spinner label={`Verifying ${fileName}...`} size="medium" centered />
       </div>
     </div>
@@ -166,6 +178,7 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
                 tokenRegistryAddress={tokenRegistryAddress}
                 tags={tags}
                 rawDocument={rawDocument}
+                invalidAttachments={invalidAttachments}
                 getGroupStatus={getGroupStatus}
                 onReset={handleReset}
                 onViewEndorsementChain={handleShowEndorsementChain}

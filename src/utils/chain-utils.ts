@@ -11,6 +11,7 @@ import { CHAIN_ID, chainInfo, encrypt } from '@trustvc/trustvc'
  */
 export const getChainInfo = (chainId: CHAIN_ID): chainInfo => {
   const res = ChainInfo[chainId]
+  // if (!res) throw new UnsupportedNetworkError(chainId)
   return res
 }
 

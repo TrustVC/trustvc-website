@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Button, ButtonSize } from '../common/Button'
 import PrimaryButton from '../common/PrimaryButton'
 import Connected from '../ConnectToBlockchain/Connected'
 import {
@@ -105,14 +106,14 @@ const ConnectToMagicLink: React.FC = () => {
         />
       ) : (
         <>
-          <PrimaryButton
-            className="connect-metamask-button"
+          <Button
+            className="connect-metamask-button connect-metamask-button-text connect-metamask-button-boundary"
             data-testid="connectToMagicLink"
             onClick={handleConnectWallet}
             btnType="transparent"
-            labelClassName="connect-metamask-button-text"
-            boundaryClassName="connect-metamask-button-boundary"
+            size={ButtonSize.LG}
             disabled={isConnecting}
+            type="button"
           >
             <img
               src={magicIconSrc}
@@ -122,7 +123,7 @@ const ConnectToMagicLink: React.FC = () => {
             <h3>
               {isConnecting ? 'Connecting...' : 'Connect with Magic Link'}
             </h3>
-          </PrimaryButton>
+          </Button>
           {errorMessage && (
             <p className="text-left text-sm text-red-500 mt-2">
               {errorMessage}

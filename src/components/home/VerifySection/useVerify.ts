@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import {
   verifyDocument,
   getChainId,
@@ -18,7 +18,8 @@ import {
   getTokenId,
   getDocumentData as getDocumentDataFromWrappedDocument,
 } from '@trustvc/trustvc'
-import { toErrorMessage } from '../../../utils/helper'
+import { toErrorMessage, getRpcUrl } from '../../../utils/helper'
+import { useDocumentContext } from '../../common/contexts/DocumentContext'
 
 export type VerifyStatus =
   | 'idle'
@@ -253,21 +254,6 @@ const getDocumentTags = (
   return tags
 }
 
-const getRpcUrl = (chainId: string): string | null => {
-  const chainEnvUrl = import.meta.env[`VITE_RPC_URL_${chainId}`]
-  if (chainEnvUrl) return chainEnvUrl
-
-  const chainDefaultUrl =
-    SUPPORTED_CHAINS[chainId as keyof typeof SUPPORTED_CHAINS]?.rpcUrl
-  const safeChainUrl = chainDefaultUrl?.includes('undefined')
-    ? null
-    : chainDefaultUrl
-  if (safeChainUrl) return safeChainUrl
-
-  // Chain not recognised — return null to surface the issue
-  return null
-}
-
 const getDocumentData = (wrappedDocument: any) => {
   if (
     vc.isSignedDocument(wrappedDocument) ||
@@ -289,6 +275,13 @@ export const makeExplorerAddressURL = (
 }
 
 export const useVerify = (): UseVerifyReturn => {
+  const verificationIdRef = useRef(0)
+  const {
+    setKeyId: setKeyIdContext,
+    setTokenRegistryVersion: setTokenRegistryVersionContext,
+    setTokenId: setTokenIdContext,
+    setTokenRegistryAddress: setTokenRegistryAddressContext,
+  } = useDocumentContext()
   const [verifyStatus, setVerifyStatus] = useState<VerifyStatus>('idle')
   const [fragments, setFragments] = useState<VerificationFragment[]>([])
   const [fileName, setFileName] = useState('')
@@ -309,8 +302,11 @@ export const useVerify = (): UseVerifyReturn => {
   const [rawDocument, setRawDocument] = useState<unknown>(undefined)
   const runVerification = async (
     doc: unknown,
-    chainId: string | null | undefined
+    chainId: string | null | undefined,
+    currentId: number
   ) => {
+    const isStale = () => currentId !== verificationIdRef.current
+
     const options: { rpcProviderUrl?: string } = {}
     const rpcUrl = getRpcUrl(chainId ?? '1')
     if (rpcUrl) options.rpcProviderUrl = rpcUrl
@@ -319,6 +315,9 @@ export const useVerify = (): UseVerifyReturn => {
       doc as any,
       options
     )) as VerificationFragment[]
+
+    if (isStale()) return
+
     setFragments(results)
 
     const types = [...new Set(results.map(f => f.type))]
@@ -341,14 +340,17 @@ export const useVerify = (): UseVerifyReturn => {
       ? getTokenRegistryAddress(doc as any)
       : undefined
     setTokenRegistryAddress(registryAddress)
-    //add code to fetch TokenId , keyId from the document
+    setTokenRegistryAddressContext(registryAddress || null)
 
+    //add code to fetch TokenId , keyId from the document
     const _keyId = getDocumentData(doc as any)?.id
     setKeyId(_keyId)
+    setKeyIdContext(_keyId || null)
 
     if (transferable) {
       const _tokenId = getTokenId(doc as any)
       setTokenId(_tokenId)
+      setTokenIdContext(_tokenId || null)
     }
 
     // Detect token registry version (async)
@@ -363,7 +365,11 @@ export const useVerify = (): UseVerifyReturn => {
         console.error('Failed to detect token registry version:', error)
       }
     }
+
+    if (isStale()) return
+
     setTokenRegistryVersion(trVersion)
+    setTokenRegistryVersionContext(trVersion)
 
     // Compute document tags
     const documentTags = getDocumentTags(doc, trVersion)
@@ -387,6 +393,7 @@ export const useVerify = (): UseVerifyReturn => {
   }
 
   const processFile = async (file: File) => {
+    const currentId = ++verificationIdRef.current
     setFileName(file.name)
     setVerifyStatus('verifying')
     setFragments([])
@@ -406,7 +413,7 @@ export const useVerify = (): UseVerifyReturn => {
         return
       }
 
-      await runVerification(doc, chainId)
+      await runVerification(doc, chainId, currentId)
     } catch (err) {
       clearVerificationMetadata()
       setErrorMessage(
@@ -418,10 +425,12 @@ export const useVerify = (): UseVerifyReturn => {
 
   const handleNetworkConfirm = async (chainId: string) => {
     if (!pendingDoc) return
+    const currentId = ++verificationIdRef.current
     setVerifyStatus('verifying')
     try {
-      await runVerification(pendingDoc, chainId)
+      await runVerification(pendingDoc, chainId, currentId)
     } catch (err) {
+      clearVerificationMetadata()
       setErrorMessage(
         toErrorMessage(err, 'Verification failed. Please try again.')
       )

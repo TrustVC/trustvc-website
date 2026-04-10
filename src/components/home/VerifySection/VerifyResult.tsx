@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
 import NetworkTooltip from './NetworkTooltip'
 import DocumentRenderer from './DocumentRenderer'
+import InvalidAttachmentsBanner from './InvalidAttachmentsBanner'
 import { makeExplorerAddressURL } from './useVerify'
 import { CheckCircle, CrossCircle } from '../../common/Icons'
+import { DocumentAttachment } from '../../../utils/helper'
 import Connected from '../../ConnectToBlockchain/Connected'
 import {
   SIGNER_TYPE,
@@ -20,6 +22,7 @@ interface VerifyResultProps {
   owner?: { name?: string; address?: string }
   holder?: { name?: string; address?: string }
   rawDocument?: unknown
+  invalidAttachments?: DocumentAttachment[]
   getGroupStatus: (_type: string) => 'VALID' | 'INVALID'
   onReset: () => void
   onViewNftRegistry?: () => void
@@ -44,6 +47,7 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
   owner,
   holder,
   rawDocument,
+  invalidAttachments,
   getGroupStatus,
   onReset,
   onViewNftRegistry,
@@ -51,11 +55,6 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
   onConnectWallet,
 }) => {
   const showNftLinks = !!isTransferable
-  const magicIconSrc =
-    typeof document !== 'undefined' &&
-    document.body.classList.contains('dark-mode')
-      ? '/images/magic_link_dark.svg'
-      : '/images/magic_link.svg'
 
   const [isTooltipVisible, setIsTooltipVisible] = useState(false)
   const [tooltipPosition, setTooltipPosition] = useState({
@@ -142,6 +141,7 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
                   viewBox="0 0 16 16"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden="true"
                 >
                   <path
                     d="M11.5899 5.41489C11.883 5.12235 12.3578 5.12189 12.6504 5.41489C12.9427 5.70787 12.9421 6.1828 12.6495 6.47543L8.54107 10.5799C8.53846 10.5827 8.53593 10.586 8.53325 10.5887C8.47743 10.6446 8.41231 10.686 8.34575 10.7205C8.29448 10.7471 8.24155 10.7681 8.18657 10.7821C7.93925 10.8447 7.66661 10.7825 7.47271 10.5897L3.35064 6.47641C3.05784 6.18398 3.05769 5.70903 3.34966 5.41586C3.64227 5.12276 4.11802 5.12231 4.41118 5.41489L7.93169 8.92563C7.97072 8.96456 8.03329 8.96455 8.07232 8.92563L11.5899 5.41489Z"
@@ -175,18 +175,12 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
           </div>
 
           <div className="vr-network-frame">
-            {account &&
-              (providerType === SIGNER_TYPE.METAMASK ||
-                providerType === SIGNER_TYPE.MAGIC) && (
-                <Connected
-                  imgSrc={
-                    providerType === SIGNER_TYPE.MAGIC
-                      ? magicIconSrc
-                      : '/images/wallet.png'
-                  }
-                  openConnectToBlockchainModel={true}
-                />
-              )}
+            {providerType === SIGNER_TYPE.METAMASK && account && (
+              <Connected
+                imgSrc="/images/wallet.png"
+                openConnectToBlockchainModel={true}
+              />
+            )}
           </div>
         </div>
       )}
@@ -327,9 +321,18 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
         )}
       </div>
 
-      {/* ── Template Renderer ── */}
+      {/* Invalid Attachments Banner */}
+      {invalidAttachments && invalidAttachments.length > 0 && (
+        <InvalidAttachmentsBanner invalidAttachments={invalidAttachments} />
+      )}
+
+      {/* Template Renderer */}
       {rawDocument ? (
-        <DocumentRenderer rawDocument={rawDocument} fileName={fileName} />
+        <DocumentRenderer
+          rawDocument={rawDocument}
+          fileName={fileName}
+          invalidAttachments={invalidAttachments}
+        />
       ) : null}
 
       {/* Tooltip */}
