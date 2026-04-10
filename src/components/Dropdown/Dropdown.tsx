@@ -22,7 +22,10 @@ export interface DropdownProps {
 export const Dropdown: FunctionComponent<DropdownProps> = ({
   dropdownButtonText,
   children,
+  classNameRoot,
   className,
+  classNameMenu,
+  classNameShared,
   disabled,
   menuPortalTarget,
   ...props
@@ -137,16 +140,10 @@ export const Dropdown: FunctionComponent<DropdownProps> = ({
         }`}
       >
         <>
-          <div className="dropdown-btn-boundary-frame">
-            <div className="dropdown-btn-text-frame">
-              <span className="dropdown-btn-text">{dropdownButtonText}</span>
-            </div>
-            <div className="dropdown-btn-action-icon-frame">
-              <span>
-                <ChevronDown />
-              </span>
-            </div>
-          </div>
+          <span className="flex-1 truncate">{dropdownButtonText}</span>
+          <span>
+            <ChevronDown />
+          </span>
         </>
       </button>
       {isOpen && (
@@ -177,7 +174,10 @@ export const DropdownItem: FunctionComponent<DropdownItemProps> = ({
   ...props
 }) => {
   return (
-    <div className={`dropdown-item-btn ${className}`} {...props}>
+    <div
+      className={`truncate cursor-pointer text-cloud-800 p-3 hover:bg-gray-50 active:bg-gray-300 ${className}`}
+      {...props}
+    >
       {children}
     </div>
   )

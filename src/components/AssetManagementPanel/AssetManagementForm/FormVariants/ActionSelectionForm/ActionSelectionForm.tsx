@@ -108,6 +108,7 @@ export const ActionSelectionForm: FunctionComponent<
   const handleConnectWallet = async () => {
     showOverlay(<ConnectToBlockchainModel onClose={closeOverlay} />)
   }
+  console.log(isTokenBurnt, account, canManage)
 
   return (
     <>
