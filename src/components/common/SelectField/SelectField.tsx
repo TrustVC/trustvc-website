@@ -8,7 +8,6 @@ interface SelectFieldProps {
   label: string
   value: EnquiryType
   onChange: React.Dispatch<React.SetStateAction<EnquiryType>>
-  required?: boolean
   error?: string
   onBlur?: () => void
 }
@@ -88,8 +87,8 @@ const SelectField = ({
         onBlur={e => {
           if (!e.currentTarget.contains(e.relatedTarget as Node | null)) {
             setIsOpen(false)
+            onBlur?.()
           }
-          onBlur?.()
         }}
       >
         <button

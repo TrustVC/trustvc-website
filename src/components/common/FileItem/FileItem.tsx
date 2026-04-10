@@ -16,7 +16,7 @@ export function FileItem({ item, onRemove, isDarkMode }: FileItemProps) {
 
   const getStatusLabel = () => {
     if (isUploading) {
-      return `Uploading - ${progress}%`
+      return `Uploading - ${progress ?? 0}%`
     }
     if (status === 'uploaded') {
       return 'Uploaded'
@@ -64,7 +64,7 @@ export function FileItem({ item, onRemove, isDarkMode }: FileItemProps) {
                 r="16"
                 fill="none"
                 strokeWidth="3"
-                strokeDasharray={`${progress * 1.02} 100`}
+                strokeDasharray={`${(progress ?? 0) * 1.02} 100`}
                 strokeLinecap="round"
                 className="transition-all duration-300"
                 stroke="#686AD2"
