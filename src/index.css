@@ -1567,7 +1567,16 @@ p.small {
   gap: 8px;
 }
 .vr-network-padded-frame {
+  flex: 1;
   padding: 4px;
+}
+
+.vr-empty-placeholder {
+  flex: 1;
+  height: 0px;
+  min-width: 290px;
+  opacity: 0;
+  border-width: 1px;
 }
 
 .vr-network-label {
@@ -2958,7 +2967,6 @@ p.small {
   max-width: 640px;
   opacity: 1;
   border-radius: 16px;
-  border-width: 1px;
   background:
     linear-gradient(
       0deg,
@@ -3462,7 +3470,6 @@ p.small {
   opacity: 1;
   border-radius: 12px;
   padding: 8px 12px;
-  border-width: 1px;
   margin-left: auto;
   display: flex;
   align-items: center;
@@ -3471,10 +3478,10 @@ p.small {
   user-select: none;
   /* Button reset styles */
   background: none;
-  border: 1px solid transparent;
   font: inherit;
   text-align: left;
-  width: auto;
+  width: 100%;
+  border: 1px solid var(--Neutral-33-90, #a9b2bb54);
 }
 @media (max-width: 768px) {
   .connected-wallet-container {
@@ -3727,7 +3734,6 @@ p.small {
   padding: 8px;
   gap: 8px;
   opacity: 1;
-  border-radius: 8px;
 
   /* TrustVC/Surface/Base/BG/Cavity */
   background:

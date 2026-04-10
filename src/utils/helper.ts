@@ -239,7 +239,7 @@ export const isValidEndorseTransfer = (
   return true
 }
 
-export const isEthereumAddress = (address: string): boolean | undefined => {
+export const isEthereumAddress = (address: string): boolean => {
   return utils.isAddress(address)
 }
 
