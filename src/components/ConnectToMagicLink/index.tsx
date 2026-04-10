@@ -1,4 +1,6 @@
 import React, { useState } from 'react'
+import { toErrorMessage } from '../../utils/helper'
+import { getMagicLinkIconSrc } from '../../utils/magicWallet'
 import { Button, ButtonSize } from '../common/Button'
 import PrimaryButton from '../common/PrimaryButton'
 import Connected from '../ConnectToBlockchain/Connected'
@@ -78,19 +80,17 @@ const ConnectToMagicLink: React.FC = () => {
   const { account, providerType, upgradeToMagicSigner } = useProviderContext()
   const [errorMessage, setErrorMessage] = useState('')
   const [isConnecting, setIsConnecting] = useState(false)
-  const magicIconSrc =
-    typeof document !== 'undefined' &&
-    document.body.classList.contains('dark-mode')
-      ? '/images/magic_link_dark.svg'
-      : '/images/magic_link.svg'
+  const magicIconSrc = getMagicLinkIconSrc()
 
   const handleConnectWallet = async () => {
     setErrorMessage('')
     setIsConnecting(true)
     try {
       await upgradeToMagicSigner()
-    } catch (error: any) {
-      setErrorMessage(error?.message || 'Unable to connect with Magic Link.')
+    } catch (error: unknown) {
+      setErrorMessage(
+        toErrorMessage(error, 'Unable to connect with Magic Link.')
+      )
     } finally {
       setIsConnecting(false)
     }

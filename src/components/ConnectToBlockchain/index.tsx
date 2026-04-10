@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { getMagicLinkIconSrc } from '../../utils/magicWallet'
 import {
   SIGNER_TYPE,
   useProviderContext,
@@ -72,11 +73,7 @@ const ConnectToBlockchainHeader = ({
   setSelectedWalletType,
 }: ConnectToBlockchainHeaderProps) => {
   const { providerType, account } = useProviderContext()
-  const magicIconSrc =
-    typeof document !== 'undefined' &&
-    document.body.classList.contains('dark-mode')
-      ? '/images/magic_link_dark.svg'
-      : '/images/magic_link.svg'
+  const magicIconSrc = getMagicLinkIconSrc()
   const WalletConnectMethods = [
     {
       walletType: SIGNER_TYPE.METAMASK,

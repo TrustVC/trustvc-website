@@ -13,3 +13,11 @@ export type {
   PresignUploadItem,
   CreateServiceRequestWithKeysPayload,
 } from './upload'
+export {
+  MAGIC_WALLET_ERRORS,
+  ethereumAddressFromMagicUserMetadata,
+  fetchMagicEthereumAddress,
+  getMagicLinkIconSrc,
+  isMagicUserLoggedIn,
+  preloadMagicSdk,
+} from './magicWallet'

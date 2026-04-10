@@ -5,6 +5,7 @@ import InvalidAttachmentsBanner from './InvalidAttachmentsBanner'
 import { makeExplorerAddressURL } from './useVerify'
 import { CheckCircle, CrossCircle } from '../../common/Icons'
 import { DocumentAttachment } from '../../../utils/helper'
+import { getMagicLinkIconSrc } from '../../../utils/magicWallet'
 import Connected from '../../ConnectToBlockchain/Connected'
 import {
   SIGNER_TYPE,
@@ -175,12 +176,18 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
           </div>
 
           <div className="vr-network-frame">
-            {providerType === SIGNER_TYPE.METAMASK && account && (
-              <Connected
-                imgSrc="/images/wallet.png"
-                openConnectToBlockchainModel={true}
-              />
-            )}
+            {(providerType === SIGNER_TYPE.METAMASK ||
+              providerType === SIGNER_TYPE.MAGIC) &&
+              account && (
+                <Connected
+                  imgSrc={
+                    providerType === SIGNER_TYPE.MAGIC
+                      ? getMagicLinkIconSrc()
+                      : '/images/wallet.png'
+                  }
+                  openConnectToBlockchainModel={true}
+                />
+              )}
           </div>
         </div>
       )}

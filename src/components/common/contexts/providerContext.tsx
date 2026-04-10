@@ -19,6 +19,13 @@ import {
   isSupportedNetwork,
   walletSwitchChain,
 } from '../../../utils/chain-utils'
+import { getRpcUrl } from '../../../utils/helper'
+import {
+  MAGIC_WALLET_ERRORS,
+  fetchMagicEthereumAddress,
+  isMagicUserLoggedIn,
+  preloadMagicSdk,
+} from '../../../utils/magicWallet'
 import { MAGIC_API_KEY } from '../../../configs/env-config'
 
 export enum SIGNER_TYPE {
@@ -113,7 +120,6 @@ export const ProviderContextProvider: FunctionComponent<
   const defaultProvider = useRef(createProvider(defaultChainId))
   const magicRef = useRef<Magic | null>(null)
   const magicChainIdRef = useRef<CHAIN_ID | null>(null)
-  const [isMagicLoggedIn, setIsMagicLoggedIn] = useState(false)
 
   const [providerType, setProviderType] =
     useState<SIGNER_TYPE>(defaultProviderType)
@@ -135,7 +141,8 @@ export const ProviderContextProvider: FunctionComponent<
 
   const getOrCreateMagic = useCallback((chainId: CHAIN_ID): Magic | null => {
     if (!MAGIC_API_KEY) return null
-    const rpcUrl = ChainInfo[chainId]?.rpcUrl
+    const rpcUrl =
+      getRpcUrl(String(chainId)) ?? ChainInfo[chainId]?.rpcUrl ?? null
     if (!rpcUrl) return null
     if (magicRef.current && magicChainIdRef.current !== chainId) {
       magicRef.current = null
@@ -240,8 +247,13 @@ export const ProviderContextProvider: FunctionComponent<
         defaultChainId) as CHAIN_ID
       newProvider = createProvider(fallbackChainId)
       setProvider(newProvider)
-      setProviderType(SIGNER_TYPE.IDENTITY)
-      setAccount(undefined)
+      // Do not force IDENTITY / clear account while still NONE — that blocked Magic
+      // session restore on load. Identity is only for explicit disconnect or failed
+      // wallet paths where _providerType !== NONE.
+      if (_providerType !== SIGNER_TYPE.NONE) {
+        setProviderType(SIGNER_TYPE.IDENTITY)
+        setAccount(undefined)
+      }
       return newProvider
     },
 
@@ -254,12 +266,23 @@ export const ProviderContextProvider: FunctionComponent<
     ]
   )
 
+  const updateProviderRef = useRef(updateProvider)
+  updateProviderRef.current = updateProvider
+
   const updateSigner = useCallback(async () => {
     if (!provider) return
 
     try {
       if (provider instanceof ethers.providers.Web3Provider) {
-        const accounts = await provider.listAccounts()
+        let accounts = await provider.listAccounts()
+        if (accounts.length === 0 && providerType === SIGNER_TYPE.MAGIC) {
+          try {
+            await provider.send('eth_requestAccounts', [])
+            accounts = await provider.listAccounts()
+          } catch {
+            /* Magic may still resolve address via getInfo in initializeMagicSigner */
+          }
+        }
         if (accounts.length > 0) {
           await provider.send('eth_requestAccounts', [])
           const signer = provider.getSigner()
@@ -268,6 +291,15 @@ export const ProviderContextProvider: FunctionComponent<
           setProviderOrSigner(signer)
           setNetworkChangeLoading(false)
           return
+        }
+        if (providerType === SIGNER_TYPE.MAGIC && magicRef.current) {
+          const magicAddr = await fetchMagicEthereumAddress(magicRef.current)
+          if (magicAddr) {
+            setAccount(magicAddr)
+            setProviderOrSigner(provider)
+            setNetworkChangeLoading(false)
+            return
+          }
         }
       }
       setAccount(undefined)
@@ -279,7 +311,7 @@ export const ProviderContextProvider: FunctionComponent<
     }
     setNetworkChangeLoading(false)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [provider])
+  }, [provider, providerType])
 
   const initializeMetaMaskSigner = async () => {
     try {
@@ -303,28 +335,15 @@ export const ProviderContextProvider: FunctionComponent<
     const magic = getOrCreateMagic(chainId)
     if (!magic) {
       if (!MAGIC_API_KEY) {
-        throw new Error(
-          'Magic is not configured. Set VITE_MAGIC_API_KEY (publishable key) in .env and restart the app.'
-        )
+        throw new Error(MAGIC_WALLET_ERRORS.missingApiKey)
       }
-      throw new Error(
-        `No RPC URL for chain ${chainId}. Check ChainInfo configuration for this network.`
-      )
+      throw new Error(MAGIC_WALLET_ERRORS.missingRpc(chainId))
     }
-    let alreadyLoggedIn = false
-    try {
-      alreadyLoggedIn = await magic.user.isLoggedIn()
-    } catch {
-      alreadyLoggedIn = false
-    }
-    if (alreadyLoggedIn) {
-      setIsMagicLoggedIn(true)
-    } else {
+    const alreadyLoggedIn = await isMagicUserLoggedIn(magic)
+    if (!alreadyLoggedIn) {
       await magic.wallet.connectWithUI()
-      setIsMagicLoggedIn(true)
     }
-    const magicMetadata = await (magic.user as any)?.getMetadata?.()
-    const magicAddress = magicMetadata?.publicAddress
+    const magicAddress = await fetchMagicEthereumAddress(magic)
     if (magicAddress) {
       setAccount(magicAddress)
     }
@@ -333,8 +352,8 @@ export const ProviderContextProvider: FunctionComponent<
 
   const upgradeToMagicSigner = async () => {
     await disconnectWallet(false)
+    await initializeMagicSigner()
     await updateProvider(SIGNER_TYPE.MAGIC)
-    return initializeMagicSigner()
   }
 
   const upgradeToMetaMaskSigner = async () => {
@@ -369,7 +388,6 @@ export const ProviderContextProvider: FunctionComponent<
       try {
         await magicRef.current?.user.logout()
       } finally {
-        setIsMagicLoggedIn(false)
         magicRef.current = null
         magicChainIdRef.current = null
       }
@@ -428,27 +446,50 @@ export const ProviderContextProvider: FunctionComponent<
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [providerType, updateProvider, currentChainId])
 
+  /**
+   * Restore Magic (iframe session) or MetaMask (authorized accounts) on load.
+   * Uses the same RPC as the rest of the app (`getRpcUrl`) so the Magic instance
+   * matches env-based RPCs. Preloads Magic before isLoggedIn so session restores reliably.
+   * Do not use a "ran once" ref set before async work — that breaks React Strict Mode
+   * and skips restore on the real mount.
+   */
   useEffect(() => {
-    // On initial load, check if MetaMask is connected or Magic is logged in, set providerType if it is
-    if (providerType === SIGNER_TYPE.NONE) {
-      ;(async () => {
-        const metamask = await getMetaMaskWallet(false)
-        if (!metamask) return
-
-        const accounts = await metamask?.listAccounts()
-        if (accounts.length > 0) {
-          setProviderType(SIGNER_TYPE.METAMASK)
+    let cancelled = false
+    const run = async () => {
+      const chainId = defaultChainId as CHAIN_ID
+      const magic = getOrCreateMagic(chainId)
+      if (magic) {
+        try {
+          await preloadMagicSdk(magic)
+          if (cancelled) return
+          const loggedIn = await isMagicUserLoggedIn(magic)
+          if (cancelled) return
+          if (loggedIn) {
+            const addr = await fetchMagicEthereumAddress(magic)
+            if (cancelled) return
+            setProviderType(SIGNER_TYPE.MAGIC)
+            if (addr) setAccount(addr)
+            await updateProviderRef.current(SIGNER_TYPE.MAGIC)
+            return
+          }
+        } catch {
+          /* ignore */
         }
-      })()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+      }
 
-  useEffect(() => {
-    if (providerType === SIGNER_TYPE.NONE && isMagicLoggedIn) {
-      setProviderType(SIGNER_TYPE.MAGIC)
+      const metamask = await getMetaMaskWallet(false)
+      if (cancelled || !metamask) return
+      const accounts = await metamask.listAccounts()
+      if (accounts.length > 0) {
+        setProviderType(SIGNER_TYPE.METAMASK)
+        await updateProviderRef.current(SIGNER_TYPE.METAMASK)
+      }
     }
-  }, [providerType, isMagicLoggedIn])
+    void run()
+    return () => {
+      cancelled = true
+    }
+  }, [defaultChainId, getOrCreateMagic])
 
   useEffect(() => {
     ;(async () => {
@@ -457,27 +498,12 @@ export const ProviderContextProvider: FunctionComponent<
         (currentChainId || defaultChainId) as CHAIN_ID
       )
       if (!magic) return
-      const magicMetadata = await (magic.user as any)?.getMetadata?.()
-      const magicAddress = magicMetadata?.publicAddress
+      const magicAddress = await fetchMagicEthereumAddress(magic)
       if (magicAddress) {
         setAccount(magicAddress)
       }
     })()
   }, [providerType, account, currentChainId, defaultChainId, getOrCreateMagic])
-
-  useEffect(() => {
-    ;(async () => {
-      const magic = getOrCreateMagic(
-        (currentChainId || defaultChainId) as CHAIN_ID
-      )
-      if (!magic) return
-      try {
-        setIsMagicLoggedIn(await magic.user.isLoggedIn())
-      } catch {
-        setIsMagicLoggedIn(false)
-      }
-    })()
-  }, [currentChainId, defaultChainId, getOrCreateMagic])
 
   return (
     <ProviderContext.Provider
