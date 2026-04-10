@@ -17,6 +17,14 @@ const getSharedStylesButton = (shared: GetSharedStylesButton): string => {
   return `box-border transition-colors duration-200 ease-out cursor-pointer font-gilroy-bold border ${padding} ${height}`
 }
 
+const sharedSizeStyles = {
+  [ButtonSize.XS]: 'px-0.5',
+  [ButtonSize.SM]: 'p-0.5',
+  [ButtonSize.MD]: 'p-[5px]',
+  [ButtonSize.LG]: 'p-2',
+  [ButtonSize.FLEX]: 'p-[5px]',
+}
+
 interface AnchorTradeTrust extends AnchorHTMLAttributes<HTMLAnchorElement> {
   size?: ButtonSize
   height?: ButtonHeight
@@ -66,7 +74,7 @@ export const Button: FunctionComponent<ButtonTradeTrust> = ({
         disabled ? '!cursor-not-allowed !text-white !opacity-33' : ''
       }`}
       style={width ? { width, ...props.style } : props.style}
-      type="submit"
+      type="button"
       disabled={disabled}
       {...props}
     >
@@ -126,11 +134,11 @@ export const ButtonIcon: FunctionComponent<ButtonTradeTrust> = ({
 
   const { style: propsStyle, ...restProps } = props
 
-  // Create style object with width having !important via CSS custom property
+  // Create style object with width
   const buttonStyle = width
     ? {
         ...propsStyle,
-        width: `${width} !important`,
+        width,
         minWidth: width,
         maxWidth: width,
       }
@@ -143,7 +151,7 @@ export const ButtonIcon: FunctionComponent<ButtonTradeTrust> = ({
         disabled ? '!cursor-not-allowed !text-white !opacity-33' : ''
       }`}
       style={buttonStyle}
-      type="submit"
+      type="button"
       disabled={disabled}
     >
       {children}
@@ -158,7 +166,10 @@ export const LinkButton: FunctionComponent<AnchorTradeTrust> = ({
   height = ButtonHeight.MD,
   ...props
 }) => {
-  const shared = getSharedStylesButton({ padding: size, height })
+  const shared = getSharedStylesButton({
+    padding: sharedSizeStyles[size],
+    height,
+  })
 
   return (
     <a
@@ -178,7 +189,10 @@ export const LabelButton: FunctionComponent<LabelTradeTrust> = ({
   height = ButtonHeight.MD,
   ...props
 }) => {
-  const shared = getSharedStylesButton({ padding: size, height })
+  const shared = getSharedStylesButton({
+    padding: sharedSizeStyles[size],
+    height,
+  })
 
   return (
     <label className={`block ${shared} ${className}`} {...props}>

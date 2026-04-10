@@ -37,16 +37,19 @@ const PrimaryButton = forwardRef<HTMLButtonElement, PrimaryButtonProps>(
     ref
   ) => {
     if (as === 'label') {
+      const isDisabled = disabled
       return (
         <label
-          htmlFor={htmlFor}
+          htmlFor={isDisabled ? undefined : htmlFor}
           className={clsx('standard-button-primary', className)}
-          onClick={onClick}
+          onClick={isDisabled ? undefined : onClick}
+          aria-disabled={isDisabled}
         >
           <div
             className={clsx(
               'button-boundary',
-              btnType === 'transparent' && 'button-boundary-transparent'
+              btnType === 'transparent' && 'button-boundary-transparent',
+              boundaryClassName
             )}
           >
             {icon && <div className="contextual-icon-frame">{icon}</div>}

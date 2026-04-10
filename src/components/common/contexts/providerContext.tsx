@@ -43,9 +43,13 @@ const createProvider = (chainId: CHAIN_ID) => {
 }
 
 // Utility function for use in non-react components that cannot get through hooks
-let currentProvider: providers.Provider | undefined = createProvider(
-  getChainInfoFromNetworkName(NETWORK_NAME).id
-)
+let currentProvider: providers.Provider | undefined
+try {
+  currentProvider = createProvider(getChainInfoFromNetworkName(NETWORK_NAME).id)
+} catch (e) {
+  console.error('Invalid NETWORK_NAME; provider init failed', e)
+  currentProvider = undefined
+}
 
 // eslint-disable-next-line
 export const getCurrentProvider = (): providers.Provider | undefined =>
@@ -178,7 +182,7 @@ export const ProviderContextProvider: FunctionComponent<
       if (_providerType === SIGNER_TYPE.METAMASK) {
         const { ethereum, web3 } = window
         const metamaskExtensionNotFound =
-          typeof ethereum === 'undefined' || typeof web3 === 'undefined'
+          typeof ethereum === 'undefined' && typeof web3 === 'undefined'
         if (metamaskExtensionNotFound || !ethereum?.request) {
           console.warn('MetaMask extension not found')
         } else {
@@ -186,12 +190,12 @@ export const ProviderContextProvider: FunctionComponent<
 
           newProvider = new ethers.providers.Web3Provider(injectedWeb3, 'any')
           const network = await newProvider.getNetwork()
-          setProvider(newProvider)
           if (!isSupportedNetwork(network.chainId, supportedChainInfoObjects)) {
             console.warn('User wallet is connected to an unsupported network')
             setCurrentChainId(undefined)
             return
           } else {
+            setProvider(newProvider)
             setCurrentChainId(network.chainId as unknown as CHAIN_ID)
             return newProvider
           }
@@ -230,7 +234,7 @@ export const ProviderContextProvider: FunctionComponent<
     } catch (e) {
       setAccount(undefined)
       console.log(e)
-      setProviderOrSigner(createProvider(currentChainId!))
+      setProviderOrSigner(createProvider(currentChainId ?? defaultChainId))
     }
     setNetworkChangeLoading(false)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -269,15 +273,16 @@ export const ProviderContextProvider: FunctionComponent<
 
   const disconnectWallet = async (disconnectOnly: boolean = true) => {
     if (providerType === SIGNER_TYPE.METAMASK) {
-      if (!window?.ethereum || !window?.ethereum?.request) return
-      try {
-        // Experimental functions: https://github.com/MetaMask/metamask-improvement-proposals/blob/main/MIPs/mip-2.md
-        await window.ethereum.request({
-          method: 'wallet_revokePermissions',
-          params: [{ eth_accounts: {} }],
-        })
-      } catch (error) {
-        console.error('Error revoking wallet permissions:', error)
+      if (window?.ethereum?.request) {
+        try {
+          // Experimental functions: https://github.com/MetaMask/metamask-improvement-proposals/blob/main/MIPs/mip-2.md
+          await window.ethereum.request({
+            method: 'wallet_revokePermissions',
+            params: [{ eth_accounts: {} }],
+          })
+        } catch (error) {
+          console.error('Error revoking wallet permissions:', error)
+        }
       }
     }
 
