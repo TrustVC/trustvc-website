@@ -1,61 +1,76 @@
 import clsx from 'clsx'
-import { ReactNode, MouseEvent, forwardRef, type Ref } from 'react'
+import { ReactNode, MouseEvent, forwardRef } from 'react'
 
-type PrimaryButtonSharedProps = {
+interface PrimaryButtonProps {
   className?: string
   labelClassName?: string
   textClassName?: string
   onClick?: (event: MouseEvent<HTMLButtonElement | HTMLLabelElement>) => void
   children: ReactNode
+  type?: 'button' | 'submit' | 'reset'
+  disabled?: boolean
   icon?: ReactNode
+  htmlFor?: string
+  as?: 'button' | 'label'
   btnType?: 'solid' | 'transparent'
   boundaryClassName?: string
   'data-testid'?: string
 }
 
-/** Default: renders `<button>`. `type` / `disabled` apply to the native button. */
-export type PrimaryButtonAsButtonProps = PrimaryButtonSharedProps & {
-  as?: 'button'
-  type?: 'button' | 'submit' | 'reset'
-  disabled?: boolean
-}
+const PrimaryButton = forwardRef<HTMLButtonElement, PrimaryButtonProps>(
+  (
+    {
+      className = '',
+      labelClassName = '',
+      textClassName = '',
+      onClick,
+      children,
+      type = 'button',
+      disabled = false,
+      icon,
+      htmlFor,
+      as = 'button',
+      btnType = 'solid',
+      boundaryClassName = '',
+      'data-testid': dataTestId,
+    },
+    ref
+  ) => {
+    if (as === 'label') {
+      const isDisabled = disabled
+      return (
+        <label
+          htmlFor={isDisabled ? undefined : htmlFor}
+          className={clsx('standard-button-primary', className)}
+          onClick={isDisabled ? undefined : onClick}
+          aria-disabled={isDisabled}
+        >
+          <div
+            className={clsx(
+              'button-boundary',
+              btnType === 'transparent' && 'button-boundary-transparent',
+              boundaryClassName
+            )}
+          >
+            {icon && <div className="contextual-icon-frame">{icon}</div>}
+            <div className={`text-frame ${textClassName}`}>
+              <div className={clsx('button-label', labelClassName)}>
+                {children}
+              </div>
+            </div>
+          </div>
+        </label>
+      )
+    }
 
-/** Renders `<label htmlFor=…>`; use with a hidden file input, etc. */
-export type PrimaryButtonAsLabelProps = PrimaryButtonSharedProps & {
-  as: 'label'
-  htmlFor?: string
-  type?: never
-  disabled?: never
-}
-
-export type PrimaryButtonProps =
-  | PrimaryButtonAsButtonProps
-  | PrimaryButtonAsLabelProps
-
-const PrimaryButton = forwardRef<
-  HTMLButtonElement | HTMLLabelElement,
-  PrimaryButtonProps
->((props, ref) => {
-  const {
-    className = '',
-    labelClassName = '',
-    textClassName = '',
-    onClick,
-    children,
-    icon,
-    btnType = 'solid',
-    boundaryClassName = '',
-    'data-testid': dataTestId,
-  } = props
-
-  if (props.as === 'label') {
-    const { htmlFor } = props
     return (
-      <label
-        ref={ref as Ref<HTMLLabelElement>}
-        htmlFor={htmlFor}
-        className={clsx('standard-button-primary', className)}
+      <button
+        ref={ref}
+        type={type}
         onClick={onClick}
+        disabled={disabled}
+        className={clsx('standard-button-primary', className)}
+        data-testid={dataTestId}
       >
         <div
           className={clsx(
@@ -71,36 +86,10 @@ const PrimaryButton = forwardRef<
             </div>
           </div>
         </div>
-      </label>
+      </button>
     )
   }
-
-  const { type = 'button', disabled = false } = props
-
-  return (
-    <button
-      ref={ref as Ref<HTMLButtonElement>}
-      type={type}
-      onClick={onClick}
-      disabled={disabled}
-      className={clsx('standard-button-primary', className)}
-      data-testid={dataTestId}
-    >
-      <div
-        className={clsx(
-          'button-boundary',
-          btnType === 'transparent' && 'button-boundary-transparent',
-          boundaryClassName
-        )}
-      >
-        {icon && <div className="contextual-icon-frame">{icon}</div>}
-        <div className={`text-frame ${textClassName}`}>
-          <div className={clsx('button-label', labelClassName)}>{children}</div>
-        </div>
-      </div>
-    </button>
-  )
-})
+)
 
 PrimaryButton.displayName = 'PrimaryButton'
 
