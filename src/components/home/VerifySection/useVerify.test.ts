@@ -26,11 +26,16 @@ if (!File.prototype.text) {
   }
 }
 
-vi.mock('@trustvc/trustvc', async (importOriginal) => {
+vi.mock('@trustvc/trustvc', async importOriginal => {
   const actual = await importOriginal<typeof import('@trustvc/trustvc')>()
-  
+
   // Create mock chain info with all required properties
-  const createMockChainInfo = (id: string, name: string, rpcUrl: string, explorerUrl: string) => ({
+  const createMockChainInfo = (
+    id: string,
+    name: string,
+    rpcUrl: string,
+    explorerUrl: string
+  ) => ({
     id,
     name,
     label: name,
@@ -40,7 +45,7 @@ vi.mock('@trustvc/trustvc', async (importOriginal) => {
     currency: 'ETH',
     nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
   })
-  
+
   return {
     ...actual,
     verifyDocument: vi.fn(),
@@ -48,16 +53,66 @@ vi.mock('@trustvc/trustvc', async (importOriginal) => {
     isTransferableRecord: vi.fn(),
     isDocumentRevokable: vi.fn(),
     SUPPORTED_CHAINS: {
-      '1': createMockChainInfo('1', 'homestead', 'https://eth-mainnet.example.com', 'https://etherscan.io'),
-      '137': createMockChainInfo('137', 'matic', 'https://polygon.example.com', 'https://polygonscan.com'),
-      '50': createMockChainInfo('50', 'xdc', 'https://xdc-rpc.com', 'https://xdc-explorer.io'),
-      '101010': createMockChainInfo('101010', 'stability', 'https://stability-rpc.com', 'https://stability-explorer.io'),
-      '1338': createMockChainInfo('1338', 'astron', 'https://astron-rpc.com', 'https://astron-explorer.io'),
-      '11155111': createMockChainInfo('11155111', 'sepolia', 'https://sepolia-rpc.com', 'https://sepolia-explorer.io'),
-      '80002': createMockChainInfo('80002', 'amoy', 'https://amoy-rpc.com', 'https://amoy-explorer.io'),
-      '51': createMockChainInfo('51', 'xdcapothem', 'https://apothem-rpc.com', 'https://apothem-explorer.io'),
-      '20180427': createMockChainInfo('20180427', 'stabilitytestnet', 'https://stability-test-rpc.com', 'https://stability-test-explorer.io'),
-      '21002': createMockChainInfo('21002', 'astrontestnet', 'https://astron-test-rpc.com', 'https://astron-test-explorer.io'),
+      '1': createMockChainInfo(
+        '1',
+        'homestead',
+        'https://eth-mainnet.example.com',
+        'https://etherscan.io'
+      ),
+      '137': createMockChainInfo(
+        '137',
+        'matic',
+        'https://polygon.example.com',
+        'https://polygonscan.com'
+      ),
+      '50': createMockChainInfo(
+        '50',
+        'xdc',
+        'https://xdc-rpc.com',
+        'https://xdc-explorer.io'
+      ),
+      '101010': createMockChainInfo(
+        '101010',
+        'stability',
+        'https://stability-rpc.com',
+        'https://stability-explorer.io'
+      ),
+      '1338': createMockChainInfo(
+        '1338',
+        'astron',
+        'https://astron-rpc.com',
+        'https://astron-explorer.io'
+      ),
+      '11155111': createMockChainInfo(
+        '11155111',
+        'sepolia',
+        'https://sepolia-rpc.com',
+        'https://sepolia-explorer.io'
+      ),
+      '80002': createMockChainInfo(
+        '80002',
+        'amoy',
+        'https://amoy-rpc.com',
+        'https://amoy-explorer.io'
+      ),
+      '51': createMockChainInfo(
+        '51',
+        'xdcapothem',
+        'https://apothem-rpc.com',
+        'https://apothem-explorer.io'
+      ),
+      '20180427': createMockChainInfo(
+        '20180427',
+        'stabilitytestnet',
+        'https://stability-test-rpc.com',
+        'https://stability-test-explorer.io'
+      ),
+      '21002': createMockChainInfo(
+        '21002',
+        'astrontestnet',
+        'https://astron-test-rpc.com',
+        'https://astron-test-explorer.io'
+      ),
     },
     // Document type predicates used in getIssuerName / getDocumentTags
     isWrappedV2Document: vi.fn().mockReturnValue(false),
