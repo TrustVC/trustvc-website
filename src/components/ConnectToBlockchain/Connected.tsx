@@ -20,7 +20,7 @@ export const Connected: React.FC<ConnectedProps> = ({
   const [tooltipMessage, setTooltipMessage] = useState(
     openConnectToBlockchainModel ? '' : 'Copy'
   )
-  const tooltipRef = useRef<HTMLDivElement>(null)
+  const tooltipRef = useRef<HTMLButtonElement>(null)
   const [displayedAccount, setDisplayedAccount] = useState('')
   const accountRef = useRef<HTMLHeadingElement>(null)
   const { account: contextAccount } = useProviderContext()
@@ -75,7 +75,8 @@ export const Connected: React.FC<ConnectedProps> = ({
 
   return (
     <>
-      <div
+      <button
+        type="button"
         onMouseLeave={() => {
           if (openConnectToBlockchainModel) return
 
@@ -127,7 +128,7 @@ export const Connected: React.FC<ConnectedProps> = ({
             </div>
           </div>
         )}
-      </div>
+      </button>
       {!openConnectToBlockchainModel && (
         <Tooltip
           id="active-wallet-tooltip"

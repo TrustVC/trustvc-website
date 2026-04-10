@@ -351,6 +351,9 @@ export const useVerify = (): UseVerifyReturn => {
       const _tokenId = getTokenId(doc as any)
       setTokenId(_tokenId)
       setTokenIdContext(_tokenId || null)
+    } else {
+      setTokenId(undefined)
+      setTokenIdContext(null)
     }
 
     // Detect token registry version (async)
@@ -390,6 +393,10 @@ export const useVerify = (): UseVerifyReturn => {
     setTokenId(undefined)
     setKeyId(undefined)
     setRawDocument(undefined)
+    setTokenRegistryAddressContext(null)
+    setTokenRegistryVersionContext(null)
+    setTokenIdContext(null)
+    setKeyIdContext(null)
   }
 
   const processFile = async (file: File) => {

@@ -76,7 +76,7 @@ export const walletSwitchChain = async (chainId: CHAIN_ID): Promise<void> => {
       return console.error(e)
     }
     if (e.code === 4902) {
-      return walletAddChain(chainId)
+      return await walletAddChain(chainId)
     }
     throw e
   }
