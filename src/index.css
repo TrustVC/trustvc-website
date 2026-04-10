@@ -3477,6 +3477,12 @@ p.small {
   cursor: pointer;
   transition: all 0.3s ease-in-out;
   user-select: none;
+  /* Button reset styles */
+  background: none;
+  border: 1px solid transparent;
+  font: inherit;
+  text-align: left;
+  width: auto;
 }
 @media (max-width: 768px) {
   .connected-wallet-container {
@@ -3486,6 +3492,15 @@ p.small {
 
 .connected-wallet-container:hover {
   background: #e5e7eb;
+}
+
+.connected-wallet-container:focus {
+  outline: 2px solid #4d4b98;
+  outline-offset: 2px;
+}
+
+.connected-wallet-container:focus:not(:focus-visible) {
+  outline: none;
 }
 
 .connected-wallet-container.with-shadow {

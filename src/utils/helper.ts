@@ -12,11 +12,7 @@ import {
 } from '@trustvc/trustvc'
 import { utils } from 'ethers'
 import { compareDesc, compareAsc } from 'date-fns'
-<<<<<<< HEAD
 import { getChainInfo, getChainInfoFromNetworkName } from './chain-utils'
-=======
-import { getChainInfo } from './chain-utils'
->>>>>>> ee8dbda (fix: merge fix resolved)
 
 export const getRpcUrl = (chainId: string): string | null => {
   const chainEnvUrl = import.meta.env[`VITE_RPC_URL_${chainId}`]
@@ -319,7 +315,8 @@ export const isExternalLink = (url: string): boolean => {
 
 export const makeAddressURL = (address: string, network: string): string => {
   const explorerUrl = getChainInfoFromNetworkName(network).explorerUrl
-  return new URL(`/address/${address}`, explorerUrl).href}
+  return new URL(`/address/${address}`, explorerUrl).href
+}
 const getEtherscanBaseUrl = (network: string): string => {
   return `https://${network === 'mainnet' ? '' : network + '.'}etherscan.io/`
 }
@@ -333,8 +330,6 @@ const getBaseUrl = (network: string): string => {
     ? getPolygonscanBaseUrl(network)
     : getEtherscanBaseUrl(network)
 }
-
-
 
 interface GenerateFileName {
   fileName: string
