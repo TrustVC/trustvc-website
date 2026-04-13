@@ -10,9 +10,7 @@ import {
 } from '../common/contexts/providerContext'
 
 export interface ConnectToMagicLinkModelProps {
-  showOnNewConnectWarningMessage: boolean
-  nextStep?: React.ReactNode
-  showNetworkSection?: boolean
+  showOnNewConnectWarningMessage?: boolean
   handleContinue?: () => void
 }
 
