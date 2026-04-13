@@ -2,8 +2,9 @@ import React, { FunctionComponent, ReactNode } from 'react'
 import Overlay from '../Overlay'
 import { MessageAddressResolver } from './MessageAddressResolver'
 import { useOverlayContext } from '../../contexts/OverlayContext'
-import LinkButton from '../../LinkButton'
 import { Button, ButtonSize } from '../../Button'
+import SuccessIcon from '@/components/icons/Success'
+import ErrorIcon from '@/components/icons/Error'
 
 export enum MessageTitle {
   NO_METAMASK = 'Metamask not installed',
@@ -40,37 +41,6 @@ export const ButtonClose: FunctionComponent<ButtonCloseProps> = ({
   )
 }
 
-const ButtonMetamaskInstall: FunctionComponent = () => {
-  return (
-    <LinkButton
-      className="bg-cerulean-500 rounded-xl text-white hover:text-white hover:bg-cerulean-800"
-      href="https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en"
-      target="_blank"
-      rel="noreferrer noopener"
-    >
-      Install Metamask
-    </LinkButton>
-  )
-}
-
-const ButtonConfirmAction = (handleOnClick: () => void): ReactNode => {
-  const { closeOverlay } = useOverlayContext()
-  const onClick = (): void => {
-    handleOnClick()
-    closeOverlay()
-  }
-  return (
-    <Button
-      size={ButtonSize.MD}
-      className="bg-cerulean-500 rounded-xl text-white hover:bg-cerulean-800"
-      onClick={onClick}
-      data-testid={'confirmActionBtn'}
-    >
-      Confirm
-    </Button>
-  )
-}
-
 interface DocumentTransferMessageProps {
   title: string
   isSuccess: boolean
@@ -78,113 +48,55 @@ interface DocumentTransferMessageProps {
   isButtonMetamaskInstall?: boolean
   isConfirmationMessage?: boolean
   onConfirmationAction?: () => void
-  footer?: React.ReactNode
+  setShowEndorsementChain: (payload: boolean) => void
 }
 
 export const DocumentTransferMessage: FunctionComponent<
   DocumentTransferMessageProps
-> = ({
-  title,
-  isSuccess,
-  isButtonMetamaskInstall,
-  isConfirmationMessage,
-  onConfirmationAction,
-  children,
-  footer,
-}) => {
+> = ({ title, isSuccess, setShowEndorsementChain, children }) => {
   const { closeOverlay } = useOverlayContext()
-
-  const documentTransferButton = (): ReactNode => {
-    // if (isButtonMetamaskInstall) {
-    //   return <ButtonMetamaskInstall />
-    // }
-    // if (isConfirmationMessage && onConfirmationAction) {
-    //   return (
-    //     <div className="flex mx-0">
-    //       <div className="col-auto ml-2">
-    //         <ButtonClose />
-    //       </div>
-    //       <div className="col-auto ml-2">
-    //         {ButtonConfirmAction(onConfirmationAction)}
-    //       </div>
-    //     </div>
-    //   )
-    // }
-    return footer ? footer : <ButtonClose />
+  const handleViewEndorsementChain = () => {
+    setShowEndorsementChain(true)
+    closeOverlay()
   }
 
   return (
-    <Overlay onClose={closeOverlay}>
-      <div className="max-w-lg bg-white rounded-2xl p-6 shadow-xl">
+    <Overlay
+      onClose={closeOverlay}
+      className="flex justify-center items-center"
+    >
+      <div className="flex flex-col items-start p-0  min-w-[308px] max-w-[640px] w-full min-h-[336px] bg-white/66 border border-[rgba(169,178,187,0.33)] shadow-[0px_8px_32px_RGBA(104,106,210,0.33)] rounded-2xl">
         {/* Header */}
-        <div
-          className="flex items-center gap-4 pt-6 pr-6 pb-4 pl-6"
-          style={{ width: '640px', height: '72px' }}
-        >
-          {isSuccess ? (
-            <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
-              <svg
-                className="w-6 h-6 text-green-600"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M5 13l4 4L19 7"
-                />
-              </svg>
-            </div>
-          ) : (
-            <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
-              <svg
-                className="w-6 h-6 text-red-600"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </div>
-          )}
+        <div className="flex flex-row items-start pt-6 px-6 pb-4 gap-4  min-h-[72px] flex-none order-0 self-stretch grow-0">
+          {isSuccess ? <SuccessIcon /> : <ErrorIcon />}
           <h2 className="text-xl font-bold text-gray-900">{title}</h2>
         </div>
 
         {/* Content */}
-        <div
-          className="flex-1 p-4 border-t border-b border-solid"
-          style={{
-            height: '184px',
-            borderColor: 'var(--Neutral-33-90, rgba(169, 178, 187, 0.33))',
-            borderWidth: '1px 0px 1px 0px',
-          }}
-        >
-          {children}
+        <div className="box-border flex flex-col items-start p-4  min-h-[184px] border-t border-b border-solid border-[rgba(169,178,187,0.33)] flex-none self-stretch grow-0">
+          <div className="flex flex-col items-start p-4 px-6 gap-4 min-h-[152px]">
+            {children}
+          </div>
         </div>
         {/* Footer Buttons */}
-        <div
-          className="flex gap-4 pt-4 pr-6 pb-6 pl-6"
-          style={{ width: '640px', height: '80px' }}
-        >
-          <Button
-            size={ButtonSize.MD}
-            className="flex-1"
-            width="170px"
-            btnType="transparent"
-            onClick={closeOverlay}
-          >
-            Dismiss
-          </Button>
-          <Button size={ButtonSize.MD} className="flex-1" width="170px">
-            View Endorsement Chain
-          </Button>
+        <div className="flex flex-row justify-end items-center pt-4 px-6 pb-6 gap-4 max-w-[640px] min-h-[80px] w-full">
+          <div className="flex flex-col sm:flex-row justify-center items-center p-0 gap-2 w-full max-w-[592px] min-h-[40px]">
+            <Button
+              size={ButtonSize.MD}
+              className="w-full h-[40px] min-w-[160px] max-w-[260px] gap-[10px] flex-1"
+              btnType="transparent"
+              onClick={closeOverlay}
+            >
+              Dismiss
+            </Button>
+            <Button
+              size={ButtonSize.MD}
+              className="w-full h-[40px] min-w-[160px] max-w-[260px] gap-[10px] flex-1"
+              onClick={() => handleViewEndorsementChain()}
+            >
+              View Endorsement Chain
+            </Button>
+          </div>
         </div>
       </div>
     </Overlay>
@@ -329,10 +241,10 @@ export const MessageTransferSuccess: FunctionComponent<MessageProps> = ({
         </>
       )}
       {holderAddress && (
-        <>
-          <h6 className="mt-3">{holderTitle}</h6>
+        <div className="flex flex-col justify-center items-start p-0 gap-1 min-w-[129px] min-h-[52px] flex-none order-0 grow-0">
+          <h4 className="mt-3">{holderTitle}</h4>
           {holderAddress && <MessageAddressResolver address={holderAddress} />}
-        </>
+        </div>
       )}
     </>
   )
@@ -353,7 +265,7 @@ interface ShowDocumentTransferMessageOptionProps {
 export const showDocumentTransferMessage = (
   title: string,
   option: ShowDocumentTransferMessageOptionProps,
-  footer?: React.ReactNode
+  setShowEndorsementChain: (payload: boolean) => void
 ): ReactNode => {
   return (
     <DocumentTransferMessage
@@ -362,7 +274,7 @@ export const showDocumentTransferMessage = (
       isButtonMetamaskInstall={option.isButtonMetamaskInstall}
       onConfirmationAction={option.onConfirmationAction}
       isConfirmationMessage={option.isConfirmationMessage}
-      footer={footer}
+      setShowEndorsementChain={setShowEndorsementChain}
     >
       {title === MessageTitle.NO_METAMASK && <MessageNoMetamask />}
       {title === MessageTitle.NO_MANAGE_ACCESS && <MessageNoManageAccess />}

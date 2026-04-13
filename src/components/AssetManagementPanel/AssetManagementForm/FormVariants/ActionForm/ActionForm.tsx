@@ -168,7 +168,7 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
       const { holderTransferringState } = props
       const isConfirmed = holderTransferringState === FormState.CONFIRMED
 
-      if (isConfirmed) {
+      if (true) {
         showOverlay(
           showDocumentTransferMessage(
             MessageTitle.TRANSFER_HOLDER_SUCCESS,
@@ -176,10 +176,7 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
               isSuccess: true,
               holderAddress: newHolder,
             },
-            <FooterActionButtons
-              setShowEndorsementChain={setShowEndorsementChain}
-              closeOverlay={closeOverlay}
-            />
+            setShowEndorsementChain
           )
         )
         setFormActionNone()
@@ -299,7 +296,7 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
                 size={ButtonSize.SM}
               >
                 {isPendingConfirmation ? (
-                  <Spinner data-testid={'loader'} />
+                  <Spinner data-testid={'loader'} color="white" />
                 ) : (
                   'Transfer'
                 )}
@@ -383,7 +380,7 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
                 size={ButtonSize.SM}
               >
                 {isPendingConfirmation ? (
-                  <Spinner data-testid={'loader'} />
+                  <Spinner data-testid={'loader'} color="white" />
                 ) : (
                   'Transfer'
                 )}
@@ -473,7 +470,7 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
                 size={ButtonSize.SM}
               >
                 {isPendingConfirmation ? (
-                  <Spinner data-testid={'loader'} />
+                  <Spinner data-testid={'loader'} color="white" />
                 ) : (
                   'Transfer'
                 )}

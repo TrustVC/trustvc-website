@@ -5,27 +5,39 @@ export type SpinnerSize = 'small' | 'medium' | 'large'
 interface LoaderProps {
   label?: string
   size?: SpinnerSize
-  className?: string
   centered?: boolean
+  row?: boolean
+  frameClass?: string
+  spinnerClass?: string
+  labelClass?: string
+  color?: string
 }
 
 const Spinner: React.FC<LoaderProps> = ({
   label,
   size = 'small',
-  className = '',
   centered = false,
+  row = false,
+  frameClass = '',
+  spinnerClass = '',
+  labelClass = '',
+  color = '',
 }) => {
+  const colorClasses = color ? `!border-${color} !border-t-transparent` : ''
+
   const spinner = (
-    <div>
-      <div className={`spinner spinner-${size} `} />
-      <div className="spinner-label">{label}</div>
+    <div
+      className={`flex items-center gap-2 ${row ? 'flex-row' : 'flex-col'} ${frameClass}`}
+    >
+      <div
+        className={`spinner spinner-${size} ${colorClasses} ${spinnerClass}`}
+      />
+      {label && <div className={`spinner-label ${labelClass}`}>{label}</div>}
     </div>
   )
 
   if (centered) {
-    return (
-      <div className={`spinner-centered-wrapper ${className}`}>{spinner}</div>
-    )
+    return <div className={`spinner-centered-wrapper `}>{spinner}</div>
   }
 
   return spinner

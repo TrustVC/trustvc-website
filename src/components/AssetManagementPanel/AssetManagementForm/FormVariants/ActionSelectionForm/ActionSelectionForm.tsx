@@ -133,7 +133,8 @@ export const ActionSelectionForm: FunctionComponent<
       )}
       <div className="vr-footer">
         {!isTokenBurnt && (
-          <div className="dropdown-btn-frame">
+          <div className="dropdown-btn-frame ">
+            <div className="vr-footer-dropdown-placeholder" />
             {account ? (
               <>
                 {canManage ? (

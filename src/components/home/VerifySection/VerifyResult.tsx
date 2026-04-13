@@ -301,8 +301,12 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
             isMagicDemo={false}
             tokenId={tokenId}
             tokenRegistryAddress={tokenRegistryAddress}
-            setShowEndorsementChain={() => {}}
-            isTransferableDocument={true}
+            setShowEndorsementChain={(show: boolean) => {
+              if (show && onViewEndorsementChain) {
+                onViewEndorsementChain()
+              }
+            }}
+            isTransferableDocument={isTransferable}
             isSampleDocument={false}
             isExpired={false}
           />

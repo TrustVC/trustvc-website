@@ -1,3 +1,4 @@
+// Types are now defined inline in the interface
 import React, {
   createContext,
   FunctionComponent,
@@ -6,7 +7,6 @@ import React, {
   useEffect,
   useState,
 } from 'react'
-import { TitleEscrow, TradeTrustToken } from '../../../../types'
 import {
   ContractFunctionState,
   useContractFunctionHook,
@@ -28,21 +28,21 @@ interface ITokenInformationContext {
   remark?: string
   documentOwner?: string
   approvedBeneficiary?: string
-  changeHolder: TitleEscrow['transferHolder']
+  changeHolder: (...args: any[]) => Promise<any>
   changeHolderState: ContractFunctionState
-  returnToIssuer: TitleEscrow['returnToIssuer']
+  returnToIssuer: (...args: any[]) => Promise<any>
   returnToIssuerState: ContractFunctionState
-  endorseBeneficiary: TitleEscrow['transferBeneficiary']
+  endorseBeneficiary: (...args: any[]) => Promise<any>
   endorseBeneficiaryState: ContractFunctionState
-  nominate: TitleEscrow['nominate']
+  nominate: (...args: any[]) => Promise<any>
   nominateState: ContractFunctionState
-  transferOwners: TitleEscrow['transferOwners']
+  transferOwners: (...args: any[]) => Promise<any>
   transferOwnersState: ContractFunctionState
-  rejectTransferOwner: TitleEscrow['rejectTransferBeneficiary']
+  rejectTransferOwner: (...args: any[]) => Promise<any>
   rejectTransferOwnerState: ContractFunctionState
-  rejectTransferHolder: TitleEscrow['rejectTransferHolder']
+  rejectTransferHolder: (...args: any[]) => Promise<any>
   rejectTransferHolderState: ContractFunctionState
-  rejectTransferOwnerHolder: TitleEscrow['rejectTransferOwners']
+  rejectTransferOwnerHolder: (...args: any[]) => Promise<any>
   rejectTransferOwnerHolderError?: Error
   rejectTransferOwnerHolderErrorMessage?: string
   rejectTransferOwnerHolderState: ContractFunctionState
@@ -51,9 +51,9 @@ interface ITokenInformationContext {
   isTokenBurnt: boolean
   isTitleEscrow?: boolean
   resetStates: () => void
-  destroyToken: TradeTrustToken['burn']
+  destroyToken: (...args: any[]) => Promise<any>
   destroyTokenState: ContractFunctionState
-  restoreToken: TradeTrustToken['restore']
+  restoreToken: (...args: any[]) => Promise<any>
   restoreTokenState: ContractFunctionState
 }
 
@@ -106,25 +106,35 @@ export const TokenInformationContextProvider: FunctionComponent<
     tokenRegistryAddress,
     providerOrSigner
   )
+  console.log(
+    'providerOrSigner, tokenRegistry, tokenId',
+    tokenRegistryAddress,
+    tokenRegistry?.address,
+    tokenId
+  )
   const { titleEscrow, titleEscrowAddress, updateTitleEscrow, documentOwner } =
     useTitleEscrowContract(providerOrSigner, tokenRegistry, tokenId)
   const isReturnedToIssuer =
     documentOwner?.toLowerCase() === tokenRegistryAddress?.toLowerCase()
   const isTokenBurnt =
     documentOwner?.toLowerCase() === BurnAddress?.toLowerCase() // check if the token belongs to burn address.
+  console.log('useTokenRegistryVersion', useTokenRegistryVersion())
   const isTitleEscrow = !!useTokenRegistryVersion() || undefined
+  console.log('isTitleEscrow', isTitleEscrow)
 
   // First check whether Contract is TitleEscrow
-
+  console.log('titleEscrow', titleEscrow)
   // Contract Read Functions
   const { call: getHolder, value: holder } = useContractFunctionHook(
     titleEscrow,
     'holder'
   )
+  console.log('getHolder', holder)
   const { call: getBeneficiary, value: beneficiary } = useContractFunctionHook(
     titleEscrow,
     'beneficiary'
   )
+  console.log('getBeneficiary', beneficiary)
   const { call: getApprovedBeneficiary, value: approvedBeneficiary } =
     useContractFunctionHook(titleEscrow, 'nominee')
   const { call: getPrevBeneficiary, value: prevBeneficiary } =
@@ -353,7 +363,7 @@ export const TokenInformationContextProvider: FunctionComponent<
 
   // Reset states for all write functions when provider changes to allow methods to be called again without refreshing
   useEffect(resetProviders, [resetProviders, providerOrSigner])
-
+  console.log('tokeninformationcontext')
   return (
     <TokenInformationContext.Provider
       value={{
@@ -361,8 +371,8 @@ export const TokenInformationContextProvider: FunctionComponent<
         tokenRegistryAddress,
         titleEscrowAddress,
         initialize,
-        holder: holder?.[0],
-        beneficiary: beneficiary?.[0],
+        holder: holder,
+        beneficiary: beneficiary,
         approvedBeneficiary: approvedBeneficiary?.[0],
         prevBeneficiary: prevBeneficiary?.[0],
         prevHolder: prevHolder?.[0],

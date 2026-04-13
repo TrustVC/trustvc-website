@@ -106,11 +106,7 @@ export const Dropdown: FunctionComponent<DropdownProps> = ({
               }
             : undefined
         }
-        className={`${
-          !menuPortalTarget ? 'z-30 ' : 'z-50 '
-        }absolute rounded bg-white border border-gray-300 py-2 shadow-lg${addonStylesShared}${
-          classNameMenu ? ` ${classNameMenu}` : ''
-        }`}
+        className="dropdown-menu-frame"
       >
         {children}
       </div>
@@ -124,7 +120,7 @@ export const Dropdown: FunctionComponent<DropdownProps> = ({
   }
 
   return (
-    <div className={`relative${classNameRoot ? ` ${classNameRoot}` : ''}`}>
+    <div className="btn-menu-frame">
       <button
         ref={buttonRef}
         {...props}
@@ -135,29 +131,18 @@ export const Dropdown: FunctionComponent<DropdownProps> = ({
             setIsOpen(!isOpen)
           }
         }}
-        className={`relative z-10 cursor-pointer disabled:cursor-not-allowed disabled:bg-gray-200 focus:outline-none flex items-center justify-between${addonStylesShared}${
-          className ? ` ${className}` : ''
-        }`}
+        className="dropdown-btn"
       >
         <>
-          <span className="flex-1 truncate">{dropdownButtonText}</span>
+          <h5 className="text-center justify-center !text-white">
+            {dropdownButtonText}
+          </h5>
           <span>
-            <ChevronDown />
+            <ChevronDown className="text-white" />
           </span>
         </>
       </button>
-      {isOpen && (
-        <>
-          {!menuPortalTarget && (
-            <button
-              tabIndex={-1}
-              onClick={() => setIsOpen(false)}
-              className="fixed z-20 inset-0 w-full h-full cursor-default focus:outline-none"
-            />
-          )}
-          {renderDropdownContent()}
-        </>
-      )}
+      {isOpen && <>{renderDropdownContent()}</>}
     </div>
   )
 }
@@ -174,11 +159,12 @@ export const DropdownItem: FunctionComponent<DropdownItemProps> = ({
   ...props
 }) => {
   return (
-    <div
-      className={`truncate cursor-pointer text-cloud-800 p-3 hover:bg-gray-50 active:bg-gray-300 ${className}`}
-      {...props}
-    >
-      {children}
+    <div className={`truncate cursor-pointer ${className}`} {...props}>
+      <div className="dropdown-item-frame">
+        <div className="dropdown-item-text-frame">
+          <h5>{children}</h5>
+        </div>
+      </div>
     </div>
   )
 }

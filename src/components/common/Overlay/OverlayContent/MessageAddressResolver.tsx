@@ -5,5 +5,5 @@ export const MessageAddressResolver: FunctionComponent<{ address: string }> = ({
   address,
 }) => {
   const { identityName } = useIdentifierResolver(address)
-  return <p>{identityName || address}</p>
+  return <p className="break-all whitespace-normal overflow-hidden text-ellipsis">{identityName || address}</p>
 }

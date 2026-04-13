@@ -40,134 +40,128 @@ export const AssetManagementDropdown: FunctionComponent<
 }) => {
   return isRejectPendingConfirmation ? (
     <ButtonIcon disabled data-testid={'rejectTransferBtn'}>
-      <Spinner data-testid={'loader'} />
-      <div className="flex-grow">Rejecting</div>
+      <Spinner data-testid={'loader'} label="Rejecting" row />
     </ButtonIcon>
   ) : (
     <Dropdown
       data-testid="manageAssetDropdown"
       dropdownButtonText="Manage Assets"
-      className="dropdown-menu-btn"
     >
       {canTransferHolder && (
         <DropdownItem
-          className="active:bg-cloud-200 active:text-white"
+          className="dropdown-item-btn"
           data-testid={'transferHolderDropdown'}
           onClick={() => onSetFormAction(AssetManagementActions.TransferHolder)}
         >
-          <div className="dropdown-item-text">Transfer holdership</div>
+          Transfer holdership
         </DropdownItem>
       )}
       {canTransferBeneficiary && (
         <DropdownItem
-          className="active:bg-cloud-200 active:text-white"
+          className="dropdown-item-btn"
           data-testid={'transferOwnerDropdown'}
           onClick={() => {
             onSetFormAction(AssetManagementActions.TransferOwner)
           }}
         >
-          <div className="dropdown-item-text">Transfer ownership</div>
+          Transfer ownership
         </DropdownItem>
       )}
       {canNominateBeneficiary && (
         <DropdownItem
-          className="active:bg-cloud-200 active:text-white"
+          className="dropdown-item-btn"
           data-testid={'nominateBeneficiaryHolderDropdown'}
           onClick={() =>
             onSetFormAction(AssetManagementActions.NominateBeneficiary)
           }
         >
-          <div className="dropdown-item-text">Nominate transfer ownership</div>
+          Nominate transfer ownership
         </DropdownItem>
       )}
       {!canTransferBeneficiary && canEndorseBeneficiary && (
         <DropdownItem
-          className="active:bg-cloud-200 active:text-white"
+          className="dropdown-item-btn"
           data-testid={'endorseBeneficiaryDropdown'}
           onClick={() => {
             onSetFormAction(AssetManagementActions.EndorseBeneficiary)
           }}
         >
-          <div className="dropdown-item-text">Endorse transfer ownership</div>
+          Endorse transfer ownership
         </DropdownItem>
       )}
       {canTransferOwners && (
         <DropdownItem
-          className="active:bg-cloud-200 active:text-white text-wrap"
+          className="dropdown-item-btn"
           data-testid={'endorseTransferDropdown'}
           onClick={() =>
             onSetFormAction(AssetManagementActions.TransferOwnerHolder)
           }
         >
-          <div className="dropdown-item-text">
-            Transfer ownership and holdership
-          </div>
+          Transfer ownership and holdership
         </DropdownItem>
       )}
       {canReturnToIssuer && (
         <DropdownItem
-          className="active:bg-cloud-200 active:text-white"
+          className="dropdown-item-btn"
           data-testid={'surrenderDropdown'}
           onClick={() => onSetFormAction(AssetManagementActions.ReturnToIssuer)}
         >
-          <div className="dropdown-item-text">Return ETR to issuer</div>
+          Return ETR to issuer
         </DropdownItem>
       )}
       {canHandleShred && (
         <DropdownItem
-          className="active:bg-cloud-200 active:text-white"
+          className="dropdown-item-btn"
           data-testid={'acceptSurrenderDropdown'}
           onClick={() =>
             onSetFormAction(AssetManagementActions.AcceptReturnToIssuer)
           }
         >
-          <div className="dropdown-item-text">Accept ETR return</div>
+          Accept ETR return
         </DropdownItem>
       )}
       {canHandleRestore && (
         <DropdownItem
-          className="active:bg-cloud-200 active:text-white"
+          className="dropdown-item-btn"
           data-testid={'rejectSurrenderDropdown'}
           onClick={() =>
             onSetFormAction(AssetManagementActions.RejectReturnToIssuer)
           }
         >
-          <div className="dropdown-item-text">Reject ETR return</div>
+          Reject ETR return
         </DropdownItem>
       )}
       {canRejectOwnerHolderTransfer && (
         <DropdownItem
-          className="divide-y active:bg-cloud-200 active:text-white"
+          className="dropdown-item-btn"
           data-testid={'rejectTransferOwnerHolderDropdown'}
           onClick={() =>
             onSetFormAction(AssetManagementActions.RejectTransferOwnerHolder)
           }
         >
-          <div className="dropdown-item-text">
-            Reject ownership and holdership
-          </div>
+          Reject ownership and holdership
         </DropdownItem>
       )}
       {canRejectOwnerTransfer && (
         <DropdownItem
-          className="divide-y active:bg-cloud-200 active:text-white"
+          className="dropdown-item-btn"
           data-testid={'rejectTransferOwnerDropdown'}
           onClick={() =>
             onSetFormAction(AssetManagementActions.RejectTransferOwner)
           }
         >
-          <div className="dropdown-item-text">Reject ownership</div>
+          Reject ownership
         </DropdownItem>
       )}
       {canRejectHolderTransfer && (
         <DropdownItem
-          className="divide-y active:bg-cloud-200 active:text-white"
+          className="dropdown-item-btn"
           data-testid={'rejectTransferHolderDropdown'}
           onClick={() =>
             onSetFormAction(AssetManagementActions.RejectTransferHolder)
           }
         >
-          <div className="dropdown-item-text">Reject holdership</div>
+          Reject holdership
         </DropdownItem>
       )}
     </Dropdown>

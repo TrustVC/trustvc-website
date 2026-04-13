@@ -46,7 +46,7 @@ export const Button: FunctionComponent<ButtonTradeTrust> = ({
 }) => {
   // Base styles for all buttons
   const baseStyles =
-    'flex flex-col justify-center items-center gap-2.5 flex-none opacity-100 box-border transition-colors duration-200 ease-out cursor-pointer font-gilroy font-bold text-center align-middle'
+    'flex flex-col justify-center items-center gap-2.5  opacity-100 box-border transition-colors duration-200 ease-out cursor-pointer font-gilroy font-bold text-center align-middle'
 
   // Size-specific width, height, padding, border-radius, and text styles
   const sizeStyles = {
@@ -94,7 +94,7 @@ export const ButtonIcon: FunctionComponent<ButtonTradeTrust> = ({
 }) => {
   // Base styles for all buttons
   const baseStyles =
-    'flex flex-col justify-center items-center gap-2.5 flex-none opacity-100 box-border transition-colors duration-200 ease-out cursor-pointer font-gilroy font-bold text-center align-middle'
+    'flex flex-col justify-center items-center gap-2.5 opacity-100 box-border transition-colors duration-200 ease-out cursor-pointer font-gilroy font-bold text-center align-middle'
 
   // Size-specific height, padding, border-radius, and text styles (without width)
   const sizeStylesNoWidth = {
