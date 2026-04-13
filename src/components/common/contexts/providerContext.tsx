@@ -494,17 +494,22 @@ export const ProviderContextProvider: FunctionComponent<
   }, [defaultChainId, getOrCreateMagic])
 
   useEffect(() => {
-    ;(async () => {
-      if (providerType !== SIGNER_TYPE.MAGIC || account) return
+    if (providerType !== SIGNER_TYPE.MAGIC || account) return
+    let cancelled = false
+    const fetchAccount = async () => {
       const magic = getOrCreateMagic(
         (currentChainId || defaultChainId) as CHAIN_ID
       )
       if (!magic) return
       const magicAddress = await fetchMagicEthereumAddress(magic)
-      if (magicAddress) {
+      if (!cancelled && magicAddress) {
         setAccount(magicAddress)
       }
-    })()
+    }
+    void fetchAccount()
+    return () => {
+      cancelled = true
+    }
   }, [providerType, account, currentChainId, defaultChainId, getOrCreateMagic])
 
   return (
