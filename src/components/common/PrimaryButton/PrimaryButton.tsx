@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import { ReactNode, MouseEvent, Ref, forwardRef } from 'react'
+import { ReactNode, MouseEvent, forwardRef, Ref } from 'react'
 
 type PrimaryButtonSharedProps = {
   className?: string
@@ -8,6 +8,8 @@ type PrimaryButtonSharedProps = {
   onClick?: (event: MouseEvent<HTMLButtonElement | HTMLLabelElement>) => void
   children: ReactNode
   icon?: ReactNode
+  htmlFor?: string
+  as?: 'button' | 'label'
   btnType?: 'solid' | 'transparent'
   boundaryClassName?: string
   'data-testid'?: string

@@ -27,7 +27,6 @@ import {
   preloadMagicSdk,
 } from '../../../utils/magicWallet'
 import { MAGIC_API_KEY } from '../../../configs/env-config'
-
 export enum SIGNER_TYPE {
   IDENTITY = 'Identity', // Internal RPC to query only.
   METAMASK = 'Metamask',
@@ -160,7 +159,6 @@ export const ProviderContextProvider: FunctionComponent<
     }
     return magicRef.current
   }, [])
-
   const changeNetwork = async (chainId: CHAIN_ID) => {
     try {
       if (
@@ -363,7 +361,6 @@ export const ProviderContextProvider: FunctionComponent<
   const upgradeToMetaMaskSigner = async () => {
     // if (providerType === SIGNER_TYPE.METAMASK) return;
     await disconnectWallet(false)
-    await updateProvider(SIGNER_TYPE.METAMASK)
     return initializeMetaMaskSigner()
   }
 
