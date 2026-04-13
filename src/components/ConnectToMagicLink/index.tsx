@@ -125,9 +125,9 @@ const ConnectToMagicLink: React.FC = () => {
             </h3>
           </Button>
           {errorMessage && (
-            <p className="text-left text-sm text-red-500 mt-2">
+            <div className="text-left mt-2 field-error-text block" role="alert">
               {errorMessage}
-            </p>
+            </div>
           )}
         </>
       )}
