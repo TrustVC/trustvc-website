@@ -21,7 +21,9 @@ export const ConnectToMagicLinkModelComponent = ({
   const { providerType, account, disconnectWallet } = useProviderContext()
 
   const handleDisconnect = () => {
-    disconnectWallet()
+    void disconnectWallet().catch(() => {
+      // Optional: surface a toast/error state
+    })
   }
 
   return (
