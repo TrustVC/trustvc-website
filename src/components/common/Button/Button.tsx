@@ -173,7 +173,7 @@ export const LinkButton: FunctionComponent<AnchorTradeTrust> = ({
 
   return (
     <a
-      className={`block ${shared} ${className}`}
+      className={`block ${shared} ${className || ''}`}
       rel="noopener noreferrer"
       {...props}
     >
@@ -195,7 +195,7 @@ export const LabelButton: FunctionComponent<LabelTradeTrust> = ({
   })
 
   return (
-    <label className={`block ${shared} ${className}`} {...props}>
+    <label className={`block ${shared} ${className || ''}`} {...props}>
       {children}
     </label>
   )

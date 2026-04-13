@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { getMagicLinkIconSrc } from '../../utils/magicWallet'
 import {
   SIGNER_TYPE,
   useProviderContext,
@@ -8,6 +9,7 @@ import Overlay from '../common/Overlay'
 import { ConnectToMetamaskModelComponent } from '../ConnectToMetamask'
 // import { Button, ButtonSize } from '../common/Button'
 import PrimaryButton from '../common/PrimaryButton'
+import { ConnectToMagicLinkModelComponent } from '../ConnectToMagicLink'
 
 const WALLET_TYPE_NAME: Partial<Record<SIGNER_TYPE, string>> = {
   [SIGNER_TYPE.METAMASK]: 'Metamask',
@@ -32,6 +34,7 @@ interface ConnectToBlockchainHeaderItemProps {
   isSelected: boolean
   isConnected: boolean
   onClick: () => void
+  'data-testid'?: string
 }
 
 const ConnectToBlockchainHeaderItem = ({
@@ -44,7 +47,8 @@ const ConnectToBlockchainHeaderItem = ({
   ...props
 }: ConnectToBlockchainHeaderItemProps) => {
   return (
-    <div
+    <button
+      type="button"
       id={`tab-${itemKey}`}
       onClick={onClick}
       {...props}
@@ -62,7 +66,7 @@ const ConnectToBlockchainHeaderItem = ({
       ) : (
         <h4>{WALLET_TYPE_NAME[walletType]}</h4>
       )}
-    </div>
+    </button>
   )
 }
 
@@ -71,6 +75,7 @@ const ConnectToBlockchainHeader = ({
   setSelectedWalletType,
 }: ConnectToBlockchainHeaderProps) => {
   const { providerType, account } = useProviderContext()
+  const magicIconSrc = getMagicLinkIconSrc()
   const WalletConnectMethods = [
     {
       walletType: SIGNER_TYPE.METAMASK,
@@ -86,7 +91,7 @@ const ConnectToBlockchainHeader = ({
       walletType: SIGNER_TYPE.MAGIC,
       'data-testid': 'connect-magic-header',
       walletIcon: (
-        <img src="/images/magic_link.svg" alt="MagicLink" className="w-6 h-6" />
+        <img src={magicIconSrc} alt="MagicLink" className="w-6 h-6" />
       ),
       isSelected: !!(selectedWalletType === SIGNER_TYPE.MAGIC),
       isConnected: !!(providerType === SIGNER_TYPE.MAGIC && account),
@@ -159,13 +164,12 @@ const ConnectToBlockchainModel: React.FC<ConnectToBlockchainProps> = ({
                     handleContinue={handleContinue}
                   />
                 )}
-                {/* {selectedWalletType === SIGNER_TYPE.MAGIC && (
-              <ConnectToMagicLinkModelComponent
-                showOnNewConnectWarningMessage
-                nextStep={nextStep}
-                showNetworkSection={showNetworkSection}
-              />
-            )} */}
+                {selectedWalletType === SIGNER_TYPE.MAGIC && (
+                  <ConnectToMagicLinkModelComponent
+                    showOnNewConnectWarningMessage
+                    handleContinue={handleContinue}
+                  />
+                )}
               </div>
             </div>
           </div>
