@@ -9,26 +9,72 @@ import {
   getAttachments,
   formatFileSize,
   getFileExtension,
+  isValidAttachmentData,
 } from './helper'
 
 // Mock @trustvc/trustvc
-vi.mock('@trustvc/trustvc', () => ({
-  SUPPORTED_CHAINS: {
-    '1': { rpcUrl: 'https://mainnet.infura.io' },
-    '137': { rpcUrl: 'https://polygon-rpc.com' },
-    '999': { rpcUrl: 'https://undefined-key.io/undefined' },
-  },
-  vc: {
-    isSignedDocument: vi.fn(() => false),
-    isRawDocument: vi.fn(() => false),
-  },
-  getDocumentData: vi.fn((doc: any) => doc?.data ?? doc),
-  getDataV2: vi.fn((doc: any) => doc?.data ?? doc),
-  isWrappedV2Document: vi.fn(() => false),
-  isWrappedV3Document: vi.fn(() => false),
-  isRawV2Document: vi.fn(() => false),
-  isRawV3Document: vi.fn(() => false),
-}))
+vi.mock('@trustvc/trustvc', async importOriginal => {
+  const actual = await importOriginal<typeof import('@trustvc/trustvc')>()
+
+  // Create mock chain info with all required properties
+  const createMockChainInfo = (id: string, name: string, rpcUrl: string) => ({
+    id,
+    name,
+    label: name,
+    rpcUrl,
+    explorerUrl: `https://explorer-${name}.io`,
+    type: 'production' as const,
+    currency: 'ETH',
+    nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
+  })
+
+  return {
+    ...actual,
+    SUPPORTED_CHAINS: {
+      '1': createMockChainInfo('1', 'homestead', 'https://mainnet.infura.io'),
+      '137': createMockChainInfo('137', 'matic', 'https://polygon-rpc.com'),
+      '50': createMockChainInfo('50', 'xdc', 'https://xdc-rpc.com'),
+      '101010': createMockChainInfo(
+        '101010',
+        'stability',
+        'https://stability-rpc.com'
+      ),
+      '1338': createMockChainInfo('1338', 'astron', 'https://astron-rpc.com'),
+      '11155111': createMockChainInfo(
+        '11155111',
+        'sepolia',
+        'https://sepolia-rpc.com'
+      ),
+      '80002': createMockChainInfo('80002', 'amoy', 'https://amoy-rpc.com'),
+      '51': createMockChainInfo('51', 'xdcapothem', 'https://apothem-rpc.com'),
+      '20180427': createMockChainInfo(
+        '20180427',
+        'stabilitytestnet',
+        'https://stability-test-rpc.com'
+      ),
+      '21002': createMockChainInfo(
+        '21002',
+        'astrontestnet',
+        'https://astron-test-rpc.com'
+      ),
+      '999': createMockChainInfo(
+        '999',
+        'unknown',
+        'https://undefined-key.io/undefined'
+      ),
+    },
+    vc: {
+      isSignedDocument: vi.fn(() => false),
+      isRawDocument: vi.fn(() => false),
+    },
+    getDocumentData: vi.fn((doc: any) => doc?.data ?? doc),
+    getDataV2: vi.fn((doc: any) => doc?.data ?? doc),
+    isWrappedV2Document: vi.fn(() => false),
+    isWrappedV3Document: vi.fn(() => false),
+    isRawV2Document: vi.fn(() => false),
+    isRawV3Document: vi.fn(() => false),
+  }
+})
 
 const trustvc = await import('@trustvc/trustvc')
 
@@ -339,5 +385,45 @@ describe('getAttachments', () => {
     vi.mocked(trustvc.isWrappedV2Document).mockReturnValue(true)
     vi.mocked(trustvc.getDataV2).mockReturnValue({} as any)
     expect(getAttachments({})).toEqual([])
+  })
+})
+
+describe('isValidAttachmentData', () => {
+  it('returns true for valid base64 string', () => {
+    const validBase64 = btoa('hello world')
+    expect(isValidAttachmentData(validBase64)).toBe(true)
+  })
+
+  it('returns false for invalid base64 string', () => {
+    expect(isValidAttachmentData('not-valid-base64!!!')).toBe(false)
+  })
+
+  it('returns false for empty string', () => {
+    expect(isValidAttachmentData('')).toBe(false)
+  })
+
+  it('returns true for valid PDF base64', () => {
+    // Create a minimal valid PDF structure that round-trips cleanly through btoa/atob
+    const pdfContent =
+      '%PDF-1.4 1 0 obj << /Type /Catalog /Root 1 0 R >> endobj xref 0 1 trailer << >> startxref 0 %%EOF padding to make it long enough for validation checks'
+    const validPdf = btoa(pdfContent)
+    expect(isValidAttachmentData(validPdf, 'application/pdf')).toBe(true)
+  })
+
+  it('returns false for non-PDF data with PDF mime type', () => {
+    const notPdf = btoa(
+      'this is not a pdf file and has enough content to pass length check'
+    )
+    expect(isValidAttachmentData(notPdf, 'application/pdf')).toBe(false)
+  })
+
+  it('returns false for PDF too short', () => {
+    const shortPdf = btoa('%PDF-1.4\nshort')
+    expect(isValidAttachmentData(shortPdf, 'application/pdf')).toBe(false)
+  })
+
+  it('returns true for non-PDF mime types with valid base64', () => {
+    const validBase64 = btoa('some image data here')
+    expect(isValidAttachmentData(validBase64, 'image/png')).toBe(true)
   })
 })

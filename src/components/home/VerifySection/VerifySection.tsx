@@ -8,6 +8,9 @@ import PrimaryButton from '../../common/PrimaryButton'
 import EndorsementChain from '../EndorsementChain'
 import { useEndorsementChain } from '../EndorsementChain/useEndorsementChain'
 import Spinner from '../../common/Spinner'
+import { getAttachments, isValidAttachmentData } from '../../../utils/helper'
+import { useOverlayContext } from '../../common/contexts/OverlayContext'
+import ConnectToBlockchainModel from '../../ConnectToBlockchain'
 
 interface VerifySectionProps {
   isDarkMode: boolean
@@ -49,7 +52,10 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
     handleNetworkConfirm,
     handleNetworkCancel,
   } = useVerify()
-
+  const { showOverlay, closeOverlay } = useOverlayContext()
+  const handleConnectWallet = async () => {
+    showOverlay(<ConnectToBlockchainModel onClose={closeOverlay} />)
+  }
   // Fetch endorsement chain data only when file is verified as valid and transferable
   const isValidTransferable =
     verifyStatus === 'valid' && isTransferable === true
@@ -67,6 +73,17 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
     verifiedChainId: isValidTransferable ? verifiedChainId : undefined,
     keyId: isValidTransferable ? keyId : undefined,
   })
+
+  const invalidAttachments = React.useMemo(() => {
+    if (!rawDocument) return []
+    const attachments = getAttachments(rawDocument)
+    return attachments.filter(
+      att =>
+        typeof att.data !== 'string' ||
+        !att.data ||
+        !isValidAttachmentData(att.data, att.type)
+    )
+  }, [rawDocument])
 
   const networkName = verifiedChainId
     ? (CHAIN_NAMES[verifiedChainId] ?? `Chain ${verifiedChainId}`)
@@ -161,9 +178,11 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
                 tokenRegistryAddress={tokenRegistryAddress}
                 tags={tags}
                 rawDocument={rawDocument}
+                invalidAttachments={invalidAttachments}
                 getGroupStatus={getGroupStatus}
                 onReset={handleReset}
                 onViewEndorsementChain={handleShowEndorsementChain}
+                onConnectWallet={handleConnectWallet}
               />
             )}
 

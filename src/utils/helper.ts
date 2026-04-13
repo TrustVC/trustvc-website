@@ -8,7 +8,11 @@ import {
   isRawV3Document,
   vc,
   SignedVerifiableCredential,
+  CHAIN_ID,
 } from '@trustvc/trustvc'
+import { utils } from 'ethers'
+import { compareDesc, compareAsc } from 'date-fns'
+import { getChainInfo, getChainInfoFromNetworkName } from './chain-utils'
 
 export const getRpcUrl = (chainId: string): string | null => {
   const chainEnvUrl = import.meta.env[`VITE_RPC_URL_${chainId}`]
@@ -152,6 +156,48 @@ export const formatFileSize = (base64Data: string): string => {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
 }
 
+const isValidBase64 = (str: string): boolean => {
+  try {
+    if (!str) return false
+    const base64Regex = /^[A-Za-z0-9+/]*={0,2}$/
+    if (!base64Regex.test(str)) return false
+    const decoded = atob(str)
+    const reencoded = btoa(decoded)
+    return reencoded === str
+  } catch {
+    return false
+  }
+}
+
+export const isValidAttachmentData = (
+  str: string,
+  mimeType?: string
+): boolean => {
+  try {
+    if (!isValidBase64(str)) return false
+
+    if (mimeType === 'application/pdf') {
+      try {
+        const binaryString = atob(str)
+        if (!binaryString.startsWith('%PDF-')) return false
+        if (binaryString.length < 100) return false
+        const hasXref =
+          binaryString.includes('xref') || binaryString.includes('/Root')
+        const hasTrailer =
+          binaryString.includes('trailer') || binaryString.includes('startxref')
+        if (!hasXref || !hasTrailer) return false
+        return true
+      } catch {
+        return false
+      }
+    }
+
+    return true
+  } catch {
+    return false
+  }
+}
+
 export const getFileExtension = (
   filename: string,
   mimeType: string
@@ -160,6 +206,7 @@ export const getFileExtension = (
     const ext = filename.split('.').pop()?.toUpperCase()
     if (ext && ext !== filename.toUpperCase()) return ext
   }
+  if (!mimeType) return 'FILE'
   if (mimeType.includes('pdf')) return 'PDF'
   if (mimeType.includes('png')) return 'PNG'
   if (mimeType.includes('jpeg') || mimeType.includes('jpg')) return 'JPG'
@@ -169,4 +216,126 @@ export const getFileExtension = (
   if (mimeType.includes('xml')) return 'XML'
   if (mimeType.includes('text')) return 'TXT'
   return 'FILE'
+}
+
+export const makeEtherscanAddressURL = (
+  address: string,
+  chainId: CHAIN_ID
+): string => {
+  const baseUrl = getChainInfo(chainId).explorerUrl
+  return new URL(`/address/${address}`, baseUrl).href
+}
+
+export const isValidEndorseTransfer = (
+  holder?: string,
+  newHolder?: string,
+  newOwner?: string
+): boolean => {
+  if (!newHolder || !newOwner) return false
+  if (newHolder === holder) return false
+  if (!isEthereumAddress(newHolder) || !isEthereumAddress(newOwner))
+    return false
+
+  return true
+}
+
+export const isEthereumAddress = (address: string): boolean => {
+  return utils.isAddress(address)
+}
+
+export const convertSecondsToMinAndSec = (seconds: number): string => {
+  const sec = seconds % 60
+  return `${~~(seconds / 60)}:${sec < 10 ? `0${sec}` : sec}m`
+}
+
+export const getSortedByDateDesc = (items: any[]): any[] => {
+  items.sort((a, b): number => {
+    return compareDesc(new Date(a.attributes.date), new Date(b.attributes.date))
+  })
+
+  return items
+}
+
+export const getSortedByDateAsc = (items: any[]): any[] => {
+  items.sort((a, b): number => {
+    return compareAsc(new Date(a.attributes.date), new Date(b.attributes.date))
+  })
+
+  return items
+}
+
+// https://docs.netlify.com/forms/setup/#submit-javascript-rendered-forms-with-ajax
+export const encode: any = (data: {
+  [x: string]: string | number | boolean
+}) => {
+  return Object.keys(data)
+    .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(data[key]))
+    .join('&')
+}
+
+export const addClassNameIfExist = (className?: string): string => {
+  if (!className) {
+    return ''
+  }
+
+  return className
+}
+
+/**
+ * Takes a file path, i.e. "static/img/image.png" , and returns the file name, i.e. "image.png".
+ *
+ * @param filePath a string that represents the filePath i.e. "static/img/image.png"
+ * @returns name of file i.e. "image.png"
+ */
+export const getFileName = (filePath: string): string => {
+  return (
+    filePath.match(/[A-Za-z0-9_.-]+\.[A-Za-z0-9]+$/)?.shift() ||
+    filePath.match(/[A-Za-z0-9_.-]+$/)?.shift() ||
+    filePath
+  )
+}
+
+export const currentDateStr = (): string => {
+  return new Date().toLocaleString('en-SG', {
+    hour12: true,
+    timeZoneName: 'short',
+  })
+}
+
+export const isExternalLink = (url: string): boolean => {
+  try {
+    const currentHostname = location.hostname
+    const urlHostname = new URL(url).hostname
+    return currentHostname !== urlHostname
+  } catch (error) {
+    console.log(error)
+    return false
+  }
+}
+
+export const makeAddressURL = (address: string, network: string): string => {
+  const explorerUrl = getChainInfoFromNetworkName(network).explorerUrl
+  return new URL(`/address/${address}`, explorerUrl).href
+}
+
+interface GenerateFileName {
+  fileName: string
+  extension: string
+  hasTimestamp?: boolean
+}
+
+export const generateFileName = ({
+  fileName,
+  extension,
+  hasTimestamp,
+}: GenerateFileName): string => {
+  const timestamp = new Date().toISOString()
+  const fileTimestamp = hasTimestamp ? `-${timestamp}` : ''
+  return `${fileName}${fileTimestamp}.${extension}`
+}
+
+export const getFileSize = (jsonString: string): number => {
+  if (!jsonString || !jsonString?.length) return 0
+  const m = encodeURIComponent(jsonString).match(/%[89ABab]/g)
+  return jsonString.length + (m ? m.length : 0)
 }

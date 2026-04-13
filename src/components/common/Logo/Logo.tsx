@@ -1,13 +1,17 @@
+import { useId } from 'react'
+import { Link } from 'react-router-dom'
+
 interface LogoProps {
   isDarkMode: boolean
 }
 
 const Logo = ({ isDarkMode }: LogoProps) => {
-  const gradientId = `logo-gradient-${Math.random().toString(36).substr(2, 9)}`
+  const id = useId()
+  const gradientId = `logo-gradient-${id}`
 
   return (
     <div className="p-4 overflow-visible">
-      <a href="/" className="logo-wrapper">
+      <Link to="/" className="logo-wrapper">
         <svg
           className="logo-icon"
           width="78"
@@ -50,7 +54,7 @@ const Logo = ({ isDarkMode }: LogoProps) => {
           <path d="M78.7625 22.848L71.2425 0.448H76.0425L81.5145 17.664L86.9545 0.448H91.7865L84.2345 22.848H78.7625Z" />
           <path d="M103.569 23.296C96.7852 23.296 91.9212 18.176 91.9212 11.648C91.9212 5.088 96.7852 0 103.569 0C107.665 0 111.281 2.08 113.201 5.28L109.393 7.488C108.305 5.504 106.129 4.288 103.569 4.288C99.1852 4.288 96.3053 7.328 96.3053 11.648C96.3053 15.936 99.1852 18.976 103.569 18.976C106.129 18.976 108.337 17.76 109.393 15.808L113.201 18.016C111.313 21.216 107.697 23.296 103.569 23.296Z" />
         </svg>
-      </a>
+      </Link>
     </div>
   )
 }

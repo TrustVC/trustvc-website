@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import type { EnquiryType } from '../../../hooks/useContactForm'
+import type { EnquiryType } from '@/hooks/useContactForm'
 import { FieldError } from '@/components/common/FieldError'
 
 interface SelectFieldProps {
