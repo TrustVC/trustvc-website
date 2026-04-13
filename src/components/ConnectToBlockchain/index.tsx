@@ -34,6 +34,7 @@ interface ConnectToBlockchainHeaderItemProps {
   isSelected: boolean
   isConnected: boolean
   onClick: () => void
+  'data-testid'?: string
 }
 
 const ConnectToBlockchainHeaderItem = ({
@@ -46,7 +47,8 @@ const ConnectToBlockchainHeaderItem = ({
   ...props
 }: ConnectToBlockchainHeaderItemProps) => {
   return (
-    <div
+    <button
+      type="button"
       id={`tab-${itemKey}`}
       onClick={onClick}
       {...props}
@@ -64,7 +66,7 @@ const ConnectToBlockchainHeaderItem = ({
       ) : (
         <h4>{WALLET_TYPE_NAME[walletType]}</h4>
       )}
-    </div>
+    </button>
   )
 }
 

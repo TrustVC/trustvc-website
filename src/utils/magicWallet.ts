@@ -10,20 +10,15 @@ export const MAGIC_WALLET_ERRORS = {
 } as const
 
 /**
- * Resolves the EVM address from Magic `user.getInfo()` (SDK v27+ uses
- * `wallets.ethereum.publicAddress`; older responses may expose `publicAddress`).
+ * Resolves the EVM address from Magic `user.getInfo()` via
+ * `wallets.ethereum.publicAddress`.
  */
 export function ethereumAddressFromMagicUserMetadata(
   info: MagicUserMetadata | null | undefined
 ): string | undefined {
   if (!info) return undefined
   const fromEthWallet = info.wallets?.ethereum?.publicAddress
-  if (fromEthWallet) return fromEthWallet
-  const withLegacy = info as MagicUserMetadata & {
-    publicAddress?: string | null
-  }
-  if (withLegacy.publicAddress) return withLegacy.publicAddress
-  return undefined
+  return fromEthWallet || undefined
 }
 
 /** Loads user info and returns the Ethereum address, or undefined if unavailable. */

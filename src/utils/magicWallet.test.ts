@@ -21,7 +21,7 @@ describe('ethereumAddressFromMagicUserMetadata', () => {
     expect(ethereumAddressFromMagicUserMetadata(info)).toBe('0xabc')
   })
 
-  it('falls back to legacy publicAddress on root', () => {
+  it('ignores legacy root publicAddress when ethereum wallet entry is missing', () => {
     const info = {
       issuer: null,
       email: null,
@@ -32,7 +32,7 @@ describe('ethereumAddressFromMagicUserMetadata', () => {
       wallets: {},
       publicAddress: '0xlegacy',
     } as unknown as MagicUserMetadata
-    expect(ethereumAddressFromMagicUserMetadata(info)).toBe('0xlegacy')
+    expect(ethereumAddressFromMagicUserMetadata(info)).toBeUndefined()
   })
 
   it('returns undefined when missing', () => {
