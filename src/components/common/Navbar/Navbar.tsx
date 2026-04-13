@@ -268,7 +268,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode }: NavbarProps) => {
             </div>
             <div className="p-2">
               <Link
-                to="/"
+                to="/news-updates"
                 className="min-w-[40px] min-h-[40px] flex items-center justify-center px-1 py-[5px] rounded-lg transition-colors duration-200"
                 style={{
                   backgroundColor: 'transparent',
