@@ -1,6 +1,11 @@
 #!/usr/bin/env sh
 set -e
 
+# Load nvm so npm is available in non-interactive shells (e.g. VS Code, GUI git clients)
+export NVM_DIR="$HOME/.nvm"
+# shellcheck disable=SC1091
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" --no-use
+
 echo "🔍 Running pre-commit checks..."
 npm run lint
 npm run format:check
