@@ -10,7 +10,8 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  BUILD_DIR: "out"
+  BUILD_DIR: "dist"
+  AWS_REGION: ap-southeast-1
 
 permissions:
   contents: read
