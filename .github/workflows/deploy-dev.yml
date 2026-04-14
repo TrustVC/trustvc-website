@@ -27,7 +27,7 @@ jobs:
           check-name: 'Lint & Test'
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
-  build-and-deploy:
+  build-dev:
     name: Build (Dev)
     runs-on: ubuntu-latest
     needs: wait-for-ci
