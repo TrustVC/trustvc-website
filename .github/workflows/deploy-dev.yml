@@ -24,7 +24,7 @@ jobs:
         uses: lewagon/wait-on-check-action@v1.3.4
         with:
           ref: ${{ github.ref }}
-          check-name: 'Lint & Test'
+          check-name: 'Lint & Test (22.x)'
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
   build-dev:
