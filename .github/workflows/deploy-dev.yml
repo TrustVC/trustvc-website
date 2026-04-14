@@ -1,0 +1,76 @@
+name: Deploy TrustVC Website (Development)
+
+on:
+  push:
+    branches:
+      - develop
+
+permissions:
+  contents: read
+
+jobs:
+  wait-for-ci:
+    name: Wait for CI
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for CI workflow
+        uses: lewagon/wait-on-check-action@v1.3.4
+        with:
+          ref: ${{ github.ref }}
+          check-name: 'Lint & Test'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+  build-and-deploy:
+    name: Build and deploy to CloudFront (Development)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    env:
+      AWS_REGION: ap-southeast-1
+      S3_BUCKET: ${{ secrets.S3_BUCKET_DEV }}
+      CF_DISTRIBUTION: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID_DEV }}
+      ENV_FILE: ${{ secrets.TRUSTVC_WEB_ENV_DEVELOPMENT }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: develop
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Create .env for build
+        run: echo "${ENV_FILE}" > .env
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Sync assets to S3
+        run: |
+          aws s3 sync ./dist "s3://${S3_BUCKET}" --delete --exclude "*.html" --cache-control "public, max-age=31536000"
+          aws s3 sync ./dist "s3://${S3_BUCKET}" --cache-control "public, max-age=0, must-revalidate" --exclude "*" --include "*.html"
+
+      - name: Invalidate CloudFront cache
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id "${CF_DISTRIBUTION}" \
+            --paths "/*"
