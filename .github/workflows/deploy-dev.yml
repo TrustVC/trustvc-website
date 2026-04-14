@@ -85,7 +85,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
           aws-region: ${{ env.AWS_REGION }}
 
-      name: Select target bucket
+      - name: Select target bucket
         id: bucket
         run: |
             echo "bucket=${S3_BUCKET_DEV}" >> $GITHUB_OUTPUT
