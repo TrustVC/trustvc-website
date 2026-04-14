@@ -1,7 +1,6 @@
 name: CI - Lint and Test
 
 on:
-  push:
   pull_request:
 
 jobs:
