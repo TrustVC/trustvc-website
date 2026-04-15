@@ -60,29 +60,8 @@ export const ActionSelectionForm: FunctionComponent<
   canRejectOwnerHolderTransfer,
   canRejectHolderTransfer,
   canRejectOwnerTransfer,
+  setShowEndorsementChain,
 }) => {
-  console.log(
-    'canmanage',
-    beneficiary,
-    holder,
-    account,
-    isReturnedToIssuer,
-    isTokenBurnt,
-    isTitleEscrow,
-    isRejectPendingConfirmation,
-    isExpired,
-    canTransferHolder,
-    canTransferBeneficiary,
-    canTransferOwners,
-    canNominateBeneficiary,
-    canEndorseBeneficiary,
-    canReturnToIssuer,
-    canHandleShred,
-    canHandleRestore,
-    canRejectOwnerHolderTransfer,
-    canRejectHolderTransfer,
-    canRejectOwnerTransfer
-  )
   const canManage =
     canTransferHolder ||
     canTransferBeneficiary ||
@@ -99,9 +78,13 @@ export const ActionSelectionForm: FunctionComponent<
   const { showOverlay, closeOverlay } = useOverlayContext()
   const handleNoAccess = () => {
     showOverlay(
-      showDocumentTransferMessage(MessageTitle.NO_MANAGE_ACCESS, {
-        isSuccess: false,
-      })
+      showDocumentTransferMessage(
+        MessageTitle.NO_MANAGE_ACCESS,
+        {
+          isSuccess: false,
+        },
+        setShowEndorsementChain
+      )
     )
   }
 

@@ -4,7 +4,6 @@ import {
   showDocumentTransferMessage,
 } from '../../../../common/Overlay/OverlayContent'
 import { AssetManagementActions } from '../../../AssetManagementActions'
-import { FooterActionButtons } from '../../FooterActionButtons'
 import { EditableAssetTitle } from './../EditableAssetTitle'
 import { useOverlayContext } from '../../../../common/contexts/OverlayContext'
 import { isEthereumAddress } from '../../../../../utils/helper'
@@ -155,7 +154,7 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
     setShowEndorsementChain,
   } = props
   const [remark, setRemark] = useState('')
-  const { closeOverlay, showOverlay } = useOverlayContext()
+  const { showOverlay } = useOverlayContext()
 
   // Additional state variables for different form types
   const [newHolder, setNewHolder] = useState(holder || '')
@@ -168,7 +167,7 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
       const { holderTransferringState } = props
       const isConfirmed = holderTransferringState === FormState.CONFIRMED
 
-      if (true) {
+      if (isConfirmed) {
         showOverlay(
           showDocumentTransferMessage(
             MessageTitle.TRANSFER_HOLDER_SUCCESS,
@@ -197,10 +196,7 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
               beneficiaryAddress: newOwner,
               holderAddress: newHolder,
             },
-            <FooterActionButtons
-              setShowEndorsementChain={setShowEndorsementChain}
-              closeOverlay={closeOverlay}
-            />
+            setShowEndorsementChain
           )
         )
         setFormActionNone()
@@ -296,7 +292,7 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
                 size={ButtonSize.SM}
               >
                 {isPendingConfirmation ? (
-                  <Spinner data-testid={'loader'} color="white" />
+                  <Spinner data-testid={'loader'} color="!white" />
                 ) : (
                   'Transfer'
                 )}
