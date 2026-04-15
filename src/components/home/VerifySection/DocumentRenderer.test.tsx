@@ -90,8 +90,8 @@ describe('DocumentRenderer', () => {
 
   it('shows loading spinner initially', () => {
     render(<DocumentRenderer {...defaultProps} />)
-    expect(screen.getByTestId('spinner')).toBeTruthy()
-    expect(screen.getByText('Loading document preview...')).toBeTruthy()
+    expect(screen.getByTestId('loader')).toBeTruthy()
+    expect(screen.getByText(/Loading document preview/)).toBeTruthy()
   })
 
   it('hides tabs wrapper before renderer is ready', () => {

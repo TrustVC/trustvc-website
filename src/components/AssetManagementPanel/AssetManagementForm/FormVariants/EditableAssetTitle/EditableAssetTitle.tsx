@@ -1,6 +1,5 @@
 import React, { FunctionComponent, useState } from 'react'
 import { Book } from 'react-feather'
-import { SkeletonPlaceholder } from '../../SkeletonPlaceholder'
 import { useTokenRegistryVersion } from '../../../../../hooks/useTokenRegistryVersion'
 import { TokenRegistryVersions } from '../../../../../constants'
 import { ExternalLinkEtherscanAddress } from '../../../../common/ExternalLink'
@@ -59,7 +58,6 @@ export const EditableAssetTitle: FunctionComponent<EditableAssetTitleProps> = ({
     setInputError(false)
   }
 
-  if (!value) return <SkeletonPlaceholder />
   if (isEditable && isRemark)
     return (
       <>
@@ -116,8 +114,8 @@ export const EditableAssetTitle: FunctionComponent<EditableAssetTitleProps> = ({
       <>
         <p className={`text-asset-title`}>{role ? `${role}:` : ''}</p>
         <ExternalLinkEtherscanAddress
-          name={value}
-          address={value}
+          name={value || ''}
+          address={value || ''}
           data-testid={`non-editable-input-${role.toLowerCase()}`}
         >
           <span className="vr-title-col-addr">{value}</span>

@@ -1,38 +1,37 @@
-import {
-  FunctionComponent,
-  AnchorHTMLAttributes,
-  LabelHTMLAttributes,
-} from 'react'
+import { FunctionComponent, LabelHTMLAttributes, ReactNode } from 'react'
 import { ButtonSize, ButtonHeight } from './constants'
 import type { ButtonTradeTrust } from './types'
+import clsx from 'clsx'
 
-interface GetSharedStylesButton {
-  padding: string
-  height: string
+// Shared size styles for all button components
+const buttonSizeStyles = {
+  [ButtonSize.XS]:
+    'w-[87px] h-6 min-w-[24px] min-h-6 px-0.5 rounded text-xs leading-[165%]',
+  [ButtonSize.SM]:
+    'w-[91px] h-8 min-w-8 min-h-8 p-0.5 rounded-md text-xs leading-[165%]',
+  [ButtonSize.MD]:
+    'w-[109px] h-10 min-w-[40px] min-h-10 p-[5px] rounded-lg text-sm leading-[155%]',
+  [ButtonSize.LG]:
+    'w-[120px] h-12 min-w-12 min-h-12 p-2 rounded-xl text-base leading-[155%]',
+  [ButtonSize.FLEX]:
+    'w-[100%] h-10 min-w-[40px] min-h-10 p-[5px] rounded-lg border text-sm leading-[155%]',
 }
 
-const getSharedStylesButton = (shared: GetSharedStylesButton): string => {
-  const { padding, height } = shared
+// Base styles for all button components
+const baseButtonStyles =
+  'flex flex-col justify-center items-center gap-2.5 box-border transition-colors duration-200 ease-out cursor-pointer font-gilroy font-bold text-center align-middle'
 
-  return `box-border transition-colors duration-200 ease-out cursor-pointer font-gilroy-bold border ${padding} ${height}`
-}
-
-const sharedSizeStyles = {
-  [ButtonSize.XS]: 'px-0.5',
-  [ButtonSize.SM]: 'p-0.5',
-  [ButtonSize.MD]: 'p-[5px]',
-  [ButtonSize.LG]: 'p-2',
-  [ButtonSize.FLEX]: 'p-[5px]',
-}
-
-interface AnchorTradeTrust extends AnchorHTMLAttributes<HTMLAnchorElement> {
-  size?: ButtonSize
-  height?: ButtonHeight
-}
+// Button type styles
+const getButtonTypeStyles = (btnType: 'solid' | 'transparent') =>
+  btnType === 'solid'
+    ? 'solid text-white border-primary-50'
+    : 'transparent text-primary-50 border border-neutral-90/33'
 
 interface LabelTradeTrust extends LabelHTMLAttributes<HTMLLabelElement> {
   size?: ButtonSize
   height?: ButtonHeight
+  btnType?: 'solid' | 'transparent'
+  width?: string
 }
 
 export const Button: FunctionComponent<ButtonTradeTrust> = ({
@@ -44,33 +43,9 @@ export const Button: FunctionComponent<ButtonTradeTrust> = ({
   width,
   ...props
 }) => {
-  // Base styles for all buttons
-  const baseStyles =
-    'flex flex-col justify-center items-center gap-2.5 box-border transition-colors duration-200 ease-out cursor-pointer font-gilroy font-bold text-center align-middle'
-
-  // Size-specific width, height, padding, border-radius, and text styles
-  const sizeStyles = {
-    [ButtonSize.XS]:
-      'w-[87px] h-6 min-w-[24px] min-h-6 px-0.5 rounded text-xs leading-[165%]',
-    [ButtonSize.SM]:
-      'w-[91px] h-8 min-w-8 min-h-8 p-0.5 rounded-md text-xs leading-[165%]',
-    [ButtonSize.MD]:
-      'w-[109px] h-10 min-w-[40px] min-h-10 p-[5px] rounded-lg text-sm leading-[155%]',
-    [ButtonSize.LG]:
-      'w-[120px] h-12 min-w-12 min-h-12 p-2 rounded-xl text-base leading-[155%]',
-    [ButtonSize.FLEX]:
-      'w-[265px] h-10 min-w-[188px] max-w-[383px] min-h-10 p-[5px] rounded-lg border text-sm leading-[155%]',
-  }
-
-  // Button type styles
-  const typeStyles =
-    btnType === 'solid'
-      ? 'solid text-white border-primary-50'
-      : 'transparent text-primary-50 border border-neutral-90/33'
-
   return (
     <button
-      className={` ${baseStyles} ${sizeStyles[size]} ${typeStyles} ${className} ${
+      className={` ${baseButtonStyles} ${buttonSizeStyles[size]} ${getButtonTypeStyles(btnType)} ${className} ${
         disabled ? '!cursor-not-allowed !text-white !opacity-[0.33]' : ''
       }`}
       style={width ? { width, ...props.style } : props.style}
@@ -92,46 +67,6 @@ export const ButtonIcon: FunctionComponent<ButtonTradeTrust> = ({
   width,
   ...props
 }) => {
-  // Base styles for all buttons
-  const baseStyles =
-    'flex flex-col justify-center items-center gap-2.5 box-border transition-colors duration-200 ease-out cursor-pointer font-gilroy font-bold text-center align-middle'
-
-  // Size-specific height, padding, border-radius, and text styles (without width)
-  const sizeStylesNoWidth = {
-    [ButtonSize.XS]:
-      'h-6 min-w-[24px] min-h-6 px-0.5 rounded text-xs leading-[165%]',
-    [ButtonSize.SM]:
-      'h-8 min-w-8 min-h-8 p-0.5 rounded-md text-xs leading-[165%]',
-    [ButtonSize.MD]:
-      'h-10 min-w-[40px] min-h-10 p-[5px] rounded-lg text-sm leading-[155%]',
-    [ButtonSize.LG]:
-      'h-12 min-w-12 min-h-12 p-2 rounded-xl text-base leading-[155%]',
-    [ButtonSize.FLEX]:
-      'h-10 min-w-[188px] max-w-[383px] min-h-10 p-[5px] rounded-lg border text-sm leading-[155%]',
-  }
-
-  // Size-specific width, height, padding, border-radius, and text styles (with width)
-  const sizeStylesWithWidth = {
-    [ButtonSize.XS]:
-      'w-[87px] h-6 min-w-[24px] min-h-6 px-0.5 rounded text-xs leading-[165%]',
-    [ButtonSize.SM]:
-      'w-[91px] h-8 min-w-8 min-h-8 p-0.5 rounded-md text-xs leading-[165%]',
-    [ButtonSize.MD]:
-      'w-[109px] h-10 min-w-[40px] min-h-10 p-[5px] rounded-lg text-sm leading-[155%]',
-    [ButtonSize.LG]:
-      'w-[120px] h-12 min-w-12 min-h-12 p-2 rounded-xl text-base leading-[155%]',
-    [ButtonSize.FLEX]:
-      'w-[265px] h-10 min-w-[188px] max-w-[383px] min-h-10 p-[5px] rounded-lg border text-sm leading-[155%]',
-  }
-
-  const sizeStyles = width ? sizeStylesNoWidth[size] : sizeStylesWithWidth[size]
-
-  // Button type styles
-  const typeStyles =
-    btnType === 'solid'
-      ? 'solid text-white border-primary-50'
-      : 'transparent text-primary-50 border border-neutral-90/33'
-
   const { style: propsStyle, ...restProps } = props
 
   // Create style object with width
@@ -147,7 +82,7 @@ export const ButtonIcon: FunctionComponent<ButtonTradeTrust> = ({
   return (
     <button
       {...restProps}
-      className={` ${baseStyles} ${sizeStyles} ${typeStyles} ${className || ''} ${
+      className={` ${baseButtonStyles} ${buttonSizeStyles[size]} ${getButtonTypeStyles(btnType)} ${className || ''} ${
         disabled ? '!cursor-not-allowed !text-white !opacity-[0.33]' : ''
       }`}
       style={buttonStyle}
@@ -159,23 +94,42 @@ export const ButtonIcon: FunctionComponent<ButtonTradeTrust> = ({
   )
 }
 
-export const LinkButton: FunctionComponent<AnchorTradeTrust> = ({
-  className,
+interface LinkButtonProps {
+  className?: string
+  href?: string
+  children: ReactNode
+  isDarkMode: boolean
+  isDisabled?: boolean
+}
+
+export const LinkButton = ({
+  className = '',
+  href,
   children,
-  size = ButtonSize.MD,
-  height = ButtonHeight.MD,
-  ...props
-}) => {
-  const shared = getSharedStylesButton({
-    padding: sharedSizeStyles[size],
-    height,
-  })
+  isDarkMode,
+  isDisabled,
+}: LinkButtonProps) => {
+  const disabled = isDisabled || !href
 
   return (
     <a
-      className={`block ${shared} ${className}`}
-      rel="noopener noreferrer"
-      {...props}
+      href={disabled ? undefined : href}
+      target={disabled ? undefined : '_blank'}
+      rel={disabled ? undefined : 'noopener noreferrer'}
+      aria-disabled={disabled}
+      tabIndex={disabled ? -1 : undefined}
+      onClick={event => {
+        if (disabled) {
+          event.preventDefault()
+        }
+      }}
+      className={clsx(
+        'bg-primary-60',
+        isDarkMode ? 'bg-primary-60 text-black' : 'text-white',
+        'inline-flex w-fit px-4 py-2 rounded-lg font-bold',
+        disabled ? 'cursor-not-allowed opacity-50 pointer-events-none' : '',
+        className
+      )}
     >
       {children}
     </a>
@@ -186,16 +140,16 @@ export const LabelButton: FunctionComponent<LabelTradeTrust> = ({
   className,
   children,
   size = ButtonSize.MD,
-  height = ButtonHeight.MD,
+  btnType = 'solid',
+  width,
   ...props
 }) => {
-  const shared = getSharedStylesButton({
-    padding: sharedSizeStyles[size],
-    height,
-  })
-
   return (
-    <label className={`block ${shared} ${className}`} {...props}>
+    <label
+      className={` ${baseButtonStyles} ${buttonSizeStyles[size]} ${getButtonTypeStyles(btnType)} ${className || ''}`}
+      style={width ? { width, ...props.style } : props.style}
+      {...props}
+    >
       {children}
     </label>
   )

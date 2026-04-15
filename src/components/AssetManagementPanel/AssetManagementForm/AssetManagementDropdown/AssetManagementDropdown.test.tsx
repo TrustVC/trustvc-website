@@ -79,7 +79,7 @@ describe('AssetManagementDropdown', () => {
 
       expect(screen.getByTestId('rejectTransferBtn')).toBeInTheDocument()
       expect(screen.getByTestId('loader')).toBeInTheDocument()
-      expect(screen.getByText('Rejecting')).toBeInTheDocument()
+      expect(screen.getByText(/Rejecting/)).toBeInTheDocument()
     })
 
     it('disables button when reject is pending confirmation', () => {

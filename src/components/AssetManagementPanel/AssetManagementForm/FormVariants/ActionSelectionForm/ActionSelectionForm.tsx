@@ -48,7 +48,7 @@ export const ActionSelectionForm: FunctionComponent<
   isTokenBurnt,
   isTitleEscrow,
   isRejectPendingConfirmation,
-  isExpired,
+  // isExpired,
   canTransferHolder,
   canTransferBeneficiary,
   canTransferOwners,

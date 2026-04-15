@@ -25,7 +25,13 @@ export const ExternalLink: FunctionComponent<ExternalLinkProps> = ({
   ...props
 }) => {
   return (
-    <a href={href} target="_blank" rel="noopener noreferrer" {...props}>
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="123"
+      {...props}
+    >
       {children ? children : <h5>{name}</h5>}
     </a>
   )

@@ -425,9 +425,9 @@ describe('ConnectToMetamaskModelComponent', () => {
         />
       )
 
-      const disconnectButton = screen.getByTestId('disconnect-metamask')
+      const disconnectButton = screen.getByText('Disconnect')
       expect(disconnectButton).toBeInTheDocument()
-      expect(disconnectButton).toHaveTextContent('Disconnect')
+      expect(disconnectButton).toHaveClass('connect-metamask-disconnect-btn')
     })
 
     it('shows continue button when connected', () => {
@@ -569,7 +569,7 @@ describe('ConnectToMetamaskModelComponent', () => {
         />
       )
 
-      const disconnectButton = screen.getByTestId('disconnect-metamask')
+      const disconnectButton = screen.getByText('Disconnect')
       fireEvent.click(disconnectButton)
 
       expect(mockDisconnectWallet).toHaveBeenCalledTimes(1)

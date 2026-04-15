@@ -3051,10 +3051,6 @@ p.small {
     linear-gradient(0deg, rgba(222, 228, 233, 0), rgba(222, 228, 233, 0));
 }
 
-.connect-metamask-disconnect-btn-label {
-  font-size: 16px;
-}
-
 .dark-mode #connect-blockchain .header .tab {
   background: #1e2026;
   border-width: 1px 1px 0px 1px;
@@ -3425,57 +3421,8 @@ p.small {
   border-top-color: #30363d;
 }
 
-/* Footer Buttons */
-.connect-blockchain-cancel-btn {
-  width: 100%;
-  height: 40px;
-  min-width: 160px;
-  max-width: 260px;
-  gap: 10px;
-  opacity: 1;
-}
-
-.connect-blockchain-cancel-btn:hover {
-  background: #eff6ff;
-}
-
 .connect-blockchain-cancel-btn-label {
   font-size: 16px;
-}
-
-.dark-mode .connect-blockchain-cancel-btn {
-  color: #7d80d7;
-  border-color: #7d80d7;
-}
-
-.dark-mode .connect-blockchain-cancel-btn:hover {
-  background: rgba(125, 128, 215, 0.1);
-}
-
-.connect-blockchain-continue-btn {
-  padding: 8px 24px;
-  background: #2563eb;
-  color: #ffffff;
-  border-radius: 8px;
-  border: none;
-  transition: background 0.2s ease;
-}
-
-.connect-blockchain-continue-btn:hover {
-  background: #1d4ed8;
-}
-
-.connect-blockchain-continue-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.dark-mode .connect-blockchain-continue-btn {
-  background: #7d80d7;
-}
-
-.dark-mode .connect-blockchain-continue-btn:hover {
-  background: #6a6dc0;
 }
 
 /* Responsive */
@@ -4055,7 +4002,8 @@ p.small {
   z-index: 2;
 }
 
-button.solid {
+button,
+label.solid {
   --base: var(--primary-button-color, #5b5bb3);
   --hover-overlay: var(--Primary-33-40, #4d4b9854);
   --active-overlay: var(--Primary-66-40, #4d4b98a8);
@@ -4063,24 +4011,29 @@ button.solid {
   background: var(--base);
 }
 
-button.solid:hover {
+button.solid:hover,
+label.solid:hover {
   background:
     linear-gradient(var(--hover-overlay), var(--hover-overlay)), var(--base);
 }
 
-button.solid:active {
+button.solid:active,
+label.solid:active {
   background:
     linear-gradient(var(--active-overlay), var(--active-overlay)), var(--base);
 }
 
-button.transparent {
+button.transparent,
+label.transparent {
   background: transparent;
 }
 
-button.transparent:hover {
+button.transparent:hover,
+label.transparent:hover {
   background: var(--Primary-33-100, #c2c5f054);
 }
 
-button.transparent:active {
+button.transparent:active,
+label.transparent:active {
   background: var(--Primary-33-90, #aaaee654);
 }
