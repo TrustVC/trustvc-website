@@ -62,13 +62,16 @@
     --Primary3360: #686ad2;
     --Primary-100-50: #7d80d7;
     --Primary-100-60: #686ad2;
+    --Primary-33-40: #4d4b9854;
+    --Primary-66-40: #4d4b98a8;
+    --Primary-33-100: #c2c5f054;
+    --Primary-33-90: #aaaee654;
     --Neutral-100-30: #3d444d;
     --Neutral-100-10: #1e2026;
     --text-secondary: #5b6571;
     --primary-button-color: #5b5bb3;
     --Alert-100-50: #b83152;
     --Alert-100-110: #fddae2;
-
     /* Base Colors - Light Mode */
     --Base-66-Base-L1: rgba(255, 255, 255, 0.66);
     --Base-66-Base-L2: rgba(30, 32, 38, 0.66);
@@ -1103,48 +1106,6 @@ p.small {
   justify-content: center;
   min-height: 140px;
   gap: 12px;
-}
-
-/* Spinner */
-.spinner {
-  width: 32px;
-  height: 32px;
-  border: 3px solid #686ad2;
-  border-top-color: transparent;
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-.spinner-small {
-  width: 16px;
-  height: 16px;
-}
-
-.spinner-medium {
-  width: 32px;
-  height: 32px;
-}
-
-.spinner-large {
-  width: 48px;
-  height: 48px;
-}
-
-/* Centered wrapper for loading states */
-.spinner-centered-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-}
-
-.spinner-label {
-  text-align: center;
-  font-size: 14px;
-  font-family: Gilroy, sans-serif;
-  font-weight: 500;
-  color: #3d444d;
 }
 
 .dark-mode .spinner-label {
@@ -3208,9 +3169,6 @@ p.small {
   min-width: 40px;
   height: 40px;
   min-height: 40px;
-
-  /* TrustVC/Surface/Solid/Primary/Default */
-  background: #5b5bb3;
   border-radius: 8px;
 
   /* Inside auto layout */
@@ -4095,4 +4053,34 @@ p.small {
   order: 1;
   flex-grow: 1;
   z-index: 2;
+}
+
+button.solid {
+  --base: var(--primary-button-color, #5b5bb3);
+  --hover-overlay: var(--Primary-33-40, #4d4b9854);
+  --active-overlay: var(--Primary-66-40, #4d4b98a8);
+
+  background: var(--base);
+}
+
+button.solid:hover {
+  background:
+    linear-gradient(var(--hover-overlay), var(--hover-overlay)), var(--base);
+}
+
+button.solid:active {
+  background:
+    linear-gradient(var(--active-overlay), var(--active-overlay)), var(--base);
+}
+
+button.transparent {
+  background: transparent;
+}
+
+button.transparent:hover {
+  background: var(--Primary-33-100, #c2c5f054);
+}
+
+button.transparent:active {
+  background: var(--Primary-33-90, #aaaee654);
 }

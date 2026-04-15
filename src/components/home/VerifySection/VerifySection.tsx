@@ -6,7 +6,7 @@ import VerifyResult from './VerifyResult'
 import VerifyError from './VerifyError'
 import EndorsementChain from '../EndorsementChain'
 import { useEndorsementChain } from '../EndorsementChain/useEndorsementChain'
-import Spinner from '../../common/Spinner'
+import Spinner from '../../icons/Spinner'
 import { getAttachments, isValidAttachmentData } from '../../../utils/helper'
 import { useOverlayContext } from '../../common/contexts/OverlayContext'
 import ConnectToBlockchainModel from '../../ConnectToBlockchain'
@@ -146,7 +146,10 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
   const renderVerifying = () => (
     <div className="frame-dropbox">
       <div className="dropbox-area dropbox-area--home dropbox-area--centered">
-        <Spinner label={`Verifying ${fileName}...`} size="medium" centered />
+        <div className="flex flex-col items-center gap-2">
+          <Spinner fill="#5B5BB3" fontSize={32} />
+          <span className="text-sm">Verifying {fileName}...</span>
+        </div>
       </div>
     </div>
   )

@@ -46,7 +46,7 @@ export const Button: FunctionComponent<ButtonTradeTrust> = ({
 }) => {
   // Base styles for all buttons
   const baseStyles =
-    'flex flex-col justify-center items-center gap-2.5  opacity-100 box-border transition-colors duration-200 ease-out cursor-pointer font-gilroy font-bold text-center align-middle'
+    'flex flex-col justify-center items-center gap-2.5 box-border transition-colors duration-200 ease-out cursor-pointer font-gilroy font-bold text-center align-middle'
 
   // Size-specific width, height, padding, border-radius, and text styles
   const sizeStyles = {
@@ -65,13 +65,13 @@ export const Button: FunctionComponent<ButtonTradeTrust> = ({
   // Button type styles
   const typeStyles =
     btnType === 'solid'
-      ? 'bg-primary-50 text-white border-primary-50 hover:bg-[#4D4B9854] hover:text-[#312D62] active:bg-[#4D4B98A8] active:text-[#312D62]'
-      : 'bg-white text-primary-50 border border-[#A9B2BB54] hover:bg-[#C2C5F054] active:bg-[#AAAEE654]'
+      ? 'solid text-white border-primary-50'
+      : 'transparent text-primary-50 border border-neutral-90/33'
 
   return (
     <button
       className={` ${baseStyles} ${sizeStyles[size]} ${typeStyles} ${className} ${
-        disabled ? '!cursor-not-allowed !text-white !opacity-33' : ''
+        disabled ? '!cursor-not-allowed !text-white !opacity-[0.33]' : ''
       }`}
       style={width ? { width, ...props.style } : props.style}
       type="button"
@@ -94,7 +94,7 @@ export const ButtonIcon: FunctionComponent<ButtonTradeTrust> = ({
 }) => {
   // Base styles for all buttons
   const baseStyles =
-    'flex flex-col justify-center items-center gap-2.5 opacity-100 box-border transition-colors duration-200 ease-out cursor-pointer font-gilroy font-bold text-center align-middle'
+    'flex flex-col justify-center items-center gap-2.5 box-border transition-colors duration-200 ease-out cursor-pointer font-gilroy font-bold text-center align-middle'
 
   // Size-specific height, padding, border-radius, and text styles (without width)
   const sizeStylesNoWidth = {
@@ -129,8 +129,8 @@ export const ButtonIcon: FunctionComponent<ButtonTradeTrust> = ({
   // Button type styles
   const typeStyles =
     btnType === 'solid'
-      ? 'bg-primary-50 text-white border-primary-50 hover:bg-[#4D4B9854] hover:text-[#312D62] active:bg-[#4D4B98A8] active:text-[#312D62]'
-      : 'bg-white text-primary-50 border border-[#A9B2BB54] hover:bg-[#C2C5F054] active:bg-[#AAAEE654]'
+      ? 'solid text-white border-primary-50'
+      : 'transparent text-primary-50 border border-neutral-90/33'
 
   const { style: propsStyle, ...restProps } = props
 
@@ -148,7 +148,7 @@ export const ButtonIcon: FunctionComponent<ButtonTradeTrust> = ({
     <button
       {...restProps}
       className={` ${baseStyles} ${sizeStyles} ${typeStyles} ${className || ''} ${
-        disabled ? '!cursor-not-allowed !text-white !opacity-33' : ''
+        disabled ? '!cursor-not-allowed !text-white !opacity-[0.33]' : ''
       }`}
       style={buttonStyle}
       type="button"

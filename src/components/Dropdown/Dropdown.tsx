@@ -131,7 +131,7 @@ export const Dropdown: FunctionComponent<DropdownProps> = ({
             setIsOpen(!isOpen)
           }
         }}
-        className="dropdown-btn"
+        className="dropdown-btn solid"
       >
         <>
           <h5 className="text-center justify-center !text-white">

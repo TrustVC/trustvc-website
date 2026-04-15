@@ -14,8 +14,11 @@ export default {
       colors: {
         primary: {
           30: '#403D7D',
-          50: '#5B5BB3',
-          60: '#686AD2',
+          40: '#4D4B98', // Base color for Primary-40 variants
+          50: '#5B5BB3', // Primary-100-50
+          60: '#686AD2', // Primary-100-60
+          90: '#AAAEE6', // Base color for Primary-90 variants
+          100: '#C2C5F0', // Base color for Primary-100 variants
           DEFAULT: '#686AD2',
         },
         secondary: {
@@ -23,12 +26,12 @@ export default {
           100: '#8AD2EE',
         },
         neutral: {
-          10: '#1E2026',
+          10: '#1E2026', // Neutral-100-10
           20: '#3D444D',
-          30: '#5B6571',
-          33: '#A9B2BB54',
-          50: '#A9B2BB',
+          30: '#5B6571', // Neutral-100-30
+          50: '#A9B2BB', // Neutral-100-50
           60: '#DEE4E9',
+          90: '#A9B2BB', // Base color for Neutral-90 variants
         },
         alert: {
           20: '#661228',

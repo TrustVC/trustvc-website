@@ -3,7 +3,7 @@ import Overlay from '../../common/Overlay'
 import { EndorsementChain } from '@trustvc/trustvc'
 import { format } from 'date-fns'
 import { EndorsementChainStatus } from './useEndorsementChain'
-import Spinner from '../../common/Spinner'
+import Spinner from '../../icons/Spinner'
 import { TokenRegistryVersion } from '../VerifySection/useVerify'
 import { Button } from '../../common/Button'
 
@@ -252,12 +252,10 @@ const EndorsementChainLayout: React.FC<EndorsementChainProps> = ({
         <div className="content-section">
           <div className="section-frame">
             {status === 'loading' && (
-              <Spinner
-                size="large"
-                centered
-                label="Loading Endorsement Chain..."
-                className="ec-spinner"
-              />
+              <div className="flex flex-col items-center gap-2">
+                <Spinner data-testid={'loader'} fill="white" /> Loading
+                Endorsement Chain..
+              </div>
             )}
             {status === 'error' && (
               <div className="ec-error-message">

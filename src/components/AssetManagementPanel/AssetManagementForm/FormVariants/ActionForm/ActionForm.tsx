@@ -7,7 +7,7 @@ import { AssetManagementActions } from '../../../AssetManagementActions'
 import { EditableAssetTitle } from './../EditableAssetTitle'
 import { useOverlayContext } from '../../../../common/contexts/OverlayContext'
 import { isEthereumAddress } from '../../../../../utils/helper'
-import Spinner from '../../../../common/Spinner'
+import Spinner from '../../../../icons/Spinner'
 import { FormState } from '../../../../../utils/common/FormState'
 import { Button, ButtonIcon, ButtonSize } from '../../../../common/Button'
 
@@ -292,7 +292,10 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
                 size={ButtonSize.SM}
               >
                 {isPendingConfirmation ? (
-                  <Spinner data-testid={'loader'} color="!white" />
+                  <div className="flex flex-row items-center gap-2">
+                    <Spinner data-testid={'loader'} fill="white" />{' '}
+                    Transferring..
+                  </div>
                 ) : (
                   'Transfer'
                 )}
@@ -376,7 +379,10 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
                 size={ButtonSize.SM}
               >
                 {isPendingConfirmation ? (
-                  <Spinner data-testid={'loader'} color="white" />
+                  <div className="flex flex-row items-center gap-2">
+                    <Spinner data-testid={'loader'} fill="white" />{' '}
+                    Transferring..
+                  </div>
                 ) : (
                   'Transfer'
                 )}
@@ -466,7 +472,9 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
                 size={ButtonSize.SM}
               >
                 {isPendingConfirmation ? (
-                  <Spinner data-testid={'loader'} color="white" />
+                  <div className="flex flex-row items-center gap-2">
+                    <Spinner fill="white" /> Transferring..
+                  </div>
                 ) : (
                   'Transfer'
                 )}

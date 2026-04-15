@@ -2,7 +2,7 @@ import { FunctionComponent } from 'react'
 
 import { Dropdown, DropdownItem } from '../../../Dropdown'
 import { AssetManagementActions } from './../../AssetManagementActions'
-import Spinner from '../../../common/Spinner'
+import Spinner from '../../../icons/Spinner'
 import { ButtonIcon } from '../../../common/Button'
 
 interface AssetManagementDropdownProps {
@@ -40,7 +40,9 @@ export const AssetManagementDropdown: FunctionComponent<
 }) => {
   return isRejectPendingConfirmation ? (
     <ButtonIcon disabled data-testid={'rejectTransferBtn'}>
-      <Spinner data-testid={'loader'} label="Rejecting" row />
+      <div className="flex flex-row items-center gap-2">
+        <Spinner data-testid={'loader'} fill="white" /> Rejecting..
+      </div>
     </ButtonIcon>
   ) : (
     <Dropdown
