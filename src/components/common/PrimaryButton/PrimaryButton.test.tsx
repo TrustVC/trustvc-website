@@ -1,4 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
+import { createRef } from 'react'
 import { render, fireEvent } from '@testing-library/react'
 import PrimaryButton from './PrimaryButton'
 
@@ -75,5 +76,23 @@ describe('PrimaryButton', () => {
     )
     const button = container.querySelector('button')
     expect(button?.type).toBe('submit')
+  })
+
+  it('forwards ref to the button element by default', () => {
+    const ref = createRef<HTMLButtonElement>()
+    render(<PrimaryButton ref={ref}>Ref me</PrimaryButton>)
+    expect(ref.current).toBeInstanceOf(HTMLButtonElement)
+    expect(ref.current?.textContent).toContain('Ref me')
+  })
+
+  it('forwards ref to the label when as="label"', () => {
+    const ref = createRef<HTMLLabelElement>()
+    render(
+      <PrimaryButton ref={ref} as="label" htmlFor="file-input">
+        Browse
+      </PrimaryButton>
+    )
+    expect(ref.current).toBeInstanceOf(HTMLLabelElement)
+    expect(ref.current?.getAttribute('for')).toBe('file-input')
   })
 })

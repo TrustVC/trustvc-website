@@ -65,4 +65,13 @@ export default [
       'no-unused-vars': 'off',
     },
   },
+  {
+    files: [
+      'src/components/common/contexts/OverlayContext.tsx',
+      'src/components/common/contexts/providerContext.tsx',
+    ],
+    rules: {
+      'react-refresh/only-export-components': 'off',
+    },
+  },
 ]
