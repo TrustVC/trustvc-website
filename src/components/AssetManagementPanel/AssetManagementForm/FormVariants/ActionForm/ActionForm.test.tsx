@@ -88,7 +88,9 @@ describe('ActionForm - TransferHolder', () => {
       />
     )
 
-    expect(screen.getAllByText(defaultProps.beneficiary).length).toBeGreaterThan(0)
+    expect(
+      screen.getAllByText(defaultProps.beneficiary).length
+    ).toBeGreaterThan(0)
     expect(screen.getByDisplayValue(defaultProps.holder)).toBeInTheDocument()
   })
 

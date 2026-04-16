@@ -58,7 +58,9 @@ vi.mock('../AssetManagementForm', () => ({
       <div data-testid="beneficiary">{props.beneficiary}</div>
       <div data-testid="holder">{props.holder}</div>
       <div data-testid="nominee">{props.nominee}</div>
-      <button onClick={() => onSetFormAction(AssetManagementActions.TransferHolder)}>
+      <button
+        onClick={() => onSetFormAction(AssetManagementActions.TransferHolder)}
+      >
         Set Transfer Holder
       </button>
     </div>
@@ -146,7 +148,9 @@ describe('AssetManagementApplication', () => {
     it('does not render AssetManagementForm when document is not transferable', () => {
       render(<AssetManagementApplication {...defaultNonTransferableProps} />)
 
-      expect(screen.queryByTestId('asset-management-form')).not.toBeInTheDocument()
+      expect(
+        screen.queryByTestId('asset-management-form')
+      ).not.toBeInTheDocument()
     })
 
     it('renders expired tag when document is expired and not transferable', () => {
@@ -200,7 +204,9 @@ describe('AssetManagementApplication', () => {
     it('passes correct beneficiary, holder, and nominee to form', () => {
       render(<AssetManagementApplication {...defaultTransferableProps} />)
 
-      expect(screen.getByTestId('beneficiary')).toHaveTextContent('0xBeneficiary')
+      expect(screen.getByTestId('beneficiary')).toHaveTextContent(
+        '0xBeneficiary'
+      )
       expect(screen.getByTestId('holder')).toHaveTextContent('0xHolder')
       expect(screen.getByTestId('nominee')).toHaveTextContent('0xNominee')
     })
@@ -213,7 +219,10 @@ describe('AssetManagementApplication', () => {
 
     it('passes isExpired prop to form', () => {
       render(
-        <AssetManagementApplication {...defaultTransferableProps} isExpired={true} />
+        <AssetManagementApplication
+          {...defaultTransferableProps}
+          isExpired={true}
+        />
       )
 
       expect(screen.getByTestId('asset-management-form')).toBeInTheDocument()
@@ -223,7 +232,7 @@ describe('AssetManagementApplication', () => {
   describe('Token Registry Roles', () => {
     it('checks for AccepterRole with V4 token registry', () => {
       mockUseTokenRegistryVersion.mockReturnValue(TokenRegistryVersions.V4)
-      
+
       render(<AssetManagementApplication {...defaultTransferableProps} />)
 
       expect(mockUseTokenRegistryRole).toHaveBeenCalled()
@@ -231,7 +240,7 @@ describe('AssetManagementApplication', () => {
 
     it('checks for AccepterRole with V5 token registry', () => {
       mockUseTokenRegistryVersion.mockReturnValue(TokenRegistryVersions.V5)
-      
+
       render(<AssetManagementApplication {...defaultTransferableProps} />)
 
       expect(mockUseTokenRegistryRole).toHaveBeenCalled()
@@ -246,9 +255,7 @@ describe('AssetManagementApplication', () => {
 
   describe('Token Operations', () => {
     it('sets up destroyToken function correctly', () => {
-      render(
-        <AssetManagementApplication {...defaultTransferableProps} />
-      )
+      render(<AssetManagementApplication {...defaultTransferableProps} />)
 
       // Verify the mock is set up correctly
       expect(mockDestroyToken).not.toHaveBeenCalled()
@@ -334,7 +341,9 @@ describe('AssetManagementApplication', () => {
 
       render(<AssetManagementApplication {...defaultTransferableProps} />)
 
-      expect(screen.queryByTestId('asset-management-form')).not.toBeInTheDocument()
+      expect(
+        screen.queryByTestId('asset-management-form')
+      ).not.toBeInTheDocument()
     })
   })
 
@@ -370,18 +379,21 @@ describe('AssetManagementApplication', () => {
 
     it('renders form for expired transferable document when isTitleEscrow is true', () => {
       render(
-        <AssetManagementApplication {...defaultTransferableProps} isExpired={true} />
+        <AssetManagementApplication
+          {...defaultTransferableProps}
+          isExpired={true}
+        />
       )
 
       expect(screen.getByTestId('asset-management-form')).toBeInTheDocument()
     })
 
     it('renders nothing when non-transferable and not expired', () => {
-      render(
-        <AssetManagementApplication {...defaultNonTransferableProps} />
-      )
+      render(<AssetManagementApplication {...defaultNonTransferableProps} />)
 
-      expect(screen.queryByTestId('asset-management-form')).not.toBeInTheDocument()
+      expect(
+        screen.queryByTestId('asset-management-form')
+      ).not.toBeInTheDocument()
       expect(screen.queryByTestId('expiredDoc')).not.toBeInTheDocument()
     })
   })
@@ -398,7 +410,7 @@ describe('AssetManagementApplication', () => {
   describe('Console Logging', () => {
     it('logs initialization information', async () => {
       const consoleSpy = vi.spyOn(console, 'log')
-      
+
       render(<AssetManagementApplication {...defaultTransferableProps} />)
 
       await waitFor(() => {
@@ -414,7 +426,7 @@ describe('AssetManagementApplication', () => {
 
     it('logs isTransferableDocument and isTitleEscrow', () => {
       const consoleSpy = vi.spyOn(console, 'log')
-      
+
       render(<AssetManagementApplication {...defaultTransferableProps} />)
 
       expect(consoleSpy).toHaveBeenCalledWith(

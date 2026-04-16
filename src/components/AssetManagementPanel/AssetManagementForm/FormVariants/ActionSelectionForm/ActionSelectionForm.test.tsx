@@ -9,7 +9,9 @@ import { AssetManagementActions } from '../../../AssetManagementActions'
 vi.mock('../../AssetManagementDropdown', () => ({
   AssetManagementDropdown: ({ onSetFormAction }: any) => (
     <div data-testid="asset-management-dropdown">
-      <button onClick={() => onSetFormAction(AssetManagementActions.TransferHolder)}>
+      <button
+        onClick={() => onSetFormAction(AssetManagementActions.TransferHolder)}
+      >
         Transfer Holder
       </button>
     </div>
@@ -143,7 +145,9 @@ describe('ActionSelectionForm', () => {
         />
       )
 
-      expect(screen.getByTestId('asset-management-dropdown')).toBeInTheDocument()
+      expect(
+        screen.getByTestId('asset-management-dropdown')
+      ).toBeInTheDocument()
     })
 
     it('shows "No Access" button when user is connected but has no permissions', () => {
@@ -183,7 +187,9 @@ describe('ActionSelectionForm', () => {
         />
       )
 
-      expect(screen.getByTestId('asset-management-dropdown')).toBeInTheDocument()
+      expect(
+        screen.getByTestId('asset-management-dropdown')
+      ).toBeInTheDocument()
     })
 
     it('shows dropdown when canTransferOwners is true', () => {
@@ -195,7 +201,9 @@ describe('ActionSelectionForm', () => {
         />
       )
 
-      expect(screen.getByTestId('asset-management-dropdown')).toBeInTheDocument()
+      expect(
+        screen.getByTestId('asset-management-dropdown')
+      ).toBeInTheDocument()
     })
 
     it('shows dropdown when canNominateBeneficiary is true', () => {
@@ -207,7 +215,9 @@ describe('ActionSelectionForm', () => {
         />
       )
 
-      expect(screen.getByTestId('asset-management-dropdown')).toBeInTheDocument()
+      expect(
+        screen.getByTestId('asset-management-dropdown')
+      ).toBeInTheDocument()
     })
 
     it('shows dropdown when canEndorseBeneficiary is true', () => {
@@ -219,7 +229,9 @@ describe('ActionSelectionForm', () => {
         />
       )
 
-      expect(screen.getByTestId('asset-management-dropdown')).toBeInTheDocument()
+      expect(
+        screen.getByTestId('asset-management-dropdown')
+      ).toBeInTheDocument()
     })
 
     it('shows dropdown when canReturnToIssuer is true', () => {
@@ -231,7 +243,9 @@ describe('ActionSelectionForm', () => {
         />
       )
 
-      expect(screen.getByTestId('asset-management-dropdown')).toBeInTheDocument()
+      expect(
+        screen.getByTestId('asset-management-dropdown')
+      ).toBeInTheDocument()
     })
 
     it('shows dropdown when canHandleShred is true', () => {
@@ -243,7 +257,9 @@ describe('ActionSelectionForm', () => {
         />
       )
 
-      expect(screen.getByTestId('asset-management-dropdown')).toBeInTheDocument()
+      expect(
+        screen.getByTestId('asset-management-dropdown')
+      ).toBeInTheDocument()
     })
 
     it('shows dropdown when canHandleRestore is true', () => {
@@ -255,7 +271,9 @@ describe('ActionSelectionForm', () => {
         />
       )
 
-      expect(screen.getByTestId('asset-management-dropdown')).toBeInTheDocument()
+      expect(
+        screen.getByTestId('asset-management-dropdown')
+      ).toBeInTheDocument()
     })
 
     it('shows dropdown when canRejectOwnerHolderTransfer is true', () => {
@@ -267,7 +285,9 @@ describe('ActionSelectionForm', () => {
         />
       )
 
-      expect(screen.getByTestId('asset-management-dropdown')).toBeInTheDocument()
+      expect(
+        screen.getByTestId('asset-management-dropdown')
+      ).toBeInTheDocument()
     })
 
     it('shows dropdown when canRejectHolderTransfer is true', () => {
@@ -279,7 +299,9 @@ describe('ActionSelectionForm', () => {
         />
       )
 
-      expect(screen.getByTestId('asset-management-dropdown')).toBeInTheDocument()
+      expect(
+        screen.getByTestId('asset-management-dropdown')
+      ).toBeInTheDocument()
     })
 
     it('shows dropdown when canRejectOwnerTransfer is true', () => {
@@ -291,7 +313,9 @@ describe('ActionSelectionForm', () => {
         />
       )
 
-      expect(screen.getByTestId('asset-management-dropdown')).toBeInTheDocument()
+      expect(
+        screen.getByTestId('asset-management-dropdown')
+      ).toBeInTheDocument()
     })
   })
 
@@ -306,7 +330,9 @@ describe('ActionSelectionForm', () => {
         />
       )
 
-      expect(screen.queryByTestId('asset-management-dropdown')).not.toBeInTheDocument()
+      expect(
+        screen.queryByTestId('asset-management-dropdown')
+      ).not.toBeInTheDocument()
       expect(screen.queryByText('No Access')).not.toBeInTheDocument()
       expect(screen.queryByTestId('connectToWallet')).not.toBeInTheDocument()
     })
@@ -379,7 +405,9 @@ describe('ActionSelectionForm', () => {
         />
       )
 
-      expect(screen.getByTestId('asset-management-dropdown')).toBeInTheDocument()
+      expect(
+        screen.getByTestId('asset-management-dropdown')
+      ).toBeInTheDocument()
     })
   })
 })

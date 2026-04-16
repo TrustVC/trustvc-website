@@ -112,9 +112,7 @@ describe('EndorsementChain', () => {
           endorsementChain={undefined}
         />
       )
-      expect(
-        screen.getByText(/Loading Endorsement Chain/)
-      ).toBeInTheDocument()
+      expect(screen.getByText(/Loading Endorsement Chain/)).toBeInTheDocument()
     })
 
     it('does not show endorsement chain entries when loading', () => {

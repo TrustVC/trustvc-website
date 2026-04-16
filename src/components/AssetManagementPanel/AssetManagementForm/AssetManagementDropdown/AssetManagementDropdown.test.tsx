@@ -11,12 +11,13 @@ vi.mock('../../../Dropdown', () => ({
       <div data-testid="dropdown-items">{children}</div>
     </div>
   ),
-  DropdownItem: ({ children, onClick, className, 'data-testid': testId }: any) => (
-    <button
-      data-testid={testId}
-      onClick={onClick}
-      className={className}
-    >
+  DropdownItem: ({
+    children,
+    onClick,
+    className,
+    'data-testid': testId,
+  }: any) => (
+    <button data-testid={testId} onClick={onClick} className={className}>
       {children}
     </button>
   ),
@@ -66,7 +67,9 @@ describe('AssetManagementDropdown', () => {
       render(<AssetManagementDropdown {...defaultProps} />)
 
       expect(screen.getByTestId('manageAssetDropdown')).toBeInTheDocument()
-      expect(screen.getByTestId('dropdown-button')).toHaveTextContent('Manage Assets')
+      expect(screen.getByTestId('dropdown-button')).toHaveTextContent(
+        'Manage Assets'
+      )
     })
 
     it('renders spinner when reject is pending confirmation', () => {
@@ -108,7 +111,9 @@ describe('AssetManagementDropdown', () => {
     it('does not render transfer holder option when canTransferHolder is false', () => {
       render(<AssetManagementDropdown {...defaultProps} />)
 
-      expect(screen.queryByTestId('transferHolderDropdown')).not.toBeInTheDocument()
+      expect(
+        screen.queryByTestId('transferHolderDropdown')
+      ).not.toBeInTheDocument()
     })
 
     it('calls onSetFormAction with TransferHolder when clicked', () => {
@@ -128,7 +133,10 @@ describe('AssetManagementDropdown', () => {
   describe('Transfer Beneficiary Actions', () => {
     it('renders transfer ownership option when canTransferBeneficiary is true', () => {
       render(
-        <AssetManagementDropdown {...defaultProps} canTransferBeneficiary={true} />
+        <AssetManagementDropdown
+          {...defaultProps}
+          canTransferBeneficiary={true}
+        />
       )
 
       expect(screen.getByTestId('transferOwnerDropdown')).toBeInTheDocument()
@@ -137,7 +145,10 @@ describe('AssetManagementDropdown', () => {
 
     it('calls onSetFormAction with TransferOwner when clicked', () => {
       render(
-        <AssetManagementDropdown {...defaultProps} canTransferBeneficiary={true} />
+        <AssetManagementDropdown
+          {...defaultProps}
+          canTransferBeneficiary={true}
+        />
       )
 
       fireEvent.click(screen.getByTestId('transferOwnerDropdown'))
@@ -151,16 +162,26 @@ describe('AssetManagementDropdown', () => {
   describe('Nominate Beneficiary Actions', () => {
     it('renders nominate beneficiary option when canNominateBeneficiary is true', () => {
       render(
-        <AssetManagementDropdown {...defaultProps} canNominateBeneficiary={true} />
+        <AssetManagementDropdown
+          {...defaultProps}
+          canNominateBeneficiary={true}
+        />
       )
 
-      expect(screen.getByTestId('nominateBeneficiaryHolderDropdown')).toBeInTheDocument()
-      expect(screen.getByText('Nominate transfer ownership')).toBeInTheDocument()
+      expect(
+        screen.getByTestId('nominateBeneficiaryHolderDropdown')
+      ).toBeInTheDocument()
+      expect(
+        screen.getByText('Nominate transfer ownership')
+      ).toBeInTheDocument()
     })
 
     it('calls onSetFormAction with NominateBeneficiary when clicked', () => {
       render(
-        <AssetManagementDropdown {...defaultProps} canNominateBeneficiary={true} />
+        <AssetManagementDropdown
+          {...defaultProps}
+          canNominateBeneficiary={true}
+        />
       )
 
       fireEvent.click(screen.getByTestId('nominateBeneficiaryHolderDropdown'))
@@ -181,7 +202,9 @@ describe('AssetManagementDropdown', () => {
         />
       )
 
-      expect(screen.getByTestId('endorseBeneficiaryDropdown')).toBeInTheDocument()
+      expect(
+        screen.getByTestId('endorseBeneficiaryDropdown')
+      ).toBeInTheDocument()
       expect(screen.getByText('Endorse transfer ownership')).toBeInTheDocument()
     })
 
@@ -194,7 +217,9 @@ describe('AssetManagementDropdown', () => {
         />
       )
 
-      expect(screen.queryByTestId('endorseBeneficiaryDropdown')).not.toBeInTheDocument()
+      expect(
+        screen.queryByTestId('endorseBeneficiaryDropdown')
+      ).not.toBeInTheDocument()
     })
 
     it('calls onSetFormAction with EndorseBeneficiary when clicked', () => {
@@ -221,7 +246,9 @@ describe('AssetManagementDropdown', () => {
       )
 
       expect(screen.getByTestId('endorseTransferDropdown')).toBeInTheDocument()
-      expect(screen.getByText('Transfer ownership and holdership')).toBeInTheDocument()
+      expect(
+        screen.getByText('Transfer ownership and holdership')
+      ).toBeInTheDocument()
     })
 
     it('calls onSetFormAction with TransferOwnerHolder when clicked', () => {
@@ -315,8 +342,12 @@ describe('AssetManagementDropdown', () => {
         />
       )
 
-      expect(screen.getByTestId('rejectTransferOwnerHolderDropdown')).toBeInTheDocument()
-      expect(screen.getByText('Reject ownership and holdership')).toBeInTheDocument()
+      expect(
+        screen.getByTestId('rejectTransferOwnerHolderDropdown')
+      ).toBeInTheDocument()
+      expect(
+        screen.getByText('Reject ownership and holdership')
+      ).toBeInTheDocument()
     })
 
     it('calls onSetFormAction with RejectTransferOwnerHolder when clicked', () => {
@@ -342,7 +373,9 @@ describe('AssetManagementDropdown', () => {
         />
       )
 
-      expect(screen.getByTestId('rejectTransferOwnerDropdown')).toBeInTheDocument()
+      expect(
+        screen.getByTestId('rejectTransferOwnerDropdown')
+      ).toBeInTheDocument()
       expect(screen.getByText('Reject ownership')).toBeInTheDocument()
     })
 
@@ -369,7 +402,9 @@ describe('AssetManagementDropdown', () => {
         />
       )
 
-      expect(screen.getByTestId('rejectTransferHolderDropdown')).toBeInTheDocument()
+      expect(
+        screen.getByTestId('rejectTransferHolderDropdown')
+      ).toBeInTheDocument()
       expect(screen.getByText('Reject holdership')).toBeInTheDocument()
     })
 
@@ -408,8 +443,12 @@ describe('AssetManagementDropdown', () => {
     it('renders no dropdown items when all permissions are false', () => {
       render(<AssetManagementDropdown {...defaultProps} />)
 
-      expect(screen.queryByTestId('transferHolderDropdown')).not.toBeInTheDocument()
-      expect(screen.queryByTestId('transferOwnerDropdown')).not.toBeInTheDocument()
+      expect(
+        screen.queryByTestId('transferHolderDropdown')
+      ).not.toBeInTheDocument()
+      expect(
+        screen.queryByTestId('transferOwnerDropdown')
+      ).not.toBeInTheDocument()
       expect(screen.queryByTestId('surrenderDropdown')).not.toBeInTheDocument()
     })
   })
@@ -432,7 +471,7 @@ describe('AssetManagementDropdown', () => {
       )
 
       const dropdownItem = screen.getByTestId('transferHolderDropdown')
-      
+
       fireEvent.click(dropdownItem)
       fireEvent.click(dropdownItem)
       fireEvent.click(dropdownItem)
@@ -459,14 +498,22 @@ describe('AssetManagementDropdown', () => {
 
       expect(screen.getByTestId('transferHolderDropdown')).toBeInTheDocument()
       expect(screen.getByTestId('transferOwnerDropdown')).toBeInTheDocument()
-      expect(screen.getByTestId('nominateBeneficiaryHolderDropdown')).toBeInTheDocument()
+      expect(
+        screen.getByTestId('nominateBeneficiaryHolderDropdown')
+      ).toBeInTheDocument()
       expect(screen.getByTestId('endorseTransferDropdown')).toBeInTheDocument()
       expect(screen.getByTestId('surrenderDropdown')).toBeInTheDocument()
       expect(screen.getByTestId('acceptSurrenderDropdown')).toBeInTheDocument()
       expect(screen.getByTestId('rejectSurrenderDropdown')).toBeInTheDocument()
-      expect(screen.getByTestId('rejectTransferOwnerHolderDropdown')).toBeInTheDocument()
-      expect(screen.getByTestId('rejectTransferOwnerDropdown')).toBeInTheDocument()
-      expect(screen.getByTestId('rejectTransferHolderDropdown')).toBeInTheDocument()
+      expect(
+        screen.getByTestId('rejectTransferOwnerHolderDropdown')
+      ).toBeInTheDocument()
+      expect(
+        screen.getByTestId('rejectTransferOwnerDropdown')
+      ).toBeInTheDocument()
+      expect(
+        screen.getByTestId('rejectTransferHolderDropdown')
+      ).toBeInTheDocument()
     })
   })
 })
