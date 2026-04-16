@@ -34,7 +34,8 @@ vi.mock('../../common/contexts/providerContext', () => ({
 const mockTokenRegistry = { address: '0xTokenRegistry' }
 const mockUseTokenRegistryContract = vi.fn()
 vi.mock('../../../hooks/useTokenRegistryContract', () => ({
-  useTokenRegistryContract: (address: string, provider: any) => mockUseTokenRegistryContract(address, provider),
+  useTokenRegistryContract: (address: string, provider: any) =>
+    mockUseTokenRegistryContract(address, provider),
 }))
 
 // Mock useTokenRegistryRole
