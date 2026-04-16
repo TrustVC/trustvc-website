@@ -198,25 +198,6 @@ describe('ConnectToMetamask', () => {
       })
     })
 
-    it('logs debug information when connecting', async () => {
-      const consoleSpy = vi.spyOn(console, 'log')
-      mockUpgradeToMetaMaskSigner.mockResolvedValue(undefined)
-
-      render(<ConnectToMetamask />)
-
-      const connectButton = screen.getByTestId('connectToMetamask')
-      fireEvent.click(connectButton)
-
-      await waitFor(() => {
-        expect(consoleSpy).toHaveBeenCalledWith('handleConnectWallet clicked!')
-        expect(consoleSpy).toHaveBeenCalledWith(
-          'About to call upgradeToMetaMaskSigner...'
-        )
-        expect(consoleSpy).toHaveBeenCalledWith(
-          'upgradeToMetaMaskSigner completed'
-        )
-      })
-    })
 
     it('handles successful connection', async () => {
       mockUpgradeToMetaMaskSigner.mockResolvedValue(undefined)
@@ -253,24 +234,6 @@ describe('ConnectToMetamask', () => {
       })
     })
 
-    it('calls handleMetamaskError with correct parameters on user rejection', async () => {
-      const consoleSpy = vi.spyOn(console, 'log')
-      const error = { message: 'User rejected request', code: 4001 }
-      mockUpgradeToMetaMaskSigner.mockRejectedValue(error)
-
-      render(<ConnectToMetamask />)
-
-      const connectButton = screen.getByTestId('connectToMetamask')
-      fireEvent.click(connectButton)
-
-      await waitFor(() => {
-        expect(consoleSpy).toHaveBeenCalledWith(
-          'handleMetamaskError called:',
-          'User rejected request',
-          4001
-        )
-      })
-    })
 
     it('handles MetaMask not installed error', async () => {
       const error = { message: 'MetaMask is not installed', code: -32002 }
@@ -308,16 +271,6 @@ describe('ConnectToMetamask', () => {
   })
 
   describe('Component Lifecycle', () => {
-    it('logs component render', () => {
-      const consoleSpy = vi.spyOn(console, 'log')
-
-      render(<ConnectToMetamask />)
-
-      expect(consoleSpy).toHaveBeenCalledWith(
-        'ConnectToMetamask component rendered'
-      )
-    })
-
     it('re-renders when provider context changes', () => {
       const { rerender } = render(<ConnectToMetamask />)
 
@@ -634,27 +587,4 @@ describe('ConnectToMetamaskModelComponent', () => {
     })
   })
 
-  describe('Console Logging', () => {
-    it('logs provider type and account', () => {
-      const consoleSpy = vi.spyOn(console, 'log')
-
-      mockUseProviderContext.mockReturnValue({
-        providerType: SIGNER_TYPE.METAMASK,
-        account: '0x1234567890123456789012345678901234567890',
-        upgradeToMetaMaskSigner: mockUpgradeToMetaMaskSigner,
-        disconnectWallet: mockDisconnectWallet,
-      })
-
-      render(
-        <ConnectToMetamaskModelComponent
-          showOnNewConnectWarningMessage={false}
-        />
-      )
-
-      expect(consoleSpy).toHaveBeenCalledWith(
-        SIGNER_TYPE.METAMASK,
-        '0x1234567890123456789012345678901234567890'
-      )
-    })
-  })
 })

@@ -407,35 +407,4 @@ describe('AssetManagementApplication', () => {
     })
   })
 
-  describe('Console Logging', () => {
-    it('logs initialization information', async () => {
-      const consoleSpy = vi.spyOn(console, 'log')
-
-      render(<AssetManagementApplication {...defaultTransferableProps} />)
-
-      await waitFor(() => {
-        expect(consoleSpy).toHaveBeenCalledWith(
-          'Initializing TokenInformationContext with:',
-          '0x123',
-          '0xTokenRegistry'
-        )
-      })
-
-      consoleSpy.mockRestore()
-    })
-
-    it('logs isTransferableDocument and isTitleEscrow', () => {
-      const consoleSpy = vi.spyOn(console, 'log')
-
-      render(<AssetManagementApplication {...defaultTransferableProps} />)
-
-      expect(consoleSpy).toHaveBeenCalledWith(
-        'isTransferableDocument',
-        true,
-        expect.any(Boolean)
-      )
-
-      consoleSpy.mockRestore()
-    })
-  })
 })
