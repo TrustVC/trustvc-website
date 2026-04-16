@@ -22,12 +22,12 @@ vi.mock('./../EditableAssetTitle', () => ({
       {isEditable && onSetNewValue ? (
         <input
           type="text"
-          value={newValue || value}
+          value={newValue !== undefined ? newValue : value}
           onChange={e => onSetNewValue(e.target.value)}
           placeholder={isRemark ? 'Enter remark' : ''}
         />
       ) : (
-        <span>{newValue || value}</span>
+        <span>{newValue !== undefined ? newValue : value}</span>
       )}
     </div>
   ),
@@ -227,10 +227,13 @@ describe('ActionForm - TransferHolder', () => {
       fireEvent.change(remarkInput, { target: { value: 'Test remark' } })
     }
 
-    await waitFor(() => {
-      const transferBtn = screen.getByTestId('transferBtn')
-      fireEvent.click(transferBtn)
+    const transferBtn = await waitFor(() => {
+      const btn = screen.getByTestId('transferBtn')
+      expect(btn).toBeEnabled()
+      return btn
     })
+
+    fireEvent.click(transferBtn)
 
     expect(mockHandleTransfer).toHaveBeenCalledWith({
       holderAddress: newHolderAddress,
@@ -299,10 +302,13 @@ describe('ActionForm - TransferOwner', () => {
 
     fireEvent.change(ownerInput, { target: { value: newOwnerAddress } })
 
-    await waitFor(() => {
-      const transferBtn = screen.getByTestId('transferBtn')
-      fireEvent.click(transferBtn)
+    const transferBtn = await waitFor(() => {
+      const btn = screen.getByTestId('transferBtn')
+      expect(btn).toBeEnabled()
+      return btn
     })
+
+    fireEvent.click(transferBtn)
 
     expect(mockHandleBeneficiaryTransfer).toHaveBeenCalledWith({
       newBeneficiaryAddress: newOwnerAddress,
@@ -407,10 +413,13 @@ describe('ActionForm - TransferOwnerHolder', () => {
     fireEvent.change(ownerInput, { target: { value: newOwnerAddress } })
     fireEvent.change(holderInput, { target: { value: newHolderAddress } })
 
-    await waitFor(() => {
-      const transferBtn = screen.getByTestId('endorseTransferBtn')
-      fireEvent.click(transferBtn)
+    const transferBtn = await waitFor(() => {
+      const btn = screen.getByTestId('endorseTransferBtn')
+      expect(btn).toBeEnabled()
+      return btn
     })
+
+    fireEvent.click(transferBtn)
 
     expect(mockHandleEndorseTransfer).toHaveBeenCalledWith({
       newBeneficiaryAddress: newOwnerAddress,
