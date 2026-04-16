@@ -198,7 +198,6 @@ describe('ConnectToMetamask', () => {
       })
     })
 
-
     it('handles successful connection', async () => {
       mockUpgradeToMetaMaskSigner.mockResolvedValue(undefined)
 
@@ -233,7 +232,6 @@ describe('ConnectToMetamask', () => {
         )
       })
     })
-
 
     it('handles MetaMask not installed error', async () => {
       const error = { message: 'MetaMask is not installed', code: -32002 }
@@ -586,5 +584,4 @@ describe('ConnectToMetamaskModelComponent', () => {
       expect(screen.getByTestId('connectToMetamask')).toBeInTheDocument()
     })
   })
-
 })

@@ -406,5 +406,4 @@ describe('AssetManagementApplication', () => {
       expect(screen.getByTestId('asset-management-form')).toBeInTheDocument()
     })
   })
-
 })
