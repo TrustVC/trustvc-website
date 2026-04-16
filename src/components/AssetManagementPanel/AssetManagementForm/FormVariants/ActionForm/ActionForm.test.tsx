@@ -6,6 +6,25 @@ import { AssetManagementActions } from '../../../AssetManagementActions'
 import { FormState } from '../../../../../utils/common/FormState'
 import { OverlayProvider } from '../../../../common/contexts/OverlayContext'
 
+const { mockShowOverlay, mockCloseOverlay } = vi.hoisted(() => ({
+  mockShowOverlay: vi.fn(),
+  mockCloseOverlay: vi.fn(),
+}))
+
+vi.mock('../../../../common/contexts/OverlayContext', async importOriginal => {
+  const actual =
+    await importOriginal<
+      typeof import('../../../../common/contexts/OverlayContext')
+    >()
+  return {
+    ...actual,
+    useOverlayContext: () => ({
+      showOverlay: mockShowOverlay,
+      closeOverlay: mockCloseOverlay,
+    }),
+  }
+})
+
 // Mock EditableAssetTitle component
 vi.mock('./../EditableAssetTitle', () => ({
   EditableAssetTitle: ({
@@ -53,6 +72,17 @@ const defaultProps = {
 const renderWithOverlay = (component: React.ReactElement) => {
   return render(<OverlayProvider>{component}</OverlayProvider>)
 }
+
+const logCurrentTestName = () => {
+  const currentTestName = expect.getState().currentTestName
+  if (currentTestName) {
+    console.log(`[TEST] ${currentTestName}`)
+  }
+}
+
+beforeEach(() => {
+  logCurrentTestName()
+})
 
 describe('ActionForm - TransferHolder', () => {
   const mockHandleTransfer = vi.fn()
@@ -491,5 +521,113 @@ describe('ActionForm - Edge Cases', () => {
       const transferBtn = screen.getByTestId('transferBtn')
       expect(transferBtn).toBeDisabled()
     })
+  })
+})
+
+describe('ActionForm - RejectTransferOwnerHolder', () => {
+  const mockHandleRejectTransferOwnerHolder = vi.fn()
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('renders previous owner and previous holder values', () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        prevBeneficiary="0xabcdefabcdefabcdefabcdefabcdefabcdefabcd"
+        prevHolder="0x1111111111111111111111111111111111111111"
+        type={AssetManagementActions.RejectTransferOwnerHolder}
+        handleRejectTransferOwnerHolder={mockHandleRejectTransferOwnerHolder}
+        rejectTransferOwnerHolderState={FormState.UNINITIALIZED}
+      />
+    )
+
+    expect(screen.getByText('Previous Owner')).toBeInTheDocument()
+    expect(screen.getByText('Previous Holder')).toBeInTheDocument()
+    expect(
+      screen.getAllByText('0xabcdefabcdefabcdefabcdefabcdefabcdefabcd').length
+    ).toBeGreaterThan(0)
+    expect(
+      screen.getAllByText('0x1111111111111111111111111111111111111111').length
+    ).toBeGreaterThan(0)
+  })
+
+  it('calls rejectTransferOwnerHolder with remarks when confirm is clicked', () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        prevBeneficiary="0xabcdefabcdefabcdefabcdefabcdefabcdefabcd"
+        prevHolder="0x1111111111111111111111111111111111111111"
+        type={AssetManagementActions.RejectTransferOwnerHolder}
+        handleRejectTransferOwnerHolder={mockHandleRejectTransferOwnerHolder}
+        rejectTransferOwnerHolderState={FormState.UNINITIALIZED}
+      />
+    )
+
+    const remarkInput = screen.getByPlaceholderText('Enter remark')
+    fireEvent.change(remarkInput, { target: { value: 'Reject reason' } })
+    fireEvent.click(screen.getByTestId('rejectTransferOwnerHolderBtn'))
+
+    expect(mockHandleRejectTransferOwnerHolder).toHaveBeenCalledWith({
+      remarks: 'Reject reason',
+    })
+  })
+
+  it('disables confirm and cancel buttons during pending confirmation', () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        prevBeneficiary="0xabcdefabcdefabcdefabcdefabcdefabcdefabcd"
+        prevHolder="0x1111111111111111111111111111111111111111"
+        type={AssetManagementActions.RejectTransferOwnerHolder}
+        handleRejectTransferOwnerHolder={mockHandleRejectTransferOwnerHolder}
+        rejectTransferOwnerHolderState={FormState.PENDING_CONFIRMATION}
+      />
+    )
+
+    expect(screen.getByText('Rejecting..')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Cancel' })).toBeDisabled()
+    expect(screen.getByTestId('rejectTransferOwnerHolderBtn')).toBeDisabled()
+  })
+
+  it('shows success overlay and closes action form on confirmation', async () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        prevBeneficiary="0xabcdefabcdefabcdefabcdefabcdefabcdefabcd"
+        prevHolder="0x1111111111111111111111111111111111111111"
+        type={AssetManagementActions.RejectTransferOwnerHolder}
+        handleRejectTransferOwnerHolder={mockHandleRejectTransferOwnerHolder}
+        rejectTransferOwnerHolderState={FormState.CONFIRMED}
+      />
+    )
+
+    await waitFor(() => {
+      expect(mockShowOverlay).toHaveBeenCalled()
+    })
+    const overlayNode = mockShowOverlay.mock.calls[0][0] as any
+    expect(overlayNode.props.title).toBe('Holdership Rejection Success')
+    expect(mockSetFormActionNone).toHaveBeenCalled()
+  })
+
+  it('still shows success overlay title when previous addresses are missing', async () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        prevBeneficiary={undefined}
+        prevHolder={undefined}
+        type={AssetManagementActions.RejectTransferOwnerHolder}
+        handleRejectTransferOwnerHolder={mockHandleRejectTransferOwnerHolder}
+        rejectTransferOwnerHolderState={FormState.CONFIRMED}
+      />
+    )
+
+    await waitFor(() => {
+      expect(mockShowOverlay).toHaveBeenCalled()
+    })
+    const overlayNode = mockShowOverlay.mock.calls[0][0] as any
+    expect(overlayNode.props.title).toBe('Holdership Rejection Success')
+    expect(mockSetFormActionNone).toHaveBeenCalled()
   })
 })

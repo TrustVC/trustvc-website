@@ -4,6 +4,8 @@ import { ActionForm } from './FormVariants/ActionForm'
 import { ActionSelectionForm } from './FormVariants/ActionSelectionForm'
 import { FormState } from '../../../utils/common/FormState'
 import { InitialAddress } from '../../../utils/chain-info'
+import { useTokenRegistryVersion } from '../../../hooks/useTokenRegistryVersion'
+import { TokenRegistryVersions } from '../../../constants'
 
 interface RejectTransferActions {
   rejectTransferOwnerHolder: ({ remarks }: { remarks: string }) => void
@@ -119,6 +121,10 @@ export const AssetManagementForm: FunctionComponent<
   nominateBeneficiaryState,
   transferOwners,
   transferOwnersState,
+  rejectTransferOwnerHolder,
+  rejectTransferOwnerHolderState,
+  rejectTransferOwnerState,
+  rejectTransferHolderState,
 
   onReturnToIssuer,
   returnToIssuerState,
@@ -127,6 +133,8 @@ export const AssetManagementForm: FunctionComponent<
   onRestoreToken,
   restoreTokenState,
 }) => {
+  const tokenRegistryVersion = useTokenRegistryVersion()
+  const isTokenRegistryV5 = tokenRegistryVersion === TokenRegistryVersions.V5
   const isActiveTitleEscrow = isTitleEscrow && !isReturnedToIssuer
   const isHolder = isTitleEscrow && account === holder
   const isBeneficiary = isTitleEscrow && account === beneficiary
@@ -135,6 +143,8 @@ export const AssetManagementForm: FunctionComponent<
   const hasPreviousBeneficiary =
     !!prevBeneficiary && prevBeneficiary !== InitialAddress
   const hasPreviousHolder = !!prevHolder && prevHolder !== InitialAddress
+  const canRejectAfterTransferOwners =
+    hasPreviousHolder && hasPreviousBeneficiary
 
   const canReturnToIssuer = isBeneficiary && isHolder && !isReturnedToIssuer
   /*
@@ -152,11 +162,13 @@ export const AssetManagementForm: FunctionComponent<
     isActiveTitleEscrow && isBeneficiary && !isHolder
   const canEndorseBeneficiary = isActiveTitleEscrow && isHolder && hasNominee
   const canRejectOwnerHolderTransfer =
+    isTokenRegistryV5 &&
     isActiveTitleEscrow &&
     isHolder &&
     isBeneficiary &&
     hasPreviousHolder &&
-    hasPreviousBeneficiary
+    hasPreviousBeneficiary &&
+    canRejectAfterTransferOwners
   const canRejectHolderTransfer = // Bug here, transfer holder and transfer holder back, will not be able to reject
     !isHolderAndBeneficiary &&
     isActiveTitleEscrow &&
@@ -175,7 +187,10 @@ export const AssetManagementForm: FunctionComponent<
       holderTransferringState === FormState.PENDING_CONFIRMATION ||
       beneficiaryEndorseState === FormState.PENDING_CONFIRMATION ||
       nominateBeneficiaryState === FormState.PENDING_CONFIRMATION ||
-      transferOwnersState === FormState.PENDING_CONFIRMATION
+      transferOwnersState === FormState.PENDING_CONFIRMATION ||
+      rejectTransferOwnerHolderState === FormState.PENDING_CONFIRMATION ||
+      rejectTransferOwnerState === FormState.PENDING_CONFIRMATION ||
+      rejectTransferHolderState === FormState.PENDING_CONFIRMATION
     )
       return
     onSetFormAction(AssetManagementActions.None)
@@ -184,6 +199,9 @@ export const AssetManagementForm: FunctionComponent<
     beneficiaryEndorseState,
     nominateBeneficiaryState,
     transferOwnersState,
+    rejectTransferOwnerHolderState,
+    rejectTransferOwnerState,
+    rejectTransferHolderState,
     onSetFormAction,
   ])
 
@@ -222,12 +240,15 @@ export const AssetManagementForm: FunctionComponent<
         formAction === AssetManagementActions.NominateBeneficiary ||
         formAction === AssetManagementActions.ReturnToIssuer ||
         formAction === AssetManagementActions.AcceptReturnToIssuer ||
-        formAction === AssetManagementActions.RejectReturnToIssuer) && (
+        formAction === AssetManagementActions.RejectReturnToIssuer ||
+        formAction === AssetManagementActions.RejectTransferOwnerHolder) && (
         <ActionForm
           type={formAction}
           beneficiary={beneficiary!}
           holder={holder!}
           nominee={nominee}
+          prevBeneficiary={prevBeneficiary}
+          prevHolder={prevHolder}
           isExpired={isExpired}
           setFormActionNone={setFormActionNone}
           setShowEndorsementChain={setShowEndorsementChain}
@@ -244,6 +265,9 @@ export const AssetManagementForm: FunctionComponent<
           // transfer owners
           handleEndorseTransfer={transferOwners}
           transferOwnersState={transferOwnersState}
+          // reject transfer ownership and holdership
+          handleRejectTransferOwnerHolder={rejectTransferOwnerHolder}
+          rejectTransferOwnerHolderState={rejectTransferOwnerHolderState}
           // return to issuer
           handleReturnToIssuer={onReturnToIssuer}
           returnToIssuerState={returnToIssuerState}
