@@ -43,10 +43,10 @@ export const Dropdown: FunctionComponent<DropdownProps> = ({
     }
   }
 
-  // Add click event listener to detect clicks outside the dropdown when using portal
+  // Add click event listener to detect clicks outside the dropdown
   const handleClickOutside = (event: MouseEvent) => {
     if (menuPortalTarget) {
-      // Check if the click is outside both the button and the dropdown content
+      // For portal rendering: check if the click is outside both the button and the dropdown content
       const dropdownContent = menuPortalTarget.querySelector(
         '[data-dropdown-content="true"]'
       )
@@ -56,6 +56,15 @@ export const Dropdown: FunctionComponent<DropdownProps> = ({
         !buttonRef.current.contains(event.target as Node) &&
         dropdownContent &&
         !dropdownContent.contains(event.target as Node)
+      ) {
+        setIsOpen(false)
+      }
+    } else {
+      // For inline rendering: check if the click is outside the dropdown container
+      const dropdownContainer = buttonRef.current?.closest('.btn-menu-frame')
+      if (
+        dropdownContainer &&
+        !dropdownContainer.contains(event.target as Node)
       ) {
         setIsOpen(false)
       }
@@ -70,11 +79,7 @@ export const Dropdown: FunctionComponent<DropdownProps> = ({
   useEffect(() => {
     if (isOpen) {
       window.addEventListener('resize', updateMenuPosition)
-
-      // Only add the event listener if we're using a portal
-      if (menuPortalTarget) {
-        document.addEventListener('mousedown', handleClickOutside)
-      }
+      document.addEventListener('mousedown', handleClickOutside)
 
       return () => {
         window.removeEventListener('resize', updateMenuPosition)
