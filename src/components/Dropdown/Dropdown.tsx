@@ -22,17 +22,12 @@ export interface DropdownProps {
 export const Dropdown: FunctionComponent<DropdownProps> = ({
   dropdownButtonText,
   children,
-  classNameRoot,
-  className,
-  classNameMenu,
-  classNameShared,
   disabled,
   menuPortalTarget,
   ...props
 }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 })
-  const addonStylesShared = classNameShared ? ` ${classNameShared}` : ''
   const buttonRef = useRef<HTMLButtonElement>(null)
 
   const updateMenuPosition = () => {

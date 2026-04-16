@@ -20,6 +20,7 @@ interface AssetManagementIsTransferableDocumentProps {
   tokenId: string
   tokenRegistryAddress: string
   setShowEndorsementChain: (payload: boolean) => void
+  refreshEndorsementChain?: () => void
   isTransferableDocument: true
   isExpired: boolean
 }
@@ -41,14 +42,15 @@ export const AssetManagementApplication: FunctionComponent<
   AssetManagementApplicationProps
 > = props => {
   const {
-    isMagicDemo,
+    // isMagicDemo,
     tokenId,
     tokenRegistryAddress,
     setShowEndorsementChain,
+    refreshEndorsementChain,
     isTransferableDocument,
     isExpired,
   } = props as AssetManagementIsTransferableDocumentProps
-  const isSampleDocument = props.isSampleDocument
+  // const isSampleDocument = props.isSampleDocument
   const {
     initialize,
     approvedBeneficiary: nominee,
@@ -134,11 +136,6 @@ export const AssetManagementApplication: FunctionComponent<
   // Initialize the token information context with tokenId and tokenRegistryAddress
   useEffect(() => {
     if (tokenId && tokenRegistryAddress) {
-      console.log(
-        'Initializing TokenInformationContext with:',
-        tokenId,
-        tokenRegistryAddress
-      )
       initialize(tokenRegistryAddress, tokenId)
     }
   }, [tokenId, tokenRegistryAddress, initialize])
@@ -146,7 +143,6 @@ export const AssetManagementApplication: FunctionComponent<
   useEffect(() => {
     onSetFormAction(AssetManagementActions.None)
   }, [account, onSetFormAction]) // unset action panel to none, whenever user change metamask account
-  console.log('isTransferableDocument', isTransferableDocument, isTitleEscrow)
   return (
     <>
       {isTransferableDocument && isTitleEscrow != undefined ? (
@@ -166,6 +162,7 @@ export const AssetManagementApplication: FunctionComponent<
           isReturnedToIssuer={isReturnedToIssuer}
           isTitleEscrow={isTitleEscrow}
           setShowEndorsementChain={setShowEndorsementChain}
+          refreshEndorsementChain={refreshEndorsementChain}
           isTokenBurnt={isTokenBurnt}
           onTransferHolder={changeHolder}
           holderTransferringState={changeHolderState}

@@ -30,6 +30,7 @@ interface VerifyResultProps {
   onReset: () => void
   onViewNftRegistry?: () => void
   onViewEndorsementChain?: () => void
+  refreshEndorsementChain?: () => void
   onConnectWallet?: () => void
 }
 
@@ -54,6 +55,7 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
   onReset,
   onViewNftRegistry,
   onViewEndorsementChain,
+  refreshEndorsementChain,
 }) => {
   const showNftLinks = !!isTransferable
 
@@ -306,6 +308,7 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
                 onViewEndorsementChain()
               }
             }}
+            refreshEndorsementChain={refreshEndorsementChain}
             isTransferableDocument={isTransferable}
             isSampleDocument={false}
             isExpired={false}

@@ -1,1 +1,2 @@
-export * from "./EditableAssetTitle";
+/* eslint-disable react-refresh/only-export-components */
+export * from './EditableAssetTitle'

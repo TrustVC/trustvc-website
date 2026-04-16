@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import React, { FunctionComponent, ReactNode } from 'react'
 import Overlay from '../Overlay'
 import { MessageAddressResolver } from './MessageAddressResolver'

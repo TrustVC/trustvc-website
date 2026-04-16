@@ -86,6 +86,7 @@ interface AssetManagementFormProps
   formAction: AssetManagementActions
   onSetFormAction: (nextFormAction: AssetManagementActions) => void
   setShowEndorsementChain: (payload: boolean) => void
+  refreshEndorsementChain?: () => void
 }
 
 export const AssetManagementForm: FunctionComponent<
@@ -106,6 +107,7 @@ export const AssetManagementForm: FunctionComponent<
   isReturnedToIssuer,
   isTokenBurnt,
   setShowEndorsementChain,
+  refreshEndorsementChain,
   isTitleEscrow,
   isExpired,
 
@@ -185,7 +187,6 @@ export const AssetManagementForm: FunctionComponent<
     onSetFormAction,
   ])
 
-  console.log('formAction', formAction)
   return (
     <>
       {formAction === AssetManagementActions.None && (
@@ -230,6 +231,7 @@ export const AssetManagementForm: FunctionComponent<
           isExpired={isExpired}
           setFormActionNone={setFormActionNone}
           setShowEndorsementChain={setShowEndorsementChain}
+          refreshEndorsementChain={refreshEndorsementChain}
           // nominate
           handleNomination={nominateBeneficiary}
           nominationState={nominateBeneficiaryState}

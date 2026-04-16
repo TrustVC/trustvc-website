@@ -325,7 +325,7 @@ const getPolygonscanBaseUrl = (network: string): string => {
   return `https://${network === 'matic' ? '' : 'mumbai.'}polygonscan.com/`
 }
 
-const getBaseUrl = (network: string): string => {
+export const getBaseUrl = (network: string): string => {
   return network.includes('matic')
     ? getPolygonscanBaseUrl(network)
     : getEtherscanBaseUrl(network)

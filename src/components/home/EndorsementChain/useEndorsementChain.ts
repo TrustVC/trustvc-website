@@ -21,6 +21,7 @@ interface UseEndorsementChainReturn {
   showEndorsementChain: boolean
   handleShowEndorsementChain: () => void
   handleHideEndorsementChain: () => void
+  refreshEndorsementChain: () => void
 }
 
 export const useEndorsementChain = ({
@@ -35,6 +36,7 @@ export const useEndorsementChain = ({
   const [endorsementChainStatus, setEndorsementChainStatus] =
     useState<EndorsementChainStatus>({ status: 'idle' })
   const [showEndorsementChain, setShowEndorsementChain] = useState(false)
+  const [refreshTrigger, setRefreshTrigger] = useState(0)
 
   const handleShowEndorsementChain = () => {
     setShowEndorsementChain(true)
@@ -42,6 +44,10 @@ export const useEndorsementChain = ({
 
   const handleHideEndorsementChain = () => {
     setShowEndorsementChain(false)
+  }
+
+  const refreshEndorsementChain = () => {
+    setRefreshTrigger(prev => prev + 1)
   }
 
   useEffect(() => {
@@ -90,7 +96,7 @@ export const useEndorsementChain = ({
     return () => {
       cancelled = true
     }
-  }, [tokenRegistryAddress, tokenId, verifiedChainId, keyId])
+  }, [tokenRegistryAddress, tokenId, verifiedChainId, keyId, refreshTrigger])
 
   return {
     endorsementChain,
@@ -98,5 +104,6 @@ export const useEndorsementChain = ({
     showEndorsementChain,
     handleShowEndorsementChain,
     handleHideEndorsementChain,
+    refreshEndorsementChain,
   }
 }

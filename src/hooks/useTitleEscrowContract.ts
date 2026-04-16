@@ -26,15 +26,8 @@ export const useTitleEscrowContract = (
   const [titleEscrowAddress, setTitleEscrowAddress] = useState<string>()
   const [documentOwner, setDocumentOwner] = useState<string>()
   const tokenRegistryVersion = useTokenRegistryVersion()
-  console.log(
-    ' tokenRegistry=',
-    tokenRegistry,
-    tokenId,
-    providerOrSigner,
-    tokenRegistryVersion
-  )
+
   const updateTitleEscrow = useCallback(async () => {
-    console.log('thiss')
     if (
       !tokenRegistry ||
       !tokenId ||
@@ -42,7 +35,6 @@ export const useTitleEscrowContract = (
       !tokenRegistryVersion
     )
       return
-    console.log('thiss 2')
     try {
       const provider = (
         'provider' in providerOrSigner
@@ -59,7 +51,6 @@ export const useTitleEscrowContract = (
           titleEscrowVersion: tokenRegistryVersion.toLowerCase() as 'v4' | 'v5',
         }
       )
-      console.log('address', address)
       let instance
       if (tokenRegistryVersion === TokenRegistryVersions.V4) {
         instance = TitleEscrow__factoryV4.connect(address, providerOrSigner)
@@ -72,6 +63,7 @@ export const useTitleEscrowContract = (
       setTitleEscrow(instance)
       setTitleEscrowAddress(address)
     } catch (error) {
+      console.log(error)
       setTitleEscrow(undefined)
       setTitleEscrowAddress(undefined)
     }

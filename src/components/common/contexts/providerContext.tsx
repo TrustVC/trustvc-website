@@ -76,7 +76,6 @@ export interface ProviderContextProps {
   disconnectWallet: (disconnectOnly?: boolean) => Promise<void>
 }
 
-// eslint-disable-next-line react-refresh/only-export-components
 export const ProviderContext = createContext<ProviderContextProps>({
   providerType: SIGNER_TYPE.NONE,
   upgradeToMetaMaskSigner: async () => {},
@@ -536,6 +535,5 @@ export const ProviderContextProvider: FunctionComponent<
   )
 }
 
-// eslint-disable-next-line
 export const useProviderContext = (): ProviderContextProps =>
   useContext<ProviderContextProps>(ProviderContext)

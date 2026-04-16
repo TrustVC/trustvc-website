@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 // Types are now defined inline in the interface
 import React, {
   createContext,
@@ -62,7 +63,6 @@ const contractFunctionStub: any = () => {
 }
 
 export const TokenInformationContext = createContext<ITokenInformationContext>({
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   initialize: () => {},
   changeHolder: contractFunctionStub,
   changeHolderState: 'UNINITIALIZED',
@@ -84,7 +84,6 @@ export const TokenInformationContext = createContext<ITokenInformationContext>({
   rejectTransferHolderState: 'UNINITIALIZED',
   rejectTransferOwnerHolder: contractFunctionStub,
   rejectTransferOwnerHolderState: 'UNINITIALIZED',
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   resetStates: () => {},
   destroyToken: contractFunctionStub,
   destroyTokenState: 'UNINITIALIZED',
@@ -106,35 +105,24 @@ export const TokenInformationContextProvider: FunctionComponent<
     tokenRegistryAddress,
     providerOrSigner
   )
-  console.log(
-    'providerOrSigner, tokenRegistry, tokenId',
-    tokenRegistryAddress,
-    tokenRegistry?.address,
-    tokenId
-  )
   const { titleEscrow, titleEscrowAddress, updateTitleEscrow, documentOwner } =
     useTitleEscrowContract(providerOrSigner, tokenRegistry, tokenId)
   const isReturnedToIssuer =
     documentOwner?.toLowerCase() === tokenRegistryAddress?.toLowerCase()
   const isTokenBurnt =
     documentOwner?.toLowerCase() === BurnAddress?.toLowerCase() // check if the token belongs to burn address.
-  console.log('useTokenRegistryVersion', useTokenRegistryVersion())
   const isTitleEscrow = !!useTokenRegistryVersion() || undefined
-  console.log('isTitleEscrow', isTitleEscrow)
 
   // First check whether Contract is TitleEscrow
-  console.log('titleEscrow', titleEscrow)
   // Contract Read Functions
   const { call: getHolder, value: holder } = useContractFunctionHook(
     titleEscrow,
     'holder'
   )
-  console.log('getHolder', holder)
   const { call: getBeneficiary, value: beneficiary } = useContractFunctionHook(
     titleEscrow,
     'beneficiary'
   )
-  console.log('getBeneficiary', beneficiary)
   const { call: getApprovedBeneficiary, value: approvedBeneficiary } =
     useContractFunctionHook(titleEscrow, 'nominee')
   const { call: getPrevBeneficiary, value: prevBeneficiary } =
@@ -363,7 +351,7 @@ export const TokenInformationContextProvider: FunctionComponent<
 
   // Reset states for all write functions when provider changes to allow methods to be called again without refreshing
   useEffect(resetProviders, [resetProviders, providerOrSigner])
-  console.log('tokeninformationcontext')
+
   return (
     <TokenInformationContext.Provider
       value={{

@@ -2,7 +2,7 @@ import { SVGProps } from 'react'
 
 const ErrorIcon = ({
   fontSize = 24,
-  stroke = 'currentColor',
+  stroke = 'white',
   ...props
 }: SVGProps<SVGSVGElement>) => (
   <svg
@@ -15,7 +15,7 @@ const ErrorIcon = ({
     <circle cx="16" cy="16" r="16" fill="#B83152" />
     <path
       d="M10 10l12 12M22 10l-12 12"
-      stroke="white"
+      stroke={stroke}
       strokeWidth="2.5"
       strokeLinecap="round"
     />

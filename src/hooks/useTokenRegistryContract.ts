@@ -15,7 +15,6 @@ export const useTokenRegistryContract = (
 } => {
   const [tokenRegistry, setTokenRegistry] = useState<TradeTrustToken>()
   const tokenRegistryVersion = useTokenRegistryVersion()
-  console.log('tokenRegistryVersiontokenRegistryVersion', tokenRegistryVersion)
   useEffect(() => {
     if (!address || !provider || !tokenRegistryVersion) return
 

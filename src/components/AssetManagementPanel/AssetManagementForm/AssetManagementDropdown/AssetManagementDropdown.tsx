@@ -5,7 +5,7 @@ import { AssetManagementActions } from './../../AssetManagementActions'
 import Spinner from '../../../icons/Spinner'
 import { ButtonIcon } from '../../../common/Button'
 
-interface AssetManagementDropdownProps {
+export interface AssetManagementDropdownProps {
   onSetFormAction: (nextFormAction: AssetManagementActions) => void
   canReturnToIssuer: boolean
   canHandleShred?: boolean

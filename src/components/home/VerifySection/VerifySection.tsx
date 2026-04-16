@@ -66,6 +66,7 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
     showEndorsementChain,
     handleShowEndorsementChain,
     handleHideEndorsementChain,
+    refreshEndorsementChain,
   } = useEndorsementChain({
     tokenRegistryAddress: isValidTransferable
       ? tokenRegistryAddress
@@ -178,6 +179,7 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
                 getGroupStatus={getGroupStatus}
                 onReset={handleReset}
                 onViewEndorsementChain={handleShowEndorsementChain}
+                refreshEndorsementChain={refreshEndorsementChain}
                 onConnectWallet={handleConnectWallet}
               />
             )}

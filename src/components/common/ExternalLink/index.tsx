@@ -1,1 +1,1 @@
-export * from "./ExternalLink";
+export { ExternalLink, ExternalLinkEtherscanAddress } from './ExternalLink'

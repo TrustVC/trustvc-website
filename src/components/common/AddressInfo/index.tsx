@@ -1,1 +1,1 @@
-export * from "./AddressInfo";
+export { AddressInfo } from './AddressInfo'
