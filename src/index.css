@@ -3718,7 +3718,6 @@ p.small {
   flex-direction: row;
   padding: 8px;
   gap: 8px;
-  opacity: 1;
 
   /* TrustVC/Surface/Base/BG/Cavity */
   background:
@@ -3726,10 +3725,24 @@ p.small {
     #ffffff;
   border-radius: 8px;
 }
-/* action-form-frame below 1024 should have dlex direction column */
+/* action-form-frame below 1024 should have flex direction column */
 @media (max-width: 1024px) {
   .action-form-frame {
     flex-direction: column;
+  }
+}
+
+@media (max-width: 640px) {
+  .action-form-frame {
+    padding: 4px;
+    gap: 4px;
+  }
+}
+
+@media (max-width: 360px) {
+  .action-form-frame {
+    padding: 2px;
+    gap: 2px;
   }
 }
 
@@ -3748,6 +3761,13 @@ p.small {
   gap: 8px;
   flex: 1 1 0;
   min-width: 0;
+}
+
+@media (max-width: 640px) {
+  .editable-asset-title {
+    min-width: 0;
+    width: 100%;
+  }
 }
 
 .non-editable-address {
@@ -3774,6 +3794,14 @@ p.small {
   order: 1;
   align-self: stretch;
   flex-grow: 0;
+}
+
+@media (max-width: 640px) {
+  .non-editable-address {
+    width: 100%;
+    max-width: 100%;
+    word-break: break-all;
+  }
 }
 
 .editable-address-input {

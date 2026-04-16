@@ -46,7 +46,7 @@ export const Button: FunctionComponent<ButtonTradeTrust> = ({
   return (
     <button
       className={` ${baseButtonStyles} ${buttonSizeStyles[size]} ${getButtonTypeStyles(btnType)} ${className} ${
-        disabled ? '!cursor-not-allowed !text-white !opacity-[0.33]' : ''
+        disabled ? '!cursor-not-allowed !opacity-[0.33]' : ''
       }`}
       style={width ? { width, ...props.style } : props.style}
       type="button"
@@ -83,7 +83,7 @@ export const ButtonIcon: FunctionComponent<ButtonTradeTrust> = ({
     <button
       {...restProps}
       className={` ${baseButtonStyles} ${buttonSizeStyles[size]} ${getButtonTypeStyles(btnType)} ${className || ''} ${
-        disabled ? '!cursor-not-allowed !text-white !opacity-[0.33]' : ''
+        disabled ? '!cursor-not-allowed !opacity-[0.33]' : ''
       }`}
       style={buttonStyle}
       type="button"

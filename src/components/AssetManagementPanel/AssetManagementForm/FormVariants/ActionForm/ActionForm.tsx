@@ -236,7 +236,9 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
 
       return (
         <>
-          <div className="action-form-frame">
+          <div
+            className={`action-form-frame ${isPendingConfirmation ? 'opacity-[0.33] pointer-events-none' : ''}`}
+          >
             <div className="editable-asset-title">
               <EditableAssetTitle
                 role="Owner"
@@ -293,7 +295,7 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
               >
                 {isPendingConfirmation ? (
                   <div className="flex flex-row items-center gap-2">
-                    <Spinner data-testid={'loader'} fill="white" />{' '}
+                    <Spinner data-testid={'loader'} fill="white" />
                     Transferring..
                   </div>
                 ) : (
@@ -323,7 +325,9 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
 
       return (
         <>
-          <div className="action-form-frame">
+          <div
+            className={`action-form-frame ${isPendingConfirmation ? 'opacity-[0.33] pointer-events-none' : ''}`}
+          >
             <div className="editable-asset-title">
               <EditableAssetTitle
                 role="Owner"
@@ -380,7 +384,7 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
               >
                 {isPendingConfirmation ? (
                   <div className="flex flex-row items-center gap-2">
-                    <Spinner data-testid={'loader'} fill="white" />{' '}
+                    <Spinner data-testid={'loader'} fill="white" />
                     Transferring..
                   </div>
                 ) : (
@@ -413,7 +417,9 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
 
       return (
         <>
-          <div className="action-form-frame">
+          <div
+            className={`action-form-frame ${isPendingConfirmation ? 'opacity-[0.33] pointer-events-none' : ''}`}
+          >
             <div className="editable-asset-title">
               <EditableAssetTitle
                 role="Owner"
