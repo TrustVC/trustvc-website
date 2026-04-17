@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { toErrorMessage } from '../../utils/helper'
 import { getMagicLinkIconSrc } from '../../utils/magicWallet'
 import { Button, ButtonSize } from '../common/Button'
-import PrimaryButton from '../common/PrimaryButton'
 import Connected from '../ConnectToBlockchain/Connected'
 import {
   SIGNER_TYPE,
@@ -52,24 +51,22 @@ export const ConnectToMagicLinkModelComponent = ({
         )}
       {providerType === SIGNER_TYPE.MAGIC && account && (
         <div className="connect-metamask-disconnect-container">
-          <PrimaryButton
+          <Button
             data-testid="disconnect-magic"
-            className="connect-metamask-disconnect-btn"
+            className="connect-metamask-disconnect-btn connect-metamask-disconnect-btn-label"
             onClick={handleDisconnect}
             btnType="transparent"
-            labelClassName="connect-metamask-disconnect-btn-label"
           >
             Disconnect
-          </PrimaryButton>
-          <PrimaryButton
-            data-testid="connect-blockchain-continue"
+          </Button>
+          <Button
+            data-testid="connect-blockchain-continue connect-metamask-disconnect-btn-label"
             className="connect-metamask-disconnect-btn"
             btnType="solid"
-            labelClassName="connect-metamask-disconnect-btn-label"
             onClick={handleContinue}
           >
             Continue
-          </PrimaryButton>
+          </Button>
         </div>
       )}
     </div>

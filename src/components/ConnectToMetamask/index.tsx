@@ -3,7 +3,6 @@ import Connected from '../ConnectToBlockchain/Connected'
 // import { showDocumentTransferMessage } from '../UI/Overlay/OverlayContent'
 // import { NetworkContent } from '../NetworkSection/NetworkContent'
 // Warning icon - use inline SVG or import from public folder
-import PrimaryButton from '../common/PrimaryButton'
 import {
   SIGNER_TYPE,
   useProviderContext,
@@ -56,27 +55,24 @@ export const ConnectToMetamaskModelComponent = ({
         account && <NetworkContent disabled={false} />} */}
       {providerType === SIGNER_TYPE.METAMASK && account && (
         <div className="connect-metamask-disconnect-container">
-          <PrimaryButton
-            data-testid="disconnect-metamask"
+          <Button
             className="connect-metamask-disconnect-btn"
-            onClick={handleDisconnect}
             btnType="transparent"
-            labelClassName="connect-metamask-disconnect-btn-label"
+            onClick={handleDisconnect}
           >
             Disconnect
-          </PrimaryButton>
-          <PrimaryButton
+          </Button>
+          <Button
             data-testid="connect-blockchain-continue"
             className="connect-metamask-disconnect-btn"
             btnType="solid"
-            labelClassName="connect-metamask-disconnect-btn-label"
             onClick={handleContinue}
             // disabled={
-            // !account || networkChangeLoading || currentChainId === undefined
+            //   !account || networkChangeLoading || currentChainId === undefined
             // }
           >
             Continue
-          </PrimaryButton>
+          </Button>
         </div>
       )}
     </div>

@@ -7,7 +7,7 @@ import {
   FrameActions,
 } from '@trustvc/decentralized-renderer-react-components'
 import { QRCodeSVG } from 'qrcode.react'
-import Spinner from '../../common/Spinner'
+import Spinner from '../../icons/Spinner'
 import {
   getTemplateSourceUrl,
   getOpenAttestationData,
@@ -327,11 +327,10 @@ const DocumentRenderer: React.FC<DocumentRendererProps> = ({
         {/* Loading spinner */}
         {!isRendererReady && selectedTemplate !== 'attachmentTab' && (
           <div className="vr-renderer-loading">
-            <Spinner
-              label="Loading document preview..."
-              size="medium"
-              centered
-            />
+            <div className="flex flex-col items-center gap-2">
+              <Spinner data-testid={'loader'} fill="white" /> Loading document
+              preview..
+            </div>
           </div>
         )}
 

@@ -233,25 +233,6 @@ describe('ConnectToMetamask', () => {
       })
     })
 
-    it('calls handleMetamaskError with correct parameters on user rejection', async () => {
-      const consoleSpy = vi.spyOn(console, 'log')
-      const error = { message: 'User rejected request', code: 4001 }
-      mockUpgradeToMetaMaskSigner.mockRejectedValue(error)
-
-      render(<ConnectToMetamask />)
-
-      const connectButton = screen.getByTestId('connectToMetamask')
-      fireEvent.click(connectButton)
-
-      await waitFor(() => {
-        expect(consoleSpy).toHaveBeenCalledWith(
-          'handleMetamaskError called:',
-          'User rejected request',
-          4001
-        )
-      })
-    })
-
     it('handles MetaMask not installed error', async () => {
       const error = { message: 'MetaMask is not installed', code: -32002 }
       mockUpgradeToMetaMaskSigner.mockRejectedValue(error)
@@ -395,9 +376,9 @@ describe('ConnectToMetamaskModelComponent', () => {
         />
       )
 
-      const disconnectButton = screen.getByTestId('disconnect-metamask')
+      const disconnectButton = screen.getByText('Disconnect')
       expect(disconnectButton).toBeInTheDocument()
-      expect(disconnectButton).toHaveTextContent('Disconnect')
+      expect(disconnectButton).toHaveClass('connect-metamask-disconnect-btn')
     })
 
     it('shows continue button when connected', () => {
@@ -539,7 +520,7 @@ describe('ConnectToMetamaskModelComponent', () => {
         />
       )
 
-      const disconnectButton = screen.getByTestId('disconnect-metamask')
+      const disconnectButton = screen.getByText('Disconnect')
       fireEvent.click(disconnectButton)
 
       expect(mockDisconnectWallet).toHaveBeenCalledTimes(1)

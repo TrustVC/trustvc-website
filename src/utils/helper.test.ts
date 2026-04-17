@@ -27,7 +27,6 @@ vi.mock('@trustvc/trustvc', async importOriginal => {
     currency: 'ETH',
     nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
   })
-
   return {
     ...actual,
     SUPPORTED_CHAINS: {

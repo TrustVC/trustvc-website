@@ -5,10 +5,8 @@ import {
   useProviderContext,
 } from '../common/contexts/providerContext'
 import Overlay from '../common/Overlay'
-// import { ConnectToMagicLinkModelComponent } from '../ConnectToMagicLink'
 import { ConnectToMetamaskModelComponent } from '../ConnectToMetamask'
-// import { Button, ButtonSize } from '../common/Button'
-import PrimaryButton from '../common/PrimaryButton'
+import { Button, ButtonSize } from '../common/Button'
 import { ConnectToMagicLinkModelComponent } from '../ConnectToMagicLink'
 
 const WALLET_TYPE_NAME: Partial<Record<SIGNER_TYPE, string>> = {
@@ -178,14 +176,15 @@ const ConnectToBlockchainModel: React.FC<ConnectToBlockchainProps> = ({
         {/* Footer Section */}
         <div className="footer-section">
           <div className="footer-subsection">
-            <PrimaryButton
+            <Button
               data-testid="connect-blockchain-cancel"
-              className="connect-blockchain-cancel-btn connect-blockchain-cancel-btn-label"
+              className="connect-blockchain-cancel-btn-label !w-[100%] max-w-[260px]"
               onClick={onClose}
               btnType="transparent"
+              size={ButtonSize.MD}
             >
               Cancel
-            </PrimaryButton>
+            </Button>
           </div>
         </div>
       </div>

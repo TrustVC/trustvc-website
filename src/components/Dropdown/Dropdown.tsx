@@ -22,17 +22,12 @@ export interface DropdownProps {
 export const Dropdown: FunctionComponent<DropdownProps> = ({
   dropdownButtonText,
   children,
-  classNameRoot,
-  className,
-  classNameMenu,
-  classNameShared,
   disabled,
   menuPortalTarget,
   ...props
 }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 })
-  const addonStylesShared = classNameShared ? ` ${classNameShared}` : ''
   const buttonRef = useRef<HTMLButtonElement>(null)
 
   const updateMenuPosition = () => {
@@ -48,10 +43,10 @@ export const Dropdown: FunctionComponent<DropdownProps> = ({
     }
   }
 
-  // Add click event listener to detect clicks outside the dropdown when using portal
+  // Add click event listener to detect clicks outside the dropdown
   const handleClickOutside = (event: MouseEvent) => {
     if (menuPortalTarget) {
-      // Check if the click is outside both the button and the dropdown content
+      // For portal rendering: check if the click is outside both the button and the dropdown content
       const dropdownContent = menuPortalTarget.querySelector(
         '[data-dropdown-content="true"]'
       )
@@ -61,6 +56,15 @@ export const Dropdown: FunctionComponent<DropdownProps> = ({
         !buttonRef.current.contains(event.target as Node) &&
         dropdownContent &&
         !dropdownContent.contains(event.target as Node)
+      ) {
+        setIsOpen(false)
+      }
+    } else {
+      // For inline rendering: check if the click is outside the dropdown container
+      const dropdownContainer = buttonRef.current?.closest('.btn-menu-frame')
+      if (
+        dropdownContainer &&
+        !dropdownContainer.contains(event.target as Node)
       ) {
         setIsOpen(false)
       }
@@ -75,11 +79,7 @@ export const Dropdown: FunctionComponent<DropdownProps> = ({
   useEffect(() => {
     if (isOpen) {
       window.addEventListener('resize', updateMenuPosition)
-
-      // Only add the event listener if we're using a portal
-      if (menuPortalTarget) {
-        document.addEventListener('mousedown', handleClickOutside)
-      }
+      document.addEventListener('mousedown', handleClickOutside)
 
       return () => {
         window.removeEventListener('resize', updateMenuPosition)
@@ -106,11 +106,7 @@ export const Dropdown: FunctionComponent<DropdownProps> = ({
               }
             : undefined
         }
-        className={`${
-          !menuPortalTarget ? 'z-30 ' : 'z-50 '
-        }absolute rounded bg-white border border-gray-300 py-2 shadow-lg${addonStylesShared}${
-          classNameMenu ? ` ${classNameMenu}` : ''
-        }`}
+        className="dropdown-menu-frame"
       >
         {children}
       </div>
@@ -124,7 +120,7 @@ export const Dropdown: FunctionComponent<DropdownProps> = ({
   }
 
   return (
-    <div className={`relative${classNameRoot ? ` ${classNameRoot}` : ''}`}>
+    <div className="btn-menu-frame">
       <button
         ref={buttonRef}
         {...props}
@@ -135,29 +131,18 @@ export const Dropdown: FunctionComponent<DropdownProps> = ({
             setIsOpen(!isOpen)
           }
         }}
-        className={`relative z-10 cursor-pointer disabled:cursor-not-allowed disabled:bg-gray-200 focus:outline-none flex items-center justify-between${addonStylesShared}${
-          className ? ` ${className}` : ''
-        }`}
+        className="dropdown-btn solid"
       >
         <>
-          <span className="flex-1 truncate">{dropdownButtonText}</span>
+          <h5 className="text-center justify-center !text-white">
+            {dropdownButtonText}
+          </h5>
           <span>
-            <ChevronDown />
+            <ChevronDown className="text-white" />
           </span>
         </>
       </button>
-      {isOpen && (
-        <>
-          {!menuPortalTarget && (
-            <button
-              tabIndex={-1}
-              onClick={() => setIsOpen(false)}
-              className="fixed z-20 inset-0 w-full h-full cursor-default focus:outline-none"
-            />
-          )}
-          {renderDropdownContent()}
-        </>
-      )}
+      {isOpen && <>{renderDropdownContent()}</>}
     </div>
   )
 }
@@ -174,11 +159,12 @@ export const DropdownItem: FunctionComponent<DropdownItemProps> = ({
   ...props
 }) => {
   return (
-    <div
-      className={`truncate cursor-pointer text-cloud-800 p-3 hover:bg-gray-50 active:bg-gray-300 ${className}`}
-      {...props}
-    >
-      {children}
+    <div className={`truncate cursor-pointer ${className}`} {...props}>
+      <div className="dropdown-item-frame">
+        <div className="dropdown-item-text-frame">
+          <h5>{children}</h5>
+        </div>
+      </div>
     </div>
   )
 }

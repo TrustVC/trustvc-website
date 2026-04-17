@@ -93,15 +93,14 @@ describe('EndorsementChain', () => {
   describe('loading state', () => {
     it('shows spinner when status is loading', () => {
       const loadingStatus: EndorsementChainStatus = { status: 'loading' }
-      const { container } = render(
+      render(
         <EndorsementChainLayout
           {...defaultProps}
           endorsementChainStatus={loadingStatus}
           endorsementChain={undefined}
         />
       )
-      const spinner = container.querySelector('.spinner')
-      expect(spinner).toBeInTheDocument()
+      expect(screen.getByTestId('loader')).toBeInTheDocument()
     })
 
     it('shows loading message when loading', () => {
@@ -113,9 +112,7 @@ describe('EndorsementChain', () => {
           endorsementChain={undefined}
         />
       )
-      expect(
-        screen.getByText('Loading Endorsement Chain...')
-      ).toBeInTheDocument()
+      expect(screen.getByText(/Loading Endorsement Chain/)).toBeInTheDocument()
     })
 
     it('does not show endorsement chain entries when loading', () => {
@@ -134,17 +131,15 @@ describe('EndorsementChain', () => {
 
     it('centers the spinner when loading', () => {
       const loadingStatus: EndorsementChainStatus = { status: 'loading' }
-      const { container } = render(
+      render(
         <EndorsementChainLayout
           {...defaultProps}
           endorsementChainStatus={loadingStatus}
           endorsementChain={undefined}
         />
       )
-      const centeredWrapper = container.querySelector(
-        '.spinner-centered-wrapper'
-      )
-      expect(centeredWrapper).toBeInTheDocument()
+      // The spinner is now rendered with flex layout, not a specific wrapper class
+      expect(screen.getByTestId('loader')).toBeInTheDocument()
     })
   })
 

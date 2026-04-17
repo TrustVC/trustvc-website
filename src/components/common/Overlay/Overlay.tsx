@@ -38,7 +38,9 @@ const Overlay: React.FC<OverlayProps> = ({
       aria-modal="true"
       aria-label={ariaLabel}
     >
-      <div className="overlay-content">{children}</div>
+      <div className="overlay-content flex justify-center items-center">
+        {children}
+      </div>
     </div>
   )
 }

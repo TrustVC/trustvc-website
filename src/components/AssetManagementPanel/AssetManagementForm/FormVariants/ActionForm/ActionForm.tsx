@@ -1,0 +1,395 @@
+import React, { FunctionComponent, useEffect, useState } from 'react'
+import {
+  MessageTitle,
+  showDocumentTransferMessage,
+} from '../../../../common/Overlay/OverlayContent'
+import { AssetManagementActions } from '../../../AssetManagementActions'
+import { EditableAssetTitle } from './../EditableAssetTitle'
+import { useOverlayContext } from '../../../../common/contexts/OverlayContext'
+import { isEthereumAddress } from '../../../../../utils/helper'
+import Spinner from '../../../../icons/Spinner'
+import { FormState } from '../../../../../utils/common/FormState'
+import { Button, ButtonIcon, ButtonSize } from '../../../../common/Button'
+import type {
+  TransferHolderFormProps,
+  TransferOwnerFormProps,
+  TransferOwnerHolderFormProps,
+  NominateBeneficiaryFormProps,
+  EndorseBeneficiaryProps,
+  SurrenderFormProps,
+  AcceptSurrenderedFormProps,
+  RejectSurrenderedFormProps,
+  RejectTransferOwnerHolderFormProps,
+  RejectTransferOwnerFormProps,
+  RejectTransferHolderFormProps,
+} from './types'
+
+// Union type for all possible props
+type ActionFormProps =
+  | TransferHolderFormProps
+  | TransferOwnerFormProps
+  | TransferOwnerHolderFormProps
+  | NominateBeneficiaryFormProps
+  | EndorseBeneficiaryProps
+  | SurrenderFormProps
+  | AcceptSurrenderedFormProps
+  | RejectSurrenderedFormProps
+  | RejectTransferOwnerHolderFormProps
+  | RejectTransferOwnerFormProps
+  | RejectTransferHolderFormProps
+
+export const ActionForm: FunctionComponent<ActionFormProps> = props => {
+  const {
+    type,
+    beneficiary,
+    holder,
+    setFormActionNone,
+    setShowEndorsementChain,
+    refreshEndorsementChain,
+  } = props
+  const [remark, setRemark] = useState('')
+  const { showOverlay } = useOverlayContext()
+
+  // Additional state variables for different form types
+  const [newHolder, setNewHolder] = useState(holder || '')
+  const [newOwner, setNewOwner] = useState(holder || '')
+
+  // All useEffect hooks moved outside of the switch statement
+  useEffect(() => {
+    if (type === AssetManagementActions.TransferHolder) {
+      const { holderTransferringState } = props
+      const isConfirmed = holderTransferringState === FormState.CONFIRMED
+
+      if (isConfirmed) {
+        if (refreshEndorsementChain) {
+          refreshEndorsementChain()
+        }
+        showOverlay(
+          showDocumentTransferMessage(
+            MessageTitle.TRANSFER_HOLDER_SUCCESS,
+            {
+              isSuccess: true,
+              holderAddress: newHolder,
+            },
+            setShowEndorsementChain
+          )
+        )
+        setFormActionNone()
+      }
+    }
+
+    // Handle EndorseTransferForm confirmation
+    if (type === AssetManagementActions.TransferOwnerHolder) {
+      const { transferOwnersState } = props
+      const isConfirmed = transferOwnersState === FormState.CONFIRMED
+
+      if (isConfirmed) {
+        if (refreshEndorsementChain) {
+          refreshEndorsementChain()
+        }
+        showOverlay(
+          showDocumentTransferMessage(
+            MessageTitle.ENDORSE_TRANSFER_SUCCESS,
+            {
+              isSuccess: true,
+              beneficiaryAddress: newOwner,
+              holderAddress: newHolder,
+            },
+            setShowEndorsementChain
+          )
+        )
+        setFormActionNone()
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    props,
+    showOverlay,
+    setFormActionNone,
+    beneficiary,
+    holder,
+    newHolder,
+    newOwner,
+    remark,
+    type,
+  ])
+
+  // Switch based on form type to handle specific UI rendering
+  switch (type) {
+    case AssetManagementActions.TransferHolder: {
+      const { handleTransfer, holderTransferringState } = props
+      console.log('🚀 ~ holderTransferringState:', holderTransferringState)
+      const isPendingConfirmation =
+        holderTransferringState === FormState.PENDING_CONFIRMATION ||
+        holderTransferringState === FormState.INITIALIZED
+      const isEditable =
+        holderTransferringState !== FormState.PENDING_CONFIRMATION &&
+        holderTransferringState !== FormState.CONFIRMED
+
+      const isValidTransfer = () => {
+        if (!newHolder) return false
+        if (newHolder?.toLowerCase() === holder?.toLowerCase()) return false
+        if (!isEthereumAddress(newHolder)) return false
+        return true
+      }
+
+      return (
+        <>
+          <div
+            className={`action-form-frame ${isPendingConfirmation ? 'opacity-[0.33] pointer-events-none' : ''}`}
+          >
+            <div className="editable-asset-title">
+              <EditableAssetTitle
+                role="Owner"
+                value={beneficiary}
+                isEditable={false}
+              />
+            </div>
+            <div className="editable-asset-title">
+              <EditableAssetTitle
+                role="Holder"
+                value={holder}
+                newValue={newHolder}
+                isEditable={isEditable}
+                onSetNewValue={setNewHolder}
+                isError={holderTransferringState === FormState.ERROR}
+              />
+            </div>
+            <div className="editable-asset-title">
+              <EditableAssetTitle
+                role="Remark"
+                value="Remark"
+                newValue={remark}
+                onSetNewValue={setRemark}
+                isEditable={true}
+                isRemark={true}
+                isSubmitted={isPendingConfirmation}
+              />
+            </div>
+          </div>
+          <div className="form-action-btn-outer-frame">
+            <div className="form-action-btn-inner-frame">
+              <Button
+                className="!flex-1 !min-w-[188px] !max-w-[383px]"
+                onClick={setFormActionNone}
+                disabled={isPendingConfirmation}
+                data-testid={'cancelTransferBtn'}
+                btnType="transparent"
+                size={ButtonSize.SM}
+              >
+                Cancel
+              </Button>
+
+              <ButtonIcon
+                className="!flex-1 !min-w-[188px] !max-w-[383px]"
+                disabled={!isValidTransfer() || isPendingConfirmation}
+                onClick={() =>
+                  handleTransfer({
+                    holderAddress: newHolder,
+                    remarks: remark,
+                  })
+                }
+                data-testid={'transferBtn'}
+                size={ButtonSize.SM}
+              >
+                {isPendingConfirmation ? (
+                  <div className="flex flex-row items-center gap-2">
+                    <Spinner data-testid={'loader'} fill="white" />
+                    Transferring..
+                  </div>
+                ) : (
+                  'Transfer'
+                )}
+              </ButtonIcon>
+            </div>
+          </div>
+        </>
+      )
+    }
+    case AssetManagementActions.TransferOwner: {
+      const { handleBeneficiaryTransfer, beneficiaryEndorseState } = props
+      const isPendingConfirmation =
+        beneficiaryEndorseState === FormState.PENDING_CONFIRMATION ||
+        beneficiaryEndorseState === FormState.INITIALIZED
+      const isEditable =
+        beneficiaryEndorseState !== FormState.PENDING_CONFIRMATION &&
+        beneficiaryEndorseState !== FormState.CONFIRMED
+
+      const isValidTransfer = () => {
+        if (!newOwner) return false
+        if (newOwner?.toLowerCase() === beneficiary?.toLowerCase()) return false
+        if (!isEthereumAddress(newOwner)) return false
+        return true
+      }
+
+      return (
+        <>
+          <div
+            className={`action-form-frame ${isPendingConfirmation ? 'opacity-[0.33] pointer-events-none' : ''}`}
+          >
+            <div className="editable-asset-title">
+              <EditableAssetTitle
+                role="Owner"
+                value={beneficiary}
+                newValue={newOwner}
+                isEditable={isEditable}
+                onSetNewValue={setNewOwner}
+                isError={beneficiaryEndorseState === FormState.ERROR}
+              />
+            </div>
+            <div className="editable-asset-title">
+              <EditableAssetTitle
+                role="Holder"
+                value={holder}
+                isEditable={false}
+              />
+            </div>
+            <div className="editable-asset-title">
+              <EditableAssetTitle
+                role="Remark"
+                value="Remark"
+                newValue={remark}
+                onSetNewValue={setRemark}
+                isEditable={true}
+                isRemark={true}
+                isSubmitted={isPendingConfirmation}
+              />
+            </div>
+          </div>
+          <div className="form-action-btn-outer-frame">
+            <div className="form-action-btn-inner-frame">
+              <Button
+                className="!flex-1 !min-w-[188px] !max-w-[383px]"
+                onClick={setFormActionNone}
+                disabled={isPendingConfirmation}
+                data-testid={'cancelTransferBtn'}
+                btnType="transparent"
+                size={ButtonSize.SM}
+              >
+                Cancel
+              </Button>
+
+              <ButtonIcon
+                className="!flex-1 !min-w-[188px] !max-w-[383px]"
+                disabled={!isValidTransfer() || isPendingConfirmation}
+                onClick={() =>
+                  handleBeneficiaryTransfer({
+                    newBeneficiaryAddress: newOwner,
+                    remarks: remark,
+                  })
+                }
+                data-testid={'transferBtn'}
+                size={ButtonSize.SM}
+              >
+                {isPendingConfirmation ? (
+                  <div className="flex flex-row items-center gap-2">
+                    <Spinner data-testid={'loader'} fill="white" />
+                    Transferring..
+                  </div>
+                ) : (
+                  'Transfer'
+                )}
+              </ButtonIcon>
+            </div>
+          </div>
+        </>
+      )
+    }
+
+    case AssetManagementActions.TransferOwnerHolder: {
+      const { handleEndorseTransfer, transferOwnersState } = props
+      const isPendingConfirmation =
+        transferOwnersState === FormState.PENDING_CONFIRMATION ||
+        transferOwnersState === FormState.INITIALIZED
+      const isEditable =
+        transferOwnersState !== FormState.PENDING_CONFIRMATION &&
+        transferOwnersState !== FormState.CONFIRMED
+      const isValidEndorseTransfer = (): boolean => {
+        if (!newHolder || !newOwner) return false
+        if (newHolder === holder) return false
+        if (!isEthereumAddress(newHolder) || !isEthereumAddress(newOwner))
+          return false
+
+        return true
+      }
+
+      return (
+        <>
+          <div
+            className={`action-form-frame ${isPendingConfirmation ? 'opacity-[0.33] pointer-events-none' : ''}`}
+          >
+            <div className="editable-asset-title">
+              <EditableAssetTitle
+                role="Owner"
+                value={beneficiary}
+                newValue={newOwner}
+                isEditable={isEditable}
+                onSetNewValue={setNewOwner}
+                isError={transferOwnersState === FormState.ERROR}
+              />
+            </div>
+            <div className="editable-asset-title">
+              <EditableAssetTitle
+                role="Holder"
+                value={holder}
+                newValue={newHolder}
+                isEditable={isEditable}
+                onSetNewValue={setNewHolder}
+                isError={transferOwnersState === FormState.ERROR}
+              />
+            </div>
+            <div className="editable-asset-title">
+              <EditableAssetTitle
+                role="Remark"
+                value="Remark"
+                newValue={remark}
+                onSetNewValue={setRemark}
+                isEditable={true}
+                isRemark={true}
+                isSubmitted={isPendingConfirmation}
+              />
+            </div>
+          </div>
+          <div className="form-action-btn-outer-frame">
+            <div className="form-action-btn-inner-frame">
+              <Button
+                className="!flex-1 !min-w-[188px] !max-w-[383px]"
+                onClick={setFormActionNone}
+                disabled={isPendingConfirmation}
+                btnType="transparent"
+                size={ButtonSize.SM}
+              >
+                Cancel
+              </Button>
+
+              <ButtonIcon
+                className="!flex-1 !min-w-[188px] !max-w-[383px]"
+                disabled={!isValidEndorseTransfer() || isPendingConfirmation}
+                onClick={() => {
+                  handleEndorseTransfer({
+                    newBeneficiaryAddress: newOwner || '',
+                    newHolderAddress: newHolder || '',
+                    remarks: remark,
+                  })
+                }}
+                data-testid={'endorseTransferBtn'}
+                size={ButtonSize.SM}
+              >
+                {isPendingConfirmation ? (
+                  <div className="flex flex-row items-center gap-2">
+                    <Spinner fill="white" /> Transferring..
+                  </div>
+                ) : (
+                  'Transfer'
+                )}
+              </ButtonIcon>
+            </div>
+          </div>
+        </>
+      )
+    }
+
+    default:
+      return null
+  }
+}

@@ -11,11 +11,13 @@ import {
   SIGNER_TYPE,
   useProviderContext,
 } from '../../common/contexts/providerContext'
+import { AssetManagementApplication } from '../../AssetManagementPanel/AssetManagementApplication'
 
 interface VerifyResultProps {
   fileName: string
   networkName?: string
   chainId?: string
+  tokenId?: string
   issuer?: string
   isTransferable?: boolean
   tokenRegistryAddress?: string
@@ -28,6 +30,7 @@ interface VerifyResultProps {
   onReset: () => void
   onViewNftRegistry?: () => void
   onViewEndorsementChain?: () => void
+  refreshEndorsementChain?: () => void
   onConnectWallet?: () => void
 }
 
@@ -41,19 +44,18 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
   fileName,
   networkName,
   chainId,
+  tokenId,
   issuer,
   isTransferable,
   tokenRegistryAddress,
   tags,
-  owner,
-  holder,
   rawDocument,
   invalidAttachments,
   getGroupStatus,
   onReset,
   onViewNftRegistry,
   onViewEndorsementChain,
-  onConnectWallet,
+  refreshEndorsementChain,
 }) => {
   const showNftLinks = !!isTransferable
 
@@ -288,46 +290,29 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
         </div>
 
         {/* Divider */}
-        {showNftLinks && <div className="vr-divider" />}
-
-        {/* Owner + Holder */}
         {showNftLinks && (
-          <div className="vr-title-info">
-            <div className="vr-title-col">
-              <span className="vr-title-col-label">Owner:</span>
-              <span className="vr-title-col-name">
-                {owner?.name ?? 'Organisation A'}
-              </span>
-              <span className="vr-title-col-addr">
-                {owner?.address ?? '0x28F7aB32C521D13F2E6980d072Ca7CA493020145'}
-              </span>
-            </div>
-            <div className="vr-title-col">
-              <span className="vr-title-col-label">Holder:</span>
-              <span className="vr-title-col-name">
-                {holder?.name ?? 'Organisation A'}
-              </span>
-              <span className="vr-title-col-addr">
-                {holder?.address ??
-                  '0x28F7aB32C521D13F2E6980d072Ca7CA493020145'}
-              </span>
-            </div>
-            <div className="vr-title-col" />
+          <div className="vr-divider-container">
+            <div className="vr-divider" />
           </div>
         )}
 
         {/* Footer: Connect Wallet */}
-        {showNftLinks && (
-          <div className="vr-footer">
-            <button
-              type="button"
-              className="vr-connect-btn"
-              onClick={onConnectWallet}
-              disabled={!onConnectWallet}
-            >
-              <span className="vr-connect-btn-label">Connect Wallet</span>
-            </button>
-          </div>
+
+        {isTransferable && tokenRegistryAddress && tokenId && (
+          <AssetManagementApplication
+            isMagicDemo={false}
+            tokenId={tokenId}
+            tokenRegistryAddress={tokenRegistryAddress}
+            setShowEndorsementChain={(show: boolean) => {
+              if (show && onViewEndorsementChain) {
+                onViewEndorsementChain()
+              }
+            }}
+            refreshEndorsementChain={refreshEndorsementChain}
+            isTransferableDocument={isTransferable}
+            isSampleDocument={false}
+            isExpired={false}
+          />
         )}
       </div>
 
