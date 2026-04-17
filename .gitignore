@@ -13,6 +13,11 @@ dist-ssr
 *.local
 coverage
 
+# Workspace package manager/runtime files
+/.pnp
+.pnp.js
+trustvc-cms/.sanity
+
 # Environment files
 .env
 .env.local
@@ -29,3 +34,7 @@ coverage
 *.njsproj
 *.sln
 *.sw?
+
+# Misc
+*.pem
+*.tsbuildinfo

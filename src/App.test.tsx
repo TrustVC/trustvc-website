@@ -24,6 +24,8 @@ describe('App Component', () => {
   it('starts with light mode by default', () => {
     const { container } = render(<App />)
 
+    const app = document.querySelector('.app-shell') // class change due to backgound diff in main screen and contact/news page
+    expect(app).toBeInTheDocument()
     const nav = container.querySelector('.navbar-light')
     expect(nav).toBeInTheDocument()
     expect(document.body.classList.contains('dark-mode')).toBe(false)

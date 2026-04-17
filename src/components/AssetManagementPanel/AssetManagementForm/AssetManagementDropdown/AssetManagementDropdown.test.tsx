@@ -488,6 +488,7 @@ describe('AssetManagementDropdown', () => {
         canTransferHolder: true,
         canTransferBeneficiary: true,
         canNominateBeneficiary: true,
+        canEndorseBeneficiary: true,
         canTransferOwners: true,
         canRejectOwnerHolderTransfer: true,
         canRejectOwnerTransfer: true,

@@ -10,6 +10,13 @@ const renderWithRouter = (ui: React.ReactElement) =>
 describe('Navbar Component', () => {
   const mockSetIsDarkMode = vi.fn()
 
+  const renderNavbar = (isDarkMode = false, initialPath = '/') =>
+    render(
+      <MemoryRouter initialEntries={[initialPath]}>
+        <Navbar isDarkMode={isDarkMode} setIsDarkMode={mockSetIsDarkMode} />
+      </MemoryRouter>
+    )
+
   beforeEach(() => {
     mockSetIsDarkMode.mockClear()
   })
@@ -137,5 +144,40 @@ describe('Navbar Component', () => {
 
     const contactButtons = container.querySelectorAll('.contact-button')
     expect(contactButtons.length).toBeGreaterThan(0)
+  })
+
+  it('shows News & Updates as active color on /news-updates route (light mode)', () => {
+    renderNavbar(false, '/news-updates')
+
+    const newsLink = screen.getByText('News & Updates')
+    expect(newsLink).toHaveStyle({ color: '#5B5BB3' })
+  })
+
+  it('shows News & Updates as active color on news detail route (light mode)', () => {
+    renderNavbar(false, '/news-updates/some-article-slug')
+
+    const newsLink = screen.getByText('News & Updates')
+    expect(newsLink).toHaveStyle({ color: '#5B5BB3' })
+  })
+
+  it('shows Home as inactive color on /news-updates route (light mode)', () => {
+    renderNavbar(false, '/news-updates')
+
+    const homeLink = screen.getByText('Home')
+    expect(homeLink).toHaveStyle({ color: '#5B6571' })
+  })
+
+  it('shows News & Updates as inactive color on home route (light mode)', () => {
+    renderNavbar(false, '/')
+
+    const newsLink = screen.getByText('News & Updates')
+    expect(newsLink).toHaveStyle({ color: '#5B6571' })
+  })
+
+  it('shows Home as active color on home route (light mode)', () => {
+    renderNavbar(false, '/')
+
+    const homeLink = screen.getByText('Home')
+    expect(homeLink).toHaveStyle({ color: '#5B5BB3' })
   })
 })

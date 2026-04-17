@@ -41,12 +41,12 @@ vi.mock('./../EditableAssetTitle', () => ({
       {isEditable && onSetNewValue ? (
         <input
           type="text"
-          value={newValue || value}
+          value={newValue !== undefined ? newValue : value}
           onChange={e => onSetNewValue(e.target.value)}
           placeholder={isRemark ? 'Enter remark' : ''}
         />
       ) : (
-        <span>{newValue || value}</span>
+        <span>{newValue !== undefined ? newValue : value}</span>
       )}
     </div>
   ),
@@ -333,6 +333,14 @@ describe('ActionForm - TransferOwner', () => {
       const transferBtn = screen.getByTestId('transferBtn')
       fireEvent.click(transferBtn)
     })
+
+    const transferBtn = await waitFor(() => {
+      const btn = screen.getByTestId('transferBtn')
+      expect(btn).toBeEnabled()
+      return btn
+    })
+
+    fireEvent.click(transferBtn)
 
     expect(mockHandleBeneficiaryTransfer).toHaveBeenCalledWith({
       newBeneficiaryAddress: newOwnerAddress,
