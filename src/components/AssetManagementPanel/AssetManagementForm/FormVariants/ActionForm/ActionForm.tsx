@@ -43,6 +43,8 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
     type,
     beneficiary,
     holder,
+    prevBeneficiary,
+    prevHolder,
     setFormActionNone,
     setShowEndorsementChain,
     refreshEndorsementChain,
@@ -101,6 +103,29 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
         setFormActionNone()
       }
     }
+
+    if (type === AssetManagementActions.RejectTransferOwnerHolder) {
+      const { rejectTransferOwnerHolderState } = props
+      const isConfirmed = rejectTransferOwnerHolderState === FormState.CONFIRMED
+
+      if (isConfirmed) {
+        if (refreshEndorsementChain) {
+          refreshEndorsementChain()
+        }
+        showOverlay(
+          showDocumentTransferMessage(
+            'Holdership Rejection Success',
+            {
+              isSuccess: true,
+              beneficiaryAddress: prevBeneficiary,
+              holderAddress: prevHolder,
+            },
+            setShowEndorsementChain
+          )
+        )
+        setFormActionNone()
+      }
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     props,
@@ -111,6 +136,8 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
     newHolder,
     newOwner,
     remark,
+    prevBeneficiary,
+    prevHolder,
     type,
   ])
 
@@ -118,7 +145,6 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
   switch (type) {
     case AssetManagementActions.TransferHolder: {
       const { handleTransfer, holderTransferringState } = props
-      console.log('🚀 ~ holderTransferringState:', holderTransferringState)
       const isPendingConfirmation =
         holderTransferringState === FormState.PENDING_CONFIRMATION ||
         holderTransferringState === FormState.INITIALIZED
@@ -381,6 +407,83 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
                   </div>
                 ) : (
                   'Transfer'
+                )}
+              </ButtonIcon>
+            </div>
+          </div>
+        </>
+      )
+    }
+
+    case AssetManagementActions.RejectTransferOwnerHolder: {
+      const {
+        handleRejectTransferOwnerHolder,
+        rejectTransferOwnerHolderState,
+      } = props
+      const isPendingConfirmation =
+        rejectTransferOwnerHolderState === FormState.PENDING_CONFIRMATION ||
+        rejectTransferOwnerHolderState === FormState.INITIALIZED
+
+      return (
+        <>
+          <div
+            className={`action-form-frame ${isPendingConfirmation ? 'opacity-[0.33] pointer-events-none' : ''}`}
+          >
+            <div className="editable-asset-title">
+              <EditableAssetTitle
+                role="Previous Owner"
+                value={prevBeneficiary}
+                isEditable={false}
+              />
+            </div>
+            <div className="editable-asset-title">
+              <EditableAssetTitle
+                role="Previous Holder"
+                value={prevHolder}
+                isEditable={false}
+              />
+            </div>
+            <div className="editable-asset-title">
+              <EditableAssetTitle
+                role="Remark"
+                value="Remark"
+                newValue={remark}
+                onSetNewValue={setRemark}
+                isEditable={true}
+                isRemark={true}
+                isSubmitted={isPendingConfirmation}
+              />
+            </div>
+          </div>
+          <div className="form-action-btn-outer-frame">
+            <div className="form-action-btn-inner-frame">
+              <Button
+                className="!flex-1 !min-w-[188px] !max-w-[383px]"
+                onClick={setFormActionNone}
+                disabled={isPendingConfirmation}
+                btnType="transparent"
+                size={ButtonSize.SM}
+              >
+                Cancel
+              </Button>
+
+              <ButtonIcon
+                className="!flex-1 !min-w-[188px] !max-w-[383px]"
+                onClick={() =>
+                  handleRejectTransferOwnerHolder({
+                    remarks: remark,
+                  })
+                }
+                disabled={isPendingConfirmation}
+                data-testid={'rejectTransferOwnerHolderBtn'}
+                size={ButtonSize.SM}
+              >
+                {isPendingConfirmation ? (
+                  <div className="flex flex-row items-center gap-2">
+                    <Spinner fill="white" /> Rejecting..
+                  </div>
+                ) : (
+                  'Confirm'
                 )}
               </ButtonIcon>
             </div>

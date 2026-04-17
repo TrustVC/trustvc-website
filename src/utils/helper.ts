@@ -317,7 +317,6 @@ export const makeAddressURL = (address: string, network: string): string => {
   const explorerUrl = getChainInfoFromNetworkName(network).explorerUrl
   return new URL(`/address/${address}`, explorerUrl).href
 }
-
 interface GenerateFileName {
   fileName: string
   extension: string

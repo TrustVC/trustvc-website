@@ -351,7 +351,6 @@ export const TokenInformationContextProvider: FunctionComponent<
 
   // Reset states for all write functions when provider changes to allow methods to be called again without refreshing
   useEffect(resetProviders, [resetProviders, providerOrSigner])
-
   return (
     <TokenInformationContext.Provider
       value={{
@@ -361,10 +360,10 @@ export const TokenInformationContextProvider: FunctionComponent<
         initialize,
         holder: holder,
         beneficiary: beneficiary,
-        approvedBeneficiary: approvedBeneficiary?.[0],
-        prevBeneficiary: prevBeneficiary?.[0],
-        prevHolder: prevHolder?.[0],
-        remark: remark?.[0],
+        approvedBeneficiary: approvedBeneficiary,
+        prevBeneficiary: prevBeneficiary,
+        prevHolder: prevHolder,
+        remark: remark,
         changeHolder,
         endorseBeneficiary,
         returnToIssuer,

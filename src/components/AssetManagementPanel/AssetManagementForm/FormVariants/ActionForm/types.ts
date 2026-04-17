@@ -5,6 +5,8 @@ export interface BaseActionFormProps {
   beneficiary: string
   holder: string
   nominee?: string
+  prevBeneficiary?: string
+  prevHolder?: string
   isExpired?: boolean
   setFormActionNone: () => void
   setShowEndorsementChain: (payload: boolean) => void
