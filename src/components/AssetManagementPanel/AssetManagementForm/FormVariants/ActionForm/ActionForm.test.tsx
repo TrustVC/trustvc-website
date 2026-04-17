@@ -73,17 +73,6 @@ const renderWithOverlay = (component: React.ReactElement) => {
   return render(<OverlayProvider>{component}</OverlayProvider>)
 }
 
-const logCurrentTestName = () => {
-  const currentTestName = expect.getState().currentTestName
-  if (currentTestName) {
-    console.log(`[TEST] ${currentTestName}`)
-  }
-}
-
-beforeEach(() => {
-  logCurrentTestName()
-})
-
 describe('ActionForm - TransferHolder', () => {
   const mockHandleTransfer = vi.fn()
 
