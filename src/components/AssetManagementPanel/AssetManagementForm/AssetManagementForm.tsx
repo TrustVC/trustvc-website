@@ -123,6 +123,7 @@ export const AssetManagementForm: FunctionComponent<
   transferOwnersState,
   rejectTransferOwnerHolder,
   rejectTransferOwnerHolderState,
+  rejectTransferHolder,
   rejectTransferOwnerState,
   rejectTransferHolderState,
 
@@ -170,11 +171,11 @@ export const AssetManagementForm: FunctionComponent<
     hasPreviousBeneficiary &&
     canRejectAfterTransferOwners
   const canRejectHolderTransfer = // Bug here, transfer holder and transfer holder back, will not be able to reject
-    !isHolderAndBeneficiary &&
+    isTokenRegistryV5 &&
     isActiveTitleEscrow &&
     isHolder &&
     hasPreviousHolder &&
-    !(isBeneficiary && hasPreviousBeneficiary)
+    !hasPreviousBeneficiary
   const canRejectOwnerTransfer =
     !isHolderAndBeneficiary &&
     isActiveTitleEscrow &&
@@ -241,7 +242,8 @@ export const AssetManagementForm: FunctionComponent<
         formAction === AssetManagementActions.ReturnToIssuer ||
         formAction === AssetManagementActions.AcceptReturnToIssuer ||
         formAction === AssetManagementActions.RejectReturnToIssuer ||
-        formAction === AssetManagementActions.RejectTransferOwnerHolder) && (
+        formAction === AssetManagementActions.RejectTransferOwnerHolder ||
+        formAction === AssetManagementActions.RejectTransferHolder) && (
         <ActionForm
           type={formAction}
           beneficiary={beneficiary!}
@@ -268,6 +270,9 @@ export const AssetManagementForm: FunctionComponent<
           // reject transfer ownership and holdership
           handleRejectTransferOwnerHolder={rejectTransferOwnerHolder}
           rejectTransferOwnerHolderState={rejectTransferOwnerHolderState}
+          // reject transfer holdership
+          handleRejectTransferHolder={rejectTransferHolder}
+          rejectTransferHolderState={rejectTransferHolderState}
           // return to issuer
           handleReturnToIssuer={onReturnToIssuer}
           returnToIssuerState={returnToIssuerState}

@@ -109,6 +109,28 @@ describe('AssetManagementForm', () => {
     )
   })
 
+  it('enables reject holdership only for token registry v5 after holder transfer context', () => {
+    mockUseTokenRegistryVersion.mockReturnValue(TokenRegistryVersions.V5)
+    render(<AssetManagementForm {...baseProps} prevBeneficiary={undefined} />)
+
+    expect(mockActionSelectionForm).toHaveBeenCalledWith(
+      expect.objectContaining({
+        canRejectHolderTransfer: true,
+      })
+    )
+  })
+
+  it('disables reject holdership for token registry v4', () => {
+    mockUseTokenRegistryVersion.mockReturnValue(TokenRegistryVersions.V4)
+    render(<AssetManagementForm {...baseProps} prevBeneficiary={undefined} />)
+
+    expect(mockActionSelectionForm).toHaveBeenCalledWith(
+      expect.objectContaining({
+        canRejectHolderTransfer: false,
+      })
+    )
+  })
+
   it('disables reject ownership and holdership for token registry v4', () => {
     mockUseTokenRegistryVersion.mockReturnValue(TokenRegistryVersions.V4)
     render(<AssetManagementForm {...baseProps} />)
@@ -154,6 +176,23 @@ describe('AssetManagementForm', () => {
     )
   })
 
+  it('disables reject holdership when previous holder is missing', () => {
+    mockUseTokenRegistryVersion.mockReturnValue(TokenRegistryVersions.V5)
+    render(
+      <AssetManagementForm
+        {...baseProps}
+        prevBeneficiary={undefined}
+        prevHolder={undefined}
+      />
+    )
+
+    expect(mockActionSelectionForm).toHaveBeenCalledWith(
+      expect.objectContaining({
+        canRejectHolderTransfer: false,
+      })
+    )
+  })
+
   it('renders reject owner and holder action form with previous accounts', () => {
     mockUseTokenRegistryVersion.mockReturnValue(TokenRegistryVersions.V5)
     render(
@@ -171,6 +210,26 @@ describe('AssetManagementForm', () => {
         prevHolder: baseProps.prevHolder,
         handleRejectTransferOwnerHolder: mockRejectTransferOwnerHolder,
         rejectTransferOwnerHolderState: FormState.UNINITIALIZED,
+      })
+    )
+  })
+
+  it('renders reject holder action form with previous holder account', () => {
+    mockUseTokenRegistryVersion.mockReturnValue(TokenRegistryVersions.V5)
+    render(
+      <AssetManagementForm
+        {...baseProps}
+        prevBeneficiary={undefined}
+        formAction={AssetManagementActions.RejectTransferHolder}
+      />
+    )
+
+    expect(screen.getByTestId('action-form')).toBeInTheDocument()
+    expect(mockActionForm).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: AssetManagementActions.RejectTransferHolder,
+        prevHolder: baseProps.prevHolder,
+        rejectTransferHolderState: FormState.UNINITIALIZED,
       })
     )
   })
