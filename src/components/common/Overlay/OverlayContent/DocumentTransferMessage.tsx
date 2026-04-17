@@ -297,10 +297,10 @@ export const showDocumentTransferMessage = (
           holderAddress={option.holderAddress}
         />
       )}
-      {title === MessageTitle.CHANGE_BENEFICIARY_SUCCESS ||
-        (title === MessageTitle.TRANSFER_OWNER_SUCCESS && (
-          <MessageBeneficiarySuccess address={option.beneficiaryAddress} />
-        ))}
+      {(title === MessageTitle.CHANGE_BENEFICIARY_SUCCESS ||
+        title === MessageTitle.TRANSFER_OWNER_SUCCESS) && (
+        <MessageBeneficiarySuccess address={option.beneficiaryAddress} />
+      )}
       {title === MessageTitle.NOMINATE_BENEFICIARY_HOLDER_SUCCESS && (
         <MessageNominateBeneficiaryHolderSuccess />
       )}

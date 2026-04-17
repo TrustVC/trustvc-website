@@ -508,7 +508,7 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
       const isInvalidNomination =
         !newBeneficiary ||
         !holder ||
-        newBeneficiary === beneficiary ||
+        newBeneficiary?.toLowerCase() === beneficiary?.toLowerCase() ||
         !isEthereumAddress(newBeneficiary)
 
       return (
@@ -653,6 +653,7 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
                   })
                 }
                 data-testid={'endorseBtn'}
+                size={ButtonSize.SM}
               >
                 {isPendingConfirmation ? (
                   <div className="flex flex-row items-center gap-2">
