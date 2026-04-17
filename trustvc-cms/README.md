@@ -9,7 +9,7 @@ time. Create a `trustvc-cms/.env` file (already in `.gitignore`) or export them
 in your shell before running any Studio command:
 
 ```bash
-export SANITY_STUDIO_PROJECT_ID=tgb3bn8j
+export SANITY_STUDIO_PROJECT_ID=<YOUR-PROJECT-ID>
 export SANITY_STUDIO_DATASET=production
 ```
 

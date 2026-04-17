@@ -1,11 +1,6 @@
 name: Deploy Sanity Studio
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'trustvc-cms/**'
   workflow_dispatch:
     inputs:
       environment:
