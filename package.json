@@ -22,8 +22,6 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@govtechsg/address-identity-resolver": "^1.5.0",
-    "@tradetrust-tt/address-identity-resolver": "^1.6.2",
     "@sanity/client": "^7.20.0",
     "@sanity/image-url": "^2.1.1",
     "@trustvc/decentralized-renderer-react-components": "^1.0.3",
