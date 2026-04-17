@@ -102,7 +102,7 @@ const ConnectToMetamask: React.FC<ConnectToMetamaskProps> = ({
     }
   }
   const handleMetamaskError = (errorMesssage: string, errorCode: number) => {
-    console.log('handleMetamaskError called:', errorMesssage, errorCode)
+    console.error('Error in handleMetamaskError:', errorMesssage, errorCode)
     // const isUserDeniedAccountAuthorization = errorCode === 4001
     // showOverlay(
     //   showDocumentTransferMessage(errorMesssage, {

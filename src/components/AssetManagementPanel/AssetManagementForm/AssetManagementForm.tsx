@@ -32,7 +32,7 @@ interface TransferActions {
     newBeneficiaryAddress: string
     remarks: string
   }) => void
-  beneficiaryEndorseState: string
+  endorseBeneficiaryState: string
   nominateBeneficiary: ({
     newBeneficiaryAddress,
     remarks,
@@ -50,7 +50,7 @@ interface TransferActions {
     newHolderAddress: string
     remarks: string
   }) => void
-  transferOwnersState: string
+  transferOwnerHoldersState: string
 }
 
 interface ReturnToIssuerActions {
@@ -116,17 +116,16 @@ export const AssetManagementForm: FunctionComponent<
   onTransferHolder,
   holderTransferringState,
   onEndorseBeneficiary,
-  beneficiaryEndorseState,
+  endorseBeneficiaryState,
   nominateBeneficiary,
   nominateBeneficiaryState,
   transferOwners,
-  transferOwnersState,
+  transferOwnerHoldersState,
   rejectTransferOwnerHolder,
   rejectTransferOwnerHolderState,
   rejectTransferHolder,
   rejectTransferOwnerState,
   rejectTransferHolderState,
-
   onReturnToIssuer,
   returnToIssuerState,
   onDestroyToken,
@@ -187,20 +186,20 @@ export const AssetManagementForm: FunctionComponent<
   const setFormActionNone = useCallback(() => {
     if (
       holderTransferringState === FormState.PENDING_CONFIRMATION ||
-      beneficiaryEndorseState === FormState.PENDING_CONFIRMATION ||
+      endorseBeneficiaryState === FormState.PENDING_CONFIRMATION ||
       nominateBeneficiaryState === FormState.PENDING_CONFIRMATION ||
-      transferOwnersState === FormState.PENDING_CONFIRMATION ||
       rejectTransferOwnerHolderState === FormState.PENDING_CONFIRMATION ||
       rejectTransferOwnerState === FormState.PENDING_CONFIRMATION ||
-      rejectTransferHolderState === FormState.PENDING_CONFIRMATION
+      rejectTransferHolderState === FormState.PENDING_CONFIRMATION ||
+      transferOwnerHoldersState === FormState.PENDING_CONFIRMATION
     )
       return
     onSetFormAction(AssetManagementActions.None)
   }, [
     holderTransferringState,
-    beneficiaryEndorseState,
+    endorseBeneficiaryState,
     nominateBeneficiaryState,
-    transferOwnersState,
+    transferOwnerHoldersState,
     rejectTransferOwnerHolderState,
     rejectTransferOwnerState,
     rejectTransferHolderState,
@@ -261,19 +260,22 @@ export const AssetManagementForm: FunctionComponent<
           nominationState={nominateBeneficiaryState}
           // transfer beneficiary / endorse beneficiary
           handleBeneficiaryTransfer={onEndorseBeneficiary}
-          beneficiaryEndorseState={beneficiaryEndorseState}
+          endorseBeneficiaryState={endorseBeneficiaryState}
+          // transfer owner
+          //the transfer owner state is same as endorse beneficiary state as the function onEndorseBeneficiary is used for both
+          transferOwnersState={endorseBeneficiaryState}
           // transfer holder
           handleTransfer={onTransferHolder}
           holderTransferringState={holderTransferringState}
-          // transfer owners
-          handleEndorseTransfer={transferOwners}
-          transferOwnersState={transferOwnersState}
           // reject transfer ownership and holdership
           handleRejectTransferOwnerHolder={rejectTransferOwnerHolder}
           rejectTransferOwnerHolderState={rejectTransferOwnerHolderState}
           // reject transfer holdership
           handleRejectTransferHolder={rejectTransferHolder}
           rejectTransferHolderState={rejectTransferHolderState}
+          // transfer owners
+          handleTransferOwnerHolder={transferOwners}
+          transferOwnerHoldersState={transferOwnerHoldersState}
           // return to issuer
           handleReturnToIssuer={onReturnToIssuer}
           returnToIssuerState={returnToIssuerState}
