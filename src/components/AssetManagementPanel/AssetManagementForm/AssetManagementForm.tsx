@@ -171,11 +171,13 @@ export const AssetManagementForm: FunctionComponent<
     hasPreviousBeneficiary &&
     canRejectAfterTransferOwners
   const canRejectHolderTransfer = // Bug here, transfer holder and transfer holder back, will not be able to reject
+    !isHolderAndBeneficiary &&
     isTokenRegistryV5 &&
     isActiveTitleEscrow &&
     isHolder &&
     hasPreviousHolder &&
-    !hasPreviousBeneficiary
+    !(isBeneficiary && hasPreviousBeneficiary)
+  !hasPreviousBeneficiary
   const canRejectOwnerTransfer =
     !isHolderAndBeneficiary &&
     isActiveTitleEscrow &&

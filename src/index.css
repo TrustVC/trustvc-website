@@ -3457,12 +3457,12 @@ p.small {
   flex-grow: 1;
 }
 
-.dark-mode .dropdown-btn {
+.dark-mode button.dropdown-btn.solid {
   background: rgba(30, 32, 38, 0.9);
   border: 1px solid rgba(94, 100, 194, 0.6);
 }
 
-.dark-mode .dropdown-btn:hover {
+.dark-mode button.dropdown-btn.solid:hover {
   background: rgba(40, 44, 56, 0.95);
 }
 
