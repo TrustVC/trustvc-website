@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, fireEvent } from '@testing-library/react'
 import { AssetManagementApplication } from './index'
 import { AssetManagementActions } from '../AssetManagementActions'
 import { TokenRegistryVersions } from '../../../constants'
@@ -32,10 +32,10 @@ vi.mock('../../common/contexts/providerContext', () => ({
 
 // Mock useTokenRegistryContract
 const mockTokenRegistry = { address: '0xTokenRegistry' }
+const mockUseTokenRegistryContract = vi.fn()
 vi.mock('../../../hooks/useTokenRegistryContract', () => ({
-  useTokenRegistryContract: () => ({
-    tokenRegistry: mockTokenRegistry,
-  }),
+  useTokenRegistryContract: (address: string, provider: any) =>
+    mockUseTokenRegistryContract(address, provider),
 }))
 
 // Mock useTokenRegistryRole
@@ -99,6 +99,9 @@ describe('AssetManagementApplication', () => {
     mockUseProviderContext.mockReturnValue({
       provider: { getSigner: vi.fn() },
       account: '0xAccount',
+    })
+    mockUseTokenRegistryContract.mockReturnValue({
+      tokenRegistry: mockTokenRegistry,
     })
     mockUseTokenRegistryRole.mockReturnValue({
       hasRole: false,
@@ -254,14 +257,13 @@ describe('AssetManagementApplication', () => {
   })
 
   describe('Token Operations', () => {
-    it('sets up destroyToken function correctly', () => {
+    it('does not call destroyToken on initial render', () => {
       render(<AssetManagementApplication {...defaultTransferableProps} />)
 
-      // Verify the mock is set up correctly
       expect(mockDestroyToken).not.toHaveBeenCalled()
     })
 
-    it('calls restoreToken with tokenId and remarks', () => {
+    it('does not call restoreToken on initial render', () => {
       render(<AssetManagementApplication {...defaultTransferableProps} />)
 
       expect(mockRestoreToken).not.toHaveBeenCalled()
@@ -281,6 +283,16 @@ describe('AssetManagementApplication', () => {
       const { rerender } = render(
         <AssetManagementApplication {...defaultTransferableProps} />
       )
+
+      // Set a non-None action
+      const setTransferHolderButton = screen.getByText('Set Transfer Holder')
+      fireEvent.click(setTransferHolderButton)
+
+      await waitFor(() => {
+        expect(screen.getByTestId('form-action')).toHaveTextContent(
+          AssetManagementActions.TransferHolder
+        )
+      })
 
       // Change account
       mockUseProviderContext.mockReturnValue({
@@ -400,10 +412,18 @@ describe('AssetManagementApplication', () => {
 
   describe('Token Registry Contract', () => {
     it('initializes token registry contract with correct address', () => {
+      const mockProvider = { getSigner: vi.fn() }
+      mockUseProviderContext.mockReturnValue({
+        provider: mockProvider,
+        account: '0xAccount',
+      })
+
       render(<AssetManagementApplication {...defaultTransferableProps} />)
 
-      // The hook should be called with tokenRegistryAddress and provider
-      expect(screen.getByTestId('asset-management-form')).toBeInTheDocument()
+      expect(mockUseTokenRegistryContract).toHaveBeenCalledWith(
+        '0xTokenRegistry',
+        mockProvider
+      )
     })
   })
 })

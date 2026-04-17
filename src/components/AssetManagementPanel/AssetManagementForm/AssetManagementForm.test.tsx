@@ -38,17 +38,6 @@ vi.mock('./FormVariants/ActionForm', () => ({
   },
 }))
 
-const logCurrentTestName = () => {
-  const currentTestName = expect.getState().currentTestName
-  if (currentTestName) {
-    console.log(`[TEST] ${currentTestName}`)
-  }
-}
-
-beforeEach(() => {
-  logCurrentTestName()
-})
-
 describe('AssetManagementForm', () => {
   const mockOnSetFormAction = vi.fn()
   const mockSetShowEndorsementChain = vi.fn()

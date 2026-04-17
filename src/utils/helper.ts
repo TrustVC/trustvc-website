@@ -317,20 +317,6 @@ export const makeAddressURL = (address: string, network: string): string => {
   const explorerUrl = getChainInfoFromNetworkName(network).explorerUrl
   return new URL(`/address/${address}`, explorerUrl).href
 }
-const getEtherscanBaseUrl = (network: string): string => {
-  return `https://${network === 'mainnet' ? '' : network + '.'}etherscan.io/`
-}
-
-const getPolygonscanBaseUrl = (network: string): string => {
-  return `https://${network === 'matic' ? '' : 'mumbai.'}polygonscan.com/`
-}
-
-export const getBaseUrl = (network: string): string => {
-  return network.includes('matic')
-    ? getPolygonscanBaseUrl(network)
-    : getEtherscanBaseUrl(network)
-}
-
 interface GenerateFileName {
   fileName: string
   extension: string
