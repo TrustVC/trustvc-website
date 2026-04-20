@@ -126,6 +126,28 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
         setFormActionNone()
       }
     }
+
+    if (type === AssetManagementActions.RejectTransferHolder) {
+      const { rejectTransferHolderState } = props
+      const isConfirmed = rejectTransferHolderState === FormState.CONFIRMED
+
+      if (isConfirmed) {
+        if (refreshEndorsementChain) {
+          refreshEndorsementChain()
+        }
+        showOverlay(
+          showDocumentTransferMessage(
+            'Holdership Rejection Success',
+            {
+              isSuccess: true,
+              holderAddress: prevHolder,
+            },
+            setShowEndorsementChain
+          )
+        )
+        setFormActionNone()
+      }
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     props,
@@ -484,6 +506,79 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
                   </div>
                 ) : (
                   'Confirm'
+                )}
+              </ButtonIcon>
+            </div>
+          </div>
+        </>
+      )
+    }
+    case AssetManagementActions.RejectTransferHolder: {
+      const { handleRejectTransferHolder, rejectTransferHolderState } = props
+      const isPendingConfirmation =
+        rejectTransferHolderState === FormState.PENDING_CONFIRMATION ||
+        rejectTransferHolderState === FormState.INITIALIZED
+
+      return (
+        <>
+          <div
+            className={`action-form-frame ${isPendingConfirmation ? 'opacity-[0.33] pointer-events-none' : ''}`}
+          >
+            <div className="editable-asset-title">
+              <EditableAssetTitle
+                role="Owner"
+                value={beneficiary}
+                isEditable={false}
+              />
+            </div>
+            <div className="editable-asset-title">
+              <EditableAssetTitle
+                role="Previous Holder"
+                value={prevHolder}
+                isEditable={false}
+              />
+            </div>
+            <div className="editable-asset-title">
+              <EditableAssetTitle
+                role="Remark"
+                value="Remark"
+                newValue={remark}
+                onSetNewValue={setRemark}
+                isEditable={true}
+                isRemark={true}
+                isSubmitted={isPendingConfirmation}
+              />
+            </div>
+          </div>
+          <div className="form-action-btn-outer-frame">
+            <div className="form-action-btn-inner-frame">
+              <Button
+                className="!flex-1 !min-w-[188px] !max-w-[383px]"
+                onClick={setFormActionNone}
+                disabled={isPendingConfirmation}
+                btnType="transparent"
+                size={ButtonSize.SM}
+              >
+                Cancel
+              </Button>
+
+              <ButtonIcon
+                className="!flex-1 !min-w-[188px] !max-w-[383px]"
+                onClick={() =>
+                  handleRejectTransferHolder({
+                    remarks: remark,
+                  })
+                }
+                disabled={isPendingConfirmation}
+                data-testid={'rejectTransferHolderBtn'}
+                size={ButtonSize.SM}
+              >
+                {isPendingConfirmation ? (
+                  <div className="flex flex-row items-center gap-2">
+                    <Spinner fill="white" /> Rejecting..
+                  </div>
+                ) : (
+                  'Reject'
                 )}
               </ButtonIcon>
             </div>

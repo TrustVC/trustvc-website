@@ -628,3 +628,86 @@ describe('ActionForm - RejectTransferOwnerHolder', () => {
     expect(mockSetFormActionNone).toHaveBeenCalled()
   })
 })
+
+describe('ActionForm - RejectTransferHolder', () => {
+  const mockHandleRejectTransferHolder = vi.fn()
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('renders owner and previous holder values', () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        prevHolder="0x1111111111111111111111111111111111111111"
+        type={AssetManagementActions.RejectTransferHolder}
+        handleRejectTransferHolder={mockHandleRejectTransferHolder}
+        rejectTransferHolderState={FormState.UNINITIALIZED}
+      />
+    )
+
+    expect(screen.getByText('Owner')).toBeInTheDocument()
+    expect(screen.getByText('Previous Holder')).toBeInTheDocument()
+    expect(
+      screen.getAllByText('0x1111111111111111111111111111111111111111').length
+    ).toBeGreaterThan(0)
+  })
+
+  it('calls rejectTransferHolder with remarks when reject is clicked', () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        prevHolder="0x1111111111111111111111111111111111111111"
+        type={AssetManagementActions.RejectTransferHolder}
+        handleRejectTransferHolder={mockHandleRejectTransferHolder}
+        rejectTransferHolderState={FormState.UNINITIALIZED}
+      />
+    )
+
+    const remarkInput = screen.getByPlaceholderText('Enter remark')
+    fireEvent.change(remarkInput, {
+      target: { value: 'Reject holder transfer' },
+    })
+    fireEvent.click(screen.getByTestId('rejectTransferHolderBtn'))
+
+    expect(mockHandleRejectTransferHolder).toHaveBeenCalledWith({
+      remarks: 'Reject holder transfer',
+    })
+  })
+
+  it('disables reject and cancel buttons during pending confirmation', () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        prevHolder="0x1111111111111111111111111111111111111111"
+        type={AssetManagementActions.RejectTransferHolder}
+        handleRejectTransferHolder={mockHandleRejectTransferHolder}
+        rejectTransferHolderState={FormState.PENDING_CONFIRMATION}
+      />
+    )
+
+    expect(screen.getByText('Rejecting..')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Cancel' })).toBeDisabled()
+    expect(screen.getByTestId('rejectTransferHolderBtn')).toBeDisabled()
+  })
+
+  it('shows success overlay and closes action form on confirmation', async () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        prevHolder="0x1111111111111111111111111111111111111111"
+        type={AssetManagementActions.RejectTransferHolder}
+        handleRejectTransferHolder={mockHandleRejectTransferHolder}
+        rejectTransferHolderState={FormState.CONFIRMED}
+      />
+    )
+
+    await waitFor(() => {
+      expect(mockShowOverlay).toHaveBeenCalled()
+    })
+    const overlayNode = mockShowOverlay.mock.calls[0][0] as any
+    expect(overlayNode.props.title).toBe('Holdership Rejection Success')
+    expect(mockSetFormActionNone).toHaveBeenCalled()
+  })
+})
