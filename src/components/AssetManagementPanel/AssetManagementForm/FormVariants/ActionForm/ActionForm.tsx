@@ -415,8 +415,8 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
         transferOwnerHoldersState !== FormState.PENDING_CONFIRMATION &&
         transferOwnerHoldersState !== FormState.CONFIRMED
       const isValidEndorseTransfer = (): boolean => {
-        if (!newHolder || !newOwner) return false
-        if (newHolder === holder) return false
+        if (!newHolder?.toLowerCase() || !newOwner?.toLowerCase()) return false
+        if (newHolder?.toLowerCase() === holder?.toLowerCase()) return false
         if (!isEthereumAddress(newHolder) || !isEthereumAddress(newOwner))
           return false
 
