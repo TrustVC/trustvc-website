@@ -49,6 +49,7 @@ const News = ({ isDarkMode }: NewsProps) => {
     loadMoreAnchorRef,
     getReadTimeText,
   }: NewsListHookResult = useNewsList()
+  const hasRenderablePosts = articles.length > 0 || Boolean(featuredArticle)
 
   return (
     <section
@@ -63,7 +64,7 @@ const News = ({ isDarkMode }: NewsProps) => {
           <Suspense fallback={<NewsListFallback isDarkMode={isDarkMode} />}>
             <NewsLoadingState isDarkMode={isDarkMode} />
           </Suspense>
-        ) : articles.length === 0 ? (
+        ) : !hasRenderablePosts ? (
           <div
             className={clsx(
               'rounded-2xl p-10 text-center border',

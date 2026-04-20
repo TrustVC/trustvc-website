@@ -38,7 +38,7 @@ interface ITokenInformationContext {
   nominate: (...args: any[]) => Promise<any>
   nominateState: ContractFunctionState
   transferOwners: (...args: any[]) => Promise<any>
-  transferOwnersState: ContractFunctionState
+  transferOwnerHoldersState: ContractFunctionState
   rejectTransferOwner: (...args: any[]) => Promise<any>
   rejectTransferOwnerState: ContractFunctionState
   rejectTransferHolder: (...args: any[]) => Promise<any>
@@ -76,7 +76,7 @@ export const TokenInformationContext = createContext<ITokenInformationContext>({
   nominate: contractFunctionStub,
   nominateState: 'UNINITIALIZED',
   transferOwners: contractFunctionStub,
-  transferOwnersState: 'UNINITIALIZED',
+  transferOwnerHoldersState: 'UNINITIALIZED',
   rejectTransferOwner: contractFunctionStub,
   rejectTransferOwnerState: 'UNINITIALIZED',
   rejectTransferOwnerHolderError: undefined,
@@ -237,7 +237,7 @@ export const TokenInformationContextProvider: FunctionComponent<
 
   const {
     send: transferOwners,
-    state: transferOwnersState,
+    state: transferOwnerHoldersState,
     reset: resetTransferOwners,
   } = useContractFunctionHook(
     titleEscrow,
@@ -331,8 +331,8 @@ export const TokenInformationContextProvider: FunctionComponent<
 
   // Update entire title escrow whenever endorse transfer to beneficiary and holder is successful
   useEffect(() => {
-    if (transferOwnersState === 'CONFIRMED') updateTitleEscrow()
-  }, [transferOwnersState, updateTitleEscrow])
+    if (transferOwnerHoldersState === 'CONFIRMED') updateTitleEscrow()
+  }, [transferOwnerHoldersState, updateTitleEscrow])
 
   // Update entire title escrow whenever reject transfer to holder is successful
   useEffect(() => {
@@ -379,7 +379,7 @@ export const TokenInformationContextProvider: FunctionComponent<
         nominate,
         nominateState,
         transferOwners,
-        transferOwnersState,
+        transferOwnerHoldersState,
         rejectTransferOwner,
         rejectTransferOwnerState,
         rejectTransferHolder,

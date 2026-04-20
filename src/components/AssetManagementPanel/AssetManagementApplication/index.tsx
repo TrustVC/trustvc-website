@@ -73,7 +73,7 @@ export const AssetManagementApplication: FunctionComponent<
     endorseBeneficiaryState,
     // transferOwners
     transferOwners,
-    transferOwnersState,
+    transferOwnerHoldersState,
     // returnToIssuer
     returnToIssuer,
     returnToIssuerState,
@@ -167,11 +167,11 @@ export const AssetManagementApplication: FunctionComponent<
           onTransferHolder={changeHolder}
           holderTransferringState={changeHolderState}
           onEndorseBeneficiary={endorseBeneficiary}
-          beneficiaryEndorseState={endorseBeneficiaryState}
+          endorseBeneficiaryState={endorseBeneficiaryState}
           nominateBeneficiary={nominate}
           nominateBeneficiaryState={nominateState}
           transferOwners={transferOwners}
-          transferOwnersState={transferOwnersState}
+          transferOwnerHoldersState={transferOwnerHoldersState}
           rejectTransferOwner={rejectTransferOwner}
           rejectTransferOwnerState={rejectTransferOwnerState}
           rejectTransferHolder={rejectTransferHolder}

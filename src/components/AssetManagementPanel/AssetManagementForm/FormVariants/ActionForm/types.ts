@@ -36,13 +36,13 @@ export interface TransferOwnerFormProps extends BaseActionFormProps {
     newBeneficiaryAddress: string
     remarks: string
   }) => void
-  beneficiaryEndorseState: string
+  transferOwnersState: string
 }
 
 // Props for TransferOwnerHolderForm
 export interface TransferOwnerHolderFormProps extends BaseActionFormProps {
   type: AssetManagementActions.TransferOwnerHolder
-  handleEndorseTransfer: ({
+  handleTransferOwnerHolder: ({
     newBeneficiaryAddress,
     newHolderAddress,
     remarks,
@@ -51,7 +51,7 @@ export interface TransferOwnerHolderFormProps extends BaseActionFormProps {
     newHolderAddress: string
     remarks: string
   }) => void
-  transferOwnersState: string
+  transferOwnerHoldersState: string
 }
 
 // Props for NominateBeneficiaryForm
@@ -78,7 +78,7 @@ export interface EndorseBeneficiaryProps extends BaseActionFormProps {
     newBeneficiaryAddress: string
     remarks: string
   }) => void
-  beneficiaryEndorseState: string
+  endorseBeneficiaryState: string
 }
 
 // Props for SurrenderForm

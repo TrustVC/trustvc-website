@@ -3361,7 +3361,6 @@ p.small {
   padding: 8px;
 
   width: 265px;
-  min-height: 118px;
 
   /* TrustVC/Surface/Base/Frost Glass/33 */
   background: rgba(255, 255, 255, 0.33);
@@ -3455,6 +3454,30 @@ p.small {
   flex: none;
   order: 0;
   flex-grow: 1;
+}
+
+.dark-mode button.dropdown-btn.solid {
+  background: rgba(30, 32, 38, 0.9);
+  border: 1px solid rgba(94, 100, 194, 0.6);
+}
+
+.dark-mode button.dropdown-btn.solid:hover {
+  background: rgba(40, 44, 56, 0.95);
+}
+
+.dark-mode .dropdown-menu-frame {
+  background: rgba(30, 32, 38, 0.92);
+  border: 1px solid rgba(94, 100, 194, 0.45);
+  box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.dark-mode .dropdown-item-text-frame h5,
+.dark-mode .dropdown-btn h5 {
+  color: #dee4e9;
+}
+
+.dark-mode .dropdown-menu-frame .dropdown-item-frame:hover {
+  background: rgba(94, 100, 194, 0.25);
 }
 
 .dark-mode #connect-blockchain .header .tab h4 {

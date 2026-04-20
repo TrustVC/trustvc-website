@@ -19,7 +19,8 @@ export enum MessageTitle {
   CHANGE_BENEFICIARY_SUCCESS = 'Change Owner Success',
   NOMINATE_BENEFICIARY_HOLDER_SUCCESS = 'Nomination Success',
   TRANSFER_HOLDER_SUCCESS = 'Transfer Holder Success',
-  ENDORSE_TRANSFER_SUCCESS = 'Endorse Ownership/Holdership Success',
+  TRANSFER_OWNER_HOLDER_SUCCESS = 'Transfer Ownership/Holdership Success',
+  TRANSFER_OWNER_SUCCESS = 'Transfer Owner Success',
 }
 
 interface ButtonCloseProps {
@@ -234,12 +235,12 @@ export const MessageTransferSuccess: FunctionComponent<MessageProps> = ({
   return (
     <>
       {beneficiaryAddress && (
-        <>
-          <h6 className="mt-3">{beneficiaryTitle}</h6>
+        <div className="flex flex-col justify-center items-start p-0 gap-1 min-w-[129px] min-h-[52px] flex-none order-0 grow-0">
+          <h4 className="mt-3">{beneficiaryTitle}</h4>
           {beneficiaryAddress && (
             <MessageAddressResolver address={beneficiaryAddress} />
           )}
-        </>
+        </div>
       )}
       {holderAddress && (
         <div className="flex flex-col justify-center items-start p-0 gap-1 min-w-[129px] min-h-[52px] flex-none order-0 grow-0">
@@ -296,7 +297,8 @@ export const showDocumentTransferMessage = (
           holderAddress={option.holderAddress}
         />
       )}
-      {title === MessageTitle.CHANGE_BENEFICIARY_SUCCESS && (
+      {(title === MessageTitle.CHANGE_BENEFICIARY_SUCCESS ||
+        title === MessageTitle.TRANSFER_OWNER_SUCCESS) && (
         <MessageBeneficiarySuccess address={option.beneficiaryAddress} />
       )}
       {title === MessageTitle.NOMINATE_BENEFICIARY_HOLDER_SUCCESS && (
@@ -305,7 +307,7 @@ export const showDocumentTransferMessage = (
       {title === MessageTitle.TRANSFER_HOLDER_SUCCESS && (
         <MessageHolderSuccess address={option.holderAddress} />
       )}
-      {title === MessageTitle.ENDORSE_TRANSFER_SUCCESS && (
+      {title === MessageTitle.TRANSFER_OWNER_HOLDER_SUCCESS && (
         <MessageEndorseTransferSuccess
           beneficiaryAddress={option.beneficiaryAddress}
           holderAddress={option.holderAddress}

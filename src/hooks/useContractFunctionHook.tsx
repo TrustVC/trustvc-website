@@ -99,7 +99,6 @@ export function useContractFunctionHook<
 
   const { keyId } = useDocumentContext()
   const sendFn = (async (params: any) => {
-    console.log('check', contract, method)
     if (!contract || !method) {
       setState('ERROR')
       setError(new Error('Contract or method is not specified'))
