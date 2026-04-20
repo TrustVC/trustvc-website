@@ -210,6 +210,26 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
         setFormActionNone()
       }
     }
+    // Handle SurrenderForm/ReturnToIssuer confirmation
+    if (type === AssetManagementActions.ReturnToIssuer) {
+      const { returnToIssuerState } = props
+      const isConfirmed = returnToIssuerState === FormState.CONFIRMED
+
+      if (isConfirmed) {
+        if (refreshEndorsementChain) {
+          refreshEndorsementChain()
+        }
+
+        showOverlay(
+          showDocumentTransferMessage(
+            MessageTitle.SURRENDER_DOCUMENT_SUCCESS,
+            { isSuccess: true },
+            setShowEndorsementChain
+          )
+        )
+        setFormActionNone()
+      }
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     props,
@@ -815,6 +835,78 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
                   </div>
                 ) : (
                   'Reject'
+                )}
+              </ButtonIcon>
+            </div>
+          </div>
+        </>
+      )
+    }
+
+    case AssetManagementActions.ReturnToIssuer: {
+      const { handleReturnToIssuer, returnToIssuerState } = props
+      const isPendingConfirmation =
+        returnToIssuerState === FormState.PENDING_CONFIRMATION ||
+        returnToIssuerState === FormState.INITIALIZED
+
+      return (
+        <>
+          <div
+            className={`action-form-frame ${isPendingConfirmation ? 'opacity-[0.33] pointer-events-none' : ''}`}
+          >
+            <div className="editable-asset-title">
+              <EditableAssetTitle
+                role="Owner"
+                value={beneficiary}
+                isEditable={false}
+              />
+            </div>
+            <div className="editable-asset-title">
+              <EditableAssetTitle
+                role="Holder"
+                value={holder}
+                isEditable={false}
+              />
+            </div>
+            <div className="editable-asset-title">
+              <EditableAssetTitle
+                role="Remark"
+                value="Remark"
+                newValue={remark}
+                onSetNewValue={setRemark}
+                isEditable={true}
+                isRemark={true}
+                isSubmitted={isPendingConfirmation}
+              />
+            </div>
+          </div>
+          <div className="form-action-btn-outer-frame">
+            <div className="form-action-btn-inner-frame">
+              <Button
+                className="!flex-1 !min-w-[188px] !max-w-[383px]"
+                onClick={setFormActionNone}
+                disabled={isPendingConfirmation}
+                data-testid={'cancelSurrenderBtn'}
+                btnType="transparent"
+                size={ButtonSize.SM}
+              >
+                Cancel
+              </Button>
+
+              <ButtonIcon
+                className="!flex-1 !min-w-[188px] !max-w-[383px]"
+                onClick={() => handleReturnToIssuer({ remarks: remark })}
+                disabled={isPendingConfirmation}
+                data-testid={'surrenderBtn'}
+                size={ButtonSize.SM}
+              >
+                {isPendingConfirmation ? (
+                  <div className="flex flex-row items-center gap-2">
+                    <Spinner data-testid={'loader'} fill="white" />
+                    Returning..
+                  </div>
+                ) : (
+                  'Return To Issuer'
                 )}
               </ButtonIcon>
             </div>

@@ -8,6 +8,7 @@ import { AssetManagementActions } from '../../../AssetManagementActions'
 import { AssetManagementDropdown } from '../../AssetManagementDropdown'
 import ConnectToBlockchainModel from '../../../../ConnectToBlockchain'
 import { Button, ButtonSize } from '../../../../common/Button'
+import { Tag } from '../../../../common/Tag'
 
 interface ActionSelectionFormProps {
   beneficiary?: string
@@ -113,10 +114,27 @@ export const ActionSelectionForm: FunctionComponent<
           <div className="vr-title-col" />
         </div>
       )}
-      <div className="vr-footer">
+      <div className="vr-footer flex-col gap-2 md:flex-row md:gap-0">
+        {(isReturnedToIssuer || isTokenBurnt) && (
+          <div className="flex justify-center md:justify-start w-full max-w-[638px] ">
+            <Tag
+              rounded="rounded-full"
+              className="bg-[#FDDAE2] !p-2 min-w-[188px] max-w-[383px] text-center w-full flex-1"
+            >
+              <h4 className="bg-alert-20">
+                {isReturnedToIssuer
+                  ? 'ETR Returned to Issuer'
+                  : 'ETR Taken Out of Circulation'}
+              </h4>
+            </Tag>
+            <div className="vr-footer-dropdown-placeholder hidden lg:block flex-1" />
+          </div>
+        )}
         {!isTokenBurnt && (
-          <div className="dropdown-btn-frame ">
-            <div className="vr-footer-dropdown-placeholder" />
+          <div className="dropdown-btn-frame flex gap-2">
+            <div className="vr-footer-dropdown-placeholder hidden lg:block flex-1" />
+
+            {/* <div className="flex-1"> */}
             {account ? (
               <>
                 {canManage ? (
@@ -156,6 +174,7 @@ export const ActionSelectionForm: FunctionComponent<
               </Button>
             )}
           </div>
+          // </div>
         )}
       </div>
     </>
