@@ -64,11 +64,11 @@ describe('AssetManagementForm', () => {
     onTransferHolder: vi.fn(),
     holderTransferringState: FormState.UNINITIALIZED,
     onEndorseBeneficiary: vi.fn(),
-    beneficiaryEndorseState: FormState.UNINITIALIZED,
+    endorseBeneficiaryState: FormState.UNINITIALIZED,
     nominateBeneficiary: vi.fn(),
     nominateBeneficiaryState: FormState.UNINITIALIZED,
     transferOwners: vi.fn(),
-    transferOwnersState: FormState.UNINITIALIZED,
+    transferOwnerHoldersState: FormState.UNINITIALIZED,
     rejectTransferOwnerHolder: mockRejectTransferOwnerHolder,
     rejectTransferOwnerHolderState: FormState.UNINITIALIZED,
     rejectTransferOwner: vi.fn(),
@@ -219,6 +219,28 @@ describe('AssetManagementForm', () => {
         type: AssetManagementActions.RejectTransferHolder,
         prevHolder: baseProps.prevHolder,
         rejectTransferHolderState: FormState.UNINITIALIZED,
+      })
+    )
+  })
+
+  it('renders reject owner action form with previous owner account', () => {
+    mockUseTokenRegistryVersion.mockReturnValue(TokenRegistryVersions.V5)
+    const mockRejectTransferOwner = vi.fn()
+    render(
+      <AssetManagementForm
+        {...baseProps}
+        rejectTransferOwner={mockRejectTransferOwner}
+        formAction={AssetManagementActions.RejectTransferOwner}
+      />
+    )
+
+    expect(screen.getByTestId('action-form')).toBeInTheDocument()
+    expect(mockActionForm).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: AssetManagementActions.RejectTransferOwner,
+        prevBeneficiary: baseProps.prevBeneficiary,
+        handleRejectTransferOwner: mockRejectTransferOwner,
+        rejectTransferOwnerState: FormState.UNINITIALIZED,
       })
     )
   })

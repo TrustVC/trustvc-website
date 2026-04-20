@@ -711,3 +711,50 @@ describe('ActionForm - RejectTransferHolder', () => {
     expect(mockSetFormActionNone).toHaveBeenCalled()
   })
 })
+
+describe('ActionForm - RejectTransferOwner', () => {
+  const mockHandleRejectTransferOwner = vi.fn()
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('calls rejectTransferOwner with remarks when reject is clicked', () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        prevBeneficiary="0xabcdefabcdefabcdefabcdefabcdefabcdefabcd"
+        type={AssetManagementActions.RejectTransferOwner}
+        handleRejectTransferOwner={mockHandleRejectTransferOwner}
+        rejectTransferOwnerState={FormState.UNINITIALIZED}
+      />
+    )
+
+    const remarkInput = screen.getByPlaceholderText('Enter remark')
+    fireEvent.change(remarkInput, { target: { value: 'Reject owner reason' } })
+    fireEvent.click(screen.getByTestId('rejectTransferOwnerBtn'))
+
+    expect(mockHandleRejectTransferOwner).toHaveBeenCalledWith({
+      remarks: 'Reject owner reason',
+    })
+  })
+
+  it('shows success overlay and closes action form on confirmation', async () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        prevBeneficiary="0xabcdefabcdefabcdefabcdefabcdefabcdefabcd"
+        type={AssetManagementActions.RejectTransferOwner}
+        handleRejectTransferOwner={mockHandleRejectTransferOwner}
+        rejectTransferOwnerState={FormState.CONFIRMED}
+      />
+    )
+
+    await waitFor(() => {
+      expect(mockShowOverlay).toHaveBeenCalled()
+    })
+    const overlayNode = mockShowOverlay.mock.calls[0][0] as any
+    expect(overlayNode.props.title).toBe('Ownership Rejection Success')
+    expect(mockSetFormActionNone).toHaveBeenCalled()
+  })
+})
