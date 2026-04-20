@@ -233,28 +233,6 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
       }
     }
 
-    if (type === AssetManagementActions.RejectTransferOwnerHolder) {
-      const { rejectTransferOwnerHolderState } = props
-      const isConfirmed = rejectTransferOwnerHolderState === FormState.CONFIRMED
-
-      if (isConfirmed) {
-        if (refreshEndorsementChain) {
-          refreshEndorsementChain()
-        }
-        showOverlay(
-          showDocumentTransferMessage(
-            'Holdership Rejection Success',
-            {
-              isSuccess: true,
-              beneficiaryAddress: prevBeneficiary,
-              holderAddress: prevHolder,
-            },
-            setShowEndorsementChain
-          )
-        )
-        setFormActionNone()
-      }
-    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     props,
