@@ -7,13 +7,14 @@ const dataset = import.meta.env.VITE_SANITY_DATASET
 const apiVersion = import.meta.env.VITE_SANITY_API_VERSION || '2025-01-01'
 const readToken = import.meta.env.VITE_SANITY_READ_TOKEN
 const hasSanityConfig = Boolean(projectId && dataset)
-
+const perspective = import.meta.env.VITE_SANITY_PERSPECTIVE || 'published' // setting default perspective to published
 export const sanityClient = hasSanityConfig
   ? createClient({
       projectId,
       dataset,
       apiVersion,
       useCdn: true,
+      perspective,
       token: readToken ? String(readToken) : undefined,
     })
   : null
