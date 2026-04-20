@@ -194,6 +194,9 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
       const isConfirmed = transferOwnersState === FormState.CONFIRMED
 
       if (isConfirmed) {
+        if (refreshEndorsementChain) {
+          refreshEndorsementChain()
+        }
         showOverlay(
           showDocumentTransferMessage(
             MessageTitle.TRANSFER_OWNER_SUCCESS,
