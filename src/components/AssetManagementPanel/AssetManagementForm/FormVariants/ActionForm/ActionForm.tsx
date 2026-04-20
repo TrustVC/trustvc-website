@@ -148,6 +148,28 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
         setFormActionNone()
       }
     }
+
+    if (type === AssetManagementActions.RejectTransferOwner) {
+      const { rejectTransferOwnerState } = props
+      const isConfirmed = rejectTransferOwnerState === FormState.CONFIRMED
+
+      if (isConfirmed) {
+        if (refreshEndorsementChain) {
+          refreshEndorsementChain()
+        }
+        showOverlay(
+          showDocumentTransferMessage(
+            'Ownership Rejection Success',
+            {
+              isSuccess: true,
+              beneficiaryAddress: prevBeneficiary,
+            },
+            setShowEndorsementChain
+          )
+        )
+        setFormActionNone()
+      }
+    }
     // Handle NominateBeneficiaryForm confirmation
     if (type === AssetManagementActions.NominateBeneficiary) {
       const { nominationState } = props
@@ -769,6 +791,81 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
         </>
       )
     }
+
+    case AssetManagementActions.RejectTransferOwner: {
+      const { handleRejectTransferOwner, rejectTransferOwnerState } = props
+      const isPendingConfirmation =
+        rejectTransferOwnerState === FormState.PENDING_CONFIRMATION ||
+        rejectTransferOwnerState === FormState.INITIALIZED
+
+      return (
+        <>
+          <div
+            className={`action-form-frame ${isPendingConfirmation ? 'opacity-[0.33] pointer-events-none' : ''}`}
+          >
+            <div className="editable-asset-title">
+              <EditableAssetTitle
+                role="Previous Owner"
+                value={prevBeneficiary}
+                isEditable={false}
+              />
+            </div>
+            <div className="editable-asset-title">
+              <EditableAssetTitle
+                role="Holder"
+                value={holder}
+                isEditable={false}
+              />
+            </div>
+            <div className="editable-asset-title">
+              <EditableAssetTitle
+                role="Remark"
+                value="Remark"
+                newValue={remark}
+                onSetNewValue={setRemark}
+                isEditable={true}
+                isRemark={true}
+                isSubmitted={isPendingConfirmation}
+              />
+            </div>
+          </div>
+          <div className="form-action-btn-outer-frame">
+            <div className="form-action-btn-inner-frame">
+              <Button
+                className="!flex-1 !min-w-[188px] !max-w-[383px]"
+                onClick={setFormActionNone}
+                disabled={isPendingConfirmation}
+                btnType="transparent"
+                size={ButtonSize.SM}
+              >
+                Cancel
+              </Button>
+
+              <ButtonIcon
+                className="!flex-1 !min-w-[188px] !max-w-[383px]"
+                onClick={() =>
+                  handleRejectTransferOwner({
+                    remarks: remark,
+                  })
+                }
+                disabled={isPendingConfirmation}
+                data-testid={'rejectTransferOwnerBtn'}
+                size={ButtonSize.SM}
+              >
+                {isPendingConfirmation ? (
+                  <div className="flex flex-row items-center gap-2">
+                    <Spinner fill="white" /> Rejecting..
+                  </div>
+                ) : (
+                  'Reject'
+                )}
+              </ButtonIcon>
+            </div>
+          </div>
+        </>
+      )
+    }
+
     case AssetManagementActions.RejectTransferHolder: {
       const { handleRejectTransferHolder, rejectTransferHolderState } = props
       const isPendingConfirmation =

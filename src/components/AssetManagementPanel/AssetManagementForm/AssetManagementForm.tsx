@@ -123,6 +123,7 @@ export const AssetManagementForm: FunctionComponent<
   transferOwnerHoldersState,
   rejectTransferOwnerHolder,
   rejectTransferOwnerHolderState,
+  rejectTransferOwner,
   rejectTransferHolder,
   rejectTransferOwnerState,
   rejectTransferHolderState,
@@ -243,6 +244,7 @@ export const AssetManagementForm: FunctionComponent<
         formAction === AssetManagementActions.AcceptReturnToIssuer ||
         formAction === AssetManagementActions.RejectReturnToIssuer ||
         formAction === AssetManagementActions.RejectTransferOwnerHolder ||
+        formAction === AssetManagementActions.RejectTransferOwner ||
         formAction === AssetManagementActions.RejectTransferHolder) && (
         <ActionForm
           type={formAction}
@@ -270,6 +272,9 @@ export const AssetManagementForm: FunctionComponent<
           // reject transfer ownership and holdership
           handleRejectTransferOwnerHolder={rejectTransferOwnerHolder}
           rejectTransferOwnerHolderState={rejectTransferOwnerHolderState}
+          // reject transfer ownership
+          handleRejectTransferOwner={rejectTransferOwner}
+          rejectTransferOwnerState={rejectTransferOwnerState}
           // reject transfer holdership
           handleRejectTransferHolder={rejectTransferHolder}
           rejectTransferHolderState={rejectTransferHolderState}
