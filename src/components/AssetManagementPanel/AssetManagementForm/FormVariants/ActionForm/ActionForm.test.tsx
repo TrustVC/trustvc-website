@@ -271,7 +271,7 @@ describe('ActionForm - TransferOwner', () => {
         {...defaultProps}
         type={AssetManagementActions.TransferOwner}
         handleBeneficiaryTransfer={mockHandleBeneficiaryTransfer}
-        beneficiaryEndorseState={FormState.UNINITIALIZED}
+        transferOwnersState={FormState.UNINITIALIZED}
       />
     )
 
@@ -286,7 +286,7 @@ describe('ActionForm - TransferOwner', () => {
         {...defaultProps}
         type={AssetManagementActions.TransferOwner}
         handleBeneficiaryTransfer={mockHandleBeneficiaryTransfer}
-        beneficiaryEndorseState={FormState.UNINITIALIZED}
+        transferOwnersState={FormState.UNINITIALIZED}
       />
     )
 
@@ -308,7 +308,7 @@ describe('ActionForm - TransferOwner', () => {
         {...defaultProps}
         type={AssetManagementActions.TransferOwner}
         handleBeneficiaryTransfer={mockHandleBeneficiaryTransfer}
-        beneficiaryEndorseState={FormState.UNINITIALIZED}
+        transferOwnersState={FormState.UNINITIALIZED}
       />
     )
 
@@ -343,7 +343,7 @@ describe('ActionForm - TransferOwner', () => {
         {...defaultProps}
         type={AssetManagementActions.TransferOwner}
         handleBeneficiaryTransfer={mockHandleBeneficiaryTransfer}
-        beneficiaryEndorseState={FormState.PENDING_CONFIRMATION}
+        transferOwnersState={FormState.PENDING_CONFIRMATION}
       />
     )
 
@@ -353,7 +353,7 @@ describe('ActionForm - TransferOwner', () => {
 })
 
 describe('ActionForm - TransferOwnerHolder', () => {
-  const mockHandleEndorseTransfer = vi.fn()
+  const mockHandleTransferOwnerHolder = vi.fn()
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -364,8 +364,8 @@ describe('ActionForm - TransferOwnerHolder', () => {
       <ActionForm
         {...defaultProps}
         type={AssetManagementActions.TransferOwnerHolder}
-        handleEndorseTransfer={mockHandleEndorseTransfer}
-        transferOwnersState={FormState.UNINITIALIZED}
+        handleTransferOwnerHolder={mockHandleTransferOwnerHolder}
+        transferOwnerHoldersState={FormState.UNINITIALIZED}
       />
     )
 
@@ -379,8 +379,8 @@ describe('ActionForm - TransferOwnerHolder', () => {
       <ActionForm
         {...defaultProps}
         type={AssetManagementActions.TransferOwnerHolder}
-        handleEndorseTransfer={mockHandleEndorseTransfer}
-        transferOwnersState={FormState.UNINITIALIZED}
+        handleTransferOwnerHolder={mockHandleTransferOwnerHolder}
+        transferOwnerHoldersState={FormState.UNINITIALIZED}
       />
     )
 
@@ -393,8 +393,8 @@ describe('ActionForm - TransferOwnerHolder', () => {
       <ActionForm
         {...defaultProps}
         type={AssetManagementActions.TransferOwnerHolder}
-        handleEndorseTransfer={mockHandleEndorseTransfer}
-        transferOwnersState={FormState.UNINITIALIZED}
+        handleTransferOwnerHolder={mockHandleTransferOwnerHolder}
+        transferOwnerHoldersState={FormState.UNINITIALIZED}
       />
     )
 
@@ -414,13 +414,13 @@ describe('ActionForm - TransferOwnerHolder', () => {
     })
   })
 
-  it('calls handleEndorseTransfer with correct parameters', async () => {
+  it('calls handleTransferOwnerHolder with correct parameters', async () => {
     renderWithOverlay(
       <ActionForm
         {...defaultProps}
         type={AssetManagementActions.TransferOwnerHolder}
-        handleEndorseTransfer={mockHandleEndorseTransfer}
-        transferOwnersState={FormState.UNINITIALIZED}
+        handleTransferOwnerHolder={mockHandleTransferOwnerHolder}
+        transferOwnerHoldersState={FormState.UNINITIALIZED}
       />
     )
 
@@ -439,7 +439,7 @@ describe('ActionForm - TransferOwnerHolder', () => {
       fireEvent.click(transferBtn)
     })
 
-    expect(mockHandleEndorseTransfer).toHaveBeenCalledWith({
+    expect(mockHandleTransferOwnerHolder).toHaveBeenCalledWith({
       newBeneficiaryAddress: newOwnerAddress,
       newHolderAddress: newHolderAddress,
       remarks: '',
@@ -451,8 +451,8 @@ describe('ActionForm - TransferOwnerHolder', () => {
       <ActionForm
         {...defaultProps}
         type={AssetManagementActions.TransferOwnerHolder}
-        handleEndorseTransfer={mockHandleEndorseTransfer}
-        transferOwnersState={FormState.PENDING_CONFIRMATION}
+        handleTransferOwnerHolder={mockHandleTransferOwnerHolder}
+        transferOwnerHoldersState={FormState.PENDING_CONFIRMATION}
       />
     )
 

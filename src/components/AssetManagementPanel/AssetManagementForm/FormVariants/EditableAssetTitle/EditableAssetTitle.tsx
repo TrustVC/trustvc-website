@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useState } from 'react'
-import { Book } from 'react-feather'
+// import { Book } from 'react-feather'
 import { useTokenRegistryVersion } from '../../../../../hooks/useTokenRegistryVersion'
 import { TokenRegistryVersions } from '../../../../../constants'
 import { ExternalLinkEtherscanAddress } from '../../../../common/ExternalLink'
@@ -8,6 +8,7 @@ import { TooltipIcon } from '../../../../common/SvgIcon'
 import { ButtonIcon, ButtonSize } from '../../../../common/Button'
 import { isEthereumAddress } from '../../../../../utils/helper'
 import InfoIcon from '../../../../icons/info'
+import Book from '@/components/icons/Book'
 
 interface EditableAssetTitleProps {
   role: string
@@ -144,7 +145,7 @@ export const EditableAssetTitle: FunctionComponent<EditableAssetTitleProps> = ({
             size={ButtonSize.MD}
             btnType="transparent"
           >
-            <Book className="text-primary-50" />
+            <Book fontSize={24} />
           </ButtonIcon>
         </div>
       </div>
