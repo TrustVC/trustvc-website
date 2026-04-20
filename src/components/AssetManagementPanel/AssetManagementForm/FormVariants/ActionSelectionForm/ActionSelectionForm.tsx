@@ -8,6 +8,7 @@ import { AssetManagementActions } from '../../../AssetManagementActions'
 import { AssetManagementDropdown } from '../../AssetManagementDropdown'
 import ConnectToBlockchainModel from '../../../../ConnectToBlockchain'
 import { Button, ButtonSize } from '../../../../common/Button'
+import { Tag } from '../../../../common/Tag'
 
 interface ActionSelectionFormProps {
   beneficiary?: string
@@ -114,9 +115,25 @@ export const ActionSelectionForm: FunctionComponent<
         </div>
       )}
       <div className="vr-footer">
+        {(isReturnedToIssuer || isTokenBurnt) && (
+          <div className="flex justify-start w-full">
+            <Tag
+              rounded="rounded-full"
+              className="bg-[#FDDAE2] !p-2 min-w-[188px] max-w-[383px] text-center w-full"
+            >
+              <h4 className="bg-alert-20">
+                {isReturnedToIssuer
+                  ? 'ETR Returned to Issuer'
+                  : 'ETR Taken Out of Circulation'}
+              </h4>
+            </Tag>
+            <div className="vr-footer-dropdown-placeholder" />
+          </div>
+        )}
         {!isTokenBurnt && (
           <div className="dropdown-btn-frame ">
             <div className="vr-footer-dropdown-placeholder" />
+
             {account ? (
               <>
                 {canManage ? (
