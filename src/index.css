@@ -3211,7 +3211,6 @@ p.small {
 .vr-footer-dropdown-placeholder {
   /* Flex Placeholder */
 
-  width: 265px;
   min-width: 188px;
   max-width: 383px;
   height: 0px;
@@ -3231,13 +3230,11 @@ p.small {
   padding: 0px;
   gap: 4px;
 
-  width: 265px;
   min-width: 188px;
   max-width: 383px;
   height: 40px;
 
   /* Inside auto layout */
-  flex: none;
   order: 1;
   flex-grow: 1;
 }
@@ -3245,6 +3242,12 @@ p.small {
 @media (max-width: 1024px) {
   .dropdown-single-btn {
     max-width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .dropdown-btn-frame {
+    justify-content: center;
   }
 }
 
@@ -3286,7 +3289,6 @@ p.small {
   padding: 5px;
   isolation: isolate;
 
-  width: 265px;
   min-width: 40px;
   height: 40px;
   min-height: 40px;
@@ -3433,8 +3435,6 @@ p.small {
 
 .dropdown-item-text-frame h5,
 .dropdown-btn h5 {
-  /* Button Label */
-  width: 223px;
   max-height: 44px;
 
   /* TrustVC/Bold/Heading 5 */
