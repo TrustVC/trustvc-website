@@ -79,15 +79,35 @@ const ConnectToMagicLink: React.FC = () => {
   const [isConnecting, setIsConnecting] = useState(false)
   const magicIconSrc = getMagicLinkIconSrc()
 
+  const getWalletErrorMessage = (error: unknown): string => {
+    const fallback = 'Unable to connect with Magic Link.'
+    const message = toErrorMessage(error, fallback)
+
+    if (
+      typeof error === 'object' &&
+      error !== null &&
+      'code' in error &&
+      typeof (error as { code?: unknown }).code === 'number'
+    ) {
+      const code = (error as { code: number }).code
+      if (code === 4001) {
+        return 'Connection request was rejected.'
+      }
+      if (code === -32002) {
+        return 'A wallet request is already pending. Please complete it first.'
+      }
+    }
+
+    return message
+  }
+
   const handleConnectWallet = async () => {
     setErrorMessage('')
     setIsConnecting(true)
     try {
       await upgradeToMagicSigner()
     } catch (error: unknown) {
-      setErrorMessage(
-        toErrorMessage(error, 'Unable to connect with Magic Link.')
-      )
+      setErrorMessage(getWalletErrorMessage(error))
     } finally {
       setIsConnecting(false)
     }
@@ -122,8 +142,13 @@ const ConnectToMagicLink: React.FC = () => {
             </h3>
           </Button>
           {errorMessage && (
-            <div className="text-left mt-2 field-error-text block" role="alert">
-              {errorMessage}
+            <div className="connect-wallet-error" role="alert">
+              <img
+                src="/icons/error.svg"
+                alt="Error"
+                className="connect-wallet-error-icon"
+              />
+              <span className="connect-wallet-error-text">{errorMessage}</span>
             </div>
           )}
         </>

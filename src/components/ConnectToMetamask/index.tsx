@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Connected from '../ConnectToBlockchain/Connected'
 // import { showDocumentTransferMessage } from '../UI/Overlay/OverlayContent'
 // import { NetworkContent } from '../NetworkSection/NetworkContent'
 // Warning icon - use inline SVG or import from public folder
+import { toErrorMessage } from '../../utils/helper'
 import {
   SIGNER_TYPE,
   useProviderContext,
@@ -92,17 +93,42 @@ const ConnectToMetamask: React.FC<ConnectToMetamaskProps> = ({
 }) => {
   const { upgradeToMetaMaskSigner, account, providerType } =
     useProviderContext()
+  const [errorMessage, setErrorMessage] = useState('')
+
+  const getWalletErrorMessage = (error: unknown): string => {
+    const fallback = 'Unable to connect with MetaMask.'
+    const message = toErrorMessage(error, fallback)
+
+    if (
+      typeof error === 'object' &&
+      error !== null &&
+      'code' in error &&
+      typeof (error as { code?: unknown }).code === 'number'
+    ) {
+      const code = (error as { code: number }).code
+      if (code === 4001) {
+        return 'Connection request was rejected in MetaMask.'
+      }
+      if (code === -32002) {
+        return 'A MetaMask request is already pending. Please open MetaMask to continue.'
+      }
+    }
+
+    return message
+  }
 
   const handleConnectWallet = async () => {
+    setErrorMessage('')
     try {
       await upgradeToMetaMaskSigner()
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error in handleConnectWallet:', error)
-      handleMetamaskError(error.message, error.code)
+      handleMetamaskError(error)
     }
   }
-  const handleMetamaskError = (errorMesssage: string, errorCode: number) => {
-    console.error('Error in handleMetamaskError:', errorMesssage, errorCode)
+  const handleMetamaskError = (error: unknown) => {
+    setErrorMessage(getWalletErrorMessage(error))
+    console.error('Error in handleMetamaskError:', error)
     // const isUserDeniedAccountAuthorization = errorCode === 4001
     // showOverlay(
     //   showDocumentTransferMessage(errorMesssage, {
@@ -136,6 +162,16 @@ const ConnectToMetamask: React.FC<ConnectToMetamaskProps> = ({
             />
             <h3>Connect with Metamask</h3>
           </Button>
+          {errorMessage && (
+            <div className="connect-wallet-error" role="alert">
+              <img
+                src="/icons/error.svg"
+                alt="Error"
+                className="connect-wallet-error-icon"
+              />
+              <span className="connect-wallet-error-text">{errorMessage}</span>
+            </div>
+          )}
         </>
       )}
     </div>
