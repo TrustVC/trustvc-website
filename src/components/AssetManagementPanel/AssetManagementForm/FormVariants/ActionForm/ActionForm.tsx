@@ -16,9 +16,9 @@ import type {
   TransferOwnerHolderFormProps,
   NominateBeneficiaryFormProps,
   EndorseBeneficiaryProps,
-  SurrenderFormProps,
-  AcceptSurrenderedFormProps,
-  RejectSurrenderedFormProps,
+  ReturnToIssuerFormProps,
+  AcceptReturnToIssuerFormProps,
+  RejectReturnToIssuerFormProps,
   RejectTransferOwnerHolderFormProps,
   RejectTransferOwnerFormProps,
   RejectTransferHolderFormProps,
@@ -31,9 +31,9 @@ type ActionFormProps =
   | TransferOwnerHolderFormProps
   | NominateBeneficiaryFormProps
   | EndorseBeneficiaryProps
-  | SurrenderFormProps
-  | AcceptSurrenderedFormProps
-  | RejectSurrenderedFormProps
+  | ReturnToIssuerFormProps
+  | AcceptReturnToIssuerFormProps
+  | RejectReturnToIssuerFormProps
   | RejectTransferOwnerHolderFormProps
   | RejectTransferOwnerFormProps
   | RejectTransferHolderFormProps
@@ -244,7 +244,7 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
 
         showOverlay(
           showDocumentTransferMessage(
-            MessageTitle.SURRENDER_DOCUMENT_SUCCESS,
+            MessageTitle.RETURN_TO_ISSUER_DOCUMENT,
             { isSuccess: true },
             setShowEndorsementChain
           )
@@ -252,6 +252,26 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
         setFormActionNone()
       }
     }
+    // Handle RejectSurrenderedForm confirmation
+    if (type === AssetManagementActions.RejectReturnToIssuer) {
+      const { restoreTokenState } = props
+      const isRestoreTokenConfirmed = restoreTokenState === FormState.CONFIRMED
+
+      if (isRestoreTokenConfirmed) {
+        if (refreshEndorsementChain) {
+          refreshEndorsementChain()
+        }
+        showOverlay(
+          showDocumentTransferMessage(
+            MessageTitle.REJECT_RETURN_TO_ISSUER_DOCUMENT,
+            { isSuccess: true },
+            setShowEndorsementChain
+          )
+        )
+        setFormActionNone()
+      }
+    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     props,
@@ -949,23 +969,9 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
       return (
         <>
           <div
-            className={`action-form-frame ${isPendingConfirmation ? 'opacity-[0.33] pointer-events-none' : ''}`}
+            className={`justify-end action-form-frame ${isPendingConfirmation ? 'opacity-[0.33] pointer-events-none' : ''}`}
           >
-            <div className="editable-asset-title">
-              <EditableAssetTitle
-                role="Owner"
-                value={beneficiary}
-                isEditable={false}
-              />
-            </div>
-            <div className="editable-asset-title">
-              <EditableAssetTitle
-                role="Holder"
-                value={holder}
-                isEditable={false}
-              />
-            </div>
-            <div className="editable-asset-title">
+            <div className="editable-asset-title max-w-[100%] lg:max-w-[383px]">
               <EditableAssetTitle
                 role="Remark"
                 value="Remark"
@@ -1004,6 +1010,78 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
                   </div>
                 ) : (
                   'Return To Issuer'
+                )}
+              </ButtonIcon>
+            </div>
+          </div>
+        </>
+      )
+    }
+
+    case AssetManagementActions.RejectReturnToIssuer: {
+      const { restoreTokenState, handleRestoreToken } = props
+      const isRestoreTokenPendingConfirmation =
+        restoreTokenState === FormState.PENDING_CONFIRMATION ||
+        restoreTokenState === FormState.INITIALIZED
+
+      return (
+        <>
+          <div
+            className={`action-form-frame ${isRestoreTokenPendingConfirmation ? 'opacity-[0.33] pointer-events-none' : ''}`}
+          >
+            <div className="editable-asset-title">
+              <EditableAssetTitle
+                role="Owner"
+                value={beneficiary}
+                isEditable={false}
+              />
+            </div>
+            <div className="editable-asset-title">
+              <EditableAssetTitle
+                role="Holder"
+                value={holder}
+                isEditable={false}
+              />
+            </div>
+            <div className="editable-asset-title">
+              <EditableAssetTitle
+                role="Remark"
+                value="Remark"
+                newValue={remark}
+                onSetNewValue={setRemark}
+                isEditable={true}
+                isRemark={true}
+                isSubmitted={isRestoreTokenPendingConfirmation}
+              />
+            </div>
+          </div>
+          <div className="form-action-btn-outer-frame">
+            <div className="form-action-btn-inner-frame">
+              <Button
+                className="!flex-1 !min-w-[188px] !max-w-[383px]"
+                onClick={setFormActionNone}
+                disabled={isRestoreTokenPendingConfirmation}
+                data-testid={'cancelSurrenderBtn'}
+                btnType="transparent"
+                size={ButtonSize.SM}
+              >
+                Cancel
+              </Button>
+
+              <ButtonIcon
+                className="!flex-1 !min-w-[188px] !max-w-[383px]"
+                onClick={() => handleRestoreToken(remark)}
+                disabled={isRestoreTokenPendingConfirmation}
+                data-testid={'rejectReturnToIssuerBtn'}
+                size={ButtonSize.SM}
+              >
+                {isRestoreTokenPendingConfirmation ? (
+                  <div className="flex flex-row items-center gap-2">
+                    <Spinner data-testid={'loader'} fill="white" />
+                    Rejecting..
+                  </div>
+                ) : (
+                  'Reject ETR Return'
                 )}
               </ButtonIcon>
             </div>

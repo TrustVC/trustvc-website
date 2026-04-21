@@ -3362,8 +3362,6 @@ p.small {
   align-items: flex-start;
   padding: 8px;
 
-  width: 265px;
-
   /* TrustVC/Surface/Base/Frost Glass/33 */
   background: rgba(255, 255, 255, 0.33);
   border: 1px solid rgba(169, 178, 187, 0.33);
@@ -3877,6 +3875,7 @@ p.small {
 @media (max-width: 1024px) {
   .action-form-frame {
     flex-direction: column;
+    justify-content: center;
   }
 }
 

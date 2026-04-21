@@ -120,7 +120,7 @@ export const Dropdown: FunctionComponent<DropdownProps> = ({
   }
 
   return (
-    <div className="btn-menu-frame">
+    <div className="btn-menu-frame flex-1">
       <button
         ref={buttonRef}
         {...props}

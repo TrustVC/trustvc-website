@@ -133,8 +133,6 @@ export const ActionSelectionForm: FunctionComponent<
         {!isTokenBurnt && (
           <div className="dropdown-btn-frame flex gap-2">
             <div className="vr-footer-dropdown-placeholder hidden lg:block flex-1" />
-
-            {/* <div className="flex-1"> */}
             {account ? (
               <>
                 {canManage ? (
@@ -174,7 +172,6 @@ export const ActionSelectionForm: FunctionComponent<
               </Button>
             )}
           </div>
-          // </div>
         )}
       </div>
     </>
