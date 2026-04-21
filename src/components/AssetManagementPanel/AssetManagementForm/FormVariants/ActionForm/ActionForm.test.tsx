@@ -958,7 +958,7 @@ describe('ActionForm - ReturnToIssuer', () => {
       expect(mockShowOverlay).toHaveBeenCalled()
     })
     const overlayNode = mockShowOverlay.mock.calls[0][0] as any
-    expect(overlayNode.props.title).toBe('Return of ETR successful')
+    expect(overlayNode.props.title).toBe('Return of ETR Successful')
     expect(mockSetFormActionNone).toHaveBeenCalled()
   })
 
