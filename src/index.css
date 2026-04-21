@@ -4071,8 +4071,8 @@ p.small {
   max-width: 538px;
   min-height: 40px;
 }
-/* below504 the flex direction column */
-@media (max-width: 504px) {
+/* below 640 the flex direction column */
+@media (max-width: 639px) {
   .form-action-btn-inner-frame {
     flex-direction: column;
   }
