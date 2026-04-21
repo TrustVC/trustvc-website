@@ -39,9 +39,7 @@ describe('Home page', () => {
     const firstItem = carouselData.items[0]
     const firstSlide = screen.getByLabelText('carousel-slide-0')
 
-    expect(
-      within(firstSlide).getByText(firstItem.content.subtitle)
-    ).toBeInTheDocument()
+    expect(within(firstSlide).getByText(firstItem.subtitle)).toBeInTheDocument()
   })
 
   it('renders the Built for Developers section title', () => {

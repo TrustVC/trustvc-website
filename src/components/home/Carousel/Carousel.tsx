@@ -16,13 +16,6 @@ interface Stat {
   label: string
 }
 
-interface ContentSectionProps {
-  title: string
-  subtitle: string
-  description: string
-  link?: string
-}
-
 interface StatsGridProps {
   topLeft: Stat
   topRight: Stat
@@ -32,139 +25,42 @@ interface StatsGridProps {
 
 interface CarouselSlideProps {
   isDarkMode: boolean
-  content: ContentSectionProps
+  logo: string
+  title: string
+  subtitle: string
+  description: string
   image: string
   stats?: StatsGridProps
+  link?: string
 }
 
 interface CarouselControlBarProps {
   isDarkMode: boolean
   swiperRef: MutableRefObject<SwiperInstance | null>
 }
-
 interface CarouselProps {
   isDarkMode: boolean
 }
 
 const StatDisplay = ({ value, label }: Stat) => (
   <div>
-    <div className="text-4xl font-bold text-primary-60">
+    <div className="text-4xl font-extrabold text-primary-60">
       <span>{value}</span>
     </div>
-    <div className={clsx('py-2 text-md font-avenir-medium text-neutral-30')}>
+    <div className={clsx('text-sm text-neutral-30 max-w-28')}>
       <span>{label}</span>
     </div>
   </div>
 )
 
-const ContentSection = ({
-  isDarkMode,
-  title,
-  subtitle,
-  description,
-  link,
-}: ContentSectionProps & { isDarkMode: boolean }) => {
-  const isComingSoon = !link
-
-  return (
-    <div>
-      <div
-        className={clsx(
-          'flex flex-col min-h-[112px] text-4xl font-bold',
-          isDarkMode ? 'text-neutral-60' : 'text-neutral-10'
-        )}
-      >
-        <span className="py-1">{title}</span>
-        <span className="text-primary-60">{subtitle}</span>
-      </div>
-      <div
-        className={clsx(
-          'pb-5 font-avenir',
-          isDarkMode ? 'text-neutral-50' : 'text-neutral-20'
-        )}
-      >
-        <span>{description}</span>
-      </div>
-      <div className="mt-4">
-        <LinkButton
-          href={link}
-          isDarkMode={isDarkMode}
-          isDisabled={isComingSoon}
-        >
-          <span>{isComingSoon ? 'Coming Soon' : 'Learn More'}</span>
-          {!isComingSoon && (
-            <span className="ml-2">
-              <RightArrowIcon height={24} width={20} />
-            </span>
-          )}
-        </LinkButton>
-      </div>
-    </div>
-  )
-}
-
-const ComingSoonPlaceholder = ({ isDarkMode }: { isDarkMode: boolean }) => (
-  <div
-    className="flex flex-col items-center text-center font-avenir-medium
-      lg:flex-row lg:gap-8 lg:text-center
-      xl:flex-col xl:gap-0 xl:text-center"
-  >
-    <div
-      className={clsx(
-        'flex mx-auto px-3 py-2 w-fit rounded-xl',
-        isDarkMode
-          ? 'bg-neutral-10 text-neutral-30'
-          : 'bg-neutral-60 text-neutral-10',
-        'lg:mx-0',
-        'xl:mx-auto'
-      )}
-    >
-      <span>Logo Here</span>
-    </div>
-    <div className="py-4 lg:py-0">
-      <div className="py-2 text-4xl font-bold text-primary-60 lg:py-0 lg:text-3xl xl:py-2 xl:text-4xl">
-        <span>Coming Soon</span>
-      </div>
-      <div
-        className={clsx(
-          'py-1 text-md font-avenir lg:mt-1 xl:mt-0',
-          isDarkMode ? 'text-neutral-30' : 'text-neutral-10'
-        )}
-      >
-        <span>Stay Tuned</span>
-      </div>
-    </div>
-  </div>
-)
-
-const StatsGridDisplay = ({
-  isDarkMode,
-  stats,
-}: {
-  isDarkMode: boolean
-  stats: StatsGridProps
-}) => (
-  <div
-    className="flex flex-col items-center text-center font-avenir-medium
-      lg:grid lg:grid-cols-[auto_1fr] lg:items-center lg:gap-x-8 lg:text-center
-      xl:flex xl:flex-col xl:gap-0 xl:text-center"
-  >
-    <div
-      className={clsx(
-        'flex mx-auto px-3 py-2 w-fit rounded-xl',
-        isDarkMode
-          ? 'bg-neutral-10 text-neutral-30'
-          : 'bg-neutral-60 text-neutral-10',
-        'lg:mx-0',
-        'xl:mx-auto'
-      )}
-    >
-      <span>Logo Here</span>
-    </div>
+const StatsGridDisplay = ({ stats }: { stats: StatsGridProps }) => (
+  <div className="flex flex-col items-center text-center font-avenir pb-8">
     <div
       className="grid grid-cols-2 mx-auto mt-4 gap-x-10 gap-y-5 w-fit
-        lg:grid-cols-4 lg:mt-0
-        xl:grid-cols-2 xl:mt-4 xl:gap-x-20"
+        sm:grid-cols-4 
+        md:grid-cols-4 md:mt-0
+        lg:grid-cols-2
+        xl:grid-cols-2 xl:gap-x-20"
     >
       <StatDisplay value={stats.topLeft.value} label={stats.topLeft.label} />
       <StatDisplay value={stats.topRight.value} label={stats.topRight.label} />
@@ -177,61 +73,53 @@ const StatsGridDisplay = ({
         label={stats.bottomRight.label}
       />
     </div>
-    <div
-      className={clsx(
-        'mx-auto mt-4 px-3 py-2 w-fit rounded-full',
-        isDarkMode
-          ? 'bg-neutral-10 text-neutral-30'
-          : 'bg-neutral-60 text-neutral-10',
-        'lg:col-span-2 lg:row-start-2 lg:mt-4',
-        'xl:col-span-1 xl:row-auto xl:mt-4'
-      )}
-    >
-      <span>2025 Growth to date</span>
-    </div>
-  </div>
-)
-
-const StatsSection = ({
-  isDarkMode,
-  stats,
-}: {
-  isDarkMode: boolean
-  stats?: StatsGridProps
-}) => (
-  <div className="flex flex-col justify-center items-center md:min-w-[300px] lg:min-h-[100px] xl:min-w-[300px] xl:min-h-[300px]">
-    {stats ? (
-      <StatsGridDisplay isDarkMode={isDarkMode} stats={stats} />
-    ) : (
-      <ComingSoonPlaceholder isDarkMode={isDarkMode} />
-    )}
   </div>
 )
 
 const CarouselSlide = ({
   isDarkMode,
-  content,
+  logo,
+  title,
+  subtitle,
+  description,
   image,
   stats,
+  link,
 }: CarouselSlideProps) => {
   return (
-    <div className="relative mx-auto px-2 max-w-[1280px]">
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:flex xl:flex-row xl:justify-between">
-        <div className="z-20 justify-center items-center p-6 min-h-[350px] lg:col-start-1 lg:row-start-1 lg:max-w-[420px]">
-          <ContentSection isDarkMode={isDarkMode} {...content} />
-        </div>
-        <div className="z-10 flex-1 lg:col-start-2 lg:row-start-1 lg:w-full xl:max-h-[600px]">
-          <div className="relative overflow-hidden min-h-[400px] md:overflow-visible xl:max-h-[600px]">
-            <img
-              src={image}
-              alt="hero-carousel-image"
-              className="absolute left-1/2 top-1/2 min-w-[750px] min-h-[300px] translate-x-[-65%] translate-y-[-50%] transition-all
-                xl:translate-x-[-70%]"
-            />
+    <div className="relative px-2 max-w-[1280px] m-4 flex flex-col lg:flex-row sm:min-h-[444px] md:min-h-[410px] lg:min-h-[380px] xl:min-h-[360px]">
+      <div className="inset-0 z-20 w-full h-full flex flex-col lg:flex-row">
+        <div className="w-full">
+          <img src={logo} alt="logo" className="lg:pl-8 pt-8 lg:pt-16 pb-4" />
+          <div className="lg:pl-8 py-4 text-3xl lg:text-4xl font-bold text-neutral-10">
+            <div className="py-1">{title}</div>
+            <div className="text-primary-60">{subtitle}</div>
           </div>
+          {link && (
+            <div className="lg:pl-8 pt-4">
+              <LinkButton href={link} isDarkMode={isDarkMode}>
+                <span className="pr-2">Learn more</span>
+                <RightArrowIcon className="w-4" />
+              </LinkButton>
+            </div>
+          )}
         </div>
-        <div className="z-20 pt-6 lg:col-span-2 xl:col-span-1 min-w-[350px]">
-          <StatsSection isDarkMode={isDarkMode} stats={stats} />
+      </div>
+      <div className="sm:absolute z-10 flex-1 lg:col-start-2 lg:row-start-1 sm:w-full xl:max-h-[600px]">
+        <div className="relative overflow-hidden md:overflow-visible sm:h-[400px] xl:max-h-[600px]">
+          <img
+            src={image}
+            alt="hero-carousel-image"
+            className="translate-y-4 -translate-x-[39%] sm:translate-x-[18%] sm:top-1 md:top-1/3 md:left-1/3 max-w-[500px] lg:w-[600px] xl:max-w-[800px] xl:w-[640px] md:translate-x-56 md:translate-y-1 lg:translate-x-40 lg:translate-y-12 xl:translate-x-52 xl:translate-y-8"
+          />
+        </div>
+      </div>
+      <div>
+        <div className="relative h-full lg:w-[58%] z-20 ml-auto flex justify-center items-center flex-col text-neutral-20 font-avenir font-medium sm:pt-4 lg:pt-0">
+          {stats && <StatsGridDisplay stats={stats} />}
+          <div className="px-4 text-lg leading-6 sm:pt-4 lg:pl-12 lg:pt-0">
+            {description}
+          </div>
         </div>
       </div>
     </div>
@@ -248,7 +136,7 @@ const CarouselControlBar = ({ swiperRef }: CarouselControlBarProps) => {
         type="button"
         aria-label="carousel-prev-button"
         onClick={() => swiperRef.current?.slidePrev()}
-        className="flex items-center justify-center h-6 w-6 hover:text-primary-60"
+        className="flex items-center justify-center h-6 w-6 bg-transparent outline-none border-none hover:text-primary-60"
       >
         <div className="rotate-180">
           <RightArrowIcon />
@@ -269,7 +157,7 @@ const CarouselControlBar = ({ swiperRef }: CarouselControlBarProps) => {
         type="button"
         aria-label="carousel-next-button"
         onClick={() => swiperRef.current?.slideNext()}
-        className="flex items-center justify-center h-6 w-6 hover:text-primary-60"
+        className="flex items-center justify-center h-6 w-6 bg-transparent outline-none border-none hover:text-primary-60"
       >
         <RightArrowIcon />
       </button>
@@ -281,12 +169,14 @@ const Carousel = ({ isDarkMode }: CarouselProps) => {
   const swiperRef = useRef<SwiperInstance | null>(null)
 
   return (
-    <div className="flex flex-col mx-auto mt-10 mb-20 gap-6 max-w-[1440px]">
-      <div>
+    <div className="flex flex-col mx-auto mt-10 mb-20 gap-6 max-w-[1340px] w-full">
+      <div className="w-full">
         <Swiper
           modules={[Pagination, Navigation, Autoplay]}
           autoplay={{ delay: 5000, disableOnInteraction: true }}
           slidesPerView={1}
+          centeredSlides={true}
+          autoHeight={true}
           loop={true}
           onSwiper={swiper => {
             swiperRef.current = swiper

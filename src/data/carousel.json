@@ -1,73 +1,52 @@
 {
   "items": [
     {
-      "content": {
-        "title": "Driving Progress",
-        "subtitle": "Across Industries",
-        "description": "When trust is paramount, our secure and transparent framework makes digital verification effortless. Our numbers tell the story of a growing network of users and organizations who rely on us with their most important data.",
-        "link": "/learn-more"
-      },
+      "logo": "/logos/carousel/TrustVC-Logo.png",
+      "title": "Driving Progress",
+      "subtitle": "Across Industries",
+      "description": "When trust is paramount, our secure and transparent framework makes digital verification effortless. Our numbers tell the story of a growing network of users and organizations who rely on us with their most important data.",
       "image": "/images/carousel/carousel-1.png",
       "stats": {
         "topLeft": {
-          "value": "500K+",
-          "label": "Documents Verified"
+          "value": "13M+",
+          "label": "Documents Secured"
         },
         "topRight": {
-          "value": "10K+",
-          "label": "Active Users"
+          "value": "47K+",
+          "label": "Active Organisations"
         },
         "bottomLeft": {
-          "value": "###",
-          "label": "Organizations"
+          "value": "27+",
+          "label": "Countries Reached"
         },
         "bottomRight": {
-          "value": "50+",
-          "label": "Countries"
+          "value": "",
+          "label": ""
         }
       }
     },
     {
-      "content": {
-        "title": "Driving Progress",
-        "subtitle": "in Trade Industry",
-        "description": "An open-source framework for digital trade documents. It allows trading partners to create, exchange, verify digitised documents, and transfer ownership of documents across different digital platforms seamlessly",
-        "link": "/trade"
-      },
-      "image": "/images/carousel/carousel-2.png",
-      "stats": {
-        "topLeft": {
-          "value": "500K+",
-          "label": "Documents Verified"
-        },
-        "topRight": {
-          "value": "10K+",
-          "label": "Active Users"
-        },
-        "bottomLeft": {
-          "value": "###",
-          "label": "Organizations"
-        },
-        "bottomRight": {
-          "value": "50+",
-          "label": "Countries"
-        }
-      }
+      "logo": "/logos/carousel/TradeTrust-Logo.png",
+      "title": "Driving Progress In",
+      "subtitle": "Trade Industries",
+      "link": "https://tradetrust.io",
+      "description": "An open-source framework for digital trade documents. It allows trading partners to create, exchange, verify digitised documents, and transfer ownership of documents across different digital platforms seamlessly",
+      "image": "/images/carousel/carousel-2.png"
     },
     {
-      "content": {
-        "title": "Driving Progress",
-        "subtitle": "In Academic Industry",
-        "description": "OpenCerts is an open-source framework which education institutions can adopt for issuing certificates. Verify academic certificates, diplomas, and professional certifications instantly."
-      },
+      "logo": "/logos/carousel/OpenCerts-Logo.png",
+      "title": "Assurance in",
+      "subtitle": "Digital Certificates & Credentials",
+      "link": "https://opencerts.io",
+      "description": "OpenCerts is an open-source framework which education institutions can adopt for issuing certificates. Verify academic certificates, diplomas, and professional certifications instantly.",
       "image": "/images/carousel/carousel-3.png"
     },
     {
-      "content": {
-        "title": "Driving Progress",
-        "subtitle": "In Legal Industry",
-        "description": "A digital certificate of authenticity for public documents, launched by the Singapore Academy of Law (SAL) in partnership with IMDA in June 2025 to simplify and secure cross-border legal notarisation."
-      },
+      "logo": "/logos/carousel/SAL-Logo.png",
+      "title": "Modernising",
+      "subtitle": "Legal Processes",
+      "link": "https://legalisation.sal.sg/",
+      "description": "A digital certificate of authenticity for public documents, launched by the Singapore Academy of Law (SAL) in partnership with IMDA in June 2025 to simplify and secure cross-border legal notarisation.",
       "image": "/images/carousel/carousel-4.png"
     }
   ]
