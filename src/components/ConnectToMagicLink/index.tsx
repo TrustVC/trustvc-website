@@ -145,7 +145,8 @@ const ConnectToMagicLink: React.FC = () => {
             <div className="connect-wallet-error" role="alert">
               <img
                 src="/icons/error.svg"
-                alt="Error"
+                alt=""
+                aria-hidden="true"
                 className="connect-wallet-error-icon"
               />
               <span className="connect-wallet-error-text">{errorMessage}</span>
