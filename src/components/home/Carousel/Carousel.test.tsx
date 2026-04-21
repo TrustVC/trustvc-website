@@ -29,10 +29,10 @@ describe('Carousel', () => {
     const firstSlide = screen.getByLabelText('carousel-slide-0')
 
     expect(
-      within(firstSlide).getByText(firstItem.content.title)
+      within(firstSlide).getByText(firstItem.title)
     ).toBeInTheDocument()
     expect(
-      within(firstSlide).getByText(firstItem.content.subtitle)
+      within(firstSlide).getByText(firstItem.subtitle)
     ).toBeInTheDocument()
   })
 
@@ -46,26 +46,37 @@ describe('Carousel', () => {
     const secondSlide = screen.getByLabelText('carousel-slide-1')
 
     expect(
-      within(secondSlide).getByText(secondItem.content.subtitle)
+      within(secondSlide).getByText(secondItem.subtitle)
     ).toBeInTheDocument()
   })
 
-  it('disables the CTA when a slide does not include a link', async () => {
+  it('renders Learn more button with correct link when slide has a link', async () => {
     const user = userEvent.setup()
     render(<Carousel isDarkMode={false} />)
 
-    // Move to the slide without a link (index 2)
-    await user.click(screen.getByLabelText('carousel-next-button'))
+    // Navigate to the second slide (index 1) which has a link
     await user.click(screen.getByLabelText('carousel-next-button'))
 
-    const thirdSlide = screen.getByLabelText('carousel-slide-2')
-    const comingSoonSpans = within(thirdSlide).getAllByText(/Coming Soon/i)
-    const ctaLink = comingSoonSpans
-      .map(span => span.closest('a'))
-      .find(anchor => anchor)
+    const secondItem = carouselData.items[1]
+    const secondSlide = screen.getByLabelText('carousel-slide-1')
 
-    expect(ctaLink).toBeTruthy()
-    expect(ctaLink).not.toHaveAttribute('href')
-    expect(ctaLink).toHaveAttribute('aria-disabled', 'true')
+    const learnMoreLink = within(secondSlide).getByText(/Learn more/i).closest('a')
+
+    expect(learnMoreLink).toBeTruthy()
+    expect(learnMoreLink).toHaveAttribute('href', secondItem.link)
+    expect(learnMoreLink).toHaveAttribute('target', '_blank')
+    expect(learnMoreLink).toHaveAttribute('rel', 'noopener noreferrer')
+    expect(learnMoreLink).not.toHaveAttribute('aria-disabled', 'true')
+  })
+
+  it('does not render a CTA when a slide does not include a link', () => {
+    render(<Carousel isDarkMode={false} />)
+
+    // First slide (index 0) has no link
+    const firstSlide = screen.getByLabelText('carousel-slide-0')
+
+    expect(
+      within(firstSlide).queryByText(/Learn more/i)
+    ).not.toBeInTheDocument()
   })
 })

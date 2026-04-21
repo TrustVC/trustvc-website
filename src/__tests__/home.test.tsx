@@ -40,7 +40,7 @@ describe('Home page', () => {
     const firstSlide = screen.getByLabelText('carousel-slide-0')
 
     expect(
-      within(firstSlide).getByText(firstItem.content.subtitle)
+      within(firstSlide).getByText(firstItem.subtitle)
     ).toBeInTheDocument()
   })
 
