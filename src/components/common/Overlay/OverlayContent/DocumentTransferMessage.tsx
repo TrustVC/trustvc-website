@@ -12,8 +12,8 @@ export enum MessageTitle {
   NO_MANAGE_ACCESS = 'No manage assets access',
   NO_USER_AUTHORIZATION = 'User denied account authorization', // this error message must match error message from metamask extension itself
   TRANSACTION_ERROR = 'Error - Failed transaction',
-  RETURN_TO_ISSUER_DOCUMENT = 'Return of ETR successful',
-  ACCEPT_RETURN_TO_ISSUER_DOCUMENT = 'Return of ETR accepted',
+  RETURN_TO_ISSUER_DOCUMENT = 'Return of ETR Successful',
+  ACCEPT_RETURN_TO_ISSUER_DOCUMENT = 'Return of ETR Accepted',
   REJECT_RETURN_TO_ISSUER_DOCUMENT = 'Return of ETR Rejected',
   CHANGE_BENEFICIARY_SUCCESS = 'Change Owner Success',
   NOMINATE_BENEFICIARY_HOLDER_SUCCESS = 'Nomination Success',
