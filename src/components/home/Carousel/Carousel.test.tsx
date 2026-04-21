@@ -28,12 +28,8 @@ describe('Carousel', () => {
     const firstItem = carouselData.items[0]
     const firstSlide = screen.getByLabelText('carousel-slide-0')
 
-    expect(
-      within(firstSlide).getByText(firstItem.title)
-    ).toBeInTheDocument()
-    expect(
-      within(firstSlide).getByText(firstItem.subtitle)
-    ).toBeInTheDocument()
+    expect(within(firstSlide).getByText(firstItem.title)).toBeInTheDocument()
+    expect(within(firstSlide).getByText(firstItem.subtitle)).toBeInTheDocument()
   })
 
   it('moves to the next slide when clicking the next button', async () => {
@@ -60,7 +56,9 @@ describe('Carousel', () => {
     const secondItem = carouselData.items[1]
     const secondSlide = screen.getByLabelText('carousel-slide-1')
 
-    const learnMoreLink = within(secondSlide).getByText(/Learn more/i).closest('a')
+    const learnMoreLink = within(secondSlide)
+      .getByText(/Learn more/i)
+      .closest('a')
 
     expect(learnMoreLink).toBeTruthy()
     expect(learnMoreLink).toHaveAttribute('href', secondItem.link)
