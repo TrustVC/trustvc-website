@@ -270,10 +270,17 @@ const EndorsementChainLayout: React.FC<EndorsementChainProps> = ({
                 <p className="ec-error-title">
                   The endorsement chain couldn&apos;t be retrieved.
                 </p>
-                <p className="ec-error-subtitle">
-                  You may retry by clicking the &ldquo;Retry&rdquo; button
-                  below.
-                </p>
+                {onRetry ? (
+                  <p className="ec-error-subtitle">
+                    You may retry by clicking the &ldquo;Retry&rdquo; button
+                    below.
+                  </p>
+                ) : (
+                  <p className="ec-error-subtitle">
+                    Dismiss this dialog and try viewing the endorsement chain
+                    again.
+                  </p>
+                )}
               </div>
             )}
             {status === 'success' &&
