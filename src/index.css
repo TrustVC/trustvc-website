@@ -3047,7 +3047,6 @@ p.small {
   left: 50%;
   transform: translate(-50%, -50%);
   width: 100%;
-
   min-width: 308px;
   max-width: 640px;
   opacity: 1;
@@ -3575,23 +3574,67 @@ p.small {
 
 /* Responsive */
 @media (max-width: 768px) {
+  .overlay {
+    padding: 8px;
+  }
+
+  .overlay-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   .connect-blockchain-modal {
-    left: 8px;
-    right: 8px;
-    width: auto;
-    transform: translateY(-50%);
+    left: 50%;
+    right: auto;
+    width: calc(100vw - 16px);
+    min-width: 0;
+    max-width: 640px;
+    transform: translate(-50%, -50%);
+    max-height: calc(100vh - 16px);
+    overflow-y: auto;
   }
 
   .connect-blockchain-modal .header-section {
-    padding: 16px;
+    padding: 12px;
   }
 
   .connect-blockchain-modal .footer-section {
-    padding: 16px;
+    padding: 12px;
   }
 
   .connect-blockchain-button {
     padding: 10px 16px;
+  }
+
+  #connect-blockchain {
+    padding: 8px;
+    min-width: 0;
+  }
+
+  #connect-blockchain .header {
+    padding-left: 0;
+    padding-right: 0;
+    overflow-x: hidden;
+    gap: 0;
+  }
+
+  #connect-blockchain .body {
+    padding: 8px;
+  }
+
+  #connect-blockchain .frame {
+    min-width: 0;
+    padding: 0;
+  }
+
+  #connect-blockchain .header .tab {
+    flex: 1 1 0;
+    min-width: 0;
+    width: 50%;
+    padding: 10px 8px;
+    gap: 6px;
+    justify-content: center;
   }
 }
 
@@ -3714,6 +3757,46 @@ p.small {
 .connected-wallet-copy-icon {
   width: 20px;
   height: 20px;
+}
+
+@media (max-width: 480px) {
+  .connected-wallet-info {
+    min-width: 0;
+  }
+
+  .connected-wallet-address {
+    display: block;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .connected-wallet-container {
+    padding: 8px;
+    gap: 4px;
+  }
+
+  .connected-wallet-icon {
+    margin-right: 8px;
+  }
+
+  .connected-wallet-copy-icon-boundary {
+    min-width: 32px;
+    min-height: 32px;
+    padding: 2px;
+  }
+
+  .connected-wallet-copy-icon-frame {
+    width: 24px;
+    height: 24px;
+    padding: 2px;
+  }
+
+  .connected-wallet-copy-icon {
+    width: 16px;
+    height: 16px;
+  }
 }
 
 /* ─── ConnectToMetamask Component ───────────────────────────────────────── */
@@ -3858,6 +3941,30 @@ p.small {
   border-radius: 12px;
   padding: 8px 12px;
   border-width: 1px;
+}
+
+.connect-wallet-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px !important;
+}
+
+.connect-wallet-error-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.connect-wallet-error-text {
+  font-family: Avenir, sans-serif;
+  font-weight: 500;
+  font-style: normal;
+  font-size: 14px;
+  line-height: 155%;
+  letter-spacing: 0;
+  vertical-align: middle;
+  color: #b83152;
 }
 
 /* action form  */
