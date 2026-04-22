@@ -22,12 +22,18 @@ export enum MessageTitle {
   TRANSFER_HOLDER_SUCCESS = 'Transfer Holder Success',
   TRANSFER_OWNER_HOLDER_SUCCESS = 'Transfer Ownership/Holdership Success',
   TRANSFER_OWNER_SUCCESS = 'Transfer Owner Success',
+  REJECT_TRANSFER_OWNER_HOLDER_SUCCESS = 'Holdership/Ownership Rejection Success',
+  REJECT_TRANSFER_OWNER_SUCCESS = 'Ownership Rejection Success',
+  REJECT_TRANSFER_HOLDER_SUCCESS = 'Holder Rejection Success',
   // Failed
   TRANSFER_HOLDER_FAILED = 'Transfer Holder Failed',
   TRANSFER_OWNER_FAILED = 'Transfer Owner Failed',
   NOMINATE_BENEFICIARY_FAILED = 'Nomination Failed',
   ENDORSE_BENEFICIARY_FAILED = 'Endorsement Failed',
   TRANSFER_OWNER_HOLDER_FAILED = 'Transfer Ownership/Holdership Failed',
+  REJECT_TRANSFER_OWNER_HOLDER_FAILED = 'Holdership/Ownership Rejection Failed',
+  REJECT_TRANSFER_OWNER_FAILED = 'Ownership Rejection Failed',
+  REJECT_TRANSFER_HOLDER_FAILED = 'Holder Rejection Failed',
 
   RETURN_TO_ISSUER_DOCUMENT_FAILED = 'Return of ETR Failed',
   ACCEPT_RETURN_TO_ISSUER_DOCUMENT_FAILED = 'Return of ETR Acceptance Failed',

@@ -119,8 +119,8 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
       const isConfirmed = rejectTransferOwnerHolderState === FormState.CONFIRMED
       const isFailed = rejectTransferOwnerHolderState === FormState.ERROR
       const msg = isConfirmed
-        ? MessageTitle.TRANSFER_OWNER_HOLDER_SUCCESS
-        : MessageTitle.TRANSFER_OWNER_HOLDER_FAILED
+        ? MessageTitle.REJECT_TRANSFER_OWNER_HOLDER_SUCCESS
+        : MessageTitle.REJECT_TRANSFER_OWNER_HOLDER_FAILED
       const beneficiaryAddress = isConfirmed ? prevBeneficiary : beneficiary
       const holderAddress = isConfirmed ? prevHolder : holder
 
@@ -148,8 +148,8 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
       const isConfirmed = rejectTransferHolderState === FormState.CONFIRMED
       const isFailed = rejectTransferHolderState === FormState.ERROR
       const msg = isConfirmed
-        ? MessageTitle.TRANSFER_OWNER_HOLDER_SUCCESS
-        : MessageTitle.TRANSFER_OWNER_HOLDER_FAILED
+        ? MessageTitle.REJECT_TRANSFER_HOLDER_SUCCESS
+        : MessageTitle.REJECT_TRANSFER_HOLDER_FAILED
       const holderAddress = isConfirmed ? prevHolder : holder
 
       if (isConfirmed || isFailed) {
@@ -175,8 +175,8 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
       const isConfirmed = rejectTransferOwnerState === FormState.CONFIRMED
       const isFailed = rejectTransferOwnerState === FormState.ERROR
       const msg = isConfirmed
-        ? MessageTitle.TRANSFER_OWNER_HOLDER_SUCCESS
-        : MessageTitle.TRANSFER_OWNER_HOLDER_FAILED
+        ? MessageTitle.REJECT_TRANSFER_OWNER_SUCCESS
+        : MessageTitle.REJECT_TRANSFER_OWNER_FAILED
       const beneficiaryAddress = isConfirmed ? prevBeneficiary : beneficiary
 
       if (isConfirmed || isFailed) {
@@ -1207,7 +1207,7 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
                 className="!flex-1 !min-w-[188px] !max-w-[383px]"
                 onClick={() => handleDestroyToken({ remarks: remark })}
                 disabled={isDestroyTokenPendingConfirmation}
-                data-testid={'acceptSurrenderBtn'}
+                data-testid={'acceptReturnToIssuerBtn'}
                 size={ButtonSize.SM}
               >
                 {isDestroyTokenPendingConfirmation ? (
