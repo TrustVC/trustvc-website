@@ -90,14 +90,22 @@ const CarouselSlide = ({
     <div className="relative px-2 max-w-[1280px] m-4 flex flex-col lg:flex-row sm:min-h-[444px] md:min-h-[410px] lg:min-h-[380px] xl:min-h-[360px]">
       <div className="inset-0 z-20 w-full h-full flex flex-col lg:flex-row">
         <div className="w-full">
-          <img src={logo} alt={`${title}-${subtitle}-logo`} className="lg:pl-8 pt-8 lg:pt-16 pb-4" />
+          <img
+            src={logo}
+            alt={`${title}-${subtitle}-logo`}
+            className="lg:pl-8 pt-8 lg:pt-16 pb-4"
+          />
           <div className="lg:pl-8 py-4 text-3xl lg:text-4xl font-bold text-neutral-10">
             <div className="py-1">{title}</div>
             <div className="text-primary-60">{subtitle}</div>
           </div>
           {link && (
             <div className="lg:pl-8 pt-4">
-              <LinkButton href={link} isDarkMode={isDarkMode} aria-label={`Learn more — ${title}`}>
+              <LinkButton
+                href={link}
+                isDarkMode={isDarkMode}
+                aria-label={`Learn more — ${title}`}
+              >
                 <span className="pr-2">Learn more</span>
                 <RightArrowIcon className="w-4" />
               </LinkButton>
