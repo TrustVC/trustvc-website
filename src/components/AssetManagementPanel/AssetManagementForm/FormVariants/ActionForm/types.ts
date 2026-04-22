@@ -81,24 +81,24 @@ export interface EndorseBeneficiaryProps extends BaseActionFormProps {
   endorseBeneficiaryState: string
 }
 
-// Props for SurrenderForm
-export interface SurrenderFormProps extends BaseActionFormProps {
+// Props for ReturnToIssuerForm
+export interface ReturnToIssuerFormProps extends BaseActionFormProps {
   type: AssetManagementActions.ReturnToIssuer
   handleReturnToIssuer: ({ remarks }: { remarks: string }) => void
   returnToIssuerState: string
 }
 
-// Props for AcceptSurrenderedForm
-export interface AcceptSurrenderedFormProps extends BaseActionFormProps {
+// Props for AcceptReturnToIssuerForm
+export interface AcceptReturnToIssuerFormProps extends BaseActionFormProps {
   type: AssetManagementActions.AcceptReturnToIssuer
   handleDestroyToken: (remarks: string) => void
   destroyTokenState: string
 }
 
-// Props for RejectSurrenderedForm
-export interface RejectSurrenderedFormProps extends BaseActionFormProps {
+// Props for RejectReturnToIssuerForm
+export interface RejectReturnToIssuerFormProps extends BaseActionFormProps {
   type: AssetManagementActions.RejectReturnToIssuer
-  handleRestoreToken: (remarks: string) => void
+  handleRestoreToken: ({ remarks }: { remarks: string }) => void
   restoreTokenState: string
 }
 

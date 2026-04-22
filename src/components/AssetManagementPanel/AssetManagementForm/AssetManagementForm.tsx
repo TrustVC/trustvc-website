@@ -58,7 +58,7 @@ interface ReturnToIssuerActions {
   returnToIssuerState: string
   onDestroyToken: (remarks: string) => void
   destroyTokenState: string
-  onRestoreToken: (remarks: string) => void
+  onRestoreToken: ({ remarks }: { remarks: string }) => void
   restoreTokenState: string
 }
 

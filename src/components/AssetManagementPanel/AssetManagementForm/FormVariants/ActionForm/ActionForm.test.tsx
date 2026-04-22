@@ -811,14 +811,12 @@ describe('ActionForm - ReturnToIssuer', () => {
       />
     )
 
-    expect(screen.getByText('Owner')).toBeInTheDocument()
-    expect(screen.getByText('Holder')).toBeInTheDocument()
     expect(screen.getAllByText('Remark').length).toBeGreaterThan(0)
     expect(screen.getByTestId('cancelSurrenderBtn')).toBeInTheDocument()
     expect(screen.getByTestId('surrenderBtn')).toBeInTheDocument()
   })
 
-  it('displays beneficiary and holder addresses as non-editable', () => {
+  it('displays only remark field without owner and holder', () => {
     renderWithOverlay(
       <ActionForm
         {...defaultProps}
@@ -828,10 +826,9 @@ describe('ActionForm - ReturnToIssuer', () => {
       />
     )
 
-    expect(
-      screen.getAllByText(defaultProps.beneficiary).length
-    ).toBeGreaterThan(0)
-    expect(screen.getAllByText(defaultProps.holder).length).toBeGreaterThan(0)
+    expect(screen.queryByText('Owner')).not.toBeInTheDocument()
+    expect(screen.queryByText('Holder')).not.toBeInTheDocument()
+    expect(screen.getAllByText('Remark').length).toBeGreaterThan(0)
   })
 
   it('enables return button by default', () => {
@@ -961,7 +958,7 @@ describe('ActionForm - ReturnToIssuer', () => {
       expect(mockShowOverlay).toHaveBeenCalled()
     })
     const overlayNode = mockShowOverlay.mock.calls[0][0] as any
-    expect(overlayNode.props.title).toBe('Return of ETR successful')
+    expect(overlayNode.props.title).toBe('Return of ETR Successful')
     expect(mockSetFormActionNone).toHaveBeenCalled()
   })
 
@@ -985,6 +982,204 @@ describe('ActionForm - ReturnToIssuer', () => {
         type={AssetManagementActions.ReturnToIssuer}
         handleReturnToIssuer={mockHandleReturnToIssuer}
         returnToIssuerState={FormState.PENDING_CONFIRMATION}
+      />
+    )
+
+    const actionFormFrame = container.querySelector('.action-form-frame')
+    expect(actionFormFrame).toHaveClass('opacity-[0.33]')
+    expect(actionFormFrame).toHaveClass('pointer-events-none')
+  })
+})
+
+describe('ActionForm - RejectReturnToIssuer', () => {
+  const mockHandleRestoreToken = vi.fn()
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('renders RejectReturnToIssuer form correctly', () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.RejectReturnToIssuer}
+        handleRestoreToken={mockHandleRestoreToken}
+        restoreTokenState={FormState.UNINITIALIZED}
+      />
+    )
+
+    expect(screen.getByText('Owner')).toBeInTheDocument()
+    expect(screen.getByText('Holder')).toBeInTheDocument()
+    expect(screen.getAllByText('Remark').length).toBeGreaterThan(0)
+    expect(screen.getByTestId('cancelSurrenderBtn')).toBeInTheDocument()
+    expect(screen.getByTestId('rejectReturnToIssuerBtn')).toBeInTheDocument()
+  })
+
+  it('displays beneficiary and holder addresses as non-editable', () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.RejectReturnToIssuer}
+        handleRestoreToken={mockHandleRestoreToken}
+        restoreTokenState={FormState.UNINITIALIZED}
+      />
+    )
+
+    expect(
+      screen.getAllByText(defaultProps.beneficiary).length
+    ).toBeGreaterThan(0)
+    expect(screen.getAllByText(defaultProps.holder).length).toBeGreaterThan(0)
+  })
+
+  it('enables reject button by default', () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.RejectReturnToIssuer}
+        handleRestoreToken={mockHandleRestoreToken}
+        restoreTokenState={FormState.UNINITIALIZED}
+      />
+    )
+
+    const rejectBtn = screen.getByTestId('rejectReturnToIssuerBtn')
+    expect(rejectBtn).not.toBeDisabled()
+  })
+
+  it('calls handleRestoreToken with empty remarks when button is clicked without remark', () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.RejectReturnToIssuer}
+        handleRestoreToken={mockHandleRestoreToken}
+        restoreTokenState={FormState.UNINITIALIZED}
+      />
+    )
+
+    const rejectBtn = screen.getByTestId('rejectReturnToIssuerBtn')
+    fireEvent.click(rejectBtn)
+
+    expect(mockHandleRestoreToken).toHaveBeenCalledWith({ remarks: '' })
+  })
+
+  it('calls handleRestoreToken with remarks when provided', () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.RejectReturnToIssuer}
+        handleRestoreToken={mockHandleRestoreToken}
+        restoreTokenState={FormState.UNINITIALIZED}
+      />
+    )
+
+    const remarkInput = screen.getByPlaceholderText('Enter remark')
+    fireEvent.change(remarkInput, {
+      target: { value: 'Rejecting return to issuer' },
+    })
+
+    const rejectBtn = screen.getByTestId('rejectReturnToIssuerBtn')
+    fireEvent.click(rejectBtn)
+
+    expect(mockHandleRestoreToken).toHaveBeenCalledWith({
+      remarks: 'Rejecting return to issuer',
+    })
+  })
+
+  it('shows loading state when pending confirmation', () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.RejectReturnToIssuer}
+        handleRestoreToken={mockHandleRestoreToken}
+        restoreTokenState={FormState.PENDING_CONFIRMATION}
+      />
+    )
+
+    expect(screen.getByText('Rejecting..')).toBeInTheDocument()
+    expect(screen.getByTestId('loader')).toBeInTheDocument()
+  })
+
+  it('disables buttons when pending confirmation', () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.RejectReturnToIssuer}
+        handleRestoreToken={mockHandleRestoreToken}
+        restoreTokenState={FormState.PENDING_CONFIRMATION}
+      />
+    )
+
+    expect(screen.getByTestId('cancelSurrenderBtn')).toBeDisabled()
+    expect(screen.getByTestId('rejectReturnToIssuerBtn')).toBeDisabled()
+  })
+
+  it('disables buttons when state is initialized', () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.RejectReturnToIssuer}
+        handleRestoreToken={mockHandleRestoreToken}
+        restoreTokenState={FormState.INITIALIZED}
+      />
+    )
+
+    expect(screen.getByTestId('cancelSurrenderBtn')).toBeDisabled()
+    expect(screen.getByTestId('rejectReturnToIssuerBtn')).toBeDisabled()
+  })
+
+  it('calls setFormActionNone when cancel button is clicked', () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.RejectReturnToIssuer}
+        handleRestoreToken={mockHandleRestoreToken}
+        restoreTokenState={FormState.UNINITIALIZED}
+      />
+    )
+
+    const cancelBtn = screen.getByTestId('cancelSurrenderBtn')
+    fireEvent.click(cancelBtn)
+
+    expect(mockSetFormActionNone).toHaveBeenCalled()
+  })
+
+  it('shows success overlay and closes action form on confirmation', async () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.RejectReturnToIssuer}
+        handleRestoreToken={mockHandleRestoreToken}
+        restoreTokenState={FormState.CONFIRMED}
+      />
+    )
+
+    await waitFor(() => {
+      expect(mockShowOverlay).toHaveBeenCalled()
+    })
+    const overlayNode = mockShowOverlay.mock.calls[0][0] as any
+    expect(overlayNode.props.title).toBe('Return of ETR Rejected')
+    expect(mockSetFormActionNone).toHaveBeenCalled()
+  })
+
+  it('displays Reject ETR Return button text correctly', () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.RejectReturnToIssuer}
+        handleRestoreToken={mockHandleRestoreToken}
+        restoreTokenState={FormState.UNINITIALIZED}
+      />
+    )
+
+    expect(screen.getByText('Reject ETR Return')).toBeInTheDocument()
+  })
+
+  it('applies correct opacity and pointer-events when pending', () => {
+    const { container } = renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.RejectReturnToIssuer}
+        handleRestoreToken={mockHandleRestoreToken}
+        restoreTokenState={FormState.PENDING_CONFIRMATION}
       />
     )
 

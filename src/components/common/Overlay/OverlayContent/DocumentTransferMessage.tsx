@@ -12,10 +12,9 @@ export enum MessageTitle {
   NO_MANAGE_ACCESS = 'No manage assets access',
   NO_USER_AUTHORIZATION = 'User denied account authorization', // this error message must match error message from metamask extension itself
   TRANSACTION_ERROR = 'Error - Failed transaction',
-  SURRENDER_DOCUMENT_SUCCESS = 'Return of ETR successful',
-  ACCEPT_SURRENDER_DOCUMENT = 'Return of ETR accepted',
-  REJECT_SURRENDER_DOCUMENT = 'Return of this ETR has been rejected by the Issuer',
-  CONFIRM_REJECT_SURRENDER_DOCUMENT = 'Confirm Document Return',
+  RETURN_TO_ISSUER_DOCUMENT = 'Return of ETR Successful',
+  ACCEPT_RETURN_TO_ISSUER_DOCUMENT = 'Return of ETR Accepted',
+  REJECT_RETURN_TO_ISSUER_DOCUMENT = 'Return of ETR Rejected',
   CHANGE_BENEFICIARY_SUCCESS = 'Change Owner Success',
   NOMINATE_BENEFICIARY_HOLDER_SUCCESS = 'Nomination Success',
   TRANSFER_HOLDER_SUCCESS = 'Transfer Holder Success',
@@ -286,16 +285,14 @@ export const showDocumentTransferMessage = (
       {title === MessageTitle.TRANSACTION_ERROR && (
         <MessageTransactionError error={option.error} />
       )}
-      {title === MessageTitle.SURRENDER_DOCUMENT_SUCCESS && (
+      {title === MessageTitle.RETURN_TO_ISSUER_DOCUMENT && (
         <MessageSurrenderSuccess />
       )}
-      {title === MessageTitle.ACCEPT_SURRENDER_DOCUMENT && <AcceptSurrender />}
-      {title === MessageTitle.REJECT_SURRENDER_DOCUMENT && <RejectSurrender />}
-      {title === MessageTitle.CONFIRM_REJECT_SURRENDER_DOCUMENT && (
-        <MessageRejectSurrenderConfirmation
-          beneficiaryAddress={option.beneficiaryAddress}
-          holderAddress={option.holderAddress}
-        />
+      {title === MessageTitle.ACCEPT_RETURN_TO_ISSUER_DOCUMENT && (
+        <AcceptSurrender />
+      )}
+      {title === MessageTitle.REJECT_RETURN_TO_ISSUER_DOCUMENT && (
+        <RejectSurrender />
       )}
       {(title === MessageTitle.CHANGE_BENEFICIARY_SUCCESS ||
         title === MessageTitle.TRANSFER_OWNER_SUCCESS) && (
