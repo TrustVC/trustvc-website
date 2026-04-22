@@ -122,7 +122,9 @@ export const AssetManagementApplication: FunctionComponent<
     destroyToken({ tokenId, remarks })
   }
 
-  const onRestoreToken = ({ remarks }: { remarks: string } = { remarks: '0x' }) => {
+  const onRestoreToken = (
+    { remarks }: { remarks: string } = { remarks: '0x' }
+  ) => {
     restoreToken({ tokenId, remarks })
   }
 
