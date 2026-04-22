@@ -159,11 +159,11 @@ describe('EndorsementChain', () => {
         />
       )
       expect(
-        screen.getByText('Failed to load endorsement chain')
+        screen.getByText("The endorsement chain couldn't be retrieved.")
       ).toBeInTheDocument()
     })
 
-    it('shows specific error message when provided', () => {
+    it('shows retry instruction message when status is error', () => {
       const errorStatus: EndorsementChainStatus = {
         status: 'error',
         errorMessage: 'Network timeout',
@@ -175,7 +175,24 @@ describe('EndorsementChain', () => {
           endorsementChain={undefined}
         />
       )
-      expect(screen.getByText('Network timeout')).toBeInTheDocument()
+      expect(
+        screen.getByText('You may retry by clicking the “Retry” button below.')
+      ).toBeInTheDocument()
+    })
+
+    it('does not show raw technical error message in UI', () => {
+      const errorStatus: EndorsementChainStatus = {
+        status: 'error',
+        errorMessage: 'Network timeout',
+      }
+      render(
+        <EndorsementChainLayout
+          {...defaultProps}
+          endorsementChainStatus={errorStatus}
+          endorsementChain={undefined}
+        />
+      )
+      expect(screen.queryByText('Network timeout')).not.toBeInTheDocument()
     })
 
     it('does not show endorsement chain entries when error', () => {
@@ -420,6 +437,24 @@ describe('EndorsementChain', () => {
       const onReset = vi.fn()
       render(<EndorsementChainLayout {...defaultProps} onReset={onReset} />)
       expect(onReset).not.toHaveBeenCalled()
+    })
+
+    it('calls onRetry when Retry button is clicked in error state', () => {
+      const onRetry = vi.fn()
+      const errorStatus: EndorsementChainStatus = {
+        status: 'error',
+        errorMessage: 'Failed to fetch data',
+      }
+      render(
+        <EndorsementChainLayout
+          {...defaultProps}
+          onRetry={onRetry}
+          endorsementChainStatus={errorStatus}
+          endorsementChain={undefined}
+        />
+      )
+      fireEvent.click(screen.getByRole('button', { name: /retry/i }))
+      expect(onRetry).toHaveBeenCalledTimes(1)
     })
   })
 
