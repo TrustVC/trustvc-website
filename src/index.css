@@ -2719,6 +2719,10 @@ p.small {
   margin-top: 16px;
   text-align: center;
   color: #3d444d;
+  background: none;
+  -webkit-background-clip: initial;
+  background-clip: initial;
+  -webkit-text-fill-color: currentColor;
 }
 
 .ec-error-subtitle {
@@ -2730,6 +2734,10 @@ p.small {
   letter-spacing: 0;
   text-align: center;
   color: #3d444d;
+  background: none;
+  -webkit-background-clip: initial;
+  background-clip: initial;
+  -webkit-text-fill-color: currentColor;
 }
 
 .dark-mode .ec-error-title,
