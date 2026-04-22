@@ -98,7 +98,7 @@ export interface AcceptReturnToIssuerFormProps extends BaseActionFormProps {
 // Props for RejectReturnToIssuerForm
 export interface RejectReturnToIssuerFormProps extends BaseActionFormProps {
   type: AssetManagementActions.RejectReturnToIssuer
-  handleRestoreToken: (remarks: string) => void
+  handleRestoreToken: ({ remarks }: { remarks: string }) => void
   restoreTokenState: string
 }
 

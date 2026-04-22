@@ -1058,7 +1058,7 @@ describe('ActionForm - RejectReturnToIssuer', () => {
     const rejectBtn = screen.getByTestId('rejectReturnToIssuerBtn')
     fireEvent.click(rejectBtn)
 
-    expect(mockHandleRestoreToken).toHaveBeenCalledWith('')
+    expect(mockHandleRestoreToken).toHaveBeenCalledWith({ remarks: '' })
   })
 
   it('calls handleRestoreToken with remarks when provided', () => {
@@ -1079,9 +1079,9 @@ describe('ActionForm - RejectReturnToIssuer', () => {
     const rejectBtn = screen.getByTestId('rejectReturnToIssuerBtn')
     fireEvent.click(rejectBtn)
 
-    expect(mockHandleRestoreToken).toHaveBeenCalledWith(
-      'Rejecting return to issuer'
-    )
+    expect(mockHandleRestoreToken).toHaveBeenCalledWith({
+      remarks: 'Rejecting return to issuer',
+    })
   })
 
   it('shows loading state when pending confirmation', () => {

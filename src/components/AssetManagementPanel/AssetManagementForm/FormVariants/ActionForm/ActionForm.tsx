@@ -1070,7 +1070,7 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
 
               <ButtonIcon
                 className="!flex-1 !min-w-[188px] !max-w-[383px]"
-                onClick={() => handleRestoreToken(remark)}
+                onClick={() => handleRestoreToken({ remarks: remark })}
                 disabled={isRestoreTokenPendingConfirmation}
                 data-testid={'rejectReturnToIssuerBtn'}
                 size={ButtonSize.SM}
