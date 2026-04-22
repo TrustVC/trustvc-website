@@ -10,6 +10,7 @@ import { Button } from '../../common/Button'
 interface EndorsementChainProps {
   endorsementChain?: any
   onReset: () => void
+  onRetry?: () => void
   isDarkMode?: boolean
   endorsementChainStatus?: EndorsementChainStatus
   tokenRegistryVersion?: TokenRegistryVersion
@@ -228,17 +229,18 @@ const LineDesign: React.FunctionComponent<{
 const EndorsementChainLayout: React.FC<EndorsementChainProps> = ({
   endorsementChain,
   onReset,
+  onRetry,
   isDarkMode,
   endorsementChainStatus,
   tokenRegistryVersion,
 }) => {
   const historyChain = getHistoryChain(endorsementChain)
-  const { status, errorMessage } = endorsementChainStatus ?? {}
+  const { status } = endorsementChainStatus ?? {}
 
   return (
     <Overlay ariaLabel="Endorsement Chain">
       <div
-        className={`endorsement-chain ${isDarkMode ? 'dark-mode' : ''} ${status === 'loading' ? 'is-loading' : ''}`}
+        className={`endorsement-chain ${isDarkMode ? 'dark-mode' : ''} ${status === 'loading' ? 'is-loading' : ''} ${status === 'error' ? 'is-error' : ''}`}
       >
         {/* First Component - Header Section */}
         <div className="header-section">
@@ -258,10 +260,26 @@ const EndorsementChainLayout: React.FC<EndorsementChainProps> = ({
               </div>
             )}
             {status === 'error' && (
-              <div className="ec-error-message">
-                <div>Failed to load endorsement chain</div>
-                {errorMessage && (
-                  <div className="ec-error-message">{errorMessage}</div>
+              <div className="ec-error-state" role="alert">
+                <img
+                  src="/icons/retry.svg"
+                  alt=""
+                  aria-hidden="true"
+                  className="ec-error-icon"
+                />
+                <p className="ec-error-title">
+                  The endorsement chain couldn&apos;t be retrieved.
+                </p>
+                {onRetry ? (
+                  <p className="ec-error-subtitle">
+                    You may retry by clicking the &ldquo;Retry&rdquo; button
+                    below.
+                  </p>
+                ) : (
+                  <p className="ec-error-subtitle">
+                    Dismiss this dialog and try viewing the endorsement chain
+                    again.
+                  </p>
                 )}
               </div>
             )}
@@ -322,8 +340,22 @@ const EndorsementChainLayout: React.FC<EndorsementChainProps> = ({
 
         {/* Third Component - Footer Section */}
         <div className="footer-section">
-          <div className="footer-subsection">
-            <Button className="dismiss-btn" onClick={onReset}>
+          <div
+            className={`footer-subsection ${status === 'error' ? 'is-error' : ''}`}
+          >
+            {status === 'error' && onRetry && (
+              <Button
+                className="ec-retry-btn"
+                btnType="transparent"
+                onClick={onRetry}
+              >
+                Retry
+              </Button>
+            )}
+            <Button
+              className={status === 'error' ? 'ec-dismiss-btn' : 'dismiss-btn'}
+              onClick={onReset}
+            >
               Dismiss
             </Button>
           </div>

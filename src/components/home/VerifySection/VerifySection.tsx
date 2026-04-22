@@ -154,6 +154,7 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
           <EndorsementChain
             endorsementChain={endorsementChain}
             onReset={handleHideEndorsementChain}
+            onRetry={refreshEndorsementChain}
             isDarkMode={isDarkMode}
             endorsementChainStatus={endorsementChainStatus}
             tokenRegistryVersion={tokenRegistryVersion}
