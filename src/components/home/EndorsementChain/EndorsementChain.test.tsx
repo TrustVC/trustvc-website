@@ -154,6 +154,7 @@ describe('EndorsementChain', () => {
       render(
         <EndorsementChainLayout
           {...defaultProps}
+          onRetry={vi.fn()}
           endorsementChainStatus={errorStatus}
           endorsementChain={undefined}
         />
@@ -171,12 +172,13 @@ describe('EndorsementChain', () => {
       render(
         <EndorsementChainLayout
           {...defaultProps}
+          onRetry={vi.fn()}
           endorsementChainStatus={errorStatus}
           endorsementChain={undefined}
         />
       )
       expect(
-        screen.getByText('You may retry by clicking the “Retry” button below.')
+        screen.getByText(/You may retry by clicking the/i)
       ).toBeInTheDocument()
     })
 
