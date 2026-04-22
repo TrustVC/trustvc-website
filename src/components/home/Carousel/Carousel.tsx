@@ -90,14 +90,22 @@ const CarouselSlide = ({
     <div className="relative px-2 max-w-[1280px] m-4 flex flex-col lg:flex-row sm:min-h-[444px] md:min-h-[410px] lg:min-h-[380px] xl:min-h-[360px]">
       <div className="inset-0 z-20 w-full h-full flex flex-col lg:flex-row">
         <div className="w-full">
-          <img src={logo} alt="logo" className="lg:pl-8 pt-8 lg:pt-16 pb-4" />
+          <img
+            src={logo}
+            alt={`${title}-${subtitle}-logo`}
+            className="lg:pl-8 pt-8 lg:pt-16 pb-4"
+          />
           <div className="lg:pl-8 py-4 text-3xl lg:text-4xl font-bold text-neutral-10">
             <div className="py-1">{title}</div>
             <div className="text-primary-60">{subtitle}</div>
           </div>
           {link && (
             <div className="lg:pl-8 pt-4">
-              <LinkButton href={link} isDarkMode={isDarkMode}>
+              <LinkButton
+                href={link}
+                isDarkMode={isDarkMode}
+                aria-label={`Learn more — ${title}`}
+              >
                 <span className="pr-2">Learn more</span>
                 <RightArrowIcon className="w-4" />
               </LinkButton>
@@ -109,7 +117,7 @@ const CarouselSlide = ({
         <div className="relative overflow-hidden md:overflow-visible sm:h-[400px] xl:max-h-[600px]">
           <img
             src={image}
-            alt="hero-carousel-image"
+            alt={`hero-image-${title}`}
             className="translate-y-4 -translate-x-[39%] sm:translate-x-[18%] sm:top-1 md:top-1/3 md:left-1/3 max-w-[500px] lg:w-[600px] xl:max-w-[800px] xl:w-[640px] md:translate-x-56 md:translate-y-1 lg:translate-x-40 lg:translate-y-12 xl:translate-x-52 xl:translate-y-8"
           />
         </div>
@@ -136,7 +144,7 @@ const CarouselControlBar = ({ swiperRef }: CarouselControlBarProps) => {
         type="button"
         aria-label="carousel-prev-button"
         onClick={() => swiperRef.current?.slidePrev()}
-        className="flex items-center justify-center h-6 w-6 bg-transparent outline-none border-none hover:text-primary-60"
+        className="flex items-center justify-center h-6 w-6 bg-transparent border-none outline-none focus-visible:outline-2 focus-visible:outline-primary-60 focus-visible:rounded hover:text-primary-60"
       >
         <div className="rotate-180">
           <RightArrowIcon />
@@ -157,7 +165,7 @@ const CarouselControlBar = ({ swiperRef }: CarouselControlBarProps) => {
         type="button"
         aria-label="carousel-next-button"
         onClick={() => swiperRef.current?.slideNext()}
-        className="flex items-center justify-center h-6 w-6 bg-transparent outline-none border-none hover:text-primary-60"
+        className="flex items-center justify-center h-6 w-6 bg-transparent border-none outline-none focus-visible:outline-2 focus-visible:outline-primary-60 focus-visible:rounded hover:text-primary-60"
       >
         <RightArrowIcon />
       </button>
