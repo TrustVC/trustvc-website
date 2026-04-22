@@ -336,7 +336,7 @@ const EndorsementChainLayout: React.FC<EndorsementChainProps> = ({
           <div
             className={`footer-subsection ${status === 'error' ? 'is-error' : ''}`}
           >
-            {status === 'error' && (
+            {status === 'error' && onRetry && (
               <Button
                 className="ec-retry-btn"
                 btnType="transparent"
