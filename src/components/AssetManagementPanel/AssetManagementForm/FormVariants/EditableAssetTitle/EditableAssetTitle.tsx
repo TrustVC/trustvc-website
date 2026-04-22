@@ -41,6 +41,7 @@ export const EditableAssetTitle: FunctionComponent<EditableAssetTitleProps> = ({
     // )
   }
   const [inputError, setInputError] = useState(false)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [unidentifiedAddressError, setUnidentifiedAddressError] =
     useState(false)
   const verifySetNewValue = (newAddressValue: string) => {
