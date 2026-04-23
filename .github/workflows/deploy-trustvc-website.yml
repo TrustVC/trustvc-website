@@ -11,14 +11,6 @@ on:
         options:
           - main
           - develop
-      environment:
-        description: 'Deployment environment'
-        required: true
-        default: 'development'
-        type: choice
-        options:
-          - development
-          - production
 
 permissions:
   contents: read
