@@ -54,11 +54,12 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
 
   // Additional state variables for different form types
   const [newHolder, setNewHolder] = useState(holder || '')
-  const [newOwner, setNewOwner] = useState(holder || '')
+  const [newOwner, setNewOwner] = useState(beneficiary || '')
   const [newBeneficiary, setNewBeneficiary] = useState('')
 
   // All useEffect hooks moved outside of the switch statement
   useEffect(() => {
+    // Handle TransferHolderForm confirmation/ failure
     if (type === AssetManagementActions.TransferHolder) {
       const { holderTransferringState } = props
       const isConfirmed = holderTransferringState === FormState.CONFIRMED
@@ -84,7 +85,7 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
         setFormActionNone()
       }
     }
-    // Handle EndorseTransferForm confirmation
+    // Handle EndorseTransferForm confirmation/ failure
     if (type === AssetManagementActions.TransferOwnerHolder) {
       const { transferOwnerHoldersState } = props
       const isConfirmed = transferOwnerHoldersState === FormState.CONFIRMED
@@ -113,7 +114,7 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
         setFormActionNone()
       }
     }
-
+    // Handle RejectTransferOwnerHolderForm confirmation/ failure
     if (type === AssetManagementActions.RejectTransferOwnerHolder) {
       const { rejectTransferOwnerHolderState } = props
       const isConfirmed = rejectTransferOwnerHolderState === FormState.CONFIRMED
@@ -142,7 +143,7 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
         setFormActionNone()
       }
     }
-
+    // Handle RejectTransferHolderForm confirmation/ failure
     if (type === AssetManagementActions.RejectTransferHolder) {
       const { rejectTransferHolderState } = props
       const isConfirmed = rejectTransferHolderState === FormState.CONFIRMED
@@ -169,7 +170,7 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
         setFormActionNone()
       }
     }
-
+    // Handle RejectTransferOwnerForm confirmation/ failure
     if (type === AssetManagementActions.RejectTransferOwner) {
       const { rejectTransferOwnerState } = props
       const isConfirmed = rejectTransferOwnerState === FormState.CONFIRMED
@@ -196,7 +197,7 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
         setFormActionNone()
       }
     }
-    // Handle NominateBeneficiaryForm confirmation
+    // Handle NominateBeneficiaryForm confirmation/ failure
     if (type === AssetManagementActions.NominateBeneficiary) {
       const { nominationState } = props
       const isConfirmed = nominationState === FormState.CONFIRMED
@@ -218,7 +219,7 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
         setFormActionNone()
       }
     }
-    // Handle EndorseBeneficiaryForm confirmation
+    // Handle EndorseBeneficiaryForm confirmation/ failure
     if (type === AssetManagementActions.EndorseBeneficiary) {
       const { nominee, endorseBeneficiaryState } = props
       const isConfirmed = endorseBeneficiaryState === FormState.CONFIRMED
@@ -245,7 +246,7 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
         setFormActionNone()
       }
     }
-    // Handle EndorseTransferForm confirmation
+    // Handle EndorseTransferForm confirmation/ failure
     if (type === AssetManagementActions.TransferOwner) {
       const { transferOwnersState } = props
       const isConfirmed = transferOwnersState === FormState.CONFIRMED
@@ -272,7 +273,7 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
         setFormActionNone()
       }
     }
-    // Handle SurrenderForm/ReturnToIssuer confirmation
+    // Handle SurrenderForm/ReturnToIssuer confirmation/ failure
     if (type === AssetManagementActions.ReturnToIssuer) {
       const { returnToIssuerState } = props
       const isConfirmed = returnToIssuerState === FormState.CONFIRMED
@@ -280,6 +281,8 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
       const msg = isConfirmed
         ? MessageTitle.RETURN_TO_ISSUER_DOCUMENT_SUCCESS
         : MessageTitle.RETURN_TO_ISSUER_DOCUMENT_FAILED
+      const beneficiaryAddress = isConfirmed ? '' : beneficiary
+      const holderAddress = isConfirmed ? '' : holder
 
       if (isConfirmed || isFailed) {
         if (refreshEndorsementChain && isConfirmed) {
@@ -291,8 +294,8 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
             msg,
             {
               isSuccess: isConfirmed,
-              beneficiaryAddress: beneficiary,
-              holderAddress: holder,
+              beneficiaryAddress,
+              holderAddress,
             },
             setShowEndorsementChain
           )
@@ -300,7 +303,7 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
         setFormActionNone()
       }
     }
-    // Handle RejectSurrenderedForm confirmation
+    // Handle RejectSurrenderedForm confirmation/ failure
     if (type === AssetManagementActions.RejectReturnToIssuer) {
       const { restoreTokenState } = props
       const isConfirmed = restoreTokenState === FormState.CONFIRMED
@@ -308,6 +311,8 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
       const msg = isConfirmed
         ? MessageTitle.REJECT_RETURN_TO_ISSUER_DOCUMENT_SUCCESS
         : MessageTitle.REJECT_RETURN_TO_ISSUER_DOCUMENT_FAILED
+      const beneficiaryAddress = isConfirmed ? beneficiary : ''
+      const holderAddress = isConfirmed ? holder : ''
 
       if (isConfirmed || isFailed) {
         if (refreshEndorsementChain && isConfirmed) {
@@ -318,8 +323,8 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
             msg,
             {
               isSuccess: isConfirmed,
-              beneficiaryAddress: beneficiary,
-              holderAddress: holder,
+              beneficiaryAddress,
+              holderAddress,
             },
             setShowEndorsementChain
           )
@@ -327,8 +332,7 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
         setFormActionNone()
       }
     }
-
-    // Handle AcceptSurrenderedForm confirmation
+    // Handle AcceptSurrenderedForm confirmation/ failure
     if (type === AssetManagementActions.AcceptReturnToIssuer) {
       const { destroyTokenState } = props
       const isConfirmed = destroyTokenState === FormState.CONFIRMED

@@ -336,7 +336,11 @@ export const showDocumentTransferMessage = (
       )}
       {(title === MessageTitle.REJECT_RETURN_TO_ISSUER_DOCUMENT_SUCCESS ||
         title === MessageTitle.REJECT_RETURN_TO_ISSUER_DOCUMENT_FAILED) && (
-        <MessageRejectReturnToIssuer isSuccess={option.isSuccess} />
+        <MessageRejectReturnToIssuer
+          isSuccess={option.isSuccess}
+          beneficiaryAddress={option.beneficiaryAddress}
+          holderAddress={option.holderAddress}
+        />
       )}
       {(title === MessageTitle.ENDORSE_BENEFICIARY_SUCCESS ||
         title === MessageTitle.TRANSFER_OWNER_SUCCESS ||
