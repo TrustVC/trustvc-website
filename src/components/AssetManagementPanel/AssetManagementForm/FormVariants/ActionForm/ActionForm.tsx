@@ -54,25 +54,30 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
 
   // Additional state variables for different form types
   const [newHolder, setNewHolder] = useState(holder || '')
-  const [newOwner, setNewOwner] = useState(holder || '')
+  const [newOwner, setNewOwner] = useState(beneficiary || '')
   const [newBeneficiary, setNewBeneficiary] = useState('')
 
   // All useEffect hooks moved outside of the switch statement
   useEffect(() => {
+    // Handle TransferHolderForm confirmation/ failure
     if (type === AssetManagementActions.TransferHolder) {
       const { holderTransferringState } = props
       const isConfirmed = holderTransferringState === FormState.CONFIRMED
+      const isFailed = holderTransferringState === FormState.ERROR
+      const msg = isConfirmed
+        ? MessageTitle.TRANSFER_HOLDER_SUCCESS
+        : MessageTitle.TRANSFER_HOLDER_FAILED
 
-      if (isConfirmed) {
-        if (refreshEndorsementChain) {
+      if (isConfirmed || isFailed) {
+        if (refreshEndorsementChain && isConfirmed) {
           refreshEndorsementChain()
         }
         showOverlay(
           showDocumentTransferMessage(
-            MessageTitle.TRANSFER_HOLDER_SUCCESS,
+            msg,
             {
-              isSuccess: true,
-              holderAddress: newHolder,
+              isSuccess: isConfirmed,
+              holderAddress: isConfirmed ? newHolder : holder,
             },
             setShowEndorsementChain
           )
@@ -80,22 +85,28 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
         setFormActionNone()
       }
     }
-    // Handle EndorseTransferForm confirmation
+    // Handle EndorseTransferForm confirmation/ failure
     if (type === AssetManagementActions.TransferOwnerHolder) {
       const { transferOwnerHoldersState } = props
       const isConfirmed = transferOwnerHoldersState === FormState.CONFIRMED
+      const isFailed = transferOwnerHoldersState === FormState.ERROR
+      const msg = isConfirmed
+        ? MessageTitle.TRANSFER_OWNER_HOLDER_SUCCESS
+        : MessageTitle.TRANSFER_OWNER_HOLDER_FAILED
+      const beneficiaryAddress = isConfirmed ? newOwner : beneficiary
+      const holderAddress = isConfirmed ? newHolder : holder
 
-      if (isConfirmed) {
-        if (refreshEndorsementChain) {
+      if (isConfirmed || isFailed) {
+        if (refreshEndorsementChain && isConfirmed) {
           refreshEndorsementChain()
         }
         showOverlay(
           showDocumentTransferMessage(
-            MessageTitle.TRANSFER_OWNER_HOLDER_SUCCESS,
+            msg,
             {
-              isSuccess: true,
-              beneficiaryAddress: newOwner,
-              holderAddress: newHolder,
+              isSuccess: isConfirmed,
+              beneficiaryAddress,
+              holderAddress,
             },
             setShowEndorsementChain
           )
@@ -103,22 +114,28 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
         setFormActionNone()
       }
     }
-
+    // Handle RejectTransferOwnerHolderForm confirmation/ failure
     if (type === AssetManagementActions.RejectTransferOwnerHolder) {
       const { rejectTransferOwnerHolderState } = props
       const isConfirmed = rejectTransferOwnerHolderState === FormState.CONFIRMED
+      const isFailed = rejectTransferOwnerHolderState === FormState.ERROR
+      const msg = isConfirmed
+        ? MessageTitle.REJECT_TRANSFER_OWNER_HOLDER_SUCCESS
+        : MessageTitle.REJECT_TRANSFER_OWNER_HOLDER_FAILED
+      const beneficiaryAddress = isConfirmed ? prevBeneficiary : beneficiary
+      const holderAddress = isConfirmed ? prevHolder : holder
 
-      if (isConfirmed) {
-        if (refreshEndorsementChain) {
+      if (isConfirmed || isFailed) {
+        if (refreshEndorsementChain && isConfirmed) {
           refreshEndorsementChain()
         }
         showOverlay(
           showDocumentTransferMessage(
-            'Holdership Rejection Success',
+            msg,
             {
-              isSuccess: true,
-              beneficiaryAddress: prevBeneficiary,
-              holderAddress: prevHolder,
+              isSuccess: isConfirmed,
+              beneficiaryAddress,
+              holderAddress,
             },
             setShowEndorsementChain
           )
@@ -126,21 +143,26 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
         setFormActionNone()
       }
     }
-
+    // Handle RejectTransferHolderForm confirmation/ failure
     if (type === AssetManagementActions.RejectTransferHolder) {
       const { rejectTransferHolderState } = props
       const isConfirmed = rejectTransferHolderState === FormState.CONFIRMED
+      const isFailed = rejectTransferHolderState === FormState.ERROR
+      const msg = isConfirmed
+        ? MessageTitle.REJECT_TRANSFER_HOLDER_SUCCESS
+        : MessageTitle.REJECT_TRANSFER_HOLDER_FAILED
+      const holderAddress = isConfirmed ? prevHolder : holder
 
-      if (isConfirmed) {
-        if (refreshEndorsementChain) {
+      if (isConfirmed || isFailed) {
+        if (refreshEndorsementChain && isConfirmed) {
           refreshEndorsementChain()
         }
         showOverlay(
           showDocumentTransferMessage(
-            'Holdership Rejection Success',
+            msg,
             {
-              isSuccess: true,
-              holderAddress: prevHolder,
+              isSuccess: isConfirmed,
+              holderAddress,
             },
             setShowEndorsementChain
           )
@@ -148,21 +170,26 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
         setFormActionNone()
       }
     }
-
+    // Handle RejectTransferOwnerForm confirmation/ failure
     if (type === AssetManagementActions.RejectTransferOwner) {
       const { rejectTransferOwnerState } = props
       const isConfirmed = rejectTransferOwnerState === FormState.CONFIRMED
+      const isFailed = rejectTransferOwnerState === FormState.ERROR
+      const msg = isConfirmed
+        ? MessageTitle.REJECT_TRANSFER_OWNER_SUCCESS
+        : MessageTitle.REJECT_TRANSFER_OWNER_FAILED
+      const beneficiaryAddress = isConfirmed ? prevBeneficiary : beneficiary
 
-      if (isConfirmed) {
-        if (refreshEndorsementChain) {
+      if (isConfirmed || isFailed) {
+        if (refreshEndorsementChain && isConfirmed) {
           refreshEndorsementChain()
         }
         showOverlay(
           showDocumentTransferMessage(
-            'Ownership Rejection Success',
+            msg,
             {
-              isSuccess: true,
-              beneficiaryAddress: prevBeneficiary,
+              isSuccess: isConfirmed,
+              beneficiaryAddress,
             },
             setShowEndorsementChain
           )
@@ -170,17 +197,21 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
         setFormActionNone()
       }
     }
-    // Handle NominateBeneficiaryForm confirmation
+    // Handle NominateBeneficiaryForm confirmation/ failure
     if (type === AssetManagementActions.NominateBeneficiary) {
       const { nominationState } = props
       const isConfirmed = nominationState === FormState.CONFIRMED
+      const isFailed = nominationState === FormState.ERROR
+      const msg = isConfirmed
+        ? MessageTitle.NOMINATE_BENEFICIARY_SUCCESS
+        : MessageTitle.NOMINATE_BENEFICIARY_FAILED
 
-      if (isConfirmed) {
+      if (isConfirmed || isFailed) {
         showOverlay(
           showDocumentTransferMessage(
-            MessageTitle.NOMINATE_BENEFICIARY_HOLDER_SUCCESS,
+            msg,
             {
-              isSuccess: true,
+              isSuccess: isConfirmed,
             },
             setShowEndorsementChain
           )
@@ -188,21 +219,26 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
         setFormActionNone()
       }
     }
-    // Handle EndorseBeneficiaryForm confirmation
+    // Handle EndorseBeneficiaryForm confirmation/ failure
     if (type === AssetManagementActions.EndorseBeneficiary) {
       const { nominee, endorseBeneficiaryState } = props
       const isConfirmed = endorseBeneficiaryState === FormState.CONFIRMED
+      const isFailed = endorseBeneficiaryState === FormState.ERROR
+      const msg = isConfirmed
+        ? MessageTitle.ENDORSE_BENEFICIARY_SUCCESS
+        : MessageTitle.ENDORSE_BENEFICIARY_FAILED
+      const beneficiaryAddress = isConfirmed ? nominee : beneficiary
 
-      if (isConfirmed) {
-        if (refreshEndorsementChain) {
+      if (isConfirmed || isFailed) {
+        if (refreshEndorsementChain && isConfirmed) {
           refreshEndorsementChain()
         }
         showOverlay(
           showDocumentTransferMessage(
-            MessageTitle.CHANGE_BENEFICIARY_SUCCESS,
+            msg,
             {
-              isSuccess: true,
-              beneficiaryAddress: nominee,
+              isSuccess: isConfirmed,
+              beneficiaryAddress,
             },
             setShowEndorsementChain
           )
@@ -210,21 +246,26 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
         setFormActionNone()
       }
     }
-    // Handle EndorseTransferForm confirmation
+    // Handle EndorseTransferForm confirmation/ failure
     if (type === AssetManagementActions.TransferOwner) {
       const { transferOwnersState } = props
       const isConfirmed = transferOwnersState === FormState.CONFIRMED
+      const isFailed = transferOwnersState === FormState.ERROR
+      const msg = isConfirmed
+        ? MessageTitle.TRANSFER_OWNER_SUCCESS
+        : MessageTitle.TRANSFER_OWNER_FAILED
+      const beneficiaryAddress = isConfirmed ? newOwner : beneficiary
 
-      if (isConfirmed) {
-        if (refreshEndorsementChain) {
+      if (isConfirmed || isFailed) {
+        if (refreshEndorsementChain && isConfirmed) {
           refreshEndorsementChain()
         }
         showOverlay(
           showDocumentTransferMessage(
-            MessageTitle.TRANSFER_OWNER_SUCCESS,
+            msg,
             {
-              isSuccess: true,
-              beneficiaryAddress: newOwner,
+              isSuccess: isConfirmed,
+              beneficiaryAddress,
             },
             setShowEndorsementChain
           )
@@ -232,39 +273,82 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
         setFormActionNone()
       }
     }
-    // Handle SurrenderForm/ReturnToIssuer confirmation
+    // Handle SurrenderForm/ReturnToIssuer confirmation/ failure
     if (type === AssetManagementActions.ReturnToIssuer) {
       const { returnToIssuerState } = props
       const isConfirmed = returnToIssuerState === FormState.CONFIRMED
+      const isFailed = returnToIssuerState === FormState.ERROR
+      const msg = isConfirmed
+        ? MessageTitle.RETURN_TO_ISSUER_DOCUMENT_SUCCESS
+        : MessageTitle.RETURN_TO_ISSUER_DOCUMENT_FAILED
+      const beneficiaryAddress = isConfirmed ? '' : beneficiary
+      const holderAddress = isConfirmed ? '' : holder
 
-      if (isConfirmed) {
-        if (refreshEndorsementChain) {
+      if (isConfirmed || isFailed) {
+        if (refreshEndorsementChain && isConfirmed) {
           refreshEndorsementChain()
         }
 
         showOverlay(
           showDocumentTransferMessage(
-            MessageTitle.RETURN_TO_ISSUER_DOCUMENT,
-            { isSuccess: true },
+            msg,
+            {
+              isSuccess: isConfirmed,
+              beneficiaryAddress,
+              holderAddress,
+            },
             setShowEndorsementChain
           )
         )
         setFormActionNone()
       }
     }
-    // Handle RejectSurrenderedForm confirmation
+    // Handle RejectSurrenderedForm confirmation/ failure
     if (type === AssetManagementActions.RejectReturnToIssuer) {
       const { restoreTokenState } = props
-      const isRestoreTokenConfirmed = restoreTokenState === FormState.CONFIRMED
+      const isConfirmed = restoreTokenState === FormState.CONFIRMED
+      const isFailed = restoreTokenState === FormState.ERROR
+      const msg = isConfirmed
+        ? MessageTitle.REJECT_RETURN_TO_ISSUER_DOCUMENT_SUCCESS
+        : MessageTitle.REJECT_RETURN_TO_ISSUER_DOCUMENT_FAILED
+      const beneficiaryAddress = isConfirmed ? beneficiary : ''
+      const holderAddress = isConfirmed ? holder : ''
 
-      if (isRestoreTokenConfirmed) {
-        if (refreshEndorsementChain) {
+      if (isConfirmed || isFailed) {
+        if (refreshEndorsementChain && isConfirmed) {
           refreshEndorsementChain()
         }
         showOverlay(
           showDocumentTransferMessage(
-            MessageTitle.REJECT_RETURN_TO_ISSUER_DOCUMENT,
-            { isSuccess: true },
+            msg,
+            {
+              isSuccess: isConfirmed,
+              beneficiaryAddress,
+              holderAddress,
+            },
+            setShowEndorsementChain
+          )
+        )
+        setFormActionNone()
+      }
+    }
+    // Handle AcceptSurrenderedForm confirmation/ failure
+    if (type === AssetManagementActions.AcceptReturnToIssuer) {
+      const { destroyTokenState } = props
+      const isConfirmed = destroyTokenState === FormState.CONFIRMED
+      const isFailed = destroyTokenState === FormState.ERROR
+      const msg = isConfirmed
+        ? MessageTitle.ACCEPT_RETURN_TO_ISSUER_DOCUMENT_SUCCESS
+        : MessageTitle.ACCEPT_RETURN_TO_ISSUER_DOCUMENT_FAILED
+
+      if (isConfirmed || isFailed) {
+        if (refreshEndorsementChain && isConfirmed) {
+          refreshEndorsementChain()
+        }
+        showOverlay(
+          showDocumentTransferMessage(
+            msg,
+            { isSuccess: isConfirmed },
             setShowEndorsementChain
           )
         )
@@ -324,7 +408,6 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
                 newValue={newHolder}
                 isEditable={isEditable}
                 onSetNewValue={setNewHolder}
-                isError={holderTransferringState === FormState.ERROR}
               />
             </div>
             <div className="editable-asset-title">
@@ -378,6 +461,7 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
         </>
       )
     }
+
     case AssetManagementActions.TransferOwner: {
       const { handleBeneficiaryTransfer, transferOwnersState } = props
       const isPendingConfirmation =
@@ -406,7 +490,6 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
                 newValue={newOwner}
                 isEditable={isEditable}
                 onSetNewValue={setNewOwner}
-                isError={transferOwnersState === FormState.ERROR}
               />
             </div>
             <div className="editable-asset-title">
@@ -497,7 +580,6 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
                 newValue={newOwner}
                 isEditable={isEditable}
                 onSetNewValue={setNewOwner}
-                isError={transferOwnerHoldersState === FormState.ERROR}
               />
             </div>
             <div className="editable-asset-title">
@@ -507,7 +589,6 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
                 newValue={newHolder}
                 isEditable={isEditable}
                 onSetNewValue={setNewHolder}
-                isError={transferOwnerHoldersState === FormState.ERROR}
               />
             </div>
             <div className="editable-asset-title">
@@ -588,7 +669,6 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
                 newValue={newBeneficiary}
                 isEditable={isEditable}
                 onSetNewValue={setNewBeneficiary}
-                isError={nominationState === FormState.ERROR}
               />
             </div>
             <div className="editable-asset-title">
@@ -649,6 +729,7 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
         </>
       )
     }
+
     case AssetManagementActions.EndorseBeneficiary: {
       const { nominee, handleBeneficiaryTransfer, endorseBeneficiaryState } =
         props
@@ -1090,6 +1171,63 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
       )
     }
 
+    case AssetManagementActions.AcceptReturnToIssuer: {
+      const { handleDestroyToken, destroyTokenState } = props
+      const isDestroyTokenPendingConfirmation =
+        destroyTokenState === FormState.PENDING_CONFIRMATION ||
+        destroyTokenState === FormState.INITIALIZED
+
+      return (
+        <>
+          <div
+            className={`justify-end action-form-frame ${isDestroyTokenPendingConfirmation ? 'opacity-[0.33] pointer-events-none' : ''}`}
+          >
+            <div className="editable-asset-title max-w-[100%] lg:max-w-[383px]">
+              <EditableAssetTitle
+                role="Remark"
+                value="Remark"
+                newValue={remark}
+                onSetNewValue={setRemark}
+                isEditable={true}
+                isRemark={true}
+                isSubmitted={isDestroyTokenPendingConfirmation}
+              />
+            </div>
+          </div>
+          <div className="form-action-btn-outer-frame">
+            <div className="form-action-btn-inner-frame">
+              <Button
+                className="!flex-1 !min-w-[188px] !max-w-[383px]"
+                onClick={setFormActionNone}
+                disabled={isDestroyTokenPendingConfirmation}
+                data-testid={'cancelSurrenderBtn'}
+                btnType="transparent"
+                size={ButtonSize.SM}
+              >
+                Cancel
+              </Button>
+
+              <ButtonIcon
+                className="!flex-1 !min-w-[188px] !max-w-[383px]"
+                onClick={() => handleDestroyToken({ remarks: remark })}
+                disabled={isDestroyTokenPendingConfirmation}
+                data-testid={'acceptReturnToIssuerBtn'}
+                size={ButtonSize.SM}
+              >
+                {isDestroyTokenPendingConfirmation ? (
+                  <div className="flex flex-row items-center gap-2">
+                    <Spinner data-testid={'loader'} fill="white" />
+                    Accepting..
+                  </div>
+                ) : (
+                  'Accept ETR Return'
+                )}
+              </ButtonIcon>
+            </div>
+          </div>
+        </>
+      )
+    }
     default:
       return null
   }
