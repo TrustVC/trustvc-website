@@ -3,6 +3,14 @@ name: Deploy Sanity Studio
 on:
   workflow_dispatch:
     inputs:
+      ref:
+        description: 'Choose branch: develop for draft preview, main for production release (same dataset)'
+        required: true
+        default: 'main'
+        type: choice
+        options:
+          - main
+          - develop
       environment:
         description: 'Deployment environment'
         required: true
@@ -27,12 +35,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          ref: main
+          ref: ${{ inputs.ref }}
 
-      - name: Use Node.js 20
+      - name: Use Node.js 22
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: 'npm'
           cache-dependency-path: trustvc-cms/package-lock.json
 
@@ -41,8 +49,9 @@ jobs:
 
       # Non-interactive deploy: token from Manage → Project → API (SANITY_AUTH_TOKEN env is required in CI)
       - name: Deploy Sanity Studio
-        run: SANITY_AUTH_TOKEN=${{ secrets.SANITY_AUTH_TOKEN }} npm run deploy
+        run: SANITY_AUTH_TOKEN=${{ secrets.SANITY_AUTH_TOKEN }} npm run deploy -- --yes --url "${SANITY_STUDIO_HOSTNAME}"
         env:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
           SANITY_STUDIO_PROJECT_ID: ${{ secrets.SANITY_STUDIO_PROJECT_ID }}
           SANITY_STUDIO_DATASET: ${{ secrets.SANITY_STUDIO_DATASET }}
+          SANITY_STUDIO_HOSTNAME: ${{ secrets.SANITY_STUDIO_HOSTNAME }}
