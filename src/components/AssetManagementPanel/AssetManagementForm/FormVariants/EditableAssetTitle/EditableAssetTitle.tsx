@@ -41,9 +41,8 @@ export const EditableAssetTitle: FunctionComponent<EditableAssetTitleProps> = ({
     // )
   }
   const [inputError, setInputError] = useState(false)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [unidentifiedAddressError, setUnidentifiedAddressError] =
-    useState(false)
+  // const [unidentifiedAddressError, setUnidentifiedAddressError] =
+  //   useState(false)
   const verifySetNewValue = (newAddressValue: string) => {
     // Update the value first
     onSetNewValue?.(newAddressValue)
@@ -135,7 +134,7 @@ export const EditableAssetTitle: FunctionComponent<EditableAssetTitleProps> = ({
             value={newValue}
             placeholder={`Input ${role}'s address`}
             onChange={event => verifySetNewValue(event.target.value)}
-            hasError={unidentifiedAddressError || inputError}
+            hasError={inputError} //add in unidentifiedAddressError once implemented
           />
         </div>
 
@@ -159,7 +158,7 @@ export const EditableAssetTitle: FunctionComponent<EditableAssetTitleProps> = ({
           <p className="small bg-alert-50">Input must be a valid address.</p>
         </div>
       )}
-      {unidentifiedAddressError && (
+      {/* {unidentifiedAddressError && (
         <div
           className="order-2 flex flex-row items-center gap-2"
           data-testid="error-msg"
@@ -169,7 +168,7 @@ export const EditableAssetTitle: FunctionComponent<EditableAssetTitleProps> = ({
             Unidentified address. Please check and input again.
           </p>
         </div>
-      )}
+      )} */}
     </>
   )
 }
