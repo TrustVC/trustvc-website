@@ -12,14 +12,32 @@ export enum MessageTitle {
   NO_MANAGE_ACCESS = 'No manage assets access',
   NO_USER_AUTHORIZATION = 'User denied account authorization', // this error message must match error message from metamask extension itself
   TRANSACTION_ERROR = 'Error - Failed transaction',
-  RETURN_TO_ISSUER_DOCUMENT = 'Return of ETR Successful',
-  ACCEPT_RETURN_TO_ISSUER_DOCUMENT = 'Return of ETR Accepted',
-  REJECT_RETURN_TO_ISSUER_DOCUMENT = 'Return of ETR Rejected',
-  CHANGE_BENEFICIARY_SUCCESS = 'Change Owner Success',
-  NOMINATE_BENEFICIARY_HOLDER_SUCCESS = 'Nomination Success',
+  // Success
+  RETURN_TO_ISSUER_DOCUMENT_SUCCESS = 'Return of ETR Successful',
+  ACCEPT_RETURN_TO_ISSUER_DOCUMENT_SUCCESS = 'Return of ETR Accepted',
+  REJECT_RETURN_TO_ISSUER_DOCUMENT_SUCCESS = 'Return of ETR Rejected',
+
+  ENDORSE_BENEFICIARY_SUCCESS = 'Endorse Beneficiary Success',
+  NOMINATE_BENEFICIARY_SUCCESS = 'Nomination Success',
   TRANSFER_HOLDER_SUCCESS = 'Transfer Holder Success',
   TRANSFER_OWNER_HOLDER_SUCCESS = 'Transfer Ownership/Holdership Success',
   TRANSFER_OWNER_SUCCESS = 'Transfer Owner Success',
+  REJECT_TRANSFER_OWNER_HOLDER_SUCCESS = 'Holdership/Ownership Rejection Success',
+  REJECT_TRANSFER_OWNER_SUCCESS = 'Ownership Rejection Success',
+  REJECT_TRANSFER_HOLDER_SUCCESS = 'Holder Rejection Success',
+  // Failed
+  TRANSFER_HOLDER_FAILED = 'Transfer Holder Failed',
+  TRANSFER_OWNER_FAILED = 'Transfer Owner Failed',
+  NOMINATE_BENEFICIARY_FAILED = 'Nomination Failed',
+  ENDORSE_BENEFICIARY_FAILED = 'Endorsement Failed',
+  TRANSFER_OWNER_HOLDER_FAILED = 'Transfer Ownership/Holdership Failed',
+  REJECT_TRANSFER_OWNER_HOLDER_FAILED = 'Holdership/Ownership Rejection Failed',
+  REJECT_TRANSFER_OWNER_FAILED = 'Ownership Rejection Failed',
+  REJECT_TRANSFER_HOLDER_FAILED = 'Holder Rejection Failed',
+
+  RETURN_TO_ISSUER_DOCUMENT_FAILED = 'Return of ETR Failed',
+  ACCEPT_RETURN_TO_ISSUER_DOCUMENT_FAILED = 'Return of ETR Acceptance Failed',
+  REJECT_RETURN_TO_ISSUER_DOCUMENT_FAILED = 'Return of ETR Rejection Failed',
 }
 
 interface ButtonCloseProps {
@@ -111,6 +129,7 @@ interface MessageProps {
   beneficiaryAddress?: string
   holderTitle?: string
   holderAddress?: string
+  isSuccess?: boolean
 }
 
 export const MessageNoMetamask: FunctionComponent = () => {
@@ -156,76 +175,94 @@ export const MessageTransactionError: FunctionComponent<MessageProps> = ({
   )
 }
 
-export const MessageSurrenderSuccess: FunctionComponent = () => {
-  return (
+export const MessageReturnToIssuer: FunctionComponent<MessageProps> = ({
+  isSuccess,
+  beneficiaryAddress,
+  holderAddress,
+}) => {
+  return isSuccess ? (
     <p className="mt-3">
       This ETR has been returned, pending acceptance by the Issuer.
     </p>
+  ) : (
+    <MessageTransfer
+      beneficiaryAddress={beneficiaryAddress}
+      holderAddress={holderAddress}
+    />
   )
 }
 
-export const AcceptSurrender: FunctionComponent = () => {
-  return (
+export const MessageAcceptReturnToIssuer: FunctionComponent<MessageProps> = ({
+  isSuccess,
+}) => {
+  return isSuccess ? (
     <p className="mt-3">
       This ETR has been taken out of circulation by the Issuer.
+    </p>
+  ) : (
+    <p className="mt-3">
+      Accept Return of ETR transaction failed. Document remains with issuer.
     </p>
   )
 }
 
-export const RejectSurrender: FunctionComponent = () => {
-  return (
-    <p className="mt-3">Return for this ETR has been rejected by the Issuer.</p>
-  )
-}
-
-export const MessageRejectSurrenderConfirmation: FunctionComponent<
-  MessageProps
-> = ({ beneficiaryAddress, holderAddress }) => {
-  return (
-    <MessageTransferSuccess
+export const MessageRejectReturnToIssuer: FunctionComponent<MessageProps> = ({
+  isSuccess,
+  beneficiaryAddress,
+  holderAddress,
+}) => {
+  return isSuccess ? (
+    <MessageTransfer
       beneficiaryTitle="Restore document to Owner:"
       beneficiaryAddress={beneficiaryAddress}
       holderTitle="and to Holder:"
       holderAddress={holderAddress}
     />
+  ) : (
+    <p className="mt-3">
+      Reject Return of ETR transaction failed. Document remains with issuer.
+    </p>
   )
 }
 
-export const MessageBeneficiarySuccess: FunctionComponent<MessageProps> = ({
+export const MessageTransferBeneficiary: FunctionComponent<MessageProps> = ({
   address,
 }) => {
-  return <MessageTransferSuccess beneficiaryAddress={address} />
+  return <MessageTransfer beneficiaryAddress={address} />
 }
 
-export const MessageHolderSuccess: FunctionComponent<MessageProps> = ({
+export const MessageTransferHolder: FunctionComponent<MessageProps> = ({
   address,
 }) => {
-  return <MessageTransferSuccess holderAddress={address} />
+  return <MessageTransfer holderAddress={address} />
 }
 
-export const MessageNominateBeneficiaryHolderSuccess: FunctionComponent =
-  () => {
-    return (
-      <p className="mt-3">
-        Document has been nominated successfully. Please notify holder to
-        execute transfer.
-      </p>
-    )
-  }
+export const MessageNominateBeneficiary: FunctionComponent<MessageProps> = ({
+  isSuccess,
+}) => {
+  return isSuccess ? (
+    <p className="mt-3">
+      Document has been nominated successfully. Please notify holder to endorse
+      transfer.
+    </p>
+  ) : (
+    <p className="mt-3">Document nomination failed. Please try again.</p>
+  )
+}
 
-export const MessageEndorseTransferSuccess: FunctionComponent<MessageProps> = ({
+export const MessageEndorseTransfer: FunctionComponent<MessageProps> = ({
   beneficiaryAddress,
   holderAddress,
 }) => {
   return (
-    <MessageTransferSuccess
+    <MessageTransfer
       beneficiaryAddress={beneficiaryAddress}
       holderAddress={holderAddress}
     />
   )
 }
 
-export const MessageTransferSuccess: FunctionComponent<MessageProps> = ({
+export const MessageTransfer: FunctionComponent<MessageProps> = ({
   beneficiaryTitle = 'Current Owner',
   beneficiaryAddress,
   holderTitle = 'Current Holder',
@@ -285,33 +322,49 @@ export const showDocumentTransferMessage = (
       {title === MessageTitle.TRANSACTION_ERROR && (
         <MessageTransactionError error={option.error} />
       )}
-      {title === MessageTitle.RETURN_TO_ISSUER_DOCUMENT && (
-        <MessageSurrenderSuccess />
+      {(title === MessageTitle.RETURN_TO_ISSUER_DOCUMENT_SUCCESS ||
+        title === MessageTitle.RETURN_TO_ISSUER_DOCUMENT_FAILED) && (
+        <MessageReturnToIssuer
+          isSuccess={option.isSuccess}
+          beneficiaryAddress={option.beneficiaryAddress}
+          holderAddress={option.holderAddress}
+        />
       )}
-      {title === MessageTitle.ACCEPT_RETURN_TO_ISSUER_DOCUMENT && (
-        <AcceptSurrender />
+      {(title === MessageTitle.ACCEPT_RETURN_TO_ISSUER_DOCUMENT_SUCCESS ||
+        title === MessageTitle.ACCEPT_RETURN_TO_ISSUER_DOCUMENT_FAILED) && (
+        <MessageAcceptReturnToIssuer isSuccess={option.isSuccess} />
       )}
-      {title === MessageTitle.REJECT_RETURN_TO_ISSUER_DOCUMENT && (
-        <RejectSurrender />
+      {(title === MessageTitle.REJECT_RETURN_TO_ISSUER_DOCUMENT_SUCCESS ||
+        title === MessageTitle.REJECT_RETURN_TO_ISSUER_DOCUMENT_FAILED) && (
+        <MessageRejectReturnToIssuer
+          isSuccess={option.isSuccess}
+          beneficiaryAddress={option.beneficiaryAddress}
+          holderAddress={option.holderAddress}
+        />
       )}
-      {(title === MessageTitle.CHANGE_BENEFICIARY_SUCCESS ||
-        title === MessageTitle.TRANSFER_OWNER_SUCCESS) && (
-        <MessageBeneficiarySuccess address={option.beneficiaryAddress} />
+      {(title === MessageTitle.ENDORSE_BENEFICIARY_SUCCESS ||
+        title === MessageTitle.TRANSFER_OWNER_SUCCESS ||
+        title === MessageTitle.TRANSFER_OWNER_FAILED ||
+        title === MessageTitle.ENDORSE_BENEFICIARY_FAILED) && (
+        <MessageTransferBeneficiary address={option.beneficiaryAddress} />
       )}
-      {title === MessageTitle.NOMINATE_BENEFICIARY_HOLDER_SUCCESS && (
-        <MessageNominateBeneficiaryHolderSuccess />
+      {(title === MessageTitle.NOMINATE_BENEFICIARY_SUCCESS ||
+        title === MessageTitle.NOMINATE_BENEFICIARY_FAILED) && (
+        <MessageNominateBeneficiary isSuccess={option.isSuccess} />
       )}
-      {title === MessageTitle.TRANSFER_HOLDER_SUCCESS && (
-        <MessageHolderSuccess address={option.holderAddress} />
+      {(title === MessageTitle.TRANSFER_HOLDER_SUCCESS ||
+        title === MessageTitle.TRANSFER_HOLDER_FAILED) && (
+        <MessageTransferHolder address={option.holderAddress} />
       )}
-      {title === MessageTitle.TRANSFER_OWNER_HOLDER_SUCCESS && (
-        <MessageEndorseTransferSuccess
+      {(title === MessageTitle.TRANSFER_OWNER_HOLDER_SUCCESS ||
+        title === MessageTitle.TRANSFER_OWNER_HOLDER_FAILED) && (
+        <MessageEndorseTransfer
           beneficiaryAddress={option.beneficiaryAddress}
           holderAddress={option.holderAddress}
         />
       )}
       {!(Object.values(MessageTitle) as string[]).includes(title) &&
-        title?.length > 0 && <MessageTransferSuccess {...option} />}
+        title?.length > 0 && <MessageTransfer {...option} />}
     </DocumentTransferMessage>
   )
 }

@@ -91,7 +91,7 @@ export interface ReturnToIssuerFormProps extends BaseActionFormProps {
 // Props for AcceptReturnToIssuerForm
 export interface AcceptReturnToIssuerFormProps extends BaseActionFormProps {
   type: AssetManagementActions.AcceptReturnToIssuer
-  handleDestroyToken: (remarks: string) => void
+  handleDestroyToken: ({ remarks }: { remarks: string }) => void
   destroyTokenState: string
 }
 

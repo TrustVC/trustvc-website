@@ -17,6 +17,7 @@ const mockRejectTransferOwner = vi.fn()
 const mockRejectTransferHolder = vi.fn()
 const mockRejectTransferOwnerHolder = vi.fn()
 const mockSetShowEndorsementChain = vi.fn()
+const mockResetProviders = vi.fn()
 
 // Mock useTokenInformationContext
 const mockUseTokenInformationContext = vi.fn()
@@ -138,6 +139,7 @@ describe('AssetManagementApplication', () => {
       rejectTransferHolderState: 'INITIALIZED',
       rejectTransferOwnerHolder: mockRejectTransferOwnerHolder,
       rejectTransferOwnerHolderState: 'INITIALIZED',
+      resetProviders: mockResetProviders,
     })
   })
 
@@ -349,6 +351,7 @@ describe('AssetManagementApplication', () => {
         rejectTransferHolderState: 'INITIALIZED',
         rejectTransferOwnerHolder: mockRejectTransferOwnerHolder,
         rejectTransferOwnerHolderState: 'INITIALIZED',
+        resetProviders: mockResetProviders,
       })
 
       render(<AssetManagementApplication {...defaultTransferableProps} />)

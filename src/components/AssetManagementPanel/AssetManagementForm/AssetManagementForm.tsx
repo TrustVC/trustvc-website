@@ -56,7 +56,7 @@ interface TransferActions {
 interface ReturnToIssuerActions {
   onReturnToIssuer: ({ remarks }: { remarks: string }) => void
   returnToIssuerState: string
-  onDestroyToken: (remarks: string) => void
+  onDestroyToken: ({ remarks }: { remarks: string }) => void
   destroyTokenState: string
   onRestoreToken: ({ remarks }: { remarks: string }) => void
   restoreTokenState: string
@@ -192,7 +192,10 @@ export const AssetManagementForm: FunctionComponent<
       rejectTransferOwnerHolderState === FormState.PENDING_CONFIRMATION ||
       rejectTransferOwnerState === FormState.PENDING_CONFIRMATION ||
       rejectTransferHolderState === FormState.PENDING_CONFIRMATION ||
-      transferOwnerHoldersState === FormState.PENDING_CONFIRMATION
+      transferOwnerHoldersState === FormState.PENDING_CONFIRMATION ||
+      destroyTokenState === FormState.PENDING_CONFIRMATION ||
+      restoreTokenState === FormState.PENDING_CONFIRMATION ||
+      returnToIssuerState === FormState.PENDING_CONFIRMATION
     )
       return
     onSetFormAction(AssetManagementActions.None)
@@ -204,6 +207,9 @@ export const AssetManagementForm: FunctionComponent<
     rejectTransferOwnerHolderState,
     rejectTransferOwnerState,
     rejectTransferHolderState,
+    destroyTokenState,
+    restoreTokenState,
+    returnToIssuerState,
     onSetFormAction,
   ])
 

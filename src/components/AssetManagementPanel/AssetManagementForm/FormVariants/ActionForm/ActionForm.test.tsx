@@ -604,7 +604,9 @@ describe('ActionForm - RejectTransferOwnerHolder', () => {
       expect(mockShowOverlay).toHaveBeenCalled()
     })
     const overlayNode = mockShowOverlay.mock.calls[0][0] as any
-    expect(overlayNode.props.title).toBe('Holdership Rejection Success')
+    expect(overlayNode.props.title).toBe(
+      'Holdership/Ownership Rejection Success'
+    )
     expect(mockSetFormActionNone).toHaveBeenCalled()
   })
 
@@ -624,7 +626,9 @@ describe('ActionForm - RejectTransferOwnerHolder', () => {
       expect(mockShowOverlay).toHaveBeenCalled()
     })
     const overlayNode = mockShowOverlay.mock.calls[0][0] as any
-    expect(overlayNode.props.title).toBe('Holdership Rejection Success')
+    expect(overlayNode.props.title).toBe(
+      'Holdership/Ownership Rejection Success'
+    )
     expect(mockSetFormActionNone).toHaveBeenCalled()
   })
 })
@@ -707,7 +711,7 @@ describe('ActionForm - RejectTransferHolder', () => {
       expect(mockShowOverlay).toHaveBeenCalled()
     })
     const overlayNode = mockShowOverlay.mock.calls[0][0] as any
-    expect(overlayNode.props.title).toBe('Holdership Rejection Success')
+    expect(overlayNode.props.title).toBe('Holder Rejection Success')
     expect(mockSetFormActionNone).toHaveBeenCalled()
   })
 })
@@ -1186,5 +1190,667 @@ describe('ActionForm - RejectReturnToIssuer', () => {
     const actionFormFrame = container.querySelector('.action-form-frame')
     expect(actionFormFrame).toHaveClass('opacity-[0.33]')
     expect(actionFormFrame).toHaveClass('pointer-events-none')
+  })
+
+  it('shows error overlay and closes action form on error', async () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.RejectReturnToIssuer}
+        handleRestoreToken={mockHandleRestoreToken}
+        restoreTokenState={FormState.ERROR}
+      />
+    )
+
+    await waitFor(() => {
+      expect(mockShowOverlay).toHaveBeenCalled()
+    })
+    const overlayNode = mockShowOverlay.mock.calls[0][0] as any
+    expect(overlayNode.props.title).toBe('Return of ETR Rejection Failed')
+    expect(overlayNode.props.isSuccess).toBe(false)
+    expect(mockSetFormActionNone).toHaveBeenCalled()
+  })
+})
+
+describe('ActionForm - AcceptReturnToIssuer', () => {
+  const mockHandleDestroyToken = vi.fn()
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('renders AcceptReturnToIssuer form correctly', () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.AcceptReturnToIssuer}
+        handleDestroyToken={mockHandleDestroyToken}
+        destroyTokenState={FormState.UNINITIALIZED}
+      />
+    )
+
+    expect(screen.getAllByText('Remark').length).toBeGreaterThan(0)
+    expect(screen.getByTestId('cancelSurrenderBtn')).toBeInTheDocument()
+    expect(screen.getByTestId('acceptReturnToIssuerBtn')).toBeInTheDocument()
+  })
+
+  it('displays only remark field', () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.AcceptReturnToIssuer}
+        handleDestroyToken={mockHandleDestroyToken}
+        destroyTokenState={FormState.UNINITIALIZED}
+      />
+    )
+
+    expect(screen.getAllByText('Remark').length).toBeGreaterThan(0)
+  })
+
+  it('enables accept button by default', () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.AcceptReturnToIssuer}
+        handleDestroyToken={mockHandleDestroyToken}
+        destroyTokenState={FormState.UNINITIALIZED}
+      />
+    )
+
+    const acceptBtn = screen.getByTestId('acceptReturnToIssuerBtn')
+    expect(acceptBtn).not.toBeDisabled()
+  })
+
+  it('calls handleDestroyToken with empty remarks when button is clicked without remark', () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.AcceptReturnToIssuer}
+        handleDestroyToken={mockHandleDestroyToken}
+        destroyTokenState={FormState.UNINITIALIZED}
+      />
+    )
+
+    const acceptBtn = screen.getByTestId('acceptReturnToIssuerBtn')
+    fireEvent.click(acceptBtn)
+
+    expect(mockHandleDestroyToken).toHaveBeenCalledWith({ remarks: '' })
+  })
+
+  it('calls handleDestroyToken with remarks when provided', () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.AcceptReturnToIssuer}
+        handleDestroyToken={mockHandleDestroyToken}
+        destroyTokenState={FormState.UNINITIALIZED}
+      />
+    )
+
+    const remarkInput = screen.getByPlaceholderText('Enter remark')
+    fireEvent.change(remarkInput, {
+      target: { value: 'Accepting return to issuer' },
+    })
+
+    const acceptBtn = screen.getByTestId('acceptReturnToIssuerBtn')
+    fireEvent.click(acceptBtn)
+
+    expect(mockHandleDestroyToken).toHaveBeenCalledWith({
+      remarks: 'Accepting return to issuer',
+    })
+  })
+
+  it('shows loading state when pending confirmation', () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.AcceptReturnToIssuer}
+        handleDestroyToken={mockHandleDestroyToken}
+        destroyTokenState={FormState.PENDING_CONFIRMATION}
+      />
+    )
+
+    expect(screen.getByText('Accepting..')).toBeInTheDocument()
+    expect(screen.getByTestId('loader')).toBeInTheDocument()
+  })
+
+  it('disables buttons when pending confirmation', () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.AcceptReturnToIssuer}
+        handleDestroyToken={mockHandleDestroyToken}
+        destroyTokenState={FormState.PENDING_CONFIRMATION}
+      />
+    )
+
+    expect(screen.getByTestId('cancelSurrenderBtn')).toBeDisabled()
+    expect(screen.getByTestId('acceptReturnToIssuerBtn')).toBeDisabled()
+  })
+
+  it('disables buttons when state is initialized', () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.AcceptReturnToIssuer}
+        handleDestroyToken={mockHandleDestroyToken}
+        destroyTokenState={FormState.INITIALIZED}
+      />
+    )
+
+    expect(screen.getByTestId('cancelSurrenderBtn')).toBeDisabled()
+    expect(screen.getByTestId('acceptReturnToIssuerBtn')).toBeDisabled()
+  })
+
+  it('calls setFormActionNone when cancel button is clicked', () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.AcceptReturnToIssuer}
+        handleDestroyToken={mockHandleDestroyToken}
+        destroyTokenState={FormState.UNINITIALIZED}
+      />
+    )
+
+    const cancelBtn = screen.getByTestId('cancelSurrenderBtn')
+    fireEvent.click(cancelBtn)
+
+    expect(mockSetFormActionNone).toHaveBeenCalled()
+  })
+
+  it('shows success overlay and closes action form on confirmation', async () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.AcceptReturnToIssuer}
+        handleDestroyToken={mockHandleDestroyToken}
+        destroyTokenState={FormState.CONFIRMED}
+      />
+    )
+
+    await waitFor(() => {
+      expect(mockShowOverlay).toHaveBeenCalled()
+    })
+    const overlayNode = mockShowOverlay.mock.calls[0][0] as any
+    expect(overlayNode.props.title).toBe('Return of ETR Accepted')
+    expect(mockSetFormActionNone).toHaveBeenCalled()
+  })
+
+  it('shows error overlay and closes action form on error', async () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.AcceptReturnToIssuer}
+        handleDestroyToken={mockHandleDestroyToken}
+        destroyTokenState={FormState.ERROR}
+      />
+    )
+
+    await waitFor(() => {
+      expect(mockShowOverlay).toHaveBeenCalled()
+    })
+    const overlayNode = mockShowOverlay.mock.calls[0][0] as any
+    expect(overlayNode.props.title).toBe('Return of ETR Acceptance Failed')
+    expect(overlayNode.props.isSuccess).toBe(false)
+    expect(mockSetFormActionNone).toHaveBeenCalled()
+  })
+
+  it('displays Accept ETR Return button text correctly', () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.AcceptReturnToIssuer}
+        handleDestroyToken={mockHandleDestroyToken}
+        destroyTokenState={FormState.UNINITIALIZED}
+      />
+    )
+
+    expect(screen.getByText('Accept ETR Return')).toBeInTheDocument()
+  })
+
+  it('applies correct opacity and pointer-events when pending', () => {
+    const { container } = renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.AcceptReturnToIssuer}
+        handleDestroyToken={mockHandleDestroyToken}
+        destroyTokenState={FormState.PENDING_CONFIRMATION}
+      />
+    )
+
+    const actionFormFrame = container.querySelector('.action-form-frame')
+    expect(actionFormFrame).toHaveClass('opacity-[0.33]')
+    expect(actionFormFrame).toHaveClass('pointer-events-none')
+  })
+})
+
+describe('ActionForm - NominateBeneficiary', () => {
+  const mockHandleNomination = vi.fn()
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('renders NominateBeneficiary form correctly', () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.NominateBeneficiary}
+        handleNomination={mockHandleNomination}
+        nominationState={FormState.UNINITIALIZED}
+      />
+    )
+
+    expect(screen.getByText('Owner')).toBeInTheDocument()
+    expect(screen.getByText('Holder')).toBeInTheDocument()
+    expect(screen.getAllByText('Remark').length).toBeGreaterThan(0)
+    expect(screen.getByTestId('cancelNominationBtn')).toBeInTheDocument()
+    expect(screen.getByTestId('nominationBtn')).toBeInTheDocument()
+  })
+
+  it('disables nominate button when beneficiary address is invalid', () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.NominateBeneficiary}
+        handleNomination={mockHandleNomination}
+        nominationState={FormState.UNINITIALIZED}
+      />
+    )
+
+    const nominateBtn = screen.getByTestId('nominationBtn')
+    expect(nominateBtn).toBeDisabled()
+  })
+
+  it('enables nominate button when valid beneficiary address is entered', async () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.NominateBeneficiary}
+        handleNomination={mockHandleNomination}
+        nominationState={FormState.UNINITIALIZED}
+      />
+    )
+
+    const inputs = screen.getAllByRole('textbox')
+    const beneficiaryInput = inputs[0]
+    const newBeneficiaryAddress = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd'
+
+    fireEvent.change(beneficiaryInput, {
+      target: { value: newBeneficiaryAddress },
+    })
+
+    await waitFor(() => {
+      const nominateBtn = screen.getByTestId('nominationBtn')
+      expect(nominateBtn).not.toBeDisabled()
+    })
+  })
+
+  it('prevents nomination when new beneficiary is same as current beneficiary', async () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.NominateBeneficiary}
+        handleNomination={mockHandleNomination}
+        nominationState={FormState.UNINITIALIZED}
+      />
+    )
+
+    const inputs = screen.getAllByRole('textbox')
+    const beneficiaryInput = inputs[0]
+
+    fireEvent.change(beneficiaryInput, {
+      target: { value: defaultProps.beneficiary },
+    })
+
+    await waitFor(() => {
+      const nominateBtn = screen.getByTestId('nominationBtn')
+      expect(nominateBtn).toBeDisabled()
+    })
+  })
+
+  it('calls handleNomination with correct parameters', async () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.NominateBeneficiary}
+        handleNomination={mockHandleNomination}
+        nominationState={FormState.UNINITIALIZED}
+      />
+    )
+
+    const inputs = screen.getAllByRole('textbox')
+    const beneficiaryInput = inputs[0]
+    const newBeneficiaryAddress = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd'
+
+    fireEvent.change(beneficiaryInput, {
+      target: { value: newBeneficiaryAddress },
+    })
+
+    await waitFor(() => {
+      const nominateBtn = screen.getByTestId('nominationBtn')
+      fireEvent.click(nominateBtn)
+    })
+
+    expect(mockHandleNomination).toHaveBeenCalledWith({
+      newBeneficiaryAddress: newBeneficiaryAddress,
+      remarks: '',
+    })
+  })
+
+  it('shows loading state when pending confirmation', () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.NominateBeneficiary}
+        handleNomination={mockHandleNomination}
+        nominationState={FormState.PENDING_CONFIRMATION}
+      />
+    )
+
+    expect(screen.getByText('Nominating..')).toBeInTheDocument()
+    expect(screen.getByTestId('loader')).toBeInTheDocument()
+  })
+
+  it('disables buttons when pending confirmation', () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.NominateBeneficiary}
+        handleNomination={mockHandleNomination}
+        nominationState={FormState.PENDING_CONFIRMATION}
+      />
+    )
+
+    expect(screen.getByTestId('cancelNominationBtn')).toBeDisabled()
+    expect(screen.getByTestId('nominationBtn')).toBeDisabled()
+  })
+
+  it('calls setFormActionNone when cancel button is clicked', () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.NominateBeneficiary}
+        handleNomination={mockHandleNomination}
+        nominationState={FormState.UNINITIALIZED}
+      />
+    )
+
+    const cancelBtn = screen.getByTestId('cancelNominationBtn')
+    fireEvent.click(cancelBtn)
+
+    expect(mockSetFormActionNone).toHaveBeenCalled()
+  })
+
+  it('shows success overlay and closes action form on confirmation', async () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.NominateBeneficiary}
+        handleNomination={mockHandleNomination}
+        nominationState={FormState.CONFIRMED}
+      />
+    )
+
+    await waitFor(() => {
+      expect(mockShowOverlay).toHaveBeenCalled()
+    })
+    const overlayNode = mockShowOverlay.mock.calls[0][0] as any
+    expect(overlayNode.props.title).toBe('Nomination Success')
+    expect(mockSetFormActionNone).toHaveBeenCalled()
+  })
+
+  it('shows error overlay and closes action form on error', async () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.NominateBeneficiary}
+        handleNomination={mockHandleNomination}
+        nominationState={FormState.ERROR}
+      />
+    )
+
+    await waitFor(() => {
+      expect(mockShowOverlay).toHaveBeenCalled()
+    })
+    const overlayNode = mockShowOverlay.mock.calls[0][0] as any
+    expect(overlayNode.props.title).toBe('Nomination Failed')
+    expect(overlayNode.props.isSuccess).toBe(false)
+    expect(mockSetFormActionNone).toHaveBeenCalled()
+  })
+
+  it('includes remark when provided', async () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.NominateBeneficiary}
+        handleNomination={mockHandleNomination}
+        nominationState={FormState.UNINITIALIZED}
+      />
+    )
+
+    const inputs = screen.getAllByRole('textbox')
+    const beneficiaryInput = inputs[0]
+    const newBeneficiaryAddress = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd'
+
+    fireEvent.change(beneficiaryInput, {
+      target: { value: newBeneficiaryAddress },
+    })
+
+    const remarkInput = screen.getByPlaceholderText('Enter remark')
+    fireEvent.change(remarkInput, { target: { value: 'Nomination remark' } })
+
+    await waitFor(() => {
+      const nominateBtn = screen.getByTestId('nominationBtn')
+      fireEvent.click(nominateBtn)
+    })
+
+    expect(mockHandleNomination).toHaveBeenCalledWith({
+      newBeneficiaryAddress: newBeneficiaryAddress,
+      remarks: 'Nomination remark',
+    })
+  })
+})
+
+describe('ActionForm - EndorseBeneficiary', () => {
+  const mockHandleBeneficiaryTransfer = vi.fn()
+  const nomineeAddress = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd'
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('renders EndorseBeneficiary form correctly', () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.EndorseBeneficiary}
+        nominee={nomineeAddress}
+        handleBeneficiaryTransfer={mockHandleBeneficiaryTransfer}
+        endorseBeneficiaryState={FormState.UNINITIALIZED}
+      />
+    )
+
+    expect(screen.getByText('Nominee')).toBeInTheDocument()
+    expect(screen.getByText('Holder')).toBeInTheDocument()
+    expect(screen.getAllByText('Remark').length).toBeGreaterThan(0)
+    expect(screen.getByTestId('cancelEndorseBtn')).toBeInTheDocument()
+    expect(screen.getByTestId('endorseBtn')).toBeInTheDocument()
+  })
+
+  it('displays nominee address as non-editable', () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.EndorseBeneficiary}
+        nominee={nomineeAddress}
+        handleBeneficiaryTransfer={mockHandleBeneficiaryTransfer}
+        endorseBeneficiaryState={FormState.UNINITIALIZED}
+      />
+    )
+
+    expect(screen.getAllByText(nomineeAddress).length).toBeGreaterThan(0)
+    expect(screen.getAllByText(defaultProps.holder).length).toBeGreaterThan(0)
+  })
+
+  it('enables endorse button when nominee is valid', () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.EndorseBeneficiary}
+        nominee={nomineeAddress}
+        handleBeneficiaryTransfer={mockHandleBeneficiaryTransfer}
+        endorseBeneficiaryState={FormState.UNINITIALIZED}
+      />
+    )
+
+    const endorseBtn = screen.getByTestId('endorseBtn')
+    expect(endorseBtn).not.toBeDisabled()
+  })
+
+  it('disables endorse button when nominee is invalid', () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.EndorseBeneficiary}
+        nominee="invalid-address"
+        handleBeneficiaryTransfer={mockHandleBeneficiaryTransfer}
+        endorseBeneficiaryState={FormState.UNINITIALIZED}
+      />
+    )
+
+    const endorseBtn = screen.getByTestId('endorseBtn')
+    expect(endorseBtn).toBeDisabled()
+  })
+
+  it('calls handleBeneficiaryTransfer with correct parameters', () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.EndorseBeneficiary}
+        nominee={nomineeAddress}
+        handleBeneficiaryTransfer={mockHandleBeneficiaryTransfer}
+        endorseBeneficiaryState={FormState.UNINITIALIZED}
+      />
+    )
+
+    const endorseBtn = screen.getByTestId('endorseBtn')
+    fireEvent.click(endorseBtn)
+
+    expect(mockHandleBeneficiaryTransfer).toHaveBeenCalledWith({
+      newBeneficiaryAddress: nomineeAddress,
+      remarks: '',
+    })
+  })
+
+  it('shows loading state when pending confirmation', () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.EndorseBeneficiary}
+        nominee={nomineeAddress}
+        handleBeneficiaryTransfer={mockHandleBeneficiaryTransfer}
+        endorseBeneficiaryState={FormState.PENDING_CONFIRMATION}
+      />
+    )
+
+    expect(screen.getByText('Endorsing transfer..')).toBeInTheDocument()
+    expect(screen.getByTestId('loader')).toBeInTheDocument()
+  })
+
+  it('disables buttons when pending confirmation', () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.EndorseBeneficiary}
+        nominee={nomineeAddress}
+        handleBeneficiaryTransfer={mockHandleBeneficiaryTransfer}
+        endorseBeneficiaryState={FormState.PENDING_CONFIRMATION}
+      />
+    )
+
+    expect(screen.getByTestId('cancelEndorseBtn')).toBeDisabled()
+    expect(screen.getByTestId('endorseBtn')).toBeDisabled()
+  })
+
+  it('calls setFormActionNone when cancel button is clicked', () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.EndorseBeneficiary}
+        nominee={nomineeAddress}
+        handleBeneficiaryTransfer={mockHandleBeneficiaryTransfer}
+        endorseBeneficiaryState={FormState.UNINITIALIZED}
+      />
+    )
+
+    const cancelBtn = screen.getByTestId('cancelEndorseBtn')
+    fireEvent.click(cancelBtn)
+
+    expect(mockSetFormActionNone).toHaveBeenCalled()
+  })
+
+  it('shows success overlay and closes action form on confirmation', async () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.EndorseBeneficiary}
+        nominee={nomineeAddress}
+        handleBeneficiaryTransfer={mockHandleBeneficiaryTransfer}
+        endorseBeneficiaryState={FormState.CONFIRMED}
+      />
+    )
+
+    await waitFor(() => {
+      expect(mockShowOverlay).toHaveBeenCalled()
+    })
+    const overlayNode = mockShowOverlay.mock.calls[0][0] as any
+    expect(overlayNode.props.title).toBe('Endorse Beneficiary Success')
+    expect(mockSetFormActionNone).toHaveBeenCalled()
+  })
+
+  it('shows error overlay and closes action form on error', async () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.EndorseBeneficiary}
+        nominee={nomineeAddress}
+        handleBeneficiaryTransfer={mockHandleBeneficiaryTransfer}
+        endorseBeneficiaryState={FormState.ERROR}
+      />
+    )
+
+    await waitFor(() => {
+      expect(mockShowOverlay).toHaveBeenCalled()
+    })
+    const overlayNode = mockShowOverlay.mock.calls[0][0] as any
+    expect(overlayNode.props.title).toBe('Endorsement Failed')
+    expect(overlayNode.props.isSuccess).toBe(false)
+    expect(mockSetFormActionNone).toHaveBeenCalled()
+  })
+
+  it('includes remark when provided', () => {
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.EndorseBeneficiary}
+        nominee={nomineeAddress}
+        handleBeneficiaryTransfer={mockHandleBeneficiaryTransfer}
+        endorseBeneficiaryState={FormState.UNINITIALIZED}
+      />
+    )
+
+    const remarkInput = screen.getByPlaceholderText('Enter remark')
+    fireEvent.change(remarkInput, {
+      target: { value: 'Endorsement remark' },
+    })
+
+    const endorseBtn = screen.getByTestId('endorseBtn')
+    fireEvent.click(endorseBtn)
+
+    expect(mockHandleBeneficiaryTransfer).toHaveBeenCalledWith({
+      newBeneficiaryAddress: nomineeAddress,
+      remarks: 'Endorsement remark',
+    })
   })
 })
