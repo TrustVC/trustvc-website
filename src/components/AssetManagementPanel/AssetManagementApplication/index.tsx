@@ -92,6 +92,7 @@ export const AssetManagementApplication: FunctionComponent<
     // reject transfer owner holder
     rejectTransferOwnerHolder,
     rejectTransferOwnerHolderState,
+    resetProviders,
   } = useTokenInformationContext()
   const [assetManagementAction, setAssetManagementAction] =
     useState<AssetManagementActions>(AssetManagementActions.None)
@@ -118,7 +119,9 @@ export const AssetManagementApplication: FunctionComponent<
         : v5RoleHash.RestorerRole,
   })
 
-  const onDestroyToken = (remarks: string = '0x') => {
+  const onDestroyToken = (
+    { remarks }: { remarks: string } = { remarks: '0x' }
+  ) => {
     destroyToken({ tokenId, remarks })
   }
 
@@ -130,9 +133,10 @@ export const AssetManagementApplication: FunctionComponent<
 
   const onSetFormAction = useCallback(
     (assetManagementActions: AssetManagementActions) => {
+      resetProviders()
       setAssetManagementAction(assetManagementActions)
     },
-    [setAssetManagementAction]
+    [setAssetManagementAction, resetProviders]
   )
 
   // Initialize the token information context with tokenId and tokenRegistryAddress

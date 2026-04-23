@@ -16,7 +16,6 @@ interface EditableAssetTitleProps {
   isEditable: boolean
   newValue?: string
   onSetNewValue?: (newValue: string) => void
-  isError?: boolean
   isRemark?: boolean
   isSubmitted?: boolean
 }
@@ -27,7 +26,6 @@ export const EditableAssetTitle: FunctionComponent<EditableAssetTitleProps> = ({
   newValue,
   isEditable,
   onSetNewValue,
-  isError: error,
   isRemark,
   isSubmitted,
 }) => {
@@ -43,6 +41,8 @@ export const EditableAssetTitle: FunctionComponent<EditableAssetTitleProps> = ({
     // )
   }
   const [inputError, setInputError] = useState(false)
+  // const [unidentifiedAddressError, setUnidentifiedAddressError] =
+  //   useState(false)
   const verifySetNewValue = (newAddressValue: string) => {
     // Update the value first
     onSetNewValue?.(newAddressValue)
@@ -134,7 +134,7 @@ export const EditableAssetTitle: FunctionComponent<EditableAssetTitleProps> = ({
             value={newValue}
             placeholder={`Input ${role}'s address`}
             onChange={event => verifySetNewValue(event.target.value)}
-            hasError={error || inputError}
+            hasError={inputError} //add in unidentifiedAddressError once implemented
           />
         </div>
 
@@ -158,7 +158,7 @@ export const EditableAssetTitle: FunctionComponent<EditableAssetTitleProps> = ({
           <p className="small bg-alert-50">Input must be a valid address.</p>
         </div>
       )}
-      {error && (
+      {/* {unidentifiedAddressError && (
         <div
           className="order-2 flex flex-row items-center gap-2"
           data-testid="error-msg"
@@ -168,7 +168,7 @@ export const EditableAssetTitle: FunctionComponent<EditableAssetTitleProps> = ({
             Unidentified address. Please check and input again.
           </p>
         </div>
-      )}
+      )} */}
     </>
   )
 }

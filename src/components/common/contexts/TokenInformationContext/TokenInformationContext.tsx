@@ -56,6 +56,7 @@ interface ITokenInformationContext {
   destroyTokenState: ContractFunctionState
   restoreToken: (...args: any[]) => Promise<any>
   restoreTokenState: ContractFunctionState
+  resetProviders: () => void
 }
 
 const contractFunctionStub: any = () => {
@@ -89,6 +90,7 @@ export const TokenInformationContext = createContext<ITokenInformationContext>({
   destroyTokenState: 'UNINITIALIZED',
   restoreToken: contractFunctionStub,
   restoreTokenState: 'UNINITIALIZED',
+  resetProviders: () => {},
 })
 
 interface TokenInformationContextProviderProps {
@@ -389,6 +391,7 @@ export const TokenInformationContextProvider: FunctionComponent<
         resetStates,
         restoreToken,
         restoreTokenState,
+        resetProviders,
       }}
     >
       {children}
