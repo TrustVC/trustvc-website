@@ -182,7 +182,11 @@ describe('AssetManagementApplication', () => {
       render(<AssetManagementApplication {...defaultTransferableProps} />)
 
       await waitFor(() => {
-        expect(mockInitialize).toHaveBeenCalledWith('0xTokenRegistry', '0x123')
+        expect(mockInitialize).toHaveBeenCalledWith(
+          '0xTokenRegistry',
+          '0x123',
+          undefined
+        )
       })
     })
 

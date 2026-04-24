@@ -33,7 +33,21 @@ export const getChainInfoFromNetworkName = (networkName: string): chainInfo => {
 export const getSupportedChainIds = (): CHAIN_ID[] => {
   const isLocal = window.location.host.indexOf('localhost') > -1
   const isTestEnv = process.env.NODE_ENV === 'test'
-  const networks = IS_DEVELOPMENT ? [...TEST_NETWORKS] : [...MAIN_NETWORKS]
+  const envNetworkType = (
+    (import.meta.env?.VITE_NETWORK_TYPE as string) || ''
+  ).toLowerCase()
+
+  // Explicitly handle both 'mainnet' and 'testnet', fall back to IS_DEVELOPMENT only when empty
+  let networks: CHAIN_ID[]
+  if (envNetworkType === 'mainnet') {
+    networks = [...MAIN_NETWORKS]
+  } else if (envNetworkType === 'testnet') {
+    networks = [...TEST_NETWORKS]
+  } else {
+    // Empty/unset: use IS_DEVELOPMENT heuristic
+    networks = IS_DEVELOPMENT ? [...TEST_NETWORKS] : [...MAIN_NETWORKS]
+  }
+
   if (isTestEnv || isLocal) networks.push(CHAIN_ID.local)
   return networks
 }

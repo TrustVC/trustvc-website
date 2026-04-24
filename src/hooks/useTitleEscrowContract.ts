@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { providers, Signer } from 'ethers'
+import { providers, Signer, utils } from 'ethers'
 import {
   getTitleEscrowAddress,
   v5Contracts,
@@ -41,10 +41,20 @@ export const useTitleEscrowContract = (
           ? providerOrSigner.provider
           : providerOrSigner
       ) as providers.Provider
-      const titleEscrowOwner = await tokenRegistry.ownerOf(tokenId)
-      setDocumentOwner(titleEscrowOwner)
+      // Skip v6 contract call (tokenRegistry.ownerOf uses v6 internally which hits Infura)
+      // Use v5 provider.call directly with the correct RPC
+      const iface = new utils.Interface([
+        'function ownerOf(uint256) view returns (address)',
+      ])
+      const data = iface.encodeFunctionData('ownerOf', [tokenId])
+      const contractAddr =
+        (tokenRegistry as any).target ?? (tokenRegistry as any).address
+      if (!contractAddr) throw new Error('Token registry address unavailable')
+      const result = await provider.call({ to: contractAddr, data })
+      if (!result || result === '0x') throw new Error('Token not found')
+      const [titleEscrowOwner] = iface.decodeFunctionResult('ownerOf', result)
       const address = await getTitleEscrowAddress(
-        tokenRegistry.target,
+        contractAddr,
         tokenId,
         provider,
         {
@@ -60,12 +70,14 @@ export const useTitleEscrowContract = (
           providerOrSigner as any
         )
       }
+      setDocumentOwner(titleEscrowOwner)
       setTitleEscrow(instance)
       setTitleEscrowAddress(address)
     } catch (error) {
-      console.log(error)
+      console.error(error)
       setTitleEscrow(undefined)
       setTitleEscrowAddress(undefined)
+      setDocumentOwner(undefined)
     }
   }, [providerOrSigner, tokenId, tokenRegistry, tokenRegistryVersion])
 
