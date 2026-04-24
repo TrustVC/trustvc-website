@@ -12,24 +12,34 @@ const ResolvedName: React.FC<{
   address?: string
   resolve: (a: string) => Promise<{ name: string; source: string } | null>
 }> = ({ address, resolve }) => {
-  const [name, setName] = useState<string | null>(null)
+  const [resolved, setResolved] = useState<{
+    name: string
+    source: string
+  } | null>(null)
 
   useEffect(() => {
     if (!address || address === '_') {
-      setName(null)
+      setResolved(null)
       return
     }
     let cancelled = false
     resolve(address)
-      .then(r => !cancelled && setName(r?.name ?? null))
-      .catch(() => !cancelled && setName(null))
+      .then(r => !cancelled && setResolved(r))
+      .catch(() => !cancelled && setResolved(null))
     return () => {
       cancelled = true
     }
   }, [address, resolve])
 
-  if (!name) return null
-  return <div className="organization">{name}</div>
+  if (!resolved) return null
+  return (
+    <div className="organization">
+      {resolved.name}{' '}
+      <span style={{ opacity: 0.6, fontSize: '0.9em' }}>
+        (Resolved by: {resolved.source})
+      </span>
+    </div>
+  )
 }
 
 interface EndorsementChainProps {

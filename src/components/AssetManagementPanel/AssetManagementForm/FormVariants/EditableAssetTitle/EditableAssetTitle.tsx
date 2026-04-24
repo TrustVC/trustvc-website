@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState } from 'react'
+import React, { FunctionComponent, useState, useEffect } from 'react'
 import { useOverlayContext } from '../../../../common/contexts/OverlayContext'
 import AddressBookOverlay from '../../../../common/AddressBookOverlay/AddressBookOverlay'
 import { useTokenRegistryVersion } from '../../../../../hooks/useTokenRegistryVersion'
@@ -10,6 +10,7 @@ import { ButtonIcon, ButtonSize } from '../../../../common/Button'
 import { isEthereumAddress } from '../../../../../utils/helper'
 import InfoIcon from '../../../../icons/info'
 import Book from '@/components/icons/Book'
+import { useAddressBook } from '../../../../../hooks/useAddressBook'
 
 interface EditableAssetTitleProps {
   role: string
@@ -32,7 +33,28 @@ export const EditableAssetTitle: FunctionComponent<EditableAssetTitleProps> = ({
 }) => {
   const { showOverlay, closeOverlay } = useOverlayContext()
   const tokenRegistryVersion = useTokenRegistryVersion()
+  const { resolveAddress } = useAddressBook()
   const [inputError, setInputError] = useState(false)
+  const [resolved, setResolved] = useState<{
+    name: string
+    source: string
+  } | null>(null)
+  useEffect(() => {
+    // Resolve for both editable (newValue) and non-editable (value) cases
+    const addressToResolve = isEditable ? newValue : value
+    if (!addressToResolve || !isEthereumAddress(addressToResolve)) {
+      setResolved(null)
+      return
+    }
+    let cancelled = false
+    resolveAddress(addressToResolve)
+      .then(r => !cancelled && setResolved(r))
+      .catch(() => !cancelled && setResolved(null))
+    return () => {
+      cancelled = true
+    }
+  }, [newValue, value, isEditable, resolveAddress])
+
   const verifySetNewValue = (newAddressValue: string) => {
     // Update the value first
     onSetNewValue?.(newAddressValue)
@@ -113,6 +135,14 @@ export const EditableAssetTitle: FunctionComponent<EditableAssetTitleProps> = ({
     return (
       <>
         <p className={`text-asset-title`}>{role ? `${role}:` : ''}</p>
+        {resolved && (
+          <>
+            <span className="vr-title-col-name">{resolved.name}</span>
+            <span className="vr-title-col-resolved">
+              (Resolved by: {resolved.source})
+            </span>
+          </>
+        )}
         <ExternalLinkEtherscanAddress
           name={value || ''}
           address={value || ''}
@@ -148,6 +178,14 @@ export const EditableAssetTitle: FunctionComponent<EditableAssetTitleProps> = ({
           </ButtonIcon>
         </div>
       </div>
+      {resolved && (
+        <div className="flex flex-col gap-1 mt-1">
+          <span className="vr-title-col-name">{resolved.name}</span>
+          <span className="vr-title-col-resolved">
+            (Resolved by: {resolved.source})
+          </span>
+        </div>
+      )}
       {inputError && (
         <div
           className="order-2 flex flex-row items-center gap-2"
