@@ -1,4 +1,5 @@
-import React, { FunctionComponent } from 'react'
+import React, { FunctionComponent, useEffect, useState } from 'react'
+import { useAddressBook } from '../../../../../hooks/useAddressBook'
 import { useOverlayContext } from '../../../../common/contexts/OverlayContext'
 import {
   MessageTitle,
@@ -63,6 +64,32 @@ export const ActionSelectionForm: FunctionComponent<
   canRejectOwnerTransfer,
   setShowEndorsementChain,
 }) => {
+  const { resolveAddress } = useAddressBook()
+  const [beneficiaryResolved, setBeneficiaryResolved] = useState<{
+    name: string
+    source: string
+  } | null>(null)
+  const [holderResolved, setHolderResolved] = useState<{
+    name: string
+    source: string
+  } | null>(null)
+
+  useEffect(() => {
+    if (beneficiary) {
+      resolveAddress(beneficiary)
+        .then(setBeneficiaryResolved)
+        .catch(() => setBeneficiaryResolved(null))
+    }
+  }, [beneficiary, resolveAddress])
+
+  useEffect(() => {
+    if (holder) {
+      resolveAddress(holder)
+        .then(setHolderResolved)
+        .catch(() => setHolderResolved(null))
+    }
+  }, [holder, resolveAddress])
+
   const canManage =
     canTransferHolder ||
     canTransferBeneficiary ||
@@ -99,17 +126,29 @@ export const ActionSelectionForm: FunctionComponent<
         <div className="vr-title-info">
           <div className="vr-title-col">
             <span className="vr-title-col-label">Owner:</span>
-            <span className="vr-title-col-name">{'Organisation A'}</span>
-            <span className="vr-title-col-addr">
-              {beneficiary ?? '0x28F7aB32C521D13F2E6980d072Ca7CA493020145'}
-            </span>
+            {beneficiaryResolved && (
+              <>
+                <span className="vr-title-col-name">
+                  {beneficiaryResolved.name}
+                </span>
+                <span className="vr-title-col-resolved">
+                  (Resolved by: {beneficiaryResolved.source})
+                </span>
+              </>
+            )}
+            <span className="vr-title-col-addr">{beneficiary ?? ''}</span>
           </div>
           <div className="vr-title-col">
             <span className="vr-title-col-label">Holder:</span>
-            <span className="vr-title-col-name">{'Organisation A'}</span>
-            <span className="vr-title-col-addr">
-              {holder ?? '0x28F7aB32C521D13F2E6980d072Ca7CA493020145'}
-            </span>
+            {holderResolved && (
+              <>
+                <span className="vr-title-col-name">{holderResolved.name}</span>
+                <span className="vr-title-col-resolved">
+                  (Resolved by: {holderResolved.source})
+                </span>
+              </>
+            )}
+            <span className="vr-title-col-addr">{holder ?? ''}</span>
           </div>
           <div className="vr-title-col" />
         </div>

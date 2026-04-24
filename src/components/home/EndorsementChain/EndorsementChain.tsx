@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Overlay from '../../common/Overlay'
 import { EndorsementChain } from '@trustvc/trustvc'
 import { format } from 'date-fns'
@@ -6,6 +6,23 @@ import { EndorsementChainStatus } from './useEndorsementChain'
 import Spinner from '../../icons/Spinner'
 import { TokenRegistryVersion } from '../VerifySection/useVerify'
 import { Button } from '../../common/Button'
+import { useAddressBook } from '../../../hooks/useAddressBook'
+
+const ResolvedName: React.FC<{ address?: string }> = ({ address }) => {
+  const { resolveAddress } = useAddressBook()
+  const [name, setName] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (address && address !== '_') {
+      resolveAddress(address)
+        .then(result => setName(result?.name ?? null))
+        .catch(() => setName(null))
+    }
+  }, [address, resolveAddress])
+
+  if (!name) return null
+  return <div className="organization">{name}</div>
+}
 
 interface EndorsementChainProps {
   endorsementChain?: any
@@ -309,14 +326,22 @@ const EndorsementChainLayout: React.FC<EndorsementChainProps> = ({
                           <div className="wallet-address">
                             {data.isNewBeneficiary ? data.beneficiary : '_'}
                           </div>
-                          <div className="organization">Organisation A</div>
+                          <ResolvedName
+                            address={
+                              data.isNewBeneficiary
+                                ? data.beneficiary
+                                : undefined
+                            }
+                          />
                         </div>
                         <div className="column">
                           <div className="subheader">Holder</div>
                           <div className="wallet-address">
                             {data.isNewHolder ? data.holder : '_'}
                           </div>
-                          <div className="organization">Organisation B</div>
+                          <ResolvedName
+                            address={data.isNewHolder ? data.holder : undefined}
+                          />
                         </div>
                         <div className="column column-2-items">
                           <div className="subheader">

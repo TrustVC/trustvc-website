@@ -15,8 +15,12 @@ import {
 import { useProviderContext } from '../providerContext'
 import { useTokenRegistryContract } from '../../../../hooks/useTokenRegistryContract'
 import { useTitleEscrowContract } from '../../../../hooks/useTitleEscrowContract'
-import { BurnAddress } from '../../../../utils/chain-info'
+import { BurnAddress, ChainInfo } from '../../../../utils/chain-info'
 import { useTokenRegistryVersion } from '../../../../hooks/useTokenRegistryVersion'
+import { providers } from 'ethers'
+import { CHAIN_ID } from '@trustvc/trustvc'
+import { getRpcUrl } from '../../../../utils/helper'
+import { getChainInfo } from '../../../../utils/chain-utils'
 
 interface ITokenInformationContext {
   tokenRegistryAddress?: string
@@ -47,7 +51,11 @@ interface ITokenInformationContext {
   rejectTransferOwnerHolderError?: Error
   rejectTransferOwnerHolderErrorMessage?: string
   rejectTransferOwnerHolderState: ContractFunctionState
-  initialize: (tokenRegistryAddress: string, tokenId: string) => void
+  initialize: (
+    tokenRegistryAddress: string,
+    tokenId: string,
+    chainId?: string
+  ) => void
   isReturnedToIssuer: boolean
   isTokenBurnt: boolean
   isTitleEscrow?: boolean
@@ -102,13 +110,45 @@ export const TokenInformationContextProvider: FunctionComponent<
 > = ({ children }) => {
   const [tokenId, setTokenId] = useState<string>()
   const [tokenRegistryAddress, setTokenRegistryAddress] = useState<string>()
+  const [documentChainId, setDocumentChainId] = useState<string>()
   const { providerOrSigner } = useProviderContext()
+
+  // Create a dedicated v5 provider for the document's chain
+  const [documentProvider, setDocumentProvider] = useState<providers.Provider>()
+  useEffect(() => {
+    if (!documentChainId) {
+      setDocumentProvider(undefined)
+      return
+    }
+    const chainNum = Number(documentChainId)
+    const rpcUrl =
+      getRpcUrl(documentChainId) ??
+      (ChainInfo as Record<number, { rpcUrl?: string }>)[chainNum]?.rpcUrl
+    if (rpcUrl) {
+      let chainName = `chain-${documentChainId}`
+      try {
+        chainName =
+          getChainInfo(chainNum as unknown as CHAIN_ID)?.name ?? chainName
+      } catch {
+        /* ignore */
+      }
+      setDocumentProvider(
+        new providers.StaticJsonRpcProvider(rpcUrl, {
+          chainId: Number(documentChainId),
+          name: chainName,
+        })
+      )
+    }
+  }, [documentChainId])
+
+  const readProvider = documentProvider ?? providerOrSigner
+
   const { tokenRegistry } = useTokenRegistryContract(
     tokenRegistryAddress,
-    providerOrSigner
+    readProvider
   )
   const { titleEscrow, titleEscrowAddress, updateTitleEscrow, documentOwner } =
-    useTitleEscrowContract(providerOrSigner, tokenRegistry, tokenId)
+    useTitleEscrowContract(readProvider, tokenRegistry, tokenId)
   const isReturnedToIssuer =
     documentOwner?.toLowerCase() === tokenRegistryAddress?.toLowerCase()
   const isTokenBurnt =
@@ -277,10 +317,14 @@ export const TokenInformationContextProvider: FunctionComponent<
     setTokenRegistryAddress(undefined)
   }, [])
 
-  const initialize = useCallback((address: string, id: string) => {
-    setTokenId(id)
-    setTokenRegistryAddress(address)
-  }, [])
+  const initialize = useCallback(
+    (address: string, id: string, chainId?: string) => {
+      setTokenId(id)
+      setTokenRegistryAddress(address)
+      setDocumentChainId(chainId)
+    },
+    []
+  )
 
   // Fetch all new information when title escrow is initialized or updated (due to actions)
   useEffect(() => {

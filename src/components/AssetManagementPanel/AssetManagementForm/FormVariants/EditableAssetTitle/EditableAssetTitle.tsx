@@ -1,5 +1,6 @@
 import React, { FunctionComponent, useState } from 'react'
-// import { Book } from 'react-feather'
+import { useOverlayContext } from '../../../../common/contexts/OverlayContext'
+import AddressBookOverlay from '../../../../common/AddressBookOverlay/AddressBookOverlay'
 import { useTokenRegistryVersion } from '../../../../../hooks/useTokenRegistryVersion'
 import { TokenRegistryVersions } from '../../../../../constants'
 import { ExternalLinkEtherscanAddress } from '../../../../common/ExternalLink'
@@ -29,16 +30,15 @@ export const EditableAssetTitle: FunctionComponent<EditableAssetTitleProps> = ({
   isRemark,
   isSubmitted,
 }) => {
-  // const { showOverlay } = useOverlayContext()
+  const { showOverlay, closeOverlay } = useOverlayContext()
   const tokenRegistryVersion = useTokenRegistryVersion()
   const onOverlayHandler = () => {
-    // showOverlay(
-    //   <OverlayAddressBook
-    //     onAddressSelected={onSetNewValue}
-    //     network={NETWORK_NAME}
-    //     title="Address Book"
-    //   />
-    // )
+    showOverlay(
+      <AddressBookOverlay
+        onAddressSelected={onSetNewValue}
+        onDismiss={closeOverlay}
+      />
+    )
   }
   const [inputError, setInputError] = useState(false)
   // const [unidentifiedAddressError, setUnidentifiedAddressError] =

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import NetworkTooltip from './NetworkTooltip'
 import DocumentRenderer from './DocumentRenderer'
 import InvalidAttachmentsBanner from './InvalidAttachmentsBanner'
@@ -57,6 +57,15 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
   onViewEndorsementChain,
   refreshEndorsementChain,
 }) => {
+  const { changeNetwork, currentChainId } = useProviderContext()
+
+  // Switch provider to the document's chain when a transferable document is loaded
+  useEffect(() => {
+    if (isTransferable && chainId && String(currentChainId) !== chainId) {
+      changeNetwork(Number(chainId) as any)
+    }
+  }, [isTransferable, chainId, currentChainId, changeNetwork])
+
   const showNftLinks = !!isTransferable
 
   const [isTooltipVisible, setIsTooltipVisible] = useState(false)
@@ -303,6 +312,7 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
             isMagicDemo={false}
             tokenId={tokenId}
             tokenRegistryAddress={tokenRegistryAddress}
+            chainId={chainId}
             setShowEndorsementChain={(show: boolean) => {
               if (show && onViewEndorsementChain) {
                 onViewEndorsementChain()

@@ -17,9 +17,12 @@ import {
   getTokenRegistryAddress,
   getTokenId,
   getDocumentData as getDocumentDataFromWrappedDocument,
+  errorMessageHandling,
+  errorMessages,
 } from '@trustvc/trustvc'
-import { toErrorMessage, getRpcUrl } from '../../../utils/helper'
+import { getRpcUrl } from '../../../utils/helper'
 import { useDocumentContext } from '../../common/contexts/DocumentContext'
+import { type VerifyErrorType, getErrorTypeFromError } from './verifyErrorUtils'
 
 export type VerifyStatus =
   | 'idle'
@@ -34,11 +37,17 @@ export type VerificationFragmentType =
   | 'DOCUMENT_STATUS'
   | 'ISSUER_IDENTITY'
 
+export interface VerificationFragmentReason {
+  code: number
+  codeString: string
+  message: string
+}
+
 export interface VerificationFragment {
   name: string
-  status: 'VALID' | 'INVALID' | 'SKIPPED'
+  status: 'VALID' | 'INVALID' | 'SKIPPED' | 'ERROR'
   type: VerificationFragmentType
-  reason?: unknown
+  reason?: VerificationFragmentReason
   data?: any
 }
 
@@ -47,7 +56,7 @@ export type TokenRegistryVersion = 'V4' | 'V5' | null
 export interface UseVerifyReturn {
   verifyStatus: VerifyStatus
   fileName: string
-  errorMessage: string
+  errorType: VerifyErrorType
   dragActive: boolean
   verifiedChainId?: string
   issuerName?: string
@@ -73,9 +82,28 @@ const computeGroupStatus = (
 ): 'VALID' | 'INVALID' => {
   const group = frags.filter(f => f.type === type)
   if (group.length === 0) return 'INVALID'
-  if (group.some(f => f.status === 'INVALID')) return 'INVALID'
+  if (group.some(f => f.status === 'INVALID' || f.status === 'ERROR'))
+    return 'INVALID'
   if (group.some(f => f.status === 'VALID')) return 'VALID'
   return 'INVALID'
+}
+
+/**
+ * Detect error type from verification fragments using @trustvc/trustvc library.
+ * Returns the first error type, or VERIFICATION_ERROR as fallback.
+ */
+export const getErrorTypeFromFragments = (
+  frags: VerificationFragment[]
+): VerifyErrorType => {
+  try {
+    const errors = errorMessageHandling(frags as any)
+    return (
+      (errors[0] as VerifyErrorType) ||
+      (errorMessages.TYPES.VERIFICATION_ERROR as VerifyErrorType)
+    )
+  } catch {
+    return errorMessages.TYPES.VERIFICATION_ERROR as VerifyErrorType
+  }
 }
 
 const getV2FormattedDomainNames = (
@@ -285,7 +313,9 @@ export const useVerify = (): UseVerifyReturn => {
   const [verifyStatus, setVerifyStatus] = useState<VerifyStatus>('idle')
   const [fragments, setFragments] = useState<VerificationFragment[]>([])
   const [fileName, setFileName] = useState('')
-  const [errorMessage, setErrorMessage] = useState('')
+  const [errorType, setErrorType] = useState<VerifyErrorType>(
+    errorMessages.TYPES.VERIFICATION_ERROR as VerifyErrorType
+  )
   const [dragActive, setDragActive] = useState(false)
   const [pendingDoc, setPendingDoc] = useState<unknown>(null)
   const [verifiedChainId, setVerifiedChainId] = useState<string>('')
@@ -325,7 +355,9 @@ export const useVerify = (): UseVerifyReturn => {
     const hasAtLeastOneValid = groupStatuses.some(s => s === 'VALID')
     const hasNoInvalid = groupStatuses.every(s => s !== 'INVALID')
     const isValid = hasAtLeastOneValid && hasNoInvalid
-    if (!isValid) setErrorMessage('Verification Failed')
+    if (!isValid) {
+      setErrorType(getErrorTypeFromFragments(results))
+    }
 
     // Compute issuer name
     const issuer = getIssuerName(doc, results)
@@ -404,7 +436,6 @@ export const useVerify = (): UseVerifyReturn => {
     setFileName(file.name)
     setVerifyStatus('verifying')
     setFragments([])
-    setErrorMessage('')
     setPendingDoc(null)
     clearVerificationMetadata()
 
@@ -423,9 +454,7 @@ export const useVerify = (): UseVerifyReturn => {
       await runVerification(doc, chainId, currentId)
     } catch (err) {
       clearVerificationMetadata()
-      setErrorMessage(
-        toErrorMessage(err, 'Verification failed. Please try again.')
-      )
+      setErrorType(getErrorTypeFromError(err))
       setVerifyStatus('error')
     }
   }
@@ -438,9 +467,7 @@ export const useVerify = (): UseVerifyReturn => {
       await runVerification(pendingDoc, chainId, currentId)
     } catch (err) {
       clearVerificationMetadata()
-      setErrorMessage(
-        toErrorMessage(err, 'Verification failed. Please try again.')
-      )
+      setErrorType(getErrorTypeFromError(err))
       setVerifyStatus('error')
     } finally {
       setPendingDoc(null)
@@ -484,7 +511,7 @@ export const useVerify = (): UseVerifyReturn => {
     setVerifyStatus('idle')
     setFragments([])
     setFileName('')
-    setErrorMessage('')
+    setErrorType(errorMessages.TYPES.VERIFICATION_ERROR as VerifyErrorType)
     setPendingDoc(null)
     clearVerificationMetadata()
   }
@@ -494,7 +521,7 @@ export const useVerify = (): UseVerifyReturn => {
   return {
     verifyStatus,
     fileName,
-    errorMessage,
+    errorType,
     dragActive,
     verifiedChainId,
     issuerName,

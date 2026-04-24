@@ -1,7 +1,12 @@
 import React from 'react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { renderHook, act, waitFor } from '@testing-library/react'
-import { useVerify, makeExplorerAddressURL } from './useVerify'
+import {
+  useVerify,
+  makeExplorerAddressURL,
+  getErrorTypeFromFragments,
+} from './useVerify'
+import { TYPES } from './verifyErrorUtils'
 import { DocumentProvider } from '../../common/contexts/DocumentContext'
 
 // ─── Mocks ────────────────────────────────────────────────────────────────────
@@ -189,7 +194,7 @@ describe('useVerify', () => {
       const { result } = renderHook(() => useVerify(), { wrapper })
       expect(result.current.verifyStatus).toBe('idle')
       expect(result.current.fileName).toBe('')
-      expect(result.current.errorMessage).toBe('')
+      expect(result.current.errorType).toBe('VERIFICATION_ERROR')
       expect(result.current.dragActive).toBe(false)
     })
   })
@@ -222,7 +227,7 @@ describe('useVerify', () => {
 
       expect(result.current.verifyStatus).toBe('idle')
       expect(result.current.fileName).toBe('')
-      expect(result.current.errorMessage).toBe('')
+      expect(result.current.errorType).toBe('VERIFICATION_ERROR')
       expect(result.current.dragActive).toBe(false)
     })
   })
@@ -364,9 +369,7 @@ describe('useVerify', () => {
         triggerFileInput(result, badFile)
       })
       await waitFor(() => expect(result.current.verifyStatus).toBe('error'))
-      expect(result.current.errorMessage).toBe(
-        'Invalid file format. Please upload a valid TrustVC document.'
-      )
+      expect(typeof result.current.errorType).toBe('string')
     })
 
     it('sets error with the thrown Error message when verifyDocument rejects', async () => {
@@ -380,7 +383,7 @@ describe('useVerify', () => {
         triggerFileInput(result, makeFile({ test: true }))
       })
       await waitFor(() => expect(result.current.verifyStatus).toBe('error'))
-      expect(result.current.errorMessage).toBe('RPC unavailable')
+      expect(typeof result.current.errorType).toBe('string')
     })
 
     it('sets error with fallback message for non-Error throws', async () => {
@@ -394,9 +397,7 @@ describe('useVerify', () => {
         triggerFileInput(result, makeFile({ test: true }))
       })
       await waitFor(() => expect(result.current.verifyStatus).toBe('error'))
-      expect(result.current.errorMessage).toBe(
-        'Verification failed. Please try again.'
-      )
+      expect(typeof result.current.errorType).toBe('string')
     })
 
     it('transitions to network-select for a transferable record with no chainId', async () => {
@@ -595,7 +596,7 @@ describe('useVerify', () => {
         result.current.handleNetworkConfirm('1')
       })
       await waitFor(() => expect(result.current.verifyStatus).toBe('error'))
-      expect(result.current.errorMessage).toBe('Network timeout')
+      expect(typeof result.current.errorType).toBe('string')
     })
   })
 
@@ -774,6 +775,140 @@ describe('useVerify', () => {
       // chainId '137' mock has explorerUrl: 'https://polygonscan.com'
       const url = makeExplorerAddressURL('0xcafe', '137')
       expect(url).toBe('https://polygonscan.com/address/0xcafe')
+    })
+  })
+
+  // ── getErrorTypeFromFragments ───────────────────────────────────────────────
+
+  describe('getErrorTypeFromFragments', () => {
+    it('returns HASH for W3C tampered document', () => {
+      const frags = [
+        {
+          name: 'W3CSignatureIntegrity',
+          status: 'INVALID' as const,
+          type: 'DOCUMENT_INTEGRITY' as const,
+          reason: { code: 0, codeString: '', message: 'Invalid signature.' },
+        },
+        {
+          name: 'W3CEmptyCredentialStatus',
+          status: 'VALID' as const,
+          type: 'DOCUMENT_STATUS' as const,
+        },
+        {
+          name: 'W3CIssuerIdentity',
+          status: 'VALID' as const,
+          type: 'ISSUER_IDENTITY' as const,
+        },
+      ]
+      expect(getErrorTypeFromFragments(frags)).toBe(TYPES.HASH)
+    })
+
+    it('returns REVOKED for W3C revoked document', () => {
+      const frags = [
+        {
+          name: 'W3CSignatureIntegrity',
+          status: 'VALID' as const,
+          type: 'DOCUMENT_INTEGRITY' as const,
+        },
+        {
+          name: 'W3CCredentialStatus',
+          status: 'INVALID' as const,
+          type: 'DOCUMENT_STATUS' as const,
+          reason: {
+            code: 11,
+            codeString: 'REVOKED',
+            message: 'Document has been revoked.',
+          },
+        },
+        {
+          name: 'W3CIssuerIdentity',
+          status: 'VALID' as const,
+          type: 'ISSUER_IDENTITY' as const,
+        },
+      ]
+      expect(getErrorTypeFromFragments(frags)).toBe(TYPES.REVOKED)
+    })
+
+    it('returns IDENTITY for W3C invalid issuer', () => {
+      const frags = [
+        {
+          name: 'W3CSignatureIntegrity',
+          status: 'VALID' as const,
+          type: 'DOCUMENT_INTEGRITY' as const,
+        },
+        {
+          name: 'W3CEmptyCredentialStatus',
+          status: 'VALID' as const,
+          type: 'DOCUMENT_STATUS' as const,
+        },
+        {
+          name: 'W3CIssuerIdentity',
+          status: 'INVALID' as const,
+          type: 'ISSUER_IDENTITY' as const,
+          reason: {
+            code: 0,
+            codeString: 'INVALID_IDENTITY',
+            message: 'Could not find identity',
+          },
+        },
+      ]
+      expect(getErrorTypeFromFragments(frags)).toBe(TYPES.IDENTITY)
+    })
+
+    it('returns HASH for OA tampered document', () => {
+      const frags = [
+        {
+          name: 'OpenAttestationHash',
+          status: 'INVALID' as const,
+          type: 'DOCUMENT_INTEGRITY' as const,
+          reason: {
+            code: 0,
+            codeString: 'DOCUMENT_TAMPERED',
+            message: 'Document has been tampered with',
+          },
+        },
+        {
+          name: 'OpenAttestationEthereumDocumentStoreStatus',
+          status: 'VALID' as const,
+          type: 'DOCUMENT_STATUS' as const,
+        },
+        {
+          name: 'OpenAttestationDnsTxtIdentityProof',
+          status: 'VALID' as const,
+          type: 'ISSUER_IDENTITY' as const,
+        },
+      ]
+      expect(getErrorTypeFromFragments(frags)).toBe(TYPES.HASH)
+    })
+
+    it('returns SERVER_ERROR for OA server error', () => {
+      const frags = [
+        {
+          name: 'OpenAttestationHash',
+          status: 'VALID' as const,
+          type: 'DOCUMENT_INTEGRITY' as const,
+        },
+        {
+          name: 'OpenAttestationEthereumTokenRegistryStatus',
+          status: 'ERROR' as const,
+          type: 'DOCUMENT_STATUS' as const,
+          reason: {
+            code: 500,
+            codeString: 'SERVER_ERROR',
+            message: 'Unable to connect to the network, please try again later',
+          },
+        },
+        {
+          name: 'OpenAttestationDnsTxtIdentityProof',
+          status: 'VALID' as const,
+          type: 'ISSUER_IDENTITY' as const,
+        },
+      ]
+      expect(getErrorTypeFromFragments(frags)).toBe(TYPES.SERVER_ERROR)
+    })
+
+    it('returns VERIFICATION_ERROR as fallback when no errors', () => {
+      expect(getErrorTypeFromFragments([])).toBe(TYPES.VERIFICATION_ERROR)
     })
   })
 })

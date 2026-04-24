@@ -35,17 +35,20 @@ export enum SIGNER_TYPE {
 }
 
 const createProvider = (chainId: CHAIN_ID) => {
-  const url = ChainInfo[chainId].rpcUrl
-  const opts: ProviderDetails = url
-    ? { url }
-    : {
-        network: getChainInfo(chainId).name,
-        providerType: 'infura',
-        apiKey: INFURA_API_KEY,
-      }
-  return chainId === CHAIN_ID.local
-    ? new providers.JsonRpcProvider(url)
-    : utils.generateProvider(opts)
+  const url = ChainInfo[chainId]?.rpcUrl
+  if (url) {
+    const chainMeta = getChainInfo(chainId)
+    return new providers.StaticJsonRpcProvider(url, {
+      chainId: Number(chainId),
+      name: chainMeta?.name ?? `chain-${chainId}`,
+    })
+  }
+  const opts: ProviderDetails = {
+    network: getChainInfo(chainId).name,
+    providerType: 'infura',
+    apiKey: INFURA_API_KEY,
+  }
+  return utils.generateProvider(opts)
 }
 
 // Utility function for use in non-react components that cannot get through hooks
