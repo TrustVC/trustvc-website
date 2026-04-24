@@ -138,6 +138,9 @@ export const TokenInformationContextProvider: FunctionComponent<
           name: chainName,
         })
       )
+    } else {
+      // Clear provider when chain has no RPC URL to prevent using stale provider from previous chain
+      setDocumentProvider(undefined)
     }
   }, [documentChainId])
 

@@ -43,8 +43,9 @@ const createProvider = (chainId: CHAIN_ID) => {
       name: chainMeta?.name ?? `chain-${chainId}`,
     })
   }
+  const chainMeta = getChainInfo(chainId)
   const opts: ProviderDetails = {
-    network: getChainInfo(chainId).name,
+    network: chainMeta?.name ?? `chain-${chainId}`,
     providerType: 'infura',
     apiKey: INFURA_API_KEY,
   }
@@ -164,10 +165,7 @@ export const ProviderContextProvider: FunctionComponent<
   }, [])
   const changeNetwork = async (chainId: CHAIN_ID) => {
     try {
-      if (
-        providerType === SIGNER_TYPE.METAMASK ||
-        providerType === SIGNER_TYPE.NONE
-      ) {
+      if (providerType === SIGNER_TYPE.METAMASK) {
         await walletSwitchChain(chainId)
       }
       if (providerType === SIGNER_TYPE.MAGIC) {
