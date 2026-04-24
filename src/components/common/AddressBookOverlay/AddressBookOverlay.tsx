@@ -23,7 +23,7 @@ const AddressBookOverlay: React.FC<AddressBookOverlayProps> = ({
   const sourceName = selectedSource === 'local' ? 'Local' : selectedSource
 
   // Get resolvers from localStorage
-  const resolvers: { name: string }[] = (() => {
+  const resolvers: { name: string; endpoint: string }[] = (() => {
     try {
       return JSON.parse(localStorage.getItem('ADDRESS_RESOLVERS') || '[]')
     } catch {

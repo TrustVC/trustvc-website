@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 interface SourceDropdownProps {
   selectedSource: string
-  resolvers: { name: string }[]
+  resolvers: { name: string; endpoint: string }[]
   onSourceChange: (source: string) => void
   isDarkMode: boolean
 }
@@ -14,7 +14,10 @@ const SourceDropdown: React.FC<SourceDropdownProps> = ({
   isDarkMode,
 }) => {
   const [showDropdown, setShowDropdown] = useState(false)
+  const [focusedIndex, setFocusedIndex] = useState(-1)
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const triggerRef = useRef<HTMLButtonElement>(null)
+  const optionRefs = useRef<(HTMLButtonElement | null)[]>([])
 
   const handleClickOutside = useCallback((e: MouseEvent) => {
     if (
@@ -26,13 +29,54 @@ const SourceDropdown: React.FC<SourceDropdownProps> = ({
   }, [])
 
   useEffect(() => {
-    if (showDropdown) document.addEventListener('mousedown', handleClickOutside)
+    if (showDropdown) {
+      document.addEventListener('mousedown', handleClickOutside)
+      // Focus first option when dropdown opens
+      const selectedIndex = ['local', ...resolvers.map(r => r.name)].indexOf(
+        selectedSource
+      )
+      setFocusedIndex(selectedIndex >= 0 ? selectedIndex : 0)
+      setTimeout(
+        () =>
+          optionRefs.current[selectedIndex >= 0 ? selectedIndex : 0]?.focus(),
+        0
+      )
+    } else {
+      setFocusedIndex(-1)
+    }
     return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [showDropdown, handleClickOutside])
+  }, [showDropdown, handleClickOutside, selectedSource, resolvers])
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Escape' && showDropdown) {
+    if (!showDropdown) return
+
+    if (e.key === 'Escape') {
       setShowDropdown(false)
+      triggerRef.current?.focus()
+      return
+    }
+
+    const allOptions = ['local', ...resolvers.map(r => r.name)]
+    const currentIndex =
+      focusedIndex === -1 ? allOptions.indexOf(selectedSource) : focusedIndex
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault()
+      const nextIndex = Math.min(currentIndex + 1, allOptions.length - 1)
+      setFocusedIndex(nextIndex)
+      optionRefs.current[nextIndex]?.focus()
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault()
+      const prevIndex = Math.max(currentIndex - 1, 0)
+      setFocusedIndex(prevIndex)
+      optionRefs.current[prevIndex]?.focus()
+    } else if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      if (focusedIndex >= 0) {
+        onSourceChange(allOptions[focusedIndex])
+        setShowDropdown(false)
+        triggerRef.current?.focus()
+      }
     }
   }
 
@@ -52,6 +96,7 @@ const SourceDropdown: React.FC<SourceDropdownProps> = ({
         }}
       />
       <button
+        ref={triggerRef}
         type="button"
         onClick={() => setShowDropdown(!showDropdown)}
         disabled={!hasResolvers}
@@ -122,12 +167,14 @@ const SourceDropdown: React.FC<SourceDropdownProps> = ({
           }}
         >
           <button
+            ref={el => (optionRefs.current[0] = el)}
             type="button"
             role="option"
             aria-selected={selectedSource === 'local'}
             onClick={() => {
               onSourceChange('local')
               setShowDropdown(false)
+              triggerRef.current?.focus()
             }}
             className="w-full px-3 py-2 text-left font-avenir font-medium text-[14px] leading-[21.7px] transition-colors duration-150"
             style={{
@@ -152,15 +199,17 @@ const SourceDropdown: React.FC<SourceDropdownProps> = ({
           >
             Local
           </button>
-          {resolvers.map(r => (
+          {resolvers.map((r, idx) => (
             <button
-              key={r.name}
+              key={r.endpoint}
+              ref={el => (optionRefs.current[idx + 1] = el)}
               type="button"
               role="option"
               aria-selected={selectedSource === r.name}
               onClick={() => {
                 onSourceChange(r.name)
                 setShowDropdown(false)
+                triggerRef.current?.focus()
               }}
               className="w-full px-3 py-2 text-left font-avenir font-medium text-[14px] leading-[21.7px] transition-colors duration-150"
               style={{

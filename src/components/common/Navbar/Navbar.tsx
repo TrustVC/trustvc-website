@@ -202,11 +202,11 @@ const Navbar = ({ isDarkMode, setIsDarkMode: _setIsDarkMode }: NavbarProps) => {
                     fill={
                       isSettingsActive
                         ? isDarkMode
-                          ? '#C8CDD3'
-                          : '#1E2026'
-                        : isDarkMode
                           ? '#7D80D7'
                           : '#5B5BB3'
+                        : isDarkMode
+                          ? '#808894'
+                          : '#5B6571'
                     }
                   />
                 </svg>
@@ -335,17 +335,25 @@ const Navbar = ({ isDarkMode, setIsDarkMode: _setIsDarkMode }: NavbarProps) => {
                     fill={
                       isSettingsActive
                         ? isDarkMode
-                          ? '#C8CDD3'
-                          : '#1E2026'
-                        : isDarkMode
                           ? '#7D80D7'
                           : '#5B5BB3'
+                        : isDarkMode
+                          ? '#808894'
+                          : '#5B6571'
                     }
                   />
                 </svg>
                 <span
                   className="font-avenir font-medium text-[16px] leading-[21.7px]"
-                  style={{ color: isDarkMode ? '#C8CDD3' : '#1E2026' }}
+                  style={{
+                    color: isSettingsActive
+                      ? isDarkMode
+                        ? '#7D80D7'
+                        : '#5B5BB3'
+                      : isDarkMode
+                        ? '#808894'
+                        : '#5B6571',
+                  }}
                 >
                   Settings
                 </span>
