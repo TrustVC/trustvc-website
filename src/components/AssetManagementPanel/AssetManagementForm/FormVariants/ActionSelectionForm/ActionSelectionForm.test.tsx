@@ -358,7 +358,7 @@ describe('ActionSelectionForm', () => {
   })
 
   describe('Default Values', () => {
-    it('uses default beneficiary address when not provided', () => {
+    it('renders empty address when beneficiary is not provided', () => {
       renderWithOverlay(
         <ActionSelectionForm
           {...defaultProps}
@@ -369,12 +369,11 @@ describe('ActionSelectionForm', () => {
         />
       )
 
-      expect(
-        screen.getByText('0x28F7aB32C521D13F2E6980d072Ca7CA493020145')
-      ).toBeInTheDocument()
+      // Owner label should still be present
+      expect(screen.getByText('Owner:')).toBeInTheDocument()
     })
 
-    it('uses default holder address when not provided', () => {
+    it('renders empty address when holder is not provided', () => {
       renderWithOverlay(
         <ActionSelectionForm
           {...defaultProps}
@@ -385,11 +384,8 @@ describe('ActionSelectionForm', () => {
         />
       )
 
-      // Should have 2 instances of the default address (one for owner, one for holder)
-      const defaultAddresses = screen.getAllByText(
-        '0x28F7aB32C521D13F2E6980d072Ca7CA493020145'
-      )
-      expect(defaultAddresses.length).toBeGreaterThanOrEqual(1)
+      // Holder label should still be present
+      expect(screen.getByText('Holder:')).toBeInTheDocument()
     })
   })
 

@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '../../../__tests__/test-utils'
 import VerifySection from './VerifySection'
 import type { UseVerifyReturn } from './useVerify'
+import { TYPES } from './verifyErrorUtils'
 
 // ─── Mocks ────────────────────────────────────────────────────────────────────
 
@@ -29,7 +30,7 @@ import { useVerify } from './useVerify'
 const defaultHook: UseVerifyReturn = {
   verifyStatus: 'idle',
   fileName: '',
-  errorMessage: '',
+  errorType: TYPES.VERIFICATION_ERROR,
   dragActive: false,
   isTransferable: false,
   tokenRegistryVersion: null,
@@ -110,7 +111,7 @@ describe('VerifySection', () => {
     it('does not render VerifyError', () => {
       setStatus({ verifyStatus: 'valid' })
       render(<VerifySection isDarkMode={false} />)
-      expect(screen.queryByText('Try again')).not.toBeInTheDocument()
+      expect(screen.queryByTestId('error-message')).not.toBeInTheDocument()
     })
   })
 
@@ -120,51 +121,123 @@ describe('VerifySection', () => {
     it('renders VerifyError instead of VerifyResult', () => {
       setStatus({
         verifyStatus: 'invalid',
-        errorMessage: 'Verification Failed',
+        errorType: TYPES.VERIFICATION_ERROR,
       })
       render(<VerifySection isDarkMode={false} />)
       expect(screen.queryByText('Document Verified')).not.toBeInTheDocument()
-      expect(screen.getByText('Try again')).toBeInTheDocument()
+      expect(screen.getByTestId('error-message')).toBeInTheDocument()
     })
 
-    it('shows the errorMessage from the hook', () => {
+    it('shows verification error for generic failures', () => {
       setStatus({
         verifyStatus: 'invalid',
-        errorMessage: 'Verification Failed',
+        errorType: TYPES.VERIFICATION_ERROR,
       })
       render(<VerifySection isDarkMode={false} />)
-      expect(screen.getByText('Verification Failed')).toBeInTheDocument()
+      expect(screen.getByTestId('error-message').textContent).toBe(
+        'Document Verification Failed'
+      )
     })
 
-    it('falls back to "Verification Failed" when errorMessage is empty', () => {
-      setStatus({ verifyStatus: 'invalid', errorMessage: '' })
+    it('renders tampered error for tampered documents', () => {
+      setStatus({
+        verifyStatus: 'invalid',
+        errorType: TYPES.HASH,
+      })
       render(<VerifySection isDarkMode={false} />)
-      expect(screen.getByText('Verification Failed')).toBeInTheDocument()
+      expect(screen.getByTestId('error-message').textContent).toBe(
+        'Document has been tampered with'
+      )
+    })
+
+    it('renders revoked error for revoked documents', () => {
+      setStatus({
+        verifyStatus: 'invalid',
+        errorType: TYPES.REVOKED,
+      })
+      render(<VerifySection isDarkMode={false} />)
+      expect(screen.getByTestId('error-message').textContent).toBe(
+        'Document revoked'
+      )
+    })
+
+    it('renders not issued error for unissued documents', () => {
+      setStatus({
+        verifyStatus: 'invalid',
+        errorType: TYPES.ISSUED,
+      })
+      render(<VerifySection isDarkMode={false} />)
+      expect(screen.getByTestId('error-message').textContent).toBe(
+        'Document not issued'
+      )
+    })
+
+    it('renders issuer identity error for invalid issuer', () => {
+      setStatus({
+        verifyStatus: 'invalid',
+        errorType: TYPES.IDENTITY,
+      })
+      render(<VerifySection isDarkMode={false} />)
+      expect(screen.getByTestId('error-message').textContent).toBe(
+        'Document issuer identity is invalid'
+      )
     })
   })
 
   // ── Error ──────────────────────────────────────────────────────────────────
 
   describe('error state', () => {
-    it('renders VerifyError with the errorMessage', () => {
+    it('renders verification error for parse errors', () => {
       setStatus({
         verifyStatus: 'error',
-        errorMessage:
-          'Invalid file format. Please upload a valid TrustVC document.',
+        errorType: TYPES.VERIFICATION_ERROR,
       })
       render(<VerifySection isDarkMode={false} />)
-      expect(
-        screen.getByText(
-          'Invalid file format. Please upload a valid TrustVC document.'
-        )
-      ).toBeInTheDocument()
-      expect(screen.getByText('Try again')).toBeInTheDocument()
+      expect(screen.getByTestId('error-message').textContent).toBe(
+        'Document Verification Failed'
+      )
     })
 
-    it('falls back to "Verification Failed" when errorMessage is empty', () => {
-      setStatus({ verifyStatus: 'error', errorMessage: '' })
+    it('renders network invalid error', () => {
+      setStatus({
+        verifyStatus: 'error',
+        errorType: TYPES.NETWORK_INVALID,
+      })
       render(<VerifySection isDarkMode={false} />)
-      expect(screen.getByText('Verification Failed')).toBeInTheDocument()
+      expect(screen.getByTestId('error-message').textContent).toBe(
+        "Document's network field is invalid"
+      )
+    })
+
+    it('renders contract not found error', () => {
+      setStatus({
+        verifyStatus: 'error',
+        errorType: TYPES.CONTRACT_NOT_FOUND,
+      })
+      render(<VerifySection isDarkMode={false} />)
+      expect(screen.getByTestId('error-message').textContent).toBe(
+        'Document store or Token registry address cannot be found'
+      )
+    })
+
+    it('renders server error', () => {
+      setStatus({
+        verifyStatus: 'error',
+        errorType: TYPES.SERVER_ERROR,
+      })
+      render(<VerifySection isDarkMode={false} />)
+      expect(screen.getByTestId('error-message').textContent).toBe(
+        'Unable to connect to the blockchain network'
+      )
+    })
+
+    it('renders Try Another Document button', () => {
+      setStatus({
+        verifyStatus: 'error',
+        errorType: TYPES.VERIFICATION_ERROR,
+      })
+      render(<VerifySection isDarkMode={false} />)
+      expect(screen.getByTestId('try-another-btn')).toBeInTheDocument()
     })
   })
 

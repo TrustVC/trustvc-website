@@ -15,6 +15,11 @@ const BACKGROUND_ROUTE_RULES: BackgroundRouteRule[] = [
     lightClass: 'app-shell--news-light',
     darkClass: 'app-shell--news-dark',
   },
+  {
+    paths: ['/settings'],
+    lightClass: 'app-shell--settings-light',
+    darkClass: 'app-shell--settings-dark',
+  },
 ]
 
 function App() {

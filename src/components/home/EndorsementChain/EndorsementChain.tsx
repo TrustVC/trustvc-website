@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Overlay from '../../common/Overlay'
 import { EndorsementChain } from '@trustvc/trustvc'
 import { format } from 'date-fns'
@@ -6,6 +6,41 @@ import { EndorsementChainStatus } from './useEndorsementChain'
 import Spinner from '../../icons/Spinner'
 import { TokenRegistryVersion } from '../VerifySection/useVerify'
 import { Button } from '../../common/Button'
+import { useAddressBook } from '../../../hooks/useAddressBook'
+
+const ResolvedName: React.FC<{
+  address?: string
+  resolve: (a: string) => Promise<{ name: string; source: string } | null>
+}> = ({ address, resolve }) => {
+  const [resolved, setResolved] = useState<{
+    name: string
+    source: string
+  } | null>(null)
+
+  useEffect(() => {
+    if (!address || address === '_') {
+      setResolved(null)
+      return
+    }
+    let cancelled = false
+    resolve(address)
+      .then(r => !cancelled && setResolved(r))
+      .catch(() => !cancelled && setResolved(null))
+    return () => {
+      cancelled = true
+    }
+  }, [address, resolve])
+
+  if (!resolved) return null
+  return (
+    <div className="organization">
+      {resolved.name}{' '}
+      <span style={{ opacity: 0.6, fontSize: '0.9em' }}>
+        (Resolved by: {resolved.source})
+      </span>
+    </div>
+  )
+}
 
 interface EndorsementChainProps {
   endorsementChain?: any
@@ -234,6 +269,7 @@ const EndorsementChainLayout: React.FC<EndorsementChainProps> = ({
   endorsementChainStatus,
   tokenRegistryVersion,
 }) => {
+  const { resolveAddress } = useAddressBook()
   const historyChain = getHistoryChain(endorsementChain)
   const { status } = endorsementChainStatus ?? {}
 
@@ -309,14 +345,24 @@ const EndorsementChainLayout: React.FC<EndorsementChainProps> = ({
                           <div className="wallet-address">
                             {data.isNewBeneficiary ? data.beneficiary : '_'}
                           </div>
-                          <div className="organization">Organisation A</div>
+                          <ResolvedName
+                            address={
+                              data.isNewBeneficiary
+                                ? data.beneficiary
+                                : undefined
+                            }
+                            resolve={resolveAddress}
+                          />
                         </div>
                         <div className="column">
                           <div className="subheader">Holder</div>
                           <div className="wallet-address">
                             {data.isNewHolder ? data.holder : '_'}
                           </div>
-                          <div className="organization">Organisation B</div>
+                          <ResolvedName
+                            address={data.isNewHolder ? data.holder : undefined}
+                            resolve={resolveAddress}
+                          />
                         </div>
                         <div className="column column-2-items">
                           <div className="subheader">

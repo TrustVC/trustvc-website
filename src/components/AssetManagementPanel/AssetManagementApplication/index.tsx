@@ -19,6 +19,7 @@ interface AssetManagementIsTransferableDocumentProps {
   isMagicDemo?: boolean
   tokenId: string
   tokenRegistryAddress: string
+  chainId?: string
   setShowEndorsementChain: (payload: boolean) => void
   refreshEndorsementChain?: () => void
   isTransferableDocument: true
@@ -45,6 +46,7 @@ export const AssetManagementApplication: FunctionComponent<
     // isMagicDemo,
     tokenId,
     tokenRegistryAddress,
+    chainId,
     setShowEndorsementChain,
     refreshEndorsementChain,
     isTransferableDocument,
@@ -139,12 +141,12 @@ export const AssetManagementApplication: FunctionComponent<
     [setAssetManagementAction, resetProviders]
   )
 
-  // Initialize the token information context with tokenId and tokenRegistryAddress
+  // Initialize the token information context with tokenId, tokenRegistryAddress and chainId
   useEffect(() => {
     if (tokenId && tokenRegistryAddress) {
-      initialize(tokenRegistryAddress, tokenId)
+      initialize(tokenRegistryAddress, tokenId, chainId)
     }
-  }, [tokenId, tokenRegistryAddress, initialize])
+  }, [tokenId, tokenRegistryAddress, chainId, initialize])
 
   useEffect(() => {
     onSetFormAction(AssetManagementActions.None)

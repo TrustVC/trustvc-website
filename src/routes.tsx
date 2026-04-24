@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import Home from './pages/Home'
 import Contact from './pages/Contact'
+import Settings from './pages/Settings'
 import NotFound from './pages/NotFound'
 import NewsRouteFallback from './components/common/NewsRouteFallback'
 
@@ -33,6 +34,7 @@ const AppRouter = ({ isDarkMode }: AppRouterProps) => {
           </Suspense>
         }
       />
+      <Route path="/settings" element={<Settings isDarkMode={isDarkMode} />} />
       <Route path="/contact" element={<Contact isDarkMode={isDarkMode} />} />
       <Route path="*" element={<NotFound isDarkMode={isDarkMode} />} />
     </Routes>
