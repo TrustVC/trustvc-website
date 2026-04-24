@@ -15,7 +15,6 @@ export default defineConfig(({ mode }) => {
       'process.env': {
         INFURA_API_KEY:
           env.INFURA_API_KEY || process.env.INFURA_API_KEY,
-        NET: env.NET || process.env.NET,
       },
       'process.browser': true,
       ...(isTest ? {} : { 'process.version': JSON.stringify('v16.0.0') })
