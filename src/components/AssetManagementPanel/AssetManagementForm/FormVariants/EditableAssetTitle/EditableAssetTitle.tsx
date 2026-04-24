@@ -32,17 +32,7 @@ export const EditableAssetTitle: FunctionComponent<EditableAssetTitleProps> = ({
 }) => {
   const { showOverlay, closeOverlay } = useOverlayContext()
   const tokenRegistryVersion = useTokenRegistryVersion()
-  const onOverlayHandler = () => {
-    showOverlay(
-      <AddressBookOverlay
-        onAddressSelected={onSetNewValue}
-        onDismiss={closeOverlay}
-      />
-    )
-  }
   const [inputError, setInputError] = useState(false)
-  // const [unidentifiedAddressError, setUnidentifiedAddressError] =
-  //   useState(false)
   const verifySetNewValue = (newAddressValue: string) => {
     // Update the value first
     onSetNewValue?.(newAddressValue)
@@ -57,6 +47,15 @@ export const EditableAssetTitle: FunctionComponent<EditableAssetTitleProps> = ({
       return
     }
     setInputError(false)
+  }
+
+  const onOverlayHandler = () => {
+    showOverlay(
+      <AddressBookOverlay
+        onAddressSelected={verifySetNewValue}
+        onDismiss={closeOverlay}
+      />
+    )
   }
 
   if (isEditable && isRemark)
@@ -134,7 +133,7 @@ export const EditableAssetTitle: FunctionComponent<EditableAssetTitleProps> = ({
             value={newValue}
             placeholder={`Input ${role}'s address`}
             onChange={event => verifySetNewValue(event.target.value)}
-            hasError={inputError} //add in unidentifiedAddressError once implemented
+            hasError={inputError}
           />
         </div>
 
@@ -158,17 +157,6 @@ export const EditableAssetTitle: FunctionComponent<EditableAssetTitleProps> = ({
           <p className="small bg-alert-50">Input must be a valid address.</p>
         </div>
       )}
-      {/* {unidentifiedAddressError && (
-        <div
-          className="order-2 flex flex-row items-center gap-2"
-          data-testid="error-msg"
-        >
-          <InfoIcon fontSize={13.5} fill="#B83152" />
-          <p className="small bg-alert-50">
-            Unidentified address. Please check and input again.
-          </p>
-        </div>
-      )} */}
     </>
   )
 }

@@ -75,18 +75,38 @@ export const ActionSelectionForm: FunctionComponent<
   } | null>(null)
 
   useEffect(() => {
+    let isCurrent = true
     if (beneficiary) {
       resolveAddress(beneficiary)
-        .then(setBeneficiaryResolved)
-        .catch(() => setBeneficiaryResolved(null))
+        .then(result => {
+          if (isCurrent) setBeneficiaryResolved(result)
+        })
+        .catch(() => {
+          if (isCurrent) setBeneficiaryResolved(null)
+        })
+    } else {
+      setBeneficiaryResolved(null)
+    }
+    return () => {
+      isCurrent = false
     }
   }, [beneficiary, resolveAddress])
 
   useEffect(() => {
+    let isCurrent = true
     if (holder) {
       resolveAddress(holder)
-        .then(setHolderResolved)
-        .catch(() => setHolderResolved(null))
+        .then(result => {
+          if (isCurrent) setHolderResolved(result)
+        })
+        .catch(() => {
+          if (isCurrent) setHolderResolved(null)
+        })
+    } else {
+      setHolderResolved(null)
+    }
+    return () => {
+      isCurrent = false
     }
   }, [holder, resolveAddress])
 

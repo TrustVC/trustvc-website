@@ -82,26 +82,21 @@ const VerifyError: React.FC<VerifyErrorProps> = ({ errorType, onReset }) => {
           {/* Action buttons */}
           <div className="self-stretch p-2 flex flex-col gap-2.5">
             <div className="self-stretch p-1 flex justify-center items-center flex-wrap content-center">
-              {/* What Should I Do? button */}
+              {/* What Should I Do? link */}
               <div className="flex-1 max-w-[360px] min-w-[240px] p-1 flex flex-col justify-center items-center gap-2.5">
-                <button
-                  type="button"
+                <a
+                  href="https://docs.trustvc.io"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   data-testid="what-should-i-do-btn"
-                  className="self-stretch min-w-[40px] min-h-[40px] p-[5px] relative overflow-hidden rounded-lg flex justify-center items-center border border-[rgba(169,178,187,0.33)] !bg-transparent hover:!bg-alert-50/10 transition-colors cursor-pointer"
-                  onClick={() =>
-                    window.open(
-                      'https://docs.trustvc.io',
-                      '_blank',
-                      'noopener,noreferrer'
-                    )
-                  }
+                  className="self-stretch min-w-[40px] min-h-[40px] p-[5px] relative overflow-hidden rounded-lg flex justify-center items-center border border-[rgba(169,178,187,0.33)] !bg-transparent hover:!bg-alert-50/10 transition-colors cursor-pointer no-underline"
                 >
                   <div className="p-1 flex items-center gap-2.5">
                     <span className="text-center text-alert-50 text-sm font-gilroy font-bold leading-snug">
                       What Should I Do?
                     </span>
                   </div>
-                </button>
+                </a>
               </div>
 
               {/* Try Another Document button */}

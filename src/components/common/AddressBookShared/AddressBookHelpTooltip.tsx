@@ -15,6 +15,12 @@ const AddressBookHelpTooltip: React.FC<AddressBookHelpTooltipProps> = ({
         type="button"
         className="min-w-[40px] min-h-[40px] p-[5px] relative overflow-hidden rounded-lg flex justify-center items-center transition-colors duration-200"
         style={{ backgroundColor: 'transparent' }}
+        aria-label="Address book help"
+        aria-expanded={showTooltip}
+        aria-describedby="address-book-tooltip"
+        onClick={() => setShowTooltip(!showTooltip)}
+        onFocus={() => setShowTooltip(true)}
+        onBlur={() => setShowTooltip(false)}
         onMouseEnter={e => {
           e.currentTarget.style.backgroundColor = isDarkMode
             ? 'rgba(255, 255, 255, 0.1)'
@@ -24,6 +30,14 @@ const AddressBookHelpTooltip: React.FC<AddressBookHelpTooltipProps> = ({
         onMouseLeave={e => {
           e.currentTarget.style.backgroundColor = 'transparent'
           setShowTooltip(false)
+        }}
+        onKeyDown={e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            setShowTooltip(!showTooltip)
+          } else if (e.key === 'Escape') {
+            setShowTooltip(false)
+          }
         }}
       >
         <svg
@@ -41,6 +55,8 @@ const AddressBookHelpTooltip: React.FC<AddressBookHelpTooltipProps> = ({
       </button>
       {showTooltip && (
         <div
+          id="address-book-tooltip"
+          role="tooltip"
           className="w-[240px] p-2 absolute z-10 flex flex-col right-0"
           style={{
             top: 50,

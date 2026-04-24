@@ -97,12 +97,9 @@ export const getErrorTypeFromFragments = (
 ): VerifyErrorType => {
   try {
     const errors = errorMessageHandling(frags as any)
-    return (
-      (errors[0] as VerifyErrorType) ||
-      (errorMessages.TYPES.VERIFICATION_ERROR as VerifyErrorType)
-    )
+    return errors[0] || errorMessages.TYPES.VERIFICATION_ERROR
   } catch {
-    return errorMessages.TYPES.VERIFICATION_ERROR as VerifyErrorType
+    return errorMessages.TYPES.VERIFICATION_ERROR
   }
 }
 
@@ -314,7 +311,7 @@ export const useVerify = (): UseVerifyReturn => {
   const [fragments, setFragments] = useState<VerificationFragment[]>([])
   const [fileName, setFileName] = useState('')
   const [errorType, setErrorType] = useState<VerifyErrorType>(
-    errorMessages.TYPES.VERIFICATION_ERROR as VerifyErrorType
+    errorMessages.TYPES.VERIFICATION_ERROR
   )
   const [dragActive, setDragActive] = useState(false)
   const [pendingDoc, setPendingDoc] = useState<unknown>(null)
@@ -511,7 +508,7 @@ export const useVerify = (): UseVerifyReturn => {
     setVerifyStatus('idle')
     setFragments([])
     setFileName('')
-    setErrorType(errorMessages.TYPES.VERIFICATION_ERROR as VerifyErrorType)
+    setErrorType(errorMessages.TYPES.VERIFICATION_ERROR)
     setPendingDoc(null)
     clearVerificationMetadata()
   }

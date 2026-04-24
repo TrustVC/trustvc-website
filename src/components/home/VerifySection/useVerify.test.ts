@@ -194,7 +194,7 @@ describe('useVerify', () => {
       const { result } = renderHook(() => useVerify(), { wrapper })
       expect(result.current.verifyStatus).toBe('idle')
       expect(result.current.fileName).toBe('')
-      expect(result.current.errorType).toBe('VERIFICATION_ERROR')
+      expect(result.current.errorType).toBe(TYPES.VERIFICATION_ERROR)
       expect(result.current.dragActive).toBe(false)
     })
   })
@@ -227,7 +227,7 @@ describe('useVerify', () => {
 
       expect(result.current.verifyStatus).toBe('idle')
       expect(result.current.fileName).toBe('')
-      expect(result.current.errorType).toBe('VERIFICATION_ERROR')
+      expect(result.current.errorType).toBe(TYPES.VERIFICATION_ERROR)
       expect(result.current.dragActive).toBe(false)
     })
   })
@@ -369,7 +369,7 @@ describe('useVerify', () => {
         triggerFileInput(result, badFile)
       })
       await waitFor(() => expect(result.current.verifyStatus).toBe('error'))
-      expect(typeof result.current.errorType).toBe('string')
+      expect(result.current.errorType).toBe(TYPES.INVALID)
     })
 
     it('sets error with the thrown Error message when verifyDocument rejects', async () => {
@@ -383,7 +383,7 @@ describe('useVerify', () => {
         triggerFileInput(result, makeFile({ test: true }))
       })
       await waitFor(() => expect(result.current.verifyStatus).toBe('error'))
-      expect(typeof result.current.errorType).toBe('string')
+      expect(result.current.errorType).toBe(TYPES.VERIFICATION_ERROR)
     })
 
     it('sets error with fallback message for non-Error throws', async () => {
@@ -397,7 +397,7 @@ describe('useVerify', () => {
         triggerFileInput(result, makeFile({ test: true }))
       })
       await waitFor(() => expect(result.current.verifyStatus).toBe('error'))
-      expect(typeof result.current.errorType).toBe('string')
+      expect(result.current.errorType).toBe(TYPES.VERIFICATION_ERROR)
     })
 
     it('transitions to network-select for a transferable record with no chainId', async () => {
@@ -596,7 +596,7 @@ describe('useVerify', () => {
         result.current.handleNetworkConfirm('1')
       })
       await waitFor(() => expect(result.current.verifyStatus).toBe('error'))
-      expect(typeof result.current.errorType).toBe('string')
+      expect(result.current.errorType).toBe(TYPES.VERIFICATION_ERROR)
     })
   })
 

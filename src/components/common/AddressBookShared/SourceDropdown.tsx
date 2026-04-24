@@ -30,6 +30,12 @@ const SourceDropdown: React.FC<SourceDropdownProps> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [showDropdown, handleClickOutside])
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape' && showDropdown) {
+      setShowDropdown(false)
+    }
+  }
+
   const displayName = selectedSource === 'local' ? 'Local' : selectedSource
   const hasResolvers = resolvers.length > 0
 
@@ -37,6 +43,7 @@ const SourceDropdown: React.FC<SourceDropdownProps> = ({
     <div
       ref={dropdownRef}
       className="flex-1 min-w-0 min-h-[32px] p-1 relative rounded-lg flex items-center"
+      onKeyDown={handleKeyDown}
     >
       <div
         className="absolute inset-0 rounded-lg pointer-events-none"
@@ -46,8 +53,12 @@ const SourceDropdown: React.FC<SourceDropdownProps> = ({
       />
       <button
         type="button"
-        onClick={() => hasResolvers && setShowDropdown(!showDropdown)}
-        className={`relative z-10 flex-1 min-h-[32px] overflow-hidden rounded-md flex items-center bg-transparent ${hasResolvers ? 'cursor-pointer' : 'cursor-default'}`}
+        onClick={() => setShowDropdown(!showDropdown)}
+        disabled={!hasResolvers}
+        aria-haspopup="listbox"
+        aria-expanded={showDropdown}
+        aria-label="Select address book source"
+        className={`relative z-10 w-full min-h-[32px] overflow-hidden rounded-md flex items-center bg-transparent ${hasResolvers ? 'cursor-pointer' : 'cursor-default'}`}
       >
         <div className="w-1 self-stretch" />
         <div className="flex-1 min-h-[32px] px-1 py-[5px] flex items-center justify-start">
@@ -60,13 +71,6 @@ const SourceDropdown: React.FC<SourceDropdownProps> = ({
             </span>
           </span>
         </div>
-        <div className="w-1 self-stretch" />
-      </button>
-      <button
-        type="button"
-        onClick={() => hasResolvers && setShowDropdown(!showDropdown)}
-        className={`relative z-10 min-h-[32px] flex justify-center items-center bg-transparent ${hasResolvers ? 'cursor-pointer' : 'cursor-default'}`}
-      >
         <svg
           width="8"
           height="32"
@@ -104,9 +108,12 @@ const SourceDropdown: React.FC<SourceDropdownProps> = ({
             </div>
           </div>
         </div>
+        <div className="w-1 self-stretch" />
       </button>
       {showDropdown && (
         <div
+          role="listbox"
+          aria-label="Address book sources"
           className="absolute left-0 top-full mt-1 w-full z-[100] rounded-lg overflow-hidden"
           style={{
             background: isDarkMode ? '#1E2026' : '#ffffff',
@@ -116,6 +123,8 @@ const SourceDropdown: React.FC<SourceDropdownProps> = ({
         >
           <button
             type="button"
+            role="option"
+            aria-selected={selectedSource === 'local'}
             onClick={() => {
               onSourceChange('local')
               setShowDropdown(false)
@@ -147,6 +156,8 @@ const SourceDropdown: React.FC<SourceDropdownProps> = ({
             <button
               key={r.name}
               type="button"
+              role="option"
+              aria-selected={selectedSource === r.name}
               onClick={() => {
                 onSourceChange(r.name)
                 setShowDropdown(false)

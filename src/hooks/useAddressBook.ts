@@ -34,12 +34,19 @@ export const useAddressBook = () => {
     setAddressBook(getStoredAddressBook())
   }, [])
 
-  const addEntry = useCallback((entry: AddressBookEntry) => {
-    setAddressBook(prev => {
-      const updated = [...prev, entry]
-      saveAddressBook(updated)
-      return updated
-    })
+  const addEntry = useCallback((entry: AddressBookEntry): boolean => {
+    // Read fresh from localStorage to avoid stale state
+    const current = getStoredAddressBook()
+    const exists = current.some(
+      e =>
+        e.address.toLowerCase() === entry.address.toLowerCase() &&
+        e.source === entry.source
+    )
+    if (exists) return false
+    const updated = [...current, entry]
+    saveAddressBook(updated)
+    setAddressBook(updated)
+    return true
   }, [])
 
   const addEntries = useCallback(

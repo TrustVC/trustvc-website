@@ -8,17 +8,22 @@ import { TokenRegistryVersion } from '../VerifySection/useVerify'
 import { Button } from '../../common/Button'
 import { useAddressBook } from '../../../hooks/useAddressBook'
 
-const ResolvedName: React.FC<{ address?: string }> = ({ address }) => {
-  const { resolveAddress } = useAddressBook()
+const ResolvedName: React.FC<{
+  address?: string
+  resolve: (a: string) => Promise<{ name: string; source: string } | null>
+}> = ({ address, resolve }) => {
   const [name, setName] = useState<string | null>(null)
 
   useEffect(() => {
-    if (address && address !== '_') {
-      resolveAddress(address)
-        .then(result => setName(result?.name ?? null))
-        .catch(() => setName(null))
+    if (!address || address === '_') return
+    let cancelled = false
+    resolve(address)
+      .then(r => !cancelled && setName(r?.name ?? null))
+      .catch(() => !cancelled && setName(null))
+    return () => {
+      cancelled = true
     }
-  }, [address, resolveAddress])
+  }, [address, resolve])
 
   if (!name) return null
   return <div className="organization">{name}</div>
@@ -251,6 +256,7 @@ const EndorsementChainLayout: React.FC<EndorsementChainProps> = ({
   endorsementChainStatus,
   tokenRegistryVersion,
 }) => {
+  const { resolveAddress } = useAddressBook()
   const historyChain = getHistoryChain(endorsementChain)
   const { status } = endorsementChainStatus ?? {}
 
@@ -332,6 +338,7 @@ const EndorsementChainLayout: React.FC<EndorsementChainProps> = ({
                                 ? data.beneficiary
                                 : undefined
                             }
+                            resolve={resolveAddress}
                           />
                         </div>
                         <div className="column">
@@ -341,6 +348,7 @@ const EndorsementChainLayout: React.FC<EndorsementChainProps> = ({
                           </div>
                           <ResolvedName
                             address={data.isNewHolder ? data.holder : undefined}
+                            resolve={resolveAddress}
                           />
                         </div>
                         <div className="column column-2-items">

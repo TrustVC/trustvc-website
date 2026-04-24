@@ -49,12 +49,12 @@ export const useTitleEscrowContract = (
       const data = iface.encodeFunctionData('ownerOf', [tokenId])
       const contractAddr =
         (tokenRegistry as any).target ?? (tokenRegistry as any).address
+      if (!contractAddr) throw new Error('Token registry address unavailable')
       const result = await provider.call({ to: contractAddr, data })
       if (!result || result === '0x') throw new Error('Token not found')
       const [titleEscrowOwner] = iface.decodeFunctionResult('ownerOf', result)
-      setDocumentOwner(titleEscrowOwner)
       const address = await getTitleEscrowAddress(
-        tokenRegistry.target,
+        contractAddr,
         tokenId,
         provider,
         {
@@ -70,12 +70,14 @@ export const useTitleEscrowContract = (
           providerOrSigner as any
         )
       }
+      setDocumentOwner(titleEscrowOwner)
       setTitleEscrow(instance)
       setTitleEscrowAddress(address)
     } catch (error) {
-      console.log(error)
+      console.error(error)
       setTitleEscrow(undefined)
       setTitleEscrowAddress(undefined)
+      setDocumentOwner(undefined)
     }
   }, [providerOrSigner, tokenId, tokenRegistry, tokenRegistryVersion])
 

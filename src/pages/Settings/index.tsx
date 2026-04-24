@@ -144,6 +144,20 @@ const Settings = ({ isDarkMode }: SettingsProps) => {
 
       const validEntries = entries.filter(e => e.name && e.address)
 
+      // If editing and the resolver name changed, remove old resolver's contacts
+      if (editingResolverIndex !== null) {
+        const oldResolverName = resolvers[editingResolverIndex].name
+        if (oldResolverName !== resolverForm.name) {
+          const currentBook = JSON.parse(
+            localStorage.getItem('ADDRESS_BOOK') || '[]'
+          )
+          const filteredBook = currentBook.filter(
+            (entry: { source: string }) => entry.source !== oldResolverName
+          )
+          localStorage.setItem('ADDRESS_BOOK', JSON.stringify(filteredBook))
+        }
+      }
+
       // Save addresses to ADDRESS_BOOK with resolver name as source
       const result = addEntries(
         validEntries.map(e => ({
@@ -238,7 +252,7 @@ const Settings = ({ isDarkMode }: SettingsProps) => {
       {/* Header Section */}
       <div className="w-full max-w-[1280px] p-4 flex flex-col items-center">
         {/* Heading */}
-        <div className="w-full max-w-[720px] min-w-[340px] p-2 flex flex-col items-center">
+        <div className="w-full max-w-[720px] p-2 flex flex-col items-center">
           <h1
             className="self-stretch text-center font-['Gilroy'] font-bold text-[36px] leading-[43.92px]"
             style={{
@@ -249,7 +263,7 @@ const Settings = ({ isDarkMode }: SettingsProps) => {
           </h1>
         </div>
         {/* Description */}
-        <div className="w-full max-w-[720px] min-w-[340px] p-2 flex flex-col items-center">
+        <div className="w-full max-w-[720px] p-2 flex flex-col items-center">
           <p
             className="self-stretch text-center font-avenir font-medium text-[18px] leading-[24.48px]"
             style={{
@@ -395,7 +409,7 @@ const Settings = ({ isDarkMode }: SettingsProps) => {
 
         {/* Card Container */}
         <div
-          className="self-stretch min-w-[380px] p-4 rounded-2xl flex flex-col gap-2.5"
+          className="self-stretch p-4 rounded-2xl flex flex-col gap-2.5"
           style={{
             background: isDarkMode
               ? 'rgba(30, 32, 38, 0.66)'
@@ -555,7 +569,7 @@ const Settings = ({ isDarkMode }: SettingsProps) => {
               {/* Address Book Content */}
               <div className="self-stretch flex flex-col">
                 <div
-                  className="self-stretch min-w-[340px] p-2 rounded-xl flex flex-col justify-center items-center"
+                  className="self-stretch p-2 rounded-xl flex flex-col justify-center items-center"
                   style={{
                     background: isDarkMode ? 'rgba(30, 32, 38, 1)' : 'white',
                     outline: '1px solid rgba(169, 178, 187, 0.33)',
@@ -889,7 +903,7 @@ const Settings = ({ isDarkMode }: SettingsProps) => {
                             <div className="flex-1 basis-0 max-w-[320px] min-w-[160px] p-1 pb-8 relative">
                               <input
                                 type="text"
-                                placeholder="Endpoint (https://...)"
+                                placeholder="Endpoint"
                                 value={resolverForm.endpoint}
                                 onChange={e => {
                                   setResolverForm(f => ({
@@ -930,7 +944,7 @@ const Settings = ({ isDarkMode }: SettingsProps) => {
                             <div className="flex-1 basis-0 max-w-[320px] min-w-[160px] p-1 pb-8 relative">
                               <input
                                 type="text"
-                                placeholder="API Header (e.g. x-api-key)"
+                                placeholder="API Header"
                                 value={resolverForm.apiHeader}
                                 onChange={e => {
                                   setResolverForm(f => ({

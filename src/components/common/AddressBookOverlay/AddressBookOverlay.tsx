@@ -216,9 +216,17 @@ const AddressBookOverlay: React.FC<AddressBookOverlayProps> = ({
                     key={`${entry.address}-${index}`}
                     className="flex flex-col"
                   >
-                    <div
-                      className="self-stretch min-w-[240px] py-2 rounded-xl flex flex-col cursor-pointer transition-colors duration-150"
+                    <button
+                      type="button"
+                      className="self-stretch min-w-[240px] py-2 rounded-xl flex flex-col cursor-pointer transition-colors duration-150 text-left w-full border-0"
+                      style={{ backgroundColor: 'transparent' }}
                       onClick={() => handleSelect(entry.address)}
+                      onKeyDown={e => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault()
+                          handleSelect(entry.address)
+                        }
+                      }}
                       onMouseEnter={e => {
                         e.currentTarget.style.backgroundColor = isDarkMode
                           ? 'rgba(255, 255, 255, 0.05)'
@@ -227,6 +235,7 @@ const AddressBookOverlay: React.FC<AddressBookOverlayProps> = ({
                       onMouseLeave={e => {
                         e.currentTarget.style.backgroundColor = 'transparent'
                       }}
+                      aria-label={`Select ${entry.name} - ${entry.address}`}
                     >
                       <div className="self-stretch flex flex-wrap items-start">
                         {/* Wallet Name */}
@@ -301,7 +310,7 @@ const AddressBookOverlay: React.FC<AddressBookOverlayProps> = ({
                           </div>
                         </div>
                       </div>
-                    </div>
+                    </button>
                     {index < filteredAddresses.length - 1 && (
                       <div className="self-stretch px-2 py-2 flex items-start gap-1">
                         <div
