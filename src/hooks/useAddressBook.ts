@@ -1,5 +1,10 @@
 import { useState, useCallback, useEffect } from 'react'
 
+// Ethereum address validation regex
+const isValidEthereumAddress = (address: string): boolean => {
+  return /^0x[a-fA-F0-9]{40}$/.test(address)
+}
+
 export interface AddressBookEntry {
   name: string
   address: string
@@ -90,7 +95,8 @@ export const useAddressBook = () => {
         reader.onload = e => {
           try {
             const text = e.target?.result as string
-            const lines = text.split('\n').filter(line => line.trim())
+            // Handle both LF and CRLF line endings
+            const lines = text.split(/\r?\n/).filter(line => line.trim())
 
             if (lines.length < 2) {
               reject(new Error('CSV file is empty or has no data rows'))
@@ -113,14 +119,16 @@ export const useAddressBook = () => {
 
             let success = 0
             let failed = 0
-            const newEntries: AddressBookEntry[] = [...addressBook]
+            // Read fresh from localStorage to avoid stale state
+            const newEntries: AddressBookEntry[] = [...getStoredAddressBook()]
 
             for (let i = 1; i < lines.length; i++) {
               const values = lines[i].split(',').map(v => v.trim())
               const name = values[nameIdx]
               const address = values[addressIdx]
 
-              if (name && address) {
+              // Validate that address is a valid Ethereum address
+              if (name && address && isValidEthereumAddress(address)) {
                 const exists = newEntries.some(
                   e =>
                     e.address.toLowerCase() === address.toLowerCase() &&
@@ -148,7 +156,7 @@ export const useAddressBook = () => {
         reader.readAsText(file)
       })
     },
-    [addressBook]
+    []
   )
 
   const downloadTemplate = useCallback(() => {
@@ -159,7 +167,10 @@ export const useAddressBook = () => {
     link.href = url
     link.download = 'address-book-template.csv'
     link.click()
-    URL.revokeObjectURL(url)
+    // Defer revoke to allow browser to read the blob
+    setTimeout(() => {
+      URL.revokeObjectURL(url)
+    }, 100)
   }, [])
 
   const resolveAddress = useCallback(

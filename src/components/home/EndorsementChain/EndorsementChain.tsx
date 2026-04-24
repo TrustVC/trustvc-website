@@ -15,7 +15,10 @@ const ResolvedName: React.FC<{
   const [name, setName] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!address || address === '_') return
+    if (!address || address === '_') {
+      setName(null)
+      return
+    }
     let cancelled = false
     resolve(address)
       .then(r => !cancelled && setName(r?.name ?? null))

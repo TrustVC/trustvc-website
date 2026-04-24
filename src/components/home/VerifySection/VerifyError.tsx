@@ -1,5 +1,5 @@
 import React from 'react'
-import { MESSAGES, type VerifyErrorType } from './verifyErrorUtils'
+import { MESSAGES, TYPES, type VerifyErrorType } from './verifyErrorUtils'
 
 const ErrorDocumentIcon: React.FC = () => (
   <svg
@@ -37,7 +37,8 @@ interface VerifyErrorProps {
 }
 
 const VerifyError: React.FC<VerifyErrorProps> = ({ errorType, onReset }) => {
-  const { failureTitle, failureMessage } = MESSAGES[errorType]
+  const { failureTitle, failureMessage } =
+    MESSAGES[errorType] ?? MESSAGES[TYPES.VERIFICATION_ERROR]
 
   return (
     <div className="self-stretch rounded-xl flex flex-col justify-center items-center gap-4">

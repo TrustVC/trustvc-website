@@ -178,6 +178,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode: _setIsDarkMode }: NavbarProps) => {
             <div className="p-1">
               <Link
                 to="/settings"
+                aria-label="Settings"
                 className="min-w-[40px] min-h-[40px] flex items-center justify-center p-[5px] rounded-lg overflow-hidden transition-colors duration-200"
                 style={{ backgroundColor: 'transparent' }}
                 onMouseEnter={e => {
@@ -311,7 +312,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode: _setIsDarkMode }: NavbarProps) => {
               <Link
                 to="/settings"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="px-4 py-3 flex items-center rounded-lg transition-colors duration-200"
+                className="px-4 py-3 flex items-center gap-3 rounded-lg transition-colors duration-200"
                 style={{ backgroundColor: 'transparent' }}
                 onMouseEnter={e => {
                   e.currentTarget.style.backgroundColor = isDarkMode
@@ -342,6 +343,12 @@ const Navbar = ({ isDarkMode, setIsDarkMode: _setIsDarkMode }: NavbarProps) => {
                     }
                   />
                 </svg>
+                <span
+                  className="font-avenir font-medium text-[16px] leading-[21.7px]"
+                  style={{ color: isDarkMode ? '#C8CDD3' : '#1E2026' }}
+                >
+                  Settings
+                </span>
               </Link>
               <Link
                 to="/contact"
