@@ -36,7 +36,7 @@ export const getSupportedChainIds = (): CHAIN_ID[] => {
   const envNetworkType = (
     (import.meta.env?.VITE_NETWORK_TYPE as string) || ''
   ).toLowerCase()
-  
+
   // Explicitly handle both 'mainnet' and 'testnet', fall back to IS_DEVELOPMENT only when empty
   let networks: CHAIN_ID[]
   if (envNetworkType === 'mainnet') {
@@ -47,7 +47,7 @@ export const getSupportedChainIds = (): CHAIN_ID[] => {
     // Empty/unset: use IS_DEVELOPMENT heuristic
     networks = IS_DEVELOPMENT ? [...TEST_NETWORKS] : [...MAIN_NETWORKS]
   }
-  
+
   if (isTestEnv || isLocal) networks.push(CHAIN_ID.local)
   return networks
 }
