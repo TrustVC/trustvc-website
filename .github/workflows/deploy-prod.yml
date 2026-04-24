@@ -33,7 +33,7 @@ jobs:
           cache-dependency-path: package-lock.json
 
       - name: Create .env for build
-        run: echo "${ENV_FILE}" > .env
+        run: printf '%s\n' "$ENV_FILE" > .env
 
       - name: Install dependencies
         run: npm ci
