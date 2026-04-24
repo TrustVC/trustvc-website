@@ -1,7 +1,10 @@
 // import { UnsupportedNetworkError } from '../errors'
 import { ChainInfo } from './chain-info'
-import { IS_DEVELOPMENT } from '../configs/chain-config'
-import { MAIN_NETWORKS, TEST_NETWORKS } from '../configs/chain-config'
+import {
+  MAIN_NETWORKS,
+  TEST_NETWORKS,
+  IS_TESTNET,
+} from '../configs/chain-config'
 import { CHAIN_ID, chainInfo, encrypt } from '@trustvc/trustvc'
 
 /**
@@ -31,10 +34,7 @@ export const getChainInfoFromNetworkName = (networkName: string): chainInfo => {
 }
 
 export const getSupportedChainIds = (): CHAIN_ID[] => {
-  const isLocal = window.location.host.indexOf('localhost') > -1
-  const isTestEnv = process.env.NODE_ENV === 'test'
-  const networks = IS_DEVELOPMENT ? [...TEST_NETWORKS] : [...MAIN_NETWORKS]
-  if (isTestEnv || isLocal) networks.push(CHAIN_ID.local)
+  const networks = IS_TESTNET ? [...TEST_NETWORKS] : [...MAIN_NETWORKS]
   return networks
 }
 
