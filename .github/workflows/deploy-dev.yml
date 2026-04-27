@@ -1,0 +1,118 @@
+name: Deploy TrustVC Website (Development)
+
+on:
+  push:
+    branches:
+      - develop
+
+concurrency:
+  group: deploy-dev-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  BUILD_DIR: "dist"
+  AWS_REGION: ap-southeast-1
+
+permissions:
+  contents: read
+
+jobs:
+  wait-for-ci:
+    name: Wait for CI
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for CI workflow
+        uses: lewagon/wait-on-check-action@v1.3.4
+        with:
+          ref: ${{ github.ref }}
+          check-name: 'Lint & Test (22.x)'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+  build-dev:
+    name: Build (Dev)
+    runs-on: ubuntu-latest
+    needs: wait-for-ci
+    permissions:
+      contents: read
+
+    env:
+      AWS_REGION: ap-southeast-1
+      S3_BUCKET: ${{ secrets.S3_BUCKET_DEV }}
+      ENV_FILE: ${{ secrets.TRUSTVC_WEB_ENV_DEVELOPMENT }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: develop
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Create .env for build
+        run: printf '%s' "$ENV_FILE" > .env
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Upload build artifact (Dev)
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-dev
+          path: ${{ env.BUILD_DIR }}
+
+  deploy-dev:
+    name: Deploy to S3 (Dev) 
+    needs: build-dev
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: site-dev
+          path: ${{ env.BUILD_DIR }}
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Select target bucket
+        id: bucket
+        run: |
+            echo "bucket=${S3_BUCKET_DEV}" >> $GITHUB_OUTPUT
+        env:
+          S3_BUCKET_DEV: ${{ secrets.S3_BUCKET_DEV }}
+
+      - name: Sync static assets with long cache
+        run: |
+          aws s3 sync $BUILD_DIR s3://${{ steps.bucket.outputs.bucket }} \
+            --delete \
+            --exclude "*" \
+            --include "assets/*" \
+            --cache-control "public, max-age=31536000, immutable"
+
+      - name: Sync HTML and other assets with no-cache
+        run: |
+          aws s3 sync $BUILD_DIR s3://${{ steps.bucket.outputs.bucket }} \
+            --delete \
+            --exclude "assets/*" \
+            --cache-control "no-cache, no-store, must-revalidate"
+
+      - name: Invalidate CloudFront
+        env:
+          CLOUDFRONT_DISTRIBUTION_ID_DEV: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID_DEV }}
+        if: ${{ env.CLOUDFRONT_DISTRIBUTION_ID_DEV != '' }}
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID_DEV }} \
+            --paths "/*"

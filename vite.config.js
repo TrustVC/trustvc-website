@@ -1,5 +1,5 @@
 import { fileURLToPath, URL } from 'node:url'
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
@@ -8,10 +8,14 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 export default defineConfig(({ mode }) => {
   const isTest = mode === 'test'
+  const env = loadEnv(mode, process.cwd(), '')
 
   return {
     define: {
-      'process.env': {},
+      'process.env': {
+        INFURA_API_KEY:
+          env.INFURA_API_KEY || process.env.INFURA_API_KEY,
+      },
       'process.browser': true,
       ...(isTest ? {} : { 'process.version': JSON.stringify('v16.0.0') })
     },
@@ -31,6 +35,7 @@ export default defineConfig(({ mode }) => {
     ],
     resolve: {
       alias: {
+
         'dotenv/config': path.resolve(__dirname, 'src/shims/dotenv-config.js'),
         'node-fetch': path.resolve(__dirname, 'src/shims/node-fetch.js'),
         // Pure ESM shim — avoids CJS `exports` in the browser bundle (crypto-browserify).
