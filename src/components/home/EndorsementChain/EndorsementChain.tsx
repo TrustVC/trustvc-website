@@ -291,7 +291,7 @@ const EndorsementChainLayout: React.FC<EndorsementChainProps> = ({
           <div className="section-frame">
             {status === 'loading' && (
               <div className="flex flex-col items-center gap-2">
-                <Spinner data-testid={'loader'} fill="white" /> Loading
+                <Spinner data-testid={'loader'} fontSize={48} /> Loading
                 Endorsement Chain..
               </div>
             )}

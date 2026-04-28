@@ -173,35 +173,33 @@ export const ActionSelectionForm: FunctionComponent<
           <div className="vr-title-col" />
         </div>
       )}
-      <div className="vr-footer flex-col gap-2 md:flex-row md:gap-0">
-        {(isReturnedToIssuer || isTokenBurnt || isExpired) && (
-          <div className="flex justify-center flex-col items-center md:justify-start md:flex-row w-full max-w-[638px] gap-2">
-            {(isReturnedToIssuer || isTokenBurnt) && (
-              <Tag
-                rounded="rounded-full"
-                className="bg-[#FDDAE2] !p-2 min-w-[188px] max-w-[383px] text-center w-full flex-1"
-              >
-                <h4 className="bg-alert-20">
-                  {isReturnedToIssuer
-                    ? 'ETR Returned to Issuer'
-                    : 'ETR Taken Out of Circulation'}
-                </h4>
-              </Tag>
-            )}
-            {isExpired && (
-              <Tag
-                rounded="rounded-full"
-                className="bg-[#FDDAE2] !p-2 min-w-[188px] max-w-[383px] text-center w-full flex-1"
-              >
-                <h4 className="bg-alert-20">ETR Expired</h4>
-              </Tag>
-            )}
-            <div className="vr-footer-dropdown-placeholder hidden lg:block flex-1 !min-w-[0px]" />
-          </div>
-        )}
+      <div className="vr-footer">
+        <div className="tag-frame flex-1 gap-2">
+          {(isReturnedToIssuer || isTokenBurnt) && (
+            <Tag
+              rounded="rounded-full"
+              className="flex flex-row justify-center items-center p-2 gap-[10px] min-w-[188px] max-w-[383px] bg-[#FDDAE2] rounded-full flex-1 text-center"
+            >
+              <h4 className="bg-alert-20">
+                {isReturnedToIssuer
+                  ? 'ETR Returned to Issuer'
+                  : 'ETR Taken Out of Circulation'}
+              </h4>
+            </Tag>
+          )}
+          {isExpired && (
+            <Tag
+              rounded="rounded-full"
+              className="flex flex-row justify-center items-center p-2 gap-[10px] min-w-[188px] max-w-[383px] h-10 bg-[#FDDAE2] rounded-full flex-1"
+            >
+              <h4 className="bg-alert-20 whitespace-nowrap">ETR Expired</h4>
+            </Tag>
+          )}
+          <div className="vr-footer-dropdown-placeholder" />
+        </div>
         {!isTokenBurnt && (
-          <div className="dropdown-btn-frame flex gap-2">
-            <div className="vr-footer-dropdown-placeholder hidden lg:block flex-1" />
+          <div className="dropdown-btn-frame flex-1">
+            <div className="vr-footer-dropdown-placeholder flex-1" />
             {account ? (
               <>
                 {canManage ? (

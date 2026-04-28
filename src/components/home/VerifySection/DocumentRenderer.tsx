@@ -328,8 +328,7 @@ const DocumentRenderer: React.FC<DocumentRendererProps> = ({
         {!isRendererReady && selectedTemplate !== 'attachmentTab' && (
           <div className="vr-renderer-loading">
             <div className="flex flex-col items-center gap-2">
-              <Spinner data-testid={'loader'} fill="white" /> Loading document
-              preview..
+              <Spinner data-testid={'loader'} /> Loading document preview..
             </div>
           </div>
         )}

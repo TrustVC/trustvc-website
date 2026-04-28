@@ -558,10 +558,17 @@ p.small {
   gap: 10px;
 }
 
+/* xs breakpoint */
+@media (max-width: 540px) {
+  .boundary-frame {
+    padding: 0;
+  }
+}
+
 /* Overlay Border Shadow */
 .overlay-border-shadow {
   align-self: stretch;
-  min-width: min(340px, 100%);
+  min-width: 360px;
   padding: 16px;
   background:
     linear-gradient(
@@ -2036,7 +2043,8 @@ p.small {
   text-align: left;
   padding: 0;
   text-decoration: none;
-  display: block;
+  display: inline-block;
+  width: fit-content;
 }
 .dark-mode .vr-nft-link {
   color: #7d80d7;
@@ -2123,10 +2131,16 @@ p.small {
 /* Connect Wallet footer */
 
 .vr-footer {
-  align-self: stretch;
-  padding: 8px;
   display: flex;
-  justify-content: flex-end;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  align-content: flex-start;
+  padding: 8px;
+  gap: 8px;
+  order: 4;
+  align-self: stretch;
+  flex-grow: 0;
 }
 
 .vr-connect-btn {
@@ -3351,7 +3365,6 @@ p.small {
 }
 
 .dropdown-btn-frame {
-  /* Auto layout */
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -3359,15 +3372,10 @@ p.small {
   align-items: flex-start;
   align-content: flex-end;
   padding: 0px;
-  gap: 8px;
+  row-gap: 0px;
 
+  min-width: 187px;
   max-width: 538px;
-  height: 40px;
-
-  /* Inside auto layout */
-  flex: none;
-  order: 0;
-  flex-grow: 1;
 }
 
 .dropdown-single-btn {
@@ -3387,15 +3395,23 @@ p.small {
   order: 0;
   flex-grow: 1;
 }
-.btn-menu-frame {
-  /* Button Menu Frame */
+.tag-frame {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  align-content: flex-start;
+  padding: 0px;
 
-  /* Auto layout */
+  min-width: 187px;
+}
+
+.btn-menu-frame {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   padding: 0px;
-  gap: 4px;
+  gap: 10px;
 
   min-width: 188px;
   max-width: 383px;
@@ -3412,23 +3428,8 @@ p.small {
   }
 }
 
-@media (max-width: 768px) {
-  .dropdown-btn-frame {
-    justify-content: center;
-  }
-}
-
-@media (max-width: 640px) {
-  .dropdown-btn-frame {
-    padding-left: 0px;
-  }
-}
-
 @media (max-width: 360px) {
   .dropdown-single-btn {
-    max-width: 100%;
-  }
-  .dropdown-btn-frame {
     max-width: 100%;
   }
 }

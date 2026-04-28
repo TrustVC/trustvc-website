@@ -345,7 +345,9 @@ export const showDocumentTransferMessage = (
       {(title === MessageTitle.ENDORSE_BENEFICIARY_SUCCESS ||
         title === MessageTitle.TRANSFER_OWNER_SUCCESS ||
         title === MessageTitle.TRANSFER_OWNER_FAILED ||
-        title === MessageTitle.ENDORSE_BENEFICIARY_FAILED) && (
+        title === MessageTitle.ENDORSE_BENEFICIARY_FAILED ||
+        title === MessageTitle.REJECT_TRANSFER_OWNER_SUCCESS ||
+        title === MessageTitle.REJECT_TRANSFER_OWNER_FAILED) && (
         <MessageTransferBeneficiary address={option.beneficiaryAddress} />
       )}
       {(title === MessageTitle.NOMINATE_BENEFICIARY_SUCCESS ||
@@ -353,11 +355,15 @@ export const showDocumentTransferMessage = (
         <MessageNominateBeneficiary isSuccess={option.isSuccess} />
       )}
       {(title === MessageTitle.TRANSFER_HOLDER_SUCCESS ||
-        title === MessageTitle.TRANSFER_HOLDER_FAILED) && (
+        title === MessageTitle.TRANSFER_HOLDER_FAILED ||
+        title === MessageTitle.REJECT_TRANSFER_HOLDER_SUCCESS ||
+        title === MessageTitle.REJECT_TRANSFER_HOLDER_FAILED) && (
         <MessageTransferHolder address={option.holderAddress} />
       )}
       {(title === MessageTitle.TRANSFER_OWNER_HOLDER_SUCCESS ||
-        title === MessageTitle.TRANSFER_OWNER_HOLDER_FAILED) && (
+        title === MessageTitle.TRANSFER_OWNER_HOLDER_FAILED ||
+        title === MessageTitle.REJECT_TRANSFER_OWNER_HOLDER_SUCCESS ||
+        title === MessageTitle.REJECT_TRANSFER_OWNER_HOLDER_FAILED) && (
         <MessageEndorseTransfer
           beneficiaryAddress={option.beneficiaryAddress}
           holderAddress={option.holderAddress}
