@@ -4552,8 +4552,8 @@ label.transparent:active {
 }
 
 .select-field-trigger--light {
-  background-color: #ffffff;
-  border-color: #a9b2bb;
+  background-color: rgba(255, 255, 255, 0.7);
+  border-color: rgba(0, 0, 0, 0.1);
 }
 
 .select-field-trigger--light:hover {
@@ -4561,12 +4561,18 @@ label.transparent:active {
 }
 
 .select-field-trigger--dark {
-  background-color: #1e2026;
-  border-color: #3d444d;
+  background-color: transparent;
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .select-field-trigger--dark:hover {
   border-color: #7d80d7;
+}
+
+.select-field-trigger:focus-visible,
+.select-field-trigger[aria-expanded='true'] {
+  border-color: #686ad2;
+  outline: none;
 }
 
 .select-field-trigger--error,
