@@ -39,7 +39,7 @@ const NewsArticlesContent = ({
     isDarkMode ? 'text-[#E6EBFF]' : 'text-[#1E2026]'
   )
   const excerptTextClass = clsx(
-    'mt-3 text-[18px] leading-[136%] font-medium line-clamp-3',
+    'mt-3 text-[18px] leading-[136%] font-medium line-clamp-3 text-left',
     isDarkMode ? 'text-[#A9B2BB]' : 'text-[#3D444D]'
   )
   const cardTitleTextClass = clsx(
@@ -47,7 +47,7 @@ const NewsArticlesContent = ({
     isDarkMode ? 'text-[#E6EBFF]' : 'text-[#1E2026]'
   )
   const cardExcerptTextClass = clsx(
-    'mt-2 text-sm line-clamp-2',
+    'mt-2 text-sm line-clamp-2 text-left',
     isDarkMode ? 'text-[#A9B2BB]' : 'text-[#3D444D]'
   )
 
