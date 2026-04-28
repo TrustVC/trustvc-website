@@ -12,6 +12,7 @@ import {
   useProviderContext,
 } from '../../common/contexts/providerContext'
 import { AssetManagementApplication } from '../../AssetManagementPanel/AssetManagementApplication'
+import { TextButton } from '../../common/Button/Button'
 
 interface VerifyResultProps {
   fileName: string
@@ -285,14 +286,13 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
                     </button>
                   )
                 })()}
-                <button
-                  type="button"
+                <TextButton
                   className="vr-nft-link"
                   onClick={onViewEndorsementChain}
                   disabled={!onViewEndorsementChain}
                 >
                   View Endorsement Chain
-                </button>
+                </TextButton>
               </div>
             </div>
           )}

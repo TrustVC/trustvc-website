@@ -14,10 +14,7 @@ export const Tag: FunctionComponent<TagProps> = ({
   ...props
 }) => {
   return (
-    <div
-      className={`inline-block py-1 px-2 ${rounded} ${className}`}
-      {...props}
-    >
+    <div className={`${rounded} ${className}`} {...props}>
       {children}
     </div>
   )

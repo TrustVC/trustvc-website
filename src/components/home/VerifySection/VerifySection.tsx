@@ -140,7 +140,7 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
     <div className="frame-dropbox">
       <div className="dropbox-area dropbox-area--home dropbox-area--centered">
         <div className="flex flex-col items-center gap-2">
-          <Spinner fill="#5B5BB3" fontSize={32} />
+          <Spinner fontSize={32} />
           <span className="text-sm">Verifying {fileName}...</span>
         </div>
       </div>
@@ -148,7 +148,9 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
   )
 
   return (
-    <div className={`verify-section ${isDarkMode ? 'dark-mode' : ''}`}>
+    <div
+      className={`min-w-[360px] max-w-[1440px] verify-section ${isDarkMode ? 'dark-mode' : ''}`}
+    >
       <div className="boundary-frame">
         {showEndorsementChain && (
           <EndorsementChain

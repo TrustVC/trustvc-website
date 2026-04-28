@@ -154,3 +154,33 @@ export const LabelButton: FunctionComponent<LabelTradeTrust> = ({
     </label>
   )
 }
+
+interface TextButtonProps {
+  className?: string
+  onClick?: () => void
+  children: ReactNode
+  disabled?: boolean
+}
+
+export const TextButton: FunctionComponent<TextButtonProps> = ({
+  className = '',
+  onClick,
+  children,
+  disabled = false,
+}) => {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      className={clsx(
+        'bg-transparent border-none p-0 cursor-pointer font-gilroy font-bold',
+        'text-primary-50',
+        `${disabled ? 'cursor-not-allowed opacity-50' : ''}`,
+        className
+      )}
+    >
+      {children}
+    </button>
+  )
+}
