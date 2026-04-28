@@ -122,7 +122,6 @@ export const ProviderContextProvider: FunctionComponent<
   defaultChainId,
   defaultProviderType = SIGNER_TYPE.NONE,
 }) => {
-  console.log('[ProviderContextProvider] Component render')
   const defaultProvider = useRef(createProvider(defaultChainId))
   const magicRef = useRef<Magic | null>(null)
   const magicChainIdRef = useRef<CHAIN_ID | null>(null)
