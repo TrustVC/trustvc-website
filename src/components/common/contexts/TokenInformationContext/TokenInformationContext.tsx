@@ -65,6 +65,7 @@ interface ITokenInformationContext {
   restoreToken: (...args: any[]) => Promise<any>
   restoreTokenState: ContractFunctionState
   resetProviders: () => void
+  errorMessage?: string
 }
 
 const contractFunctionStub: any = () => {
@@ -185,6 +186,7 @@ export const TokenInformationContextProvider: FunctionComponent<
     send: changeHolder,
     state: changeHolderState,
     reset: resetChangeHolder,
+    errorMessage: changeHolderErrorMessage,
   } = useContractFunctionHook(
     titleEscrow,
     'transferHolder',
@@ -196,6 +198,7 @@ export const TokenInformationContextProvider: FunctionComponent<
     send: destroyToken,
     state: destroyTokenState,
     reset: resetDestroyingTokenState,
+    errorMessage: destroyTokenErrorMessage,
   } = useContractFunctionHook(
     tokenRegistry,
     'acceptReturned',
@@ -207,6 +210,7 @@ export const TokenInformationContextProvider: FunctionComponent<
     send: endorseBeneficiary,
     state: endorseBeneficiaryState,
     reset: resetEndorseBeneficiary,
+    errorMessage: endorseBeneficiaryErrorMessage,
   } = useContractFunctionHook(
     titleEscrow,
     'transferBeneficiary',
@@ -218,6 +222,7 @@ export const TokenInformationContextProvider: FunctionComponent<
     send: nominate,
     state: nominateState,
     reset: resetNominate,
+    errorMessage: nominateErrorMessage,
   } = useContractFunctionHook(
     titleEscrow,
     'nominate',
@@ -229,6 +234,7 @@ export const TokenInformationContextProvider: FunctionComponent<
     send: rejectTransferHolder,
     state: rejectTransferHolderState,
     reset: resetRejectTransferHolder,
+    errorMessage: rejectTransferHolderErrorMessage,
   } = useContractFunctionHook(
     titleEscrow,
     'rejectTransferHolder',
@@ -240,6 +246,7 @@ export const TokenInformationContextProvider: FunctionComponent<
     send: rejectTransferOwner,
     state: rejectTransferOwnerState,
     reset: resetRejectTransferOwner,
+    errorMessage: rejectTransferOwnerErrorMessage,
   } = useContractFunctionHook(
     titleEscrow,
     'rejectTransferBeneficiary',
@@ -251,6 +258,7 @@ export const TokenInformationContextProvider: FunctionComponent<
     send: rejectTransferOwnerHolder,
     state: rejectTransferOwnerHolderState,
     reset: resetRejectTransferOwnerHolder,
+    errorMessage: rejectTransferOwnerHolderErrorMessage,
   } = useContractFunctionHook(
     titleEscrow,
     'rejectTransferOwners',
@@ -262,6 +270,7 @@ export const TokenInformationContextProvider: FunctionComponent<
     send: restoreToken, // restoreToken function does not return any value
     state: restoreTokenState,
     reset: resetRestoreTokenState,
+    errorMessage: restoreTokenErrorMessage,
   } = useContractFunctionHook(
     tokenRegistry,
     'rejectReturned',
@@ -273,6 +282,7 @@ export const TokenInformationContextProvider: FunctionComponent<
     send: returnToIssuer,
     state: returnToIssuerState,
     reset: resetReturnToIssuer,
+    errorMessage: returnToIssuerErrorMessage,
   } = useContractFunctionHook(
     titleEscrow,
     'returnToIssuer',
@@ -284,6 +294,7 @@ export const TokenInformationContextProvider: FunctionComponent<
     send: transferOwners,
     state: transferOwnerHoldersState,
     reset: resetTransferOwners,
+    errorMessage: transferOwnersErrorMessage,
   } = useContractFunctionHook(
     titleEscrow,
     'transferOwners',
@@ -400,6 +411,19 @@ export const TokenInformationContextProvider: FunctionComponent<
 
   // Reset states for all write functions when provider changes to allow methods to be called again without refreshing
   useEffect(resetProviders, [resetProviders, providerOrSigner])
+
+  const errorMessage =
+    changeHolderErrorMessage ||
+    destroyTokenErrorMessage ||
+    endorseBeneficiaryErrorMessage ||
+    transferOwnersErrorMessage ||
+    nominateErrorMessage ||
+    rejectTransferOwnerErrorMessage ||
+    rejectTransferHolderErrorMessage ||
+    rejectTransferOwnerHolderErrorMessage ||
+    restoreTokenErrorMessage ||
+    returnToIssuerErrorMessage
+
   return (
     <TokenInformationContext.Provider
       value={{
@@ -439,6 +463,7 @@ export const TokenInformationContextProvider: FunctionComponent<
         restoreToken,
         restoreTokenState,
         resetProviders,
+        errorMessage,
       }}
     >
       {children}

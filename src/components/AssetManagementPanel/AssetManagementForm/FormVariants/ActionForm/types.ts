@@ -11,6 +11,7 @@ export interface BaseActionFormProps {
   setFormActionNone: () => void
   setShowEndorsementChain: (payload: boolean) => void
   refreshEndorsementChain?: () => void
+  errorMessage?: string
 }
 
 // Props for TransferHolderForm

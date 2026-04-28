@@ -94,7 +94,10 @@ export const AssetManagementApplication: FunctionComponent<
     // reject transfer owner holder
     rejectTransferOwnerHolder,
     rejectTransferOwnerHolderState,
+    // reset providers
     resetProviders,
+    //errorMessage
+    errorMessage,
   } = useTokenInformationContext()
   const [assetManagementAction, setAssetManagementAction] =
     useState<AssetManagementActions>(AssetManagementActions.None)
@@ -193,6 +196,7 @@ export const AssetManagementApplication: FunctionComponent<
           onRestoreToken={onRestoreToken}
           restoreTokenState={restoreTokenState}
           isExpired={isExpired}
+          errorMessage={errorMessage}
         />
       ) : (
         isExpired && (
