@@ -167,7 +167,7 @@ describe('AssetManagementApplication', () => {
       )
 
       expect(screen.getByTestId('tag')).toBeInTheDocument()
-      expect(screen.getByText('ETR Expired')).toBeInTheDocument()
+      expect(screen.getByText('Expired')).toBeInTheDocument()
     })
 
     it('does not render expired tag when document is not expired', () => {

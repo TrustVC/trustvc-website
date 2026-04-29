@@ -24,7 +24,6 @@ interface ActionSelectionFormProps {
   isTitleEscrow: boolean
   isRejectPendingConfirmation?: boolean
   isTokenBurnt: boolean
-  isExpired?: boolean
 
   canReturnToIssuer: boolean
   canHandleShred?: boolean
@@ -50,7 +49,6 @@ export const ActionSelectionForm: FunctionComponent<
   isTokenBurnt,
   isTitleEscrow,
   isRejectPendingConfirmation,
-  isExpired,
   canTransferHolder,
   canTransferBeneficiary,
   canTransferOwners,
@@ -185,14 +183,6 @@ export const ActionSelectionForm: FunctionComponent<
                   ? 'ETR Returned to Issuer'
                   : 'ETR Taken Out of Circulation'}
               </h4>
-            </Tag>
-          )}
-          {isExpired && (
-            <Tag
-              rounded="rounded-full"
-              className="flex flex-row justify-center items-center p-2 gap-[10px] min-w-[188px] max-w-[383px] h-10 bg-[#FDDAE2] rounded-full flex-1"
-            >
-              <h4 className="bg-alert-20 whitespace-nowrap">ETR Expired</h4>
             </Tag>
           )}
           <div className="vr-footer-dropdown-placeholder" />

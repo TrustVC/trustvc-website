@@ -205,7 +205,7 @@ export const AssetManagementApplication: FunctionComponent<
               rounded="rounded-full"
               className="bg-[#FDDAE2] !p-2 min-w-[188px] max-w-[383px] text-center w-full flex-1"
             >
-              <h4 className="bg-alert-20">ETR Expired</h4>
+              <h4 className="bg-alert-20">Expired</h4>
             </Tag>
           </div>
         )
