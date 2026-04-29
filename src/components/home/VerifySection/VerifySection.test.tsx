@@ -33,6 +33,7 @@ const defaultHook: UseVerifyReturn = {
   errorType: TYPES.VERIFICATION_ERROR,
   dragActive: false,
   isTransferable: false,
+  isExpired: false,
   tokenRegistryVersion: null,
   tags: [],
   getGroupStatus: vi.fn().mockReturnValue('VALID' as const),

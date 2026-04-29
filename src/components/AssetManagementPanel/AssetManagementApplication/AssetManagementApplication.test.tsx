@@ -68,10 +68,10 @@ vi.mock('../AssetManagementForm', () => ({
   ),
 }))
 
-// Mock TagBordered
+// Mock Tag
 vi.mock('../../common/Tag', () => ({
-  TagBordered: ({ children, ...props }: any) => (
-    <div data-testid="tag-bordered" {...props}>
+  Tag: ({ children, ...props }: any) => (
+    <div data-testid="tag" {...props}>
       {children}
     </div>
   ),
@@ -166,14 +166,14 @@ describe('AssetManagementApplication', () => {
         />
       )
 
-      expect(screen.getByTestId('expiredDoc')).toBeInTheDocument()
-      expect(screen.getByText('Expired')).toBeInTheDocument()
+      expect(screen.getByTestId('tag')).toBeInTheDocument()
+      expect(screen.getByText('ETR Expired')).toBeInTheDocument()
     })
 
     it('does not render expired tag when document is not expired', () => {
       render(<AssetManagementApplication {...defaultNonTransferableProps} />)
 
-      expect(screen.queryByTestId('expiredDoc')).not.toBeInTheDocument()
+      expect(screen.queryByTestId('tag')).not.toBeInTheDocument()
     })
   })
 
@@ -413,7 +413,7 @@ describe('AssetManagementApplication', () => {
       expect(
         screen.queryByTestId('asset-management-form')
       ).not.toBeInTheDocument()
-      expect(screen.queryByTestId('expiredDoc')).not.toBeInTheDocument()
+      expect(screen.queryByTestId('tag')).not.toBeInTheDocument()
     })
   })
 

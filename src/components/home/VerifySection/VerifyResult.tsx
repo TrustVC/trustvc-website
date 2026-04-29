@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import NetworkTooltip from './NetworkTooltip'
 import DocumentRenderer from './DocumentRenderer'
 import InvalidAttachmentsBanner from './InvalidAttachmentsBanner'
+import ObfuscatedMessage from './ObfuscatedMessage'
 import { makeExplorerAddressURL } from './useVerify'
 import { CheckCircle, CrossCircle } from '../../common/Icons'
 import { DocumentAttachment } from '../../../utils/helper'
@@ -313,6 +314,7 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
             isMagicDemo={false}
             isTransferableDocument={!!isTransferable}
             isExpired={!!isExpired}
+            isSampleDocument={false}
           />
         )}
 
@@ -334,6 +336,9 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
           />
         )}
       </div>
+
+      {/* Obfuscation Notice */}
+      {rawDocument ? <ObfuscatedMessage document={rawDocument} /> : null}
 
       {/* Invalid Attachments Banner */}
       {invalidAttachments && invalidAttachments.length > 0 && (
