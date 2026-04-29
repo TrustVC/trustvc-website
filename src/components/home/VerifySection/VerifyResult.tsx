@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import NetworkTooltip from './NetworkTooltip'
 import DocumentRenderer from './DocumentRenderer'
 import InvalidAttachmentsBanner from './InvalidAttachmentsBanner'
+import ObfuscatedMessage from './ObfuscatedMessage'
 import { makeExplorerAddressURL } from './useVerify'
 import { CheckCircle, CrossCircle } from '../../common/Icons'
 import { DocumentAttachment } from '../../../utils/helper'
@@ -21,6 +22,7 @@ interface VerifyResultProps {
   tokenId?: string
   issuer?: string
   isTransferable?: boolean
+  isExpired?: boolean
   tokenRegistryAddress?: string
   tags?: string[]
   owner?: { name?: string; address?: string }
@@ -57,6 +59,7 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
   onViewNftRegistry,
   onViewEndorsementChain,
   refreshEndorsementChain,
+  isExpired,
 }) => {
   const { changeNetwork, currentChainId } = useProviderContext()
 
@@ -306,6 +309,14 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
         )}
 
         {/* Footer: Connect Wallet */}
+        {!isTransferable && (
+          <AssetManagementApplication
+            isMagicDemo={false}
+            isTransferableDocument={!!isTransferable}
+            isExpired={!!isExpired}
+            isSampleDocument={false}
+          />
+        )}
 
         {isTransferable && tokenRegistryAddress && tokenId && (
           <AssetManagementApplication
@@ -321,10 +332,13 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
             refreshEndorsementChain={refreshEndorsementChain}
             isTransferableDocument={isTransferable}
             isSampleDocument={false}
-            isExpired={false}
+            isExpired={isExpired}
           />
         )}
       </div>
+
+      {/* Obfuscation Notice */}
+      {rawDocument ? <ObfuscatedMessage document={rawDocument} /> : null}
 
       {/* Invalid Attachments Banner */}
       {invalidAttachments && invalidAttachments.length > 0 && (
