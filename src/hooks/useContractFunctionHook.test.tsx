@@ -41,7 +41,9 @@ describe('useContractFunctionHook', () => {
       })
 
       expect(result.current.state).toBe('ERROR')
-      expect(result.current.errorMessage).toBe('Contract or method is not specified')
+      expect(result.current.errorMessage).toBe(
+        'Contract or method is not specified'
+      )
     })
 
     it('sets ERROR and errorMessage when method is undefined', async () => {
@@ -54,7 +56,9 @@ describe('useContractFunctionHook', () => {
       })
 
       expect(result.current.state).toBe('ERROR')
-      expect(result.current.errorMessage).toBe('Contract or method is not specified')
+      expect(result.current.errorMessage).toBe(
+        'Contract or method is not specified'
+      )
     })
   })
 

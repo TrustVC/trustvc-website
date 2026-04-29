@@ -62,7 +62,9 @@ describe('DocumentTransferMessage', () => {
       )
 
       expect(screen.getByText('User Rejected Transaction')).toBeInTheDocument()
-      expect(screen.queryByText('default child content')).not.toBeInTheDocument()
+      expect(
+        screen.queryByText('default child content')
+      ).not.toBeInTheDocument()
     })
 
     it('renders children when errorMessage is undefined', () => {

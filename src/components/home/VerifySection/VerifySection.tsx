@@ -1,5 +1,4 @@
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
 import { useVerify } from './useVerify'
 import NetworkModal from './NetworkModal'
 import VerifyResult from './VerifyResult'
@@ -90,8 +89,6 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
   const networkName = verifiedChainId
     ? (CHAIN_NAMES[verifiedChainId] ?? `Chain ${verifiedChainId}`)
     : undefined
-
-  const navigate = useNavigate()
 
   const renderDropzone = () => (
     <div className="frame-dropbox">
@@ -212,7 +209,13 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
                 <button
                   type="button"
                   className="cta-button"
-                  onClick={() => navigate('/')}
+                  onClick={() =>
+                    window.open(
+                      'https://gallery.tradetrust.io',
+                      '_blank',
+                      'noopener,noreferrer'
+                    )
+                  }
                 >
                   <div className="cta-boundary">
                     <div className="cta-padding" />
