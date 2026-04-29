@@ -98,9 +98,28 @@ describe('AssetManagementForm', () => {
     )
   })
 
-  it('enables reject holdership only for token registry v5 after holder transfer context', () => {
+  it('disables reject holdership when holder and beneficiary are the same account (isHolderAndBeneficiary)', () => {
     mockUseTokenRegistryVersion.mockReturnValue(TokenRegistryVersions.V5)
+    // baseProps has beneficiary === holder === account, so isHolderAndBeneficiary=true
     render(<AssetManagementForm {...baseProps} prevBeneficiary={undefined} />)
+
+    expect(mockActionSelectionForm).toHaveBeenCalledWith(
+      expect.objectContaining({
+        canRejectHolderTransfer: false,
+      })
+    )
+  })
+
+  it('enables reject holdership for token registry v5 when holder differs from beneficiary', () => {
+    mockUseTokenRegistryVersion.mockReturnValue(TokenRegistryVersions.V5)
+    // Different beneficiary means isHolderAndBeneficiary=false, so canRejectHolderTransfer can be true
+    render(
+      <AssetManagementForm
+        {...baseProps}
+        beneficiary="0xDEADBEEFdeadbeefdeadbeefdeadbeefdeadbeef"
+        prevBeneficiary={undefined}
+      />
+    )
 
     expect(mockActionSelectionForm).toHaveBeenCalledWith(
       expect.objectContaining({

@@ -48,6 +48,7 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
     setFormActionNone,
     setShowEndorsementChain,
     refreshEndorsementChain,
+    errorMessage,
   } = props
   const [remark, setRemark] = useState('')
   const { showOverlay } = useOverlayContext()
@@ -64,7 +65,7 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
       const { holderTransferringState } = props
       const isConfirmed = holderTransferringState === FormState.CONFIRMED
       const isFailed = holderTransferringState === FormState.ERROR
-      const msg = isConfirmed
+      const title = isConfirmed
         ? MessageTitle.TRANSFER_HOLDER_SUCCESS
         : MessageTitle.TRANSFER_HOLDER_FAILED
 
@@ -74,12 +75,13 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
         }
         showOverlay(
           showDocumentTransferMessage(
-            msg,
+            title,
             {
               isSuccess: isConfirmed,
               holderAddress: isConfirmed ? newHolder : holder,
             },
-            setShowEndorsementChain
+            setShowEndorsementChain,
+            errorMessage
           )
         )
         setFormActionNone()
@@ -90,7 +92,7 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
       const { transferOwnerHoldersState } = props
       const isConfirmed = transferOwnerHoldersState === FormState.CONFIRMED
       const isFailed = transferOwnerHoldersState === FormState.ERROR
-      const msg = isConfirmed
+      const title = isConfirmed
         ? MessageTitle.TRANSFER_OWNER_HOLDER_SUCCESS
         : MessageTitle.TRANSFER_OWNER_HOLDER_FAILED
       const beneficiaryAddress = isConfirmed ? newOwner : beneficiary
@@ -102,13 +104,14 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
         }
         showOverlay(
           showDocumentTransferMessage(
-            msg,
+            title,
             {
               isSuccess: isConfirmed,
               beneficiaryAddress,
               holderAddress,
             },
-            setShowEndorsementChain
+            setShowEndorsementChain,
+            errorMessage
           )
         )
         setFormActionNone()
@@ -119,7 +122,7 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
       const { rejectTransferOwnerHolderState } = props
       const isConfirmed = rejectTransferOwnerHolderState === FormState.CONFIRMED
       const isFailed = rejectTransferOwnerHolderState === FormState.ERROR
-      const msg = isConfirmed
+      const title = isConfirmed
         ? MessageTitle.REJECT_TRANSFER_OWNER_HOLDER_SUCCESS
         : MessageTitle.REJECT_TRANSFER_OWNER_HOLDER_FAILED
       const beneficiaryAddress = isConfirmed ? prevBeneficiary : beneficiary
@@ -131,13 +134,14 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
         }
         showOverlay(
           showDocumentTransferMessage(
-            msg,
+            title,
             {
               isSuccess: isConfirmed,
               beneficiaryAddress,
               holderAddress,
             },
-            setShowEndorsementChain
+            setShowEndorsementChain,
+            errorMessage
           )
         )
         setFormActionNone()
@@ -148,23 +152,23 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
       const { rejectTransferHolderState } = props
       const isConfirmed = rejectTransferHolderState === FormState.CONFIRMED
       const isFailed = rejectTransferHolderState === FormState.ERROR
-      const msg = isConfirmed
+      const title = isConfirmed
         ? MessageTitle.REJECT_TRANSFER_HOLDER_SUCCESS
         : MessageTitle.REJECT_TRANSFER_HOLDER_FAILED
       const holderAddress = isConfirmed ? prevHolder : holder
-
       if (isConfirmed || isFailed) {
         if (refreshEndorsementChain && isConfirmed) {
           refreshEndorsementChain()
         }
         showOverlay(
           showDocumentTransferMessage(
-            msg,
+            title,
             {
               isSuccess: isConfirmed,
               holderAddress,
             },
-            setShowEndorsementChain
+            setShowEndorsementChain,
+            errorMessage
           )
         )
         setFormActionNone()
@@ -175,7 +179,7 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
       const { rejectTransferOwnerState } = props
       const isConfirmed = rejectTransferOwnerState === FormState.CONFIRMED
       const isFailed = rejectTransferOwnerState === FormState.ERROR
-      const msg = isConfirmed
+      const title = isConfirmed
         ? MessageTitle.REJECT_TRANSFER_OWNER_SUCCESS
         : MessageTitle.REJECT_TRANSFER_OWNER_FAILED
       const beneficiaryAddress = isConfirmed ? prevBeneficiary : beneficiary
@@ -186,12 +190,13 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
         }
         showOverlay(
           showDocumentTransferMessage(
-            msg,
+            title,
             {
               isSuccess: isConfirmed,
               beneficiaryAddress,
             },
-            setShowEndorsementChain
+            setShowEndorsementChain,
+            errorMessage
           )
         )
         setFormActionNone()
@@ -202,18 +207,19 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
       const { nominationState } = props
       const isConfirmed = nominationState === FormState.CONFIRMED
       const isFailed = nominationState === FormState.ERROR
-      const msg = isConfirmed
+      const title = isConfirmed
         ? MessageTitle.NOMINATE_BENEFICIARY_SUCCESS
         : MessageTitle.NOMINATE_BENEFICIARY_FAILED
 
       if (isConfirmed || isFailed) {
         showOverlay(
           showDocumentTransferMessage(
-            msg,
+            title,
             {
               isSuccess: isConfirmed,
             },
-            setShowEndorsementChain
+            setShowEndorsementChain,
+            errorMessage
           )
         )
         setFormActionNone()
@@ -224,7 +230,7 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
       const { nominee, endorseBeneficiaryState } = props
       const isConfirmed = endorseBeneficiaryState === FormState.CONFIRMED
       const isFailed = endorseBeneficiaryState === FormState.ERROR
-      const msg = isConfirmed
+      const title = isConfirmed
         ? MessageTitle.ENDORSE_BENEFICIARY_SUCCESS
         : MessageTitle.ENDORSE_BENEFICIARY_FAILED
       const beneficiaryAddress = isConfirmed ? nominee : beneficiary
@@ -235,12 +241,13 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
         }
         showOverlay(
           showDocumentTransferMessage(
-            msg,
+            title,
             {
               isSuccess: isConfirmed,
               beneficiaryAddress,
             },
-            setShowEndorsementChain
+            setShowEndorsementChain,
+            errorMessage
           )
         )
         setFormActionNone()
@@ -251,7 +258,7 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
       const { transferOwnersState } = props
       const isConfirmed = transferOwnersState === FormState.CONFIRMED
       const isFailed = transferOwnersState === FormState.ERROR
-      const msg = isConfirmed
+      const title = isConfirmed
         ? MessageTitle.TRANSFER_OWNER_SUCCESS
         : MessageTitle.TRANSFER_OWNER_FAILED
       const beneficiaryAddress = isConfirmed ? newOwner : beneficiary
@@ -262,12 +269,13 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
         }
         showOverlay(
           showDocumentTransferMessage(
-            msg,
+            title,
             {
               isSuccess: isConfirmed,
               beneficiaryAddress,
             },
-            setShowEndorsementChain
+            setShowEndorsementChain,
+            errorMessage
           )
         )
         setFormActionNone()
@@ -278,7 +286,7 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
       const { returnToIssuerState } = props
       const isConfirmed = returnToIssuerState === FormState.CONFIRMED
       const isFailed = returnToIssuerState === FormState.ERROR
-      const msg = isConfirmed
+      const title = isConfirmed
         ? MessageTitle.RETURN_TO_ISSUER_DOCUMENT_SUCCESS
         : MessageTitle.RETURN_TO_ISSUER_DOCUMENT_FAILED
       const beneficiaryAddress = isConfirmed ? '' : beneficiary
@@ -291,13 +299,14 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
 
         showOverlay(
           showDocumentTransferMessage(
-            msg,
+            title,
             {
               isSuccess: isConfirmed,
               beneficiaryAddress,
               holderAddress,
             },
-            setShowEndorsementChain
+            setShowEndorsementChain,
+            errorMessage
           )
         )
         setFormActionNone()
@@ -308,7 +317,7 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
       const { restoreTokenState } = props
       const isConfirmed = restoreTokenState === FormState.CONFIRMED
       const isFailed = restoreTokenState === FormState.ERROR
-      const msg = isConfirmed
+      const title = isConfirmed
         ? MessageTitle.REJECT_RETURN_TO_ISSUER_DOCUMENT_SUCCESS
         : MessageTitle.REJECT_RETURN_TO_ISSUER_DOCUMENT_FAILED
       const beneficiaryAddress = isConfirmed ? beneficiary : ''
@@ -320,13 +329,14 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
         }
         showOverlay(
           showDocumentTransferMessage(
-            msg,
+            title,
             {
               isSuccess: isConfirmed,
               beneficiaryAddress,
               holderAddress,
             },
-            setShowEndorsementChain
+            setShowEndorsementChain,
+            errorMessage
           )
         )
         setFormActionNone()
@@ -337,7 +347,7 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
       const { destroyTokenState } = props
       const isConfirmed = destroyTokenState === FormState.CONFIRMED
       const isFailed = destroyTokenState === FormState.ERROR
-      const msg = isConfirmed
+      const title = isConfirmed
         ? MessageTitle.ACCEPT_RETURN_TO_ISSUER_DOCUMENT_SUCCESS
         : MessageTitle.ACCEPT_RETURN_TO_ISSUER_DOCUMENT_FAILED
 
@@ -347,9 +357,10 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
         }
         showOverlay(
           showDocumentTransferMessage(
-            msg,
+            title,
             { isSuccess: isConfirmed },
-            setShowEndorsementChain
+            setShowEndorsementChain,
+            errorMessage
           )
         )
         setFormActionNone()

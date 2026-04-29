@@ -86,7 +86,7 @@ const VerifyError: React.FC<VerifyErrorProps> = ({ errorType, onReset }) => {
               {/* What Should I Do? link */}
               <div className="flex-1 max-w-[360px] min-w-[240px] p-1 flex flex-col justify-center items-center gap-2.5">
                 <a
-                  href="https://docs.trustvc.io"
+                  href="https://docs.tradetrust.io"
                   target="_blank"
                   rel="noopener noreferrer"
                   data-testid="what-should-i-do-btn"

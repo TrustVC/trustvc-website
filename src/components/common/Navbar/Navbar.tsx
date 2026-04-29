@@ -344,7 +344,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode: _setIsDarkMode }: NavbarProps) => {
                   />
                 </svg>
                 <span
-                  className="font-avenir font-medium text-[16px] leading-[21.7px]"
+                  className="text-sm font-bold font-['Gilroy']"
                   style={{
                     color: isSettingsActive
                       ? isDarkMode
