@@ -241,7 +241,6 @@ export const AssetManagementForm: FunctionComponent<
           isTokenBurnt={isTokenBurnt}
           setShowEndorsementChain={setShowEndorsementChain}
           isTitleEscrow={isTitleEscrow}
-          isExpired={isExpired}
         />
       )}
       {(formAction === AssetManagementActions.TransferHolder ||

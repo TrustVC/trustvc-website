@@ -26,7 +26,6 @@ const METAMASK_NUMERIC_CODES: Record<number, string> = {
   [-32600]: 'Invalid Request',
   [-32601]: 'Method Not Found',
   [-32602]: 'Invalid Parameters',
-  [-32603]: 'Internal Error',
   [-32000]: 'Invalid Input',
   [-32001]: 'Resource Not Found',
   [-32002]: 'Request Already Pending',
@@ -56,7 +55,7 @@ const getMetaMaskErrorMessage = (e: unknown): string => {
   if (typeof code === 'string' && code in ETHERS_STRING_CODES) {
     return ETHERS_STRING_CODES[code]
   }
-  return (e as Error)?.message || ''
+  return ''
 }
 
 // Create a mapping of method names to trustvc functions

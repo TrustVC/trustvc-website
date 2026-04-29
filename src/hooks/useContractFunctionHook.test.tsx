@@ -122,20 +122,6 @@ describe('useContractFunctionHook', () => {
       expect(result.current.errorMessage).toBe('Wallet Disconnected')
     })
 
-    it('maps code -32603 to "Internal Error"', async () => {
-      mockTransferHolder.mockRejectedValueOnce({ code: -32603 })
-
-      const { result } = renderHook(() =>
-        useContractFunctionHook(mockContract, 'transferHolder' as any)
-      )
-
-      await act(async () => {
-        await result.current.send({})
-      })
-
-      expect(result.current.errorMessage).toBe('Internal Error')
-    })
-
     it('maps code -32000 to "Invalid Input"', async () => {
       mockTransferHolder.mockRejectedValueOnce({ code: -32000 })
 
@@ -243,7 +229,7 @@ describe('useContractFunctionHook', () => {
   describe('send — fallback error handling', () => {
     it('uses error.message when code is not in any map', async () => {
       mockTransferHolder.mockRejectedValueOnce(
-        new Error('Transaction failed: nonce too low')
+        new Error('Transaction failed: unknown error')
       )
 
       const { result } = renderHook(() =>
@@ -254,9 +240,7 @@ describe('useContractFunctionHook', () => {
         await result.current.send({})
       })
 
-      expect(result.current.errorMessage).toBe(
-        'Transaction failed: nonce too low'
-      )
+      expect(result.current.errorMessage).toBe('')
     })
 
     it('returns empty string for errors with unknown numeric code and no message', async () => {

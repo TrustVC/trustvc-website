@@ -20,7 +20,7 @@ import {
   errorMessageHandling,
   errorMessages,
 } from '@trustvc/trustvc'
-import { getRpcUrl } from '../../../utils/helper'
+import { getRpcUrl, getIsExpired } from '../../../utils/helper'
 import { useDocumentContext } from '../../common/contexts/DocumentContext'
 import { type VerifyErrorType, getErrorTypeFromError } from './verifyErrorUtils'
 
@@ -61,6 +61,7 @@ export interface UseVerifyReturn {
   verifiedChainId?: string
   issuerName?: string
   isTransferable: boolean
+  isExpired: boolean
   tokenRegistryVersion: TokenRegistryVersion
   tokenRegistryAddress?: string
   tags: string[]
@@ -327,6 +328,7 @@ export const useVerify = (): UseVerifyReturn => {
   const [tokenId, setTokenId] = useState<string | undefined>(undefined)
   const [keyId, setKeyId] = useState<string | undefined>(undefined)
   const [rawDocument, setRawDocument] = useState<unknown>(undefined)
+  const [isExpired, setIsExpired] = useState<boolean>(false)
   const runVerification = async (
     doc: unknown,
     chainId: string | null | undefined,
@@ -370,6 +372,8 @@ export const useVerify = (): UseVerifyReturn => {
       : undefined
     setTokenRegistryAddress(registryAddress)
     setTokenRegistryAddressContext(registryAddress || null)
+
+    setIsExpired(getIsExpired(doc))
 
     //add code to fetch TokenId , keyId from the document
     const _keyId = getDocumentData(doc as any)?.id
@@ -523,6 +527,7 @@ export const useVerify = (): UseVerifyReturn => {
     verifiedChainId,
     issuerName,
     isTransferable,
+    isExpired,
     tokenRegistryVersion,
     tokenRegistryAddress,
     tags,
