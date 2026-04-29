@@ -1854,3 +1854,167 @@ describe('ActionForm - EndorseBeneficiary', () => {
     })
   })
 })
+
+describe('ActionForm - errorMessage prop passthrough', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('passes errorMessage to overlay when TransferHolder fails', async () => {
+    const mockHandleTransfer = vi.fn()
+
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.TransferHolder}
+        handleTransfer={mockHandleTransfer}
+        holderTransferringState={FormState.ERROR}
+        errorMessage="User Rejected Transaction"
+      />
+    )
+
+    await waitFor(() => {
+      expect(mockShowOverlay).toHaveBeenCalled()
+    })
+
+    const overlayNode = mockShowOverlay.mock.calls[0][0] as any
+    expect(overlayNode.props.title).toBe('Transfer Holder Failed')
+    expect(overlayNode.props.isSuccess).toBe(false)
+    expect(overlayNode.props.errorMessage).toBe('User Rejected Transaction')
+  })
+
+  it('passes errorMessage to overlay when TransferOwnerHolder fails', async () => {
+    const mockHandleTransferOwnerHolder = vi.fn()
+
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.TransferOwnerHolder}
+        handleTransferOwnerHolder={mockHandleTransferOwnerHolder}
+        transferOwnerHoldersState={FormState.ERROR}
+        errorMessage="Insufficient Funds"
+      />
+    )
+
+    await waitFor(() => {
+      expect(mockShowOverlay).toHaveBeenCalled()
+    })
+
+    const overlayNode = mockShowOverlay.mock.calls[0][0] as any
+    expect(overlayNode.props.title).toBe('Transfer Ownership/Holdership Failed')
+    expect(overlayNode.props.errorMessage).toBe('Insufficient Funds')
+  })
+
+  it('passes errorMessage to overlay when NominateBeneficiary fails', async () => {
+    const mockHandleNomination = vi.fn()
+
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.NominateBeneficiary}
+        handleNomination={mockHandleNomination}
+        nominationState={FormState.ERROR}
+        errorMessage="Network Error"
+      />
+    )
+
+    await waitFor(() => {
+      expect(mockShowOverlay).toHaveBeenCalled()
+    })
+
+    const overlayNode = mockShowOverlay.mock.calls[0][0] as any
+    expect(overlayNode.props.title).toBe('Nomination Failed')
+    expect(overlayNode.props.errorMessage).toBe('Network Error')
+  })
+
+  it('passes errorMessage to overlay when RejectTransferOwnerHolder fails', async () => {
+    const mockHandleRejectTransferOwnerHolder = vi.fn()
+
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        prevBeneficiary="0xabcdefabcdefabcdefabcdefabcdefabcdefabcd"
+        prevHolder="0x1111111111111111111111111111111111111111"
+        type={AssetManagementActions.RejectTransferOwnerHolder}
+        handleRejectTransferOwnerHolder={mockHandleRejectTransferOwnerHolder}
+        rejectTransferOwnerHolderState={FormState.ERROR}
+        errorMessage="Transaction Rejected"
+      />
+    )
+
+    await waitFor(() => {
+      expect(mockShowOverlay).toHaveBeenCalled()
+    })
+
+    const overlayNode = mockShowOverlay.mock.calls[0][0] as any
+    expect(overlayNode.props.title).toBe(
+      'Holdership/Ownership Rejection Failed'
+    )
+    expect(overlayNode.props.errorMessage).toBe('Transaction Rejected')
+  })
+
+  it('passes errorMessage to overlay when ReturnToIssuer fails', async () => {
+    const mockHandleReturnToIssuer = vi.fn()
+
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.ReturnToIssuer}
+        handleReturnToIssuer={mockHandleReturnToIssuer}
+        returnToIssuerState={FormState.ERROR}
+        errorMessage="Contract Call Failed"
+      />
+    )
+
+    await waitFor(() => {
+      expect(mockShowOverlay).toHaveBeenCalled()
+    })
+
+    const overlayNode = mockShowOverlay.mock.calls[0][0] as any
+    expect(overlayNode.props.title).toBe('Return of ETR Failed')
+    expect(overlayNode.props.errorMessage).toBe('Contract Call Failed')
+  })
+
+  it('passes errorMessage to overlay on successful TransferOwner', async () => {
+    const mockHandleBeneficiaryTransfer = vi.fn()
+
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.TransferOwner}
+        handleBeneficiaryTransfer={mockHandleBeneficiaryTransfer}
+        transferOwnersState={FormState.CONFIRMED}
+        errorMessage="Some Error"
+      />
+    )
+
+    await waitFor(() => {
+      expect(mockShowOverlay).toHaveBeenCalled()
+    })
+
+    const overlayNode = mockShowOverlay.mock.calls[0][0] as any
+    expect(overlayNode.props.title).toBe('Transfer Owner Success')
+    expect(overlayNode.props.isSuccess).toBe(true)
+    expect(overlayNode.props.errorMessage).toBe('Some Error')
+  })
+
+  it('passes undefined errorMessage when prop is not provided', async () => {
+    const mockHandleTransfer = vi.fn()
+
+    renderWithOverlay(
+      <ActionForm
+        {...defaultProps}
+        type={AssetManagementActions.TransferHolder}
+        handleTransfer={mockHandleTransfer}
+        holderTransferringState={FormState.ERROR}
+      />
+    )
+
+    await waitFor(() => {
+      expect(mockShowOverlay).toHaveBeenCalled()
+    })
+
+    const overlayNode = mockShowOverlay.mock.calls[0][0] as any
+    expect(overlayNode.props.errorMessage).toBeUndefined()
+  })
+})

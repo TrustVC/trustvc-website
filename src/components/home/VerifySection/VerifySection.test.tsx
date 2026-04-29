@@ -289,13 +289,19 @@ describe('VerifySection', () => {
       ).toBeInTheDocument()
     })
 
-    it('navigates to root when Visit Document Gallery is clicked', () => {
+    it('opens the document gallery in a new tab when clicked', () => {
+      const openSpy = vi.spyOn(window, 'open').mockImplementation(() => null)
       render(<VerifySection isDarkMode={false} />)
       const ctaButton = screen
         .getByText(/Visit Document Gallery/i)
         .closest('.cta-button')
       fireEvent.click(ctaButton as HTMLElement)
-      expect(mockNavigate).toHaveBeenCalledWith('/')
+      expect(openSpy).toHaveBeenCalledWith(
+        'https://gallery.tradetrust.io',
+        '_blank',
+        'noopener,noreferrer'
+      )
+      openSpy.mockRestore()
     })
   })
 })

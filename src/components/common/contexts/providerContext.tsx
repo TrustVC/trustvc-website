@@ -1,4 +1,4 @@
-import { ProviderDetails, utils, CHAIN_ID, chainInfo } from '@trustvc/trustvc'
+import { CHAIN_ID, chainInfo } from '@trustvc/trustvc'
 import { ethers, providers } from 'ethers'
 import { Magic } from 'magic-sdk'
 import React, {
@@ -10,7 +10,7 @@ import React, {
   useRef,
   useState,
 } from 'react'
-import { INFURA_API_KEY, NETWORK_NAME } from '../../../configs/chain-config'
+import { NETWORK_NAME } from '../../../configs/chain-config'
 import { ChainInfo } from '../../../utils/chain-info'
 // import { UnsupportedNetworkError } from '../errors'
 import {
@@ -35,34 +35,32 @@ export enum SIGNER_TYPE {
 }
 
 const createProvider = (chainId: CHAIN_ID) => {
-  const url = ChainInfo[chainId]?.rpcUrl
-  if (url) {
-    const chainMeta = getChainInfo(chainId)
-    return new providers.StaticJsonRpcProvider(url, {
-      chainId: Number(chainId),
-      name: chainMeta?.name ?? `chain-${chainId}`,
-    })
+  // First try to get RPC URL from env (VITE_RPC_URL_*), then fall back to chain defaults
+  const url = getRpcUrl(String(chainId)) ?? ChainInfo[chainId]?.rpcUrl
+
+  if (!url) {
+    throw new Error(`No RPC URL configured for chain ${chainId}`)
   }
-  const chainMeta = getChainInfo(chainId)
-  const opts: ProviderDetails = {
-    network: chainMeta?.name ?? `chain-${chainId}`,
-    providerType: 'infura',
-    apiKey: INFURA_API_KEY,
-  }
-  return utils.generateProvider(opts)
+
+  return new providers.JsonRpcProvider(url)
 }
 
 // Utility function for use in non-react components that cannot get through hooks
 let currentProvider: providers.Provider | undefined
-try {
-  currentProvider = createProvider(getChainInfoFromNetworkName(NETWORK_NAME).id)
-} catch (e) {
-  console.error('Invalid NETWORK_NAME; provider init failed', e)
-  currentProvider = undefined
-}
 
-export const getCurrentProvider = (): providers.Provider | undefined =>
-  currentProvider
+export const getCurrentProvider = (): providers.Provider | undefined => {
+  if (!currentProvider) {
+    try {
+      currentProvider = createProvider(
+        getChainInfoFromNetworkName(NETWORK_NAME).id
+      )
+    } catch (e) {
+      console.error('Invalid NETWORK_NAME; provider init failed', e)
+      currentProvider = undefined
+    }
+  }
+  return currentProvider
+}
 
 export interface ProviderContextProps {
   providerType: SIGNER_TYPE
@@ -88,8 +86,8 @@ export const ProviderContext = createContext<ProviderContextProps>({
   reloadNetwork: async () => {},
   supportedChainInfoObjects: [],
   currentChainId: undefined,
-  provider: currentProvider,
-  providerOrSigner: currentProvider,
+  provider: undefined,
+  providerOrSigner: undefined,
   account: undefined,
   networkChangeLoading: false,
   setNetworkChangeLoading: () => {},

@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import clsx from 'clsx'
 import type { EnquiryType } from '@/hooks/useContactForm'
 import { FieldError } from '@/components/common/FieldError'
 
@@ -31,6 +32,29 @@ const SelectField = ({
   const selected = options.find(o => o.value === value) ?? options[0]
   const [isOpen, setIsOpen] = useState(false)
   const optionItems = options.slice(1)
+  const hasError = Boolean(error)
+
+  const triggerClassName = clsx(
+    'select-field-trigger',
+    isDarkMode ? 'select-field-trigger--dark' : 'select-field-trigger--light',
+    hasError && 'select-field-trigger--error'
+  )
+
+  const selectedTextClassName = clsx(
+    'select-field-value',
+    selected.value === ''
+      ? isDarkMode
+        ? 'select-field-value--placeholder-dark'
+        : 'select-field-value--placeholder-light'
+      : isDarkMode
+        ? 'select-field-value--selected-dark'
+        : 'select-field-value--selected-light'
+  )
+
+  const menuClassName = clsx(
+    'select-field-menu',
+    isDarkMode ? 'select-field-menu--dark' : 'select-field-menu--light'
+  )
 
   const handleTriggerKeyDown: React.KeyboardEventHandler<
     HTMLButtonElement
@@ -98,27 +122,11 @@ const SelectField = ({
           aria-expanded={isOpen}
           aria-invalid={!!error}
           aria-describedby={error ? `${id}-error` : undefined}
-          className={`w-full min-h-[48px] sm:min-h-[40px] rounded-lg border px-3 pr-10 py-3 sm:py-2 text-left text-base sm:text-sm font-gilroy flex items-center justify-between cursor-pointer transition-colors ${
-            error
-              ? 'border-red-500'
-              : isDarkMode
-                ? 'bg-black/10 border-white/15'
-                : 'bg-white/90 border-black/15'
-          }`}
+          className={triggerClassName}
           onClick={() => setIsOpen(open => !open)}
           onKeyDown={handleTriggerKeyDown}
         >
-          <span
-            className={
-              selected.value === ''
-                ? 'text-neutral-30'
-                : isDarkMode
-                  ? 'text-neutral-60'
-                  : 'text-neutral-10'
-            }
-          >
-            {selected.label}
-          </span>
+          <span className={selectedTextClassName}>{selected.label}</span>
           <span
             className={`pointer-events-none inline-flex items-center absolute right-3 top-1/2 -translate-y-1/2 transition-transform ${
               isOpen ? 'rotate-180' : ''
@@ -138,15 +146,7 @@ const SelectField = ({
         </button>
 
         {isOpen && (
-          <div
-            className={`absolute z-10 mt-1 w-full rounded-lg border shadow-lg ${
-              isDarkMode
-                ? 'border-white/15 bg-[#1E2026]'
-                : 'border-black/10 bg-white'
-            }`}
-            role="listbox"
-            aria-labelledby={id}
-          >
+          <div className={menuClassName} role="listbox" aria-labelledby={id}>
             {optionItems.map((option, index) => (
               <button
                 key={option.value}
@@ -159,13 +159,16 @@ const SelectField = ({
                   setIsOpen(false)
                 }}
                 onKeyDown={e => handleOptionKeyDown(e, index)}
-                className={`block w-full px-3 py-2 text-left text-sm font-gilroy transition-colors ${
+                className={clsx(
+                  'select-field-option',
                   value === option.value
-                    ? 'bg-primary-60/10 text-primary-60'
+                    ? isDarkMode
+                      ? 'select-field-option--selected-dark'
+                      : 'select-field-option--selected-light'
                     : isDarkMode
-                      ? 'text-neutral-60 hover:bg-white/10'
-                      : 'text-neutral-10 hover:bg-neutral-10/5'
-                }`}
+                      ? 'select-field-option--dark'
+                      : 'select-field-option--light'
+                )}
               >
                 {option.label}
               </button>

@@ -16,6 +16,49 @@ import { TitleEscrow, TradeTrustToken } from '../types'
 import { TypedContractMethod } from '@trustvc/trustvc'
 import { useDocumentContext } from '../components/common/contexts/DocumentContext'
 
+const METAMASK_NUMERIC_CODES: Record<number, string> = {
+  4001: 'User Rejected Transaction',
+  4100: 'Unauthorized: Account or method not authorized',
+  4200: 'Unsupported Method',
+  4900: 'Wallet Disconnected',
+  4901: 'Chain Disconnected',
+  [-32700]: 'Parse Error',
+  [-32600]: 'Invalid Request',
+  [-32601]: 'Method Not Found',
+  [-32602]: 'Invalid Parameters',
+  [-32603]: 'Internal Error',
+  [-32000]: 'Invalid Input',
+  [-32001]: 'Resource Not Found',
+  [-32002]: 'Request Already Pending',
+  [-32003]: 'Transaction Rejected',
+  [-32004]: 'Method Not Supported',
+  [-32005]: 'Request Limit Exceeded',
+}
+
+const ETHERS_STRING_CODES: Record<string, string> = {
+  ACTION_REJECTED: 'User Rejected Transaction',
+  INSUFFICIENT_FUNDS: 'Insufficient Funds',
+  UNPREDICTABLE_GAS_LIMIT: 'Unable to Estimate Gas',
+  NETWORK_ERROR: 'Network Error',
+  SERVER_ERROR: 'Server Error',
+  TIMEOUT: 'Request Timed Out',
+  CALL_EXCEPTION: 'Contract Call Failed',
+  TRANSACTION_REPLACED: 'Transaction Replaced',
+  NONCE_EXPIRED: 'Nonce Already Used',
+  REPLACEMENT_UNDERPRICED: 'Replacement Transaction Underpriced',
+}
+
+const getMetaMaskErrorMessage = (e: unknown): string => {
+  const code = (e as any)?.code
+  if (typeof code === 'number' && code in METAMASK_NUMERIC_CODES) {
+    return METAMASK_NUMERIC_CODES[code]
+  }
+  if (typeof code === 'string' && code in ETHERS_STRING_CODES) {
+    return ETHERS_STRING_CODES[code]
+  }
+  return (e as Error)?.message || ''
+}
+
 // Create a mapping of method names to trustvc functions
 const trustvcFunctions: Record<string, (...args: any[]) => any> = {
   transferHolder,
@@ -68,18 +111,17 @@ export function useContractFunctionHook<
   state: ContractFunctionState
   receipt?: ContractReceipt
   transaction?: ContractTransaction
-  error?: Error
+  errorMessage?: string
   value?: UnwrapPromise<
     ReturnType<T[S] extends (...args: any[]) => any ? T[S] : never>
   >
   events?: ContractReceipt['events']
   transactionHash?: string
-  errorMessage?: string
 } {
   const [state, setState] = useState<ContractFunctionState>('UNINITIALIZED')
   const [receipt, setReceipt] = useState<ContractReceipt>()
   const [transaction, setTransaction] = useState<ContractTransaction>()
-  const [error, setError] = useState<Error>()
+  const [errorMessage, setErrorMessage] = useState<string>()
   const [value, setValue] =
     useState<
       UnwrapPromise<
@@ -93,7 +135,7 @@ export function useContractFunctionHook<
     setState('UNINITIALIZED')
     setReceipt(undefined)
     setTransaction(undefined)
-    setError(undefined)
+    setErrorMessage(undefined)
     setValue(undefined)
   }
 
@@ -101,7 +143,7 @@ export function useContractFunctionHook<
   const sendFn = (async (params: any) => {
     if (!contract || !method) {
       setState('ERROR')
-      setError(new Error('Contract or method is not specified'))
+      setErrorMessage('Contract or method is not specified')
       return
     }
     resetState()
@@ -135,11 +177,7 @@ export function useContractFunctionHook<
       setState('CONFIRMED')
       setReceipt(_receipt)
     } catch (e) {
-      if ((e as Error).message?.includes('user rejected transaction')) {
-        setState('UNINITIALIZED')
-        return
-      }
-      setError(e as Error)
+      setErrorMessage(getMetaMaskErrorMessage(e))
       setState('ERROR')
     }
   }) as TypedContractMethod<
@@ -151,7 +189,6 @@ export function useContractFunctionHook<
   const callFn = (async (...params: any[]) => {
     if (!contract || !method) {
       setState('ERROR')
-      setError(new Error('Contract or method is not specified'))
       return
     }
     resetState()
@@ -167,7 +204,7 @@ export function useContractFunctionHook<
       setState('CONFIRMED')
       setValue(response)
     } catch (e) {
-      setError(e as Error)
+      setErrorMessage(getMetaMaskErrorMessage(e))
       setState('ERROR')
     }
   }) as TypedContractMethod<
@@ -178,7 +215,6 @@ export function useContractFunctionHook<
 
   const transactionHash = transaction?.hash
   const events = receipt?.events
-  const errorMessage = error?.message
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const send = useCallback(sendFn, [
@@ -202,7 +238,6 @@ export function useContractFunctionHook<
     transaction,
     transactionHash,
     errorMessage,
-    error,
     value,
     reset,
   }

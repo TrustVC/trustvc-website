@@ -89,6 +89,7 @@ interface AssetManagementFormProps
   onSetFormAction: (nextFormAction: AssetManagementActions) => void
   setShowEndorsementChain: (payload: boolean) => void
   refreshEndorsementChain?: () => void
+  errorMessage?: string
 }
 
 export const AssetManagementForm: FunctionComponent<
@@ -133,6 +134,7 @@ export const AssetManagementForm: FunctionComponent<
   destroyTokenState,
   onRestoreToken,
   restoreTokenState,
+  errorMessage,
 }) => {
   const tokenRegistryVersion = useTokenRegistryVersion()
   const isTokenRegistryV5 = tokenRegistryVersion === TokenRegistryVersions.V5
@@ -170,8 +172,8 @@ export const AssetManagementForm: FunctionComponent<
     hasPreviousHolder &&
     hasPreviousBeneficiary &&
     canRejectAfterTransferOwners
-  const canRejectHolderTransfer = // Allow reject after holder is transferred back to original owner
-    (isHolderAndBeneficiary ? !hasPreviousBeneficiary : true) &&
+  const canRejectHolderTransfer =
+    !isHolderAndBeneficiary &&
     isTokenRegistryV5 &&
     isActiveTitleEscrow &&
     isHolder &&
@@ -179,6 +181,7 @@ export const AssetManagementForm: FunctionComponent<
     !(isBeneficiary && hasPreviousBeneficiary)
   const canRejectOwnerTransfer =
     !isHolderAndBeneficiary &&
+    isTokenRegistryV5 &&
     isActiveTitleEscrow &&
     isBeneficiary &&
     hasPreviousBeneficiary &&
@@ -296,6 +299,8 @@ export const AssetManagementForm: FunctionComponent<
           // reject return to issuer
           handleRestoreToken={onRestoreToken}
           restoreTokenState={restoreTokenState}
+          //error message
+          errorMessage={errorMessage}
         />
       )}
     </>
