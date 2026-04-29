@@ -38,6 +38,7 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
     verifiedChainId,
     issuerName,
     isTransferable,
+    isExpired,
     tokenRegistryAddress,
     tokenRegistryVersion,
     tags,
@@ -176,6 +177,7 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
                 tags={tags}
                 rawDocument={rawDocument}
                 invalidAttachments={invalidAttachments}
+                isExpired={isExpired}
                 getGroupStatus={getGroupStatus}
                 onReset={handleReset}
                 onViewEndorsementChain={handleShowEndorsementChain}

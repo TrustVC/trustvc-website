@@ -97,6 +97,12 @@ export const getOpenAttestationData = (rawDocument: any): any => {
   return getDocumentData(rawDocument)
 }
 
+export const getIsExpired = (rawDocument: any): boolean => {
+  const docData = getOpenAttestationData(rawDocument)
+  const expirationDate = docData.expirationDate || docData.validUntil
+  return !!(expirationDate && new Date(expirationDate) < new Date())
+}
+
 export const getQRCodeLink = (rawDocument: any): string | undefined => {
   if (isRawV2Document(rawDocument) || isWrappedV2Document(rawDocument)) {
     const data = isWrappedV2Document(rawDocument)

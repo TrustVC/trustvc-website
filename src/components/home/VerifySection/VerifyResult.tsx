@@ -21,6 +21,7 @@ interface VerifyResultProps {
   tokenId?: string
   issuer?: string
   isTransferable?: boolean
+  isExpired?: boolean
   tokenRegistryAddress?: string
   tags?: string[]
   owner?: { name?: string; address?: string }
@@ -57,6 +58,7 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
   onViewNftRegistry,
   onViewEndorsementChain,
   refreshEndorsementChain,
+  isExpired,
 }) => {
   const { changeNetwork, currentChainId } = useProviderContext()
 
@@ -306,6 +308,13 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
         )}
 
         {/* Footer: Connect Wallet */}
+        {!isTransferable && (
+          <AssetManagementApplication
+            isMagicDemo={false}
+            isTransferableDocument={!!isTransferable}
+            isExpired={!!isExpired}
+          />
+        )}
 
         {isTransferable && tokenRegistryAddress && tokenId && (
           <AssetManagementApplication
@@ -321,7 +330,7 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
             refreshEndorsementChain={refreshEndorsementChain}
             isTransferableDocument={isTransferable}
             isSampleDocument={false}
-            isExpired={false}
+            isExpired={isExpired}
           />
         )}
       </div>
