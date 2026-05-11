@@ -36,8 +36,8 @@ const PartnersSection = ({ isDarkMode }: PartnersSectionProps) => {
         </h2>
         <p
           className={clsx(
-            'mt-3 text-base font-avenir',
-            isDarkMode ? 'text-neutral-50' : 'text-neutral-30'
+            'mt-3 font-avenir',
+            isDarkMode ? 'text-neutral-50' : 'text-[#3D444D]'
           )}
         >
           Building a foundation of trust for every industry.

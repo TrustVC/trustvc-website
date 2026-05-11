@@ -48,11 +48,12 @@ const Partners = ({ isDarkMode }: PartnersProps) => {
           </h1>
           <p
             className={clsx(
-              'mt-3 text-base font-avenir',
-              isDarkMode ? 'text-neutral-50' : 'text-neutral-30'
+              'mt-3 font-avenir',
+              isDarkMode ? 'text-neutral-50' : 'text-[#3D444D]'
             )}
+            style={{ fontSize: '18px', fontWeight: 500 }}
           >
-            Building a foundation of trust for every industry.
+            The Global Engine for Verifiable Documents and Transferable Records.
           </p>
         </div>
 

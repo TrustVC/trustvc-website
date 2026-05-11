@@ -38,6 +38,10 @@ function App() {
   }, [isDarkMode])
 
   useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [location.pathname])
+
+  useEffect(() => {
     if (isDarkMode) {
       document.body.classList.add('dark-mode')
     } else {
