@@ -34,6 +34,8 @@ export const ObfuscatedMessage: FunctionComponent<ObfuscatedMessageProps> = ({
   return (
     <div
       data-testid="obfuscation-info"
+      role="status"
+      aria-live="polite"
       style={{
         textAlign: 'left',
         color: '#DC2626',

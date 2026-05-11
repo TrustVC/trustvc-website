@@ -5,7 +5,7 @@ import clsx from 'clsx'
 const HOME_PARTNERS = [
   {
     name: 'Institute of Technical Education',
-    logo: '/images/partners/Institute of Technical Education.svg',
+    logo: '/images/partners/Institute%20of%20Technical%20Education.svg',
   },
   { name: 'Jed', logo: '/images/partners/jed.svg' },
   { name: 'JSLA', logo: '/images/partners/JSLA.svg' },
@@ -45,7 +45,7 @@ const PartnersSection = ({ isDarkMode }: PartnersSectionProps) => {
       </div>
 
       {/* Partner logos — centered row */}
-      <div className="max-w-[1440px] mx-auto px-8 sm:px-16 lg:px-20 flex items-center justify-center gap-20">
+      <div className="max-w-[1440px] mx-auto px-8 sm:px-16 lg:px-20 flex items-center justify-center gap-8 sm:gap-12 lg:gap-20">
         {HOME_PARTNERS.map((partner, idx) => (
           <div
             key={partner.name}
@@ -69,6 +69,7 @@ const PartnersSection = ({ isDarkMode }: PartnersSectionProps) => {
       {/* CTA */}
       <div className="text-center mt-10">
         <button
+          type="button"
           onClick={() => navigate('/partners')}
           className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-white font-gilroy font-bold text-sm transition-opacity hover:opacity-90"
           style={{ backgroundColor: '#5B5BB3' }}
