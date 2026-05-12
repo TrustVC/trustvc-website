@@ -4,6 +4,7 @@ import Home from './pages/Home'
 import Contact from './pages/Contact'
 import Settings from './pages/Settings'
 import NotFound from './pages/NotFound'
+import Partners from './pages/Partners'
 import NewsRouteFallback from './components/common/NewsRouteFallback'
 
 const News = lazy(() => import('./pages/News'))
@@ -34,6 +35,7 @@ const AppRouter = ({ isDarkMode }: AppRouterProps) => {
           </Suspense>
         }
       />
+      <Route path="/partners" element={<Partners isDarkMode={isDarkMode} />} />
       <Route path="/settings" element={<Settings isDarkMode={isDarkMode} />} />
       <Route path="/contact" element={<Contact isDarkMode={isDarkMode} />} />
       <Route path="*" element={<NotFound isDarkMode={isDarkMode} />} />
