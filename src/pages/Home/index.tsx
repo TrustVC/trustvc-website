@@ -18,6 +18,7 @@ const Home = ({ isDarkMode }: HomeProps) => {
         <BuiltForDev isDarkMode={isDarkMode} />
         <PartnersSection isDarkMode={isDarkMode} />
       </div>
+      <PartnersSection isDarkMode={isDarkMode} />
     </div>
   )
 }
