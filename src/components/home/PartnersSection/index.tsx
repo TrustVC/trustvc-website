@@ -1,28 +1,21 @@
 import { useNavigate } from 'react-router-dom'
 import { ChevronRight } from 'lucide-react'
 import clsx from 'clsx'
-
-const HOME_PARTNERS = [
-  {
-    name: 'Institute of Technical Education',
-    logo: '/images/partners/Institute%20of%20Technical%20Education.svg',
-  },
-  { name: 'Jed', logo: '/images/partners/jed.svg' },
-  { name: 'JSLA', logo: '/images/partners/JSLA.svg' },
-  { name: 'JUPYTON', logo: '/images/partners/JUPYTON.svg' },
-  { name: 'LaSalle | UAS', logo: '/images/partners/lasalle-uas.svg' },
-]
+import partners from '../../../data/partners'
 
 interface PartnersSectionProps {
   isDarkMode: boolean
 }
 
+const bannerPartners = partners.filter(p => p.bannerLogo)
+const marqueeItems = [...bannerPartners, ...bannerPartners]
+
 const PartnersSection = ({ isDarkMode }: PartnersSectionProps) => {
   const navigate = useNavigate()
 
   return (
-    <section className="w-full py-16">
-      <div className="max-w-[1440px] mx-auto px-8 sm:px-16 lg:px-20 text-center mb-10">
+    <div className="w-full py-12">
+      <div className="text-center mb-10">
         <h2
           className="font-gilroy font-bold"
           style={{ fontSize: '36px', lineHeight: '122%', letterSpacing: '0%' }}
@@ -44,26 +37,41 @@ const PartnersSection = ({ isDarkMode }: PartnersSectionProps) => {
         </p>
       </div>
 
-      {/* Partner logos — centered row */}
-      <div className="max-w-[1440px] mx-auto px-8 sm:px-16 lg:px-20 flex items-center justify-center gap-8 sm:gap-12 lg:gap-20">
-        {HOME_PARTNERS.map((partner, idx) => (
-          <div
-            key={partner.name}
-            className={clsx(
-              'flex items-center justify-center',
-              idx >= 2 ? 'hidden sm:flex' : ''
-            )}
-            style={{ minHeight: '40px' }}
-          >
-            <img
-              src={partner.logo}
-              alt={partner.name}
-              className="w-auto object-contain"
-              style={{ height: '55px' }}
-              loading="lazy"
-            />
-          </div>
-        ))}
+      {/* Centered carousel wrapper */}
+      <div
+        className="max-w-4xl mx-auto overflow-hidden"
+        style={{
+          WebkitMaskImage:
+            'linear-gradient(to right, transparent, black 15%, black 85%, transparent)',
+          maskImage:
+            'linear-gradient(to right, transparent, black 15%, black 85%, transparent)',
+        }}
+      >
+        {/* Animated track */}
+        <div
+          className="flex animate-marquee w-max"
+          style={{ willChange: 'transform', backfaceVisibility: 'hidden' }}
+        >
+          {marqueeItems.map((partner, idx) => (
+            <div
+              key={`${partner.name}-${idx}`}
+              className="flex-shrink-0 flex items-center justify-center mx-10"
+              style={{ height: '100px' }}
+            >
+              <img
+                src={partner.bannerLogo}
+                srcSet={
+                  partner.bannerLogo2x
+                    ? `${encodeURI(partner.bannerLogo!)} 1x, ${encodeURI(partner.bannerLogo2x)} 2x`
+                    : undefined
+                }
+                alt={partner.name}
+                className="h-20 w-auto object-contain"
+                loading="eager"
+              />
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* CTA */}
@@ -78,7 +86,7 @@ const PartnersSection = ({ isDarkMode }: PartnersSectionProps) => {
           <ChevronRight size={16} />
         </button>
       </div>
-    </section>
+    </div>
   )
 }
 

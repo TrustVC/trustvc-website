@@ -73,9 +73,10 @@ describe('Home page', () => {
 
     it('renders at least one partner logo', () => {
       renderHome(false)
-      expect(
-        screen.getByRole('img', { name: 'Institute of Technical Education' })
-      ).toBeInTheDocument()
+      const imgs = screen.getAllByRole('img', {
+        name: 'Institute of Technical Education',
+      })
+      expect(imgs[0]).toBeInTheDocument()
     })
   })
 })

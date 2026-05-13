@@ -16,8 +16,8 @@ const Home = ({ isDarkMode }: HomeProps) => {
         <VerifySection isDarkMode={isDarkMode} />
         <Carousel isDarkMode={isDarkMode} />
         <BuiltForDev isDarkMode={isDarkMode} />
+        <PartnersSection isDarkMode={isDarkMode} />
       </div>
-      <PartnersSection isDarkMode={isDarkMode} />
     </div>
   )
 }
