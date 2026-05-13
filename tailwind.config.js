@@ -77,7 +77,7 @@ export default {
         },
       },
       animation: {
-        marquee: 'marquee 1400s linear infinite',
+        marquee: 'marquee 200s linear infinite',
       },
       backgroundImage: {
         'overlay-light':
