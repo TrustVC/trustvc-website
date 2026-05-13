@@ -42,20 +42,20 @@ const PartnersSection = ({ isDarkMode }: PartnersSectionProps) => {
         className="max-w-4xl mx-auto overflow-hidden"
         style={{
           WebkitMaskImage:
-            'linear-gradient(to right, transparent, black 15%, black 85%, transparent)',
+            'linear-gradient(to right, rgba(0,0,0,0) 0%, black 18%, black 82%, rgba(0,0,0,0) 100%)',
           maskImage:
-            'linear-gradient(to right, transparent, black 15%, black 85%, transparent)',
+            'linear-gradient(to right, rgba(0,0,0,0) 0%, black 18%, black 82%, rgba(0,0,0,0) 100%)',
         }}
       >
         {/* Animated track */}
         <div
           className="flex animate-marquee w-max"
-          style={{ willChange: 'transform', backfaceVisibility: 'hidden' }}
+          style={{ willChange: 'transform' }}
         >
           {marqueeItems.map((partner, idx) => (
             <div
               key={`${partner.name}-${idx}`}
-              className="flex-shrink-0 flex items-center justify-center mx-10"
+              className="flex-shrink-0 flex items-center justify-center mx-5"
               style={{ height: '100px' }}
             >
               <img
