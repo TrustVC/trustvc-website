@@ -17,7 +17,7 @@ const HOME_PARTNERS = [
   'Jed',
   'JSLA',
   'JUPYTON',
-  'LaSalle | UAS',
+  'LASALLE College of the Arts',
 ]
 
 afterEach(() => {
@@ -41,31 +41,35 @@ describe('PartnersSection', () => {
   })
 
   describe('partner logos', () => {
-    it('renders logos for all 5 home partners', () => {
+    it('renders logos for home partners in the marquee', () => {
       render(<PartnersSection isDarkMode={false} />)
       HOME_PARTNERS.forEach(name => {
-        expect(screen.getByRole('img', { name })).toBeInTheDocument()
+        const imgs = screen.getAllByRole('img', { name })
+        expect(imgs.length).toBeGreaterThanOrEqual(1)
       })
     })
 
-    it('renders logos with lazy loading', () => {
+    it('renders logos with eager loading for marquee animation', () => {
       render(<PartnersSection isDarkMode={false} />)
       const imgs = screen.getAllByRole('img')
-      imgs.forEach(img => expect(img).toHaveAttribute('loading', 'lazy'))
+      imgs.forEach(img => expect(img).toHaveAttribute('loading', 'eager'))
     })
 
-    it('applies hidden class to partners at index 2 and beyond for mobile', () => {
+    it('duplicates partner logos for infinite marquee effect', () => {
       render(<PartnersSection isDarkMode={false} />)
-      const jslaImg = screen.getByRole('img', { name: 'JSLA' })
-      const container = jslaImg.closest('div')
-      expect(container?.className).toContain('hidden')
+      const firstPartnerImgs = screen.getAllByRole('img', {
+        name: HOME_PARTNERS[0],
+      })
+      expect(firstPartnerImgs.length).toBe(2)
     })
 
-    it('first two partners are always visible (no hidden class)', () => {
+    it('all partner logo containers are visible (no hidden class)', () => {
       render(<PartnersSection isDarkMode={false} />)
-      const firstImg = screen.getByRole('img', { name: HOME_PARTNERS[0] })
-      const container = firstImg.closest('div')
-      expect(container?.className).not.toContain('hidden')
+      const imgs = screen.getAllByRole('img', { name: HOME_PARTNERS[0] })
+      imgs.forEach(img => {
+        const container = img.closest('div')
+        expect(container?.className).not.toContain('hidden')
+      })
     })
   })
 
