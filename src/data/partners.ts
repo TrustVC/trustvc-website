@@ -3,7 +3,11 @@ import type { Partner } from '../types/partner'
 const partners: Partner[] = [
   {
     name: 'AEOTRADE',
-    logo: '/images/partners/AEOTRADE.svg',
+    logo: '/images/partners/1X/Card/Solution Providers/TradeTrust/AEOTRADE.png',
+    logo2x:
+      '/images/partners/2X/Card/Solution Provider/TradeTrust/AEOTRADE.png',
+    bannerLogo: '/images/partners/1X/Banner/AEOTRADE.png',
+    bannerLogo2x: '/images/partners/2X/Banner/AEOTRADE.png',
     website: 'https://www.aeotrade.com',
     description: '',
     verticalType: 'TradeTrust',
@@ -11,7 +15,10 @@ const partners: Partner[] = [
   },
   {
     name: 'ASTROn',
-    logo: '/images/partners/ASTROn.svg',
+    logo: '/images/partners/1X/Card/Infrastructure/TradeTrust/ASTROn.png',
+    logo2x: '/images/partners/2X/Card/Infrastructure/TradeTrust/ASTROn.png',
+    bannerLogo: '/images/partners/1X/Banner/ASTROn.png',
+    bannerLogo2x: '/images/partners/2X/Banner/ASTROn.png',
     website: 'https://bitfactory.cn',
     description: '',
     verticalType: 'TradeTrust',
@@ -19,7 +26,11 @@ const partners: Partner[] = [
   },
   {
     name: 'Angsana Technology',
-    logo: '/images/partners/Angsana Technology.svg',
+    logo: '/images/partners/1X/Card/Solution Providers/TradeTrust/Angsana Technology.png',
+    logo2x:
+      '/images/partners/2X/Card/Solution Provider/TradeTrust/Angsana Technology.png',
+    bannerLogo: '/images/partners/1X/Banner/Angsana Technology.png',
+    bannerLogo2x: '/images/partners/2X/Banner/Angsana Technology.png',
     website: 'https://angsanatech.com',
     description: '',
     verticalType: 'TradeTrust',
@@ -27,7 +38,11 @@ const partners: Partner[] = [
   },
   {
     name: 'Automaxis',
-    logo: '/images/partners/Automaxis.svg',
+    logo: '/images/partners/1X/Card/Solution Providers/TradeTrust/Automaxis.png',
+    logo2x:
+      '/images/partners/2X/Card/Solution Provider/TradeTrust/Automaxis.png',
+    bannerLogo: '/images/partners/1X/Banner/Automaxis.png',
+    bannerLogo2x: '/images/partners/2X/Banner/Automaxis.png',
     website: 'https://autom-axis.com',
     description: '',
     verticalType: 'TradeTrust',
@@ -35,7 +50,10 @@ const partners: Partner[] = [
   },
   {
     name: 'Banco',
-    logo: '/images/partners/Banco.svg',
+    logo: '/images/partners/1X/Card/Solution Providers/TradeTrust/Banco.png',
+    logo2x: '/images/partners/2X/Card/Solution Provider/TradeTrust/Banco.png',
+    bannerLogo: '/images/partners/1X/Banner/Banco.png',
+    bannerLogo2x: '/images/partners/2X/Banner/Banco.png',
     website: 'https://www.banco.com.sg',
     description: '',
     verticalType: 'TradeTrust',
@@ -43,7 +61,11 @@ const partners: Partner[] = [
   },
   {
     name: 'Bank of China',
-    logo: '/images/partners/Bank of China.svg',
+    logo: '/images/partners/1X/Card/Verification Validation/TradeTrust/Bank of China.png',
+    logo2x:
+      '/images/partners/2X/Card/Verification Validation/TradeTrust/Bank of China.png',
+    bannerLogo: '/images/partners/1X/Banner/Bank of China.png',
+    bannerLogo2x: '/images/partners/2X/Banner/Bank of China.png',
     website: 'https://www.boc.cn/en/',
     description: '',
     verticalType: 'TradeTrust',
@@ -51,7 +73,11 @@ const partners: Partner[] = [
   },
   {
     name: 'BlockPeer',
-    logo: '/images/partners/BlockPeer.svg',
+    logo: '/images/partners/1X/Card/Solution Providers/TradeTrust/BlockPeer.png',
+    logo2x:
+      '/images/partners/2X/Card/Solution Provider/TradeTrust/BlockPeer.png',
+    bannerLogo: '/images/partners/1X/Banner/BlockPeer.png',
+    bannerLogo2x: '/images/partners/2X/Banner/BlockPeer.png',
     website: 'https://www.blockpeer.finance',
     description: '',
     verticalType: 'TradeTrust',
@@ -59,7 +85,11 @@ const partners: Partner[] = [
   },
   {
     name: 'BunkerChain',
-    logo: '/images/partners/BunkerChain.svg',
+    logo: '/images/partners/1X/Card/Solution Providers/TradeTrust/BunkerChain.png',
+    logo2x:
+      '/images/partners/2X/Card/Solution Provider/TradeTrust/BunkerChain.png',
+    bannerLogo: '/images/partners/1X/Banner/BunkerChain.png',
+    bannerLogo2x: '/images/partners/2X/Banner/BunkerChain.png',
     website: 'https://bunkerchain.io',
     description: '',
     verticalType: 'TradeTrust',
@@ -67,7 +97,10 @@ const partners: Partner[] = [
   },
   {
     name: 'CALISTA',
-    logo: '/images/partners/CALISTA.svg',
+    logo: '/images/partners/1X/Card/Solution Providers/TradeTrust/CALISTA.png',
+    logo2x: '/images/partners/2X/Card/Solution Provider/TradeTrust/CALISTA.png',
+    bannerLogo: '/images/partners/1X/Banner/CALISTA.png',
+    bannerLogo2x: '/images/partners/2X/Banner/CALISTA.png',
     website: 'https://calistang.globaletrade.services/cng/home',
     description: '',
     verticalType: 'TradeTrust',
@@ -75,7 +108,11 @@ const partners: Partner[] = [
   },
   {
     name: 'COFCO',
-    logo: '/images/partners/COFCO.svg',
+    logo: '/images/partners/1X/Card/Issuance Attestation/TradeTrust/COFCO.png',
+    logo2x:
+      '/images/partners/2X/Card/Issuance Attestation/TradeTrust/COFCO.png',
+    bannerLogo: '/images/partners/1X/Banner/COFCO.png',
+    bannerLogo2x: '/images/partners/2X/Banner/COFCO.png',
     website: 'https://www.cofcointernational.com',
     description: '',
     verticalType: 'TradeTrust',
@@ -83,7 +120,10 @@ const partners: Partner[] = [
   },
   {
     name: 'CargoX',
-    logo: '/images/partners/CargoX.svg',
+    logo: '/images/partners/1X/Card/Solution Providers/TradeTrust/CargoX.png',
+    logo2x: '/images/partners/2X/Card/Solution Provider/TradeTrust/CargoX.png',
+    bannerLogo: '/images/partners/1X/Banner/CargoX.png',
+    bannerLogo2x: '/images/partners/2X/Banner/CargoX.png',
     website: 'https://cargox.io',
     description: '',
     verticalType: 'TradeTrust',
@@ -91,7 +131,11 @@ const partners: Partner[] = [
   },
   {
     name: 'ChainDoX',
-    logo: '/images/partners/ChainDoX.svg',
+    logo: '/images/partners/1X/Card/Solution Providers/TradeTrust/ChainDoX.png',
+    logo2x:
+      '/images/partners/2X/Card/Solution Provider/TradeTrust/ChainDoX.png',
+    bannerLogo: '/images/partners/1X/Banner/ChainDoX.png',
+    bannerLogo2x: '/images/partners/2X/Banner/ChainDoX.png',
     website: 'https://chaindox.com/',
     description: '',
     verticalType: 'TradeTrust',
@@ -99,7 +143,10 @@ const partners: Partner[] = [
   },
   {
     name: 'Credore',
-    logo: '/images/partners/Credore.svg',
+    logo: '/images/partners/1X/Card/Solution Providers/TradeTrust/Credore.png',
+    logo2x: '/images/partners/2X/Card/Solution Provider/TradeTrust/Credore.png',
+    bannerLogo: '/images/partners/1X/Banner/Credore.png',
+    bannerLogo2x: '/images/partners/2X/Banner/Credore.png',
     website: 'https://www.credore.xyz',
     description: '',
     verticalType: 'TradeTrust',
@@ -107,7 +154,11 @@ const partners: Partner[] = [
   },
   {
     name: 'DBS Group',
-    logo: '/images/partners/DBS Group.svg',
+    logo: '/images/partners/1X/Card/Verification Validation/TradeTrust/DBS Group.png',
+    logo2x:
+      '/images/partners/2X/Card/Verification Validation/TradeTrust/DBS Group.png',
+    bannerLogo: '/images/partners/1X/Banner/DBS Group.png',
+    bannerLogo2x: '/images/partners/2X/Banner/DBS Group.png',
     website: 'https://www.dbsg.com/',
     description: '',
     verticalType: 'TradeTrust',
@@ -115,7 +166,10 @@ const partners: Partner[] = [
   },
   {
     name: 'DIMUTO',
-    logo: '/images/partners/DIMUTO.svg',
+    logo: '/images/partners/1X/Card/Solution Providers/TradeTrust/DIMUTO.png',
+    logo2x: '/images/partners/2X/Card/Solution Provider/TradeTrust/DIMUTO.png',
+    bannerLogo: '/images/partners/1X/Banner/DIMUTO.png',
+    bannerLogo2x: '/images/partners/2X/Banner/DIMUTO.png',
     website: 'https://dimuto.io',
     description: '',
     verticalType: 'TradeTrust',
@@ -123,7 +177,10 @@ const partners: Partner[] = [
   },
   {
     name: 'DLTLedgers',
-    logo: '/images/partners/DLTLedgers.svg',
+    logo: '/images/partners/1X/Card/Infrastructure/TradeTrust/DLTLedgers.png',
+    logo2x: '/images/partners/2X/Card/Infrastructure/TradeTrust/DLTLedgers.png',
+    bannerLogo: '/images/partners/1X/Banner/DLTLedgers.png',
+    bannerLogo2x: '/images/partners/2X/Banner/DLTLedgers.png',
     website: 'https://dlt.sg/',
     description: '',
     verticalType: 'TradeTrust',
@@ -131,7 +188,10 @@ const partners: Partner[] = [
   },
   {
     name: 'DOCKLAB',
-    logo: '/images/partners/DOCKLAB.svg',
+    logo: '/images/partners/1X/Card/Solution Providers/TradeTrust/DOCKLAB.png',
+    logo2x: '/images/partners/2X/Card/Solution Provider/TradeTrust/DOCKLAB.png',
+    bannerLogo: '/images/partners/1X/Banner/DOCKLAB.png',
+    bannerLogo2x: '/images/partners/2X/Banner/DOCKLAB.png',
     website: 'https://docklab.nl',
     description: '',
     verticalType: 'TradeTrust',
@@ -139,7 +199,11 @@ const partners: Partner[] = [
   },
   {
     name: 'Docsonblocks',
-    logo: '/images/partners/Docsonblocks.svg',
+    logo: '/images/partners/1X/Card/Solution Providers/TradeTrust/Docsonblocks.png',
+    logo2x:
+      '/images/partners/2X/Card/Solution Provider/TradeTrust/Docsonblocks.png',
+    bannerLogo: '/images/partners/1X/Banner/Docsonblocks.png',
+    bannerLogo2x: '/images/partners/2X/Banner/Docsonblocks.png',
     website: 'https://app.docsonblocks.com/',
     description: '',
     verticalType: 'TradeTrust',
@@ -147,7 +211,11 @@ const partners: Partner[] = [
   },
   {
     name: 'DocuShield',
-    logo: '/images/partners/DocuShield.svg',
+    logo: '/images/partners/1X/Card/Solution Providers/TradeTrust/DocuShield.png',
+    logo2x:
+      '/images/partners/2X/Card/Solution Provider/TradeTrust/DocuShield.png',
+    bannerLogo: '/images/partners/1X/Banner/DocuShield.png',
+    bannerLogo2x: '/images/partners/2X/Banner/DocuShield.png',
     website: 'https://www.docushield.co.in/',
     description: '',
     verticalType: 'TradeTrust',
@@ -155,7 +223,11 @@ const partners: Partner[] = [
   },
   {
     name: 'DocuTrade',
-    logo: '/images/partners/DocuTrade.svg',
+    logo: '/images/partners/1X/Card/Solution Providers/TradeTrust/DocuTrade.png',
+    logo2x:
+      '/images/partners/2X/Card/Solution Provider/TradeTrust/DocuTrade.png',
+    bannerLogo: '/images/partners/1X/Banner/DocuTrade.png',
+    bannerLogo2x: '/images/partners/2X/Banner/DocuTrade.png',
     website: 'https://docutrade.io',
     description: '',
     verticalType: 'TradeTrust',
@@ -163,7 +235,11 @@ const partners: Partner[] = [
   },
   {
     name: 'FUIX LABS',
-    logo: '/images/partners/FUIX LABS.svg',
+    logo: '/images/partners/1X/Card/Solution Providers/TradeTrust/FUIX LABS.png',
+    logo2x:
+      '/images/partners/2X/Card/Solution Provider/TradeTrust/FUIX LABS.png',
+    bannerLogo: '/images/partners/1X/Banner/FUIX LABS.png',
+    bannerLogo2x: '/images/partners/2X/Banner/FUIX LABS.png',
     website: 'https://fuixlabs.com',
     description: '',
     verticalType: 'TradeTrust',
@@ -171,7 +247,10 @@ const partners: Partner[] = [
   },
   {
     name: 'FilPass',
-    logo: '/images/partners/FilPass.svg',
+    logo: '/images/partners/1X/Card/Solution Providers/TradeTrust/FilPass.png',
+    logo2x: '/images/partners/2X/Card/Solution Provider/TradeTrust/FilPass.png',
+    bannerLogo: '/images/partners/1X/Banner/FilPass.png',
+    bannerLogo2x: '/images/partners/2X/Banner/FilPass.png',
     website: 'https://filpass.ph',
     description: '',
     verticalType: 'TradeTrust',
@@ -179,7 +258,10 @@ const partners: Partner[] = [
   },
   {
     name: 'GUUD',
-    logo: '/images/partners/GUUD.svg',
+    logo: '/images/partners/1X/Card/Solution Providers/TradeTrust/GUUD.png',
+    logo2x: '/images/partners/2X/Card/Solution Provider/TradeTrust/GUUD.png',
+    bannerLogo: '/images/partners/1X/Banner/GUUD.png',
+    bannerLogo2x: '/images/partners/2X/Banner/GUUD.png',
     website: 'https://guud.company',
     description: '',
     verticalType: 'TradeTrust',
@@ -187,7 +269,11 @@ const partners: Partner[] = [
   },
   {
     name: 'ICICI Bank',
-    logo: '/images/partners/ICICI Bank.svg',
+    logo: '/images/partners/1X/Card/Issuance Attestation/TradeTrust/ICICI Bank.png',
+    logo2x:
+      '/images/partners/2X/Card/Issuance Attestation/TradeTrust/ICICI Bank.png',
+    bannerLogo: '/images/partners/1X/Banner/ICICI Bank.png',
+    bannerLogo2x: '/images/partners/2X/Banner/ICICI Bank.png',
     website: 'https://www.icicibank.com',
     description: '',
     verticalType: 'TradeTrust',
@@ -195,15 +281,35 @@ const partners: Partner[] = [
   },
   {
     name: 'Institute of Technical Education',
-    logo: '/images/partners/Institute of Technical Education.svg',
+    logo: '/images/partners/1X/Card/Issuance Attestation/OpenCert/Institute of Technical Education.png',
+    logo2x:
+      '/images/partners/2X/Card/Issuance Attestation/OpenCert/Institute of Technical Education.png',
+    bannerLogo:
+      '/images/partners/1X/Banner/Institute of Technical Education.png',
+    bannerLogo2x:
+      '/images/partners/2X/Banner/Institute of Technical Education.png',
     website: 'https://www.ite.edu.sg',
     description: '',
     verticalType: 'OpenCerts',
     category: 'Issuance & Attestation',
   },
   {
+    name: 'JSLA',
+    logo: '/images/partners/1X/Card/Issuance Attestation/TradeTrust/JSLA.png',
+    logo2x: '/images/partners/2X/Card/Issuance Attestation/TradeTrust/JSLA.png',
+    bannerLogo: '/images/partners/1X/Banner/JSLA.png',
+    bannerLogo2x: '/images/partners/2X/Banner/JSLA.png',
+    website: '',
+    description: '',
+    verticalType: 'TradeTrust',
+    category: 'Issuance & Attestation',
+  },
+  {
     name: 'JUPYTON',
-    logo: '/images/partners/JUPYTON.svg',
+    logo: '/images/partners/1X/Card/Solution Providers/TradeTrust/JUPYTON.png',
+    logo2x: '/images/partners/2X/Card/Solution Provider/TradeTrust/JUPYTON.png',
+    bannerLogo: '/images/partners/1X/Banner/JUPYTON.png',
+    bannerLogo2x: '/images/partners/2X/Banner/JUPYTON.png',
     website: 'https://jupyton.com',
     description: '',
     verticalType: 'TradeTrust',
@@ -211,23 +317,22 @@ const partners: Partner[] = [
   },
   {
     name: 'Jed',
-    logo: '/images/partners/jed.svg',
+    logo: '/images/partners/1X/Card/Solution Providers/TradeTrust/Jed.png',
+    logo2x: '/images/partners/2X/Card/Solution Provider/TradeTrust/Jed.png',
+    bannerLogo: '/images/partners/1X/Banner/Jed.png',
+    bannerLogo2x: '/images/partners/2X/Banner/Jed.png',
     website: 'https://www.jedtrade.com',
     description: '',
     verticalType: 'TradeTrust',
     category: 'Solution Partners',
   },
   {
-    name: 'Jindal Stainless',
-    logo: '/images/partners/jindal.svg',
-    website: 'https://www.jindalstainless.com',
-    description: '',
-    verticalType: 'TradeTrust',
-    category: 'Solution Partners',
-  },
-  {
     name: 'LASALLE College of the Arts',
-    logo: '/images/partners/LASALLE College of the Arts.svg',
+    logo: '/images/partners/1X/Card/Issuance Attestation/OpenCert/LASALLE College of the Arts.png',
+    logo2x:
+      '/images/partners/2X/Card/Issuance Attestation/OpenCert/LASALLE College of the Arts.png',
+    bannerLogo: '/images/partners/1X/Banner/LASALLE College of the Arts.png',
+    bannerLogo2x: '/images/partners/2X/Banner/LASALLE College of the Arts.png',
     website: 'https://www.lasalle.edu.sg',
     description: '',
     verticalType: 'OpenCerts',
@@ -235,7 +340,11 @@ const partners: Partner[] = [
   },
   {
     name: 'Linklogis',
-    logo: '/images/partners/Linklogis.svg',
+    logo: '/images/partners/1X/Card/Solution Providers/TradeTrust/Linklogis.png',
+    logo2x:
+      '/images/partners/2X/Card/Solution Provider/TradeTrust/Linklogis.png',
+    bannerLogo: '/images/partners/1X/Banner/Linklogis.png',
+    bannerLogo2x: '/images/partners/2X/Banner/Linklogis.png',
     website: 'https://www.linklogis.com/en/',
     description: '',
     verticalType: 'TradeTrust',
@@ -243,7 +352,11 @@ const partners: Partner[] = [
   },
   {
     name: 'MAPTRASCO',
-    logo: '/images/partners/MAPTRASCO.svg',
+    logo: '/images/partners/1X/Card/Issuance Attestation/TradeTrust/MAPTRASCO.png',
+    logo2x:
+      '/images/partners/2X/Card/Issuance Attestation/TradeTrust/MAPTRASCO.png',
+    bannerLogo: '/images/partners/1X/Banner/MAPTRASCO.png',
+    bannerLogo2x: '/images/partners/2X/Banner/MAPTRASCO.png',
     website: 'https://khaitan.com.sg/',
     description: '',
     verticalType: 'TradeTrust',
@@ -251,7 +364,11 @@ const partners: Partner[] = [
   },
   {
     name: 'Morpheus.Network',
-    logo: '/images/partners/Morpheus.Network.svg',
+    logo: '/images/partners/1X/Card/Solution Providers/TradeTrust/Morpheus.Network.png',
+    logo2x:
+      '/images/partners/2X/Card/Solution Provider/TradeTrust/Morpheus.Network.png',
+    bannerLogo: '/images/partners/1X/Banner/Morpheus.Network.png',
+    bannerLogo2x: '/images/partners/2X/Banner/Morpheus.Network.png',
     website: 'https://morpheus.network',
     description: '',
     verticalType: 'TradeTrust',
@@ -259,7 +376,10 @@ const partners: Partner[] = [
   },
   {
     name: 'NAFA',
-    logo: '/images/partners/NAFA.svg',
+    logo: '/images/partners/1X/Card/Issuance Attestation/OpenCert/NAFA.png',
+    logo2x: '/images/partners/2X/Card/Issuance Attestation/OpenCert/NAFA.png',
+    bannerLogo: '/images/partners/1X/Banner/NAFA.png',
+    bannerLogo2x: '/images/partners/2X/Banner/NAFA.png',
     website: 'https://www.nafa.edu.sg',
     description: '',
     verticalType: 'OpenCerts',
@@ -267,7 +387,10 @@ const partners: Partner[] = [
   },
   {
     name: 'NIEC',
-    logo: '/images/partners/NIEC.svg',
+    logo: '/images/partners/1X/Card/Issuance Attestation/OpenCert/NIEC.png',
+    logo2x: '/images/partners/2X/Card/Issuance Attestation/OpenCert/NIEC.png',
+    bannerLogo: '/images/partners/1X/Banner/NIEC.png',
+    bannerLogo2x: '/images/partners/2X/Banner/NIEC.png',
     website: 'https://niec.edu.sg',
     description: '',
     verticalType: 'OpenCerts',
@@ -275,7 +398,11 @@ const partners: Partner[] = [
   },
   {
     name: 'Nanyang Polytechnic',
-    logo: '/images/partners/Nanyang Polytechnic.svg',
+    logo: '/images/partners/1X/Card/Issuance Attestation/OpenCert/Nanyang Polytechnic.png',
+    logo2x:
+      '/images/partners/2X/Card/Issuance Attestation/OpenCert/Nanyang Polytechnic.png',
+    bannerLogo: '/images/partners/1X/Banner/Nanyang Polytechnic.png',
+    bannerLogo2x: '/images/partners/2X/Banner/Nanyang Polytechnic.png',
     website: 'https://www.nyp.edu.sg',
     description: '',
     verticalType: 'OpenCerts',
@@ -283,7 +410,13 @@ const partners: Partner[] = [
   },
   {
     name: 'National University of Singapore',
-    logo: '/images/partners/National University of Singapore.svg',
+    logo: '/images/partners/1X/Card/Issuance Attestation/OpenCert/National University of Singapore.png',
+    logo2x:
+      '/images/partners/2X/Card/Issuance Attestation/OpenCert/National University of Singapore.png',
+    bannerLogo:
+      '/images/partners/1X/Banner/National University of Singapore.png',
+    bannerLogo2x:
+      '/images/partners/2X/Banner/National University of Singapore.png',
     website: 'https://nus.edu.sg',
     description: '',
     verticalType: 'OpenCerts',
@@ -291,7 +424,11 @@ const partners: Partner[] = [
   },
   {
     name: 'Ngee Ann Polytechnic',
-    logo: '/images/partners/Ngee Ann Polytechnic.svg',
+    logo: '/images/partners/1X/Card/Issuance Attestation/OpenCert/Ngee Ann Polytechnic.png',
+    logo2x:
+      '/images/partners/2X/Card/Issuance Attestation/OpenCert/Ngee Ann Polytechnic.png',
+    bannerLogo: '/images/partners/1X/Banner/Ngee Ann Polytechnic.png',
+    bannerLogo2x: '/images/partners/2X/Banner/Ngee Ann Polytechnic.png',
     website: 'https://www.np.edu.sg',
     description: '',
     verticalType: 'OpenCerts',
@@ -299,7 +436,11 @@ const partners: Partner[] = [
   },
   {
     name: 'Pacific International Lines',
-    logo: '/images/partners/Pacific International Lines.svg',
+    logo: '/images/partners/1X/Card/Issuance Attestation/TradeTrust/Pacific International Lines.png',
+    logo2x:
+      '/images/partners/2X/Card/Issuance Attestation/TradeTrust/Pacific International Lines.png',
+    bannerLogo: '/images/partners/1X/Banner/Pacific International Lines.png',
+    bannerLogo2x: '/images/partners/2X/Banner/Pacific International Lines.png',
     website: 'https://www.pilship.com',
     description: '',
     verticalType: 'TradeTrust',
@@ -307,7 +448,11 @@ const partners: Partner[] = [
   },
   {
     name: 'Republic Polytechnic',
-    logo: '/images/partners/Republic Polytechnic.svg',
+    logo: '/images/partners/1X/Card/Issuance Attestation/OpenCert/Republic Polytechnic.png',
+    logo2x:
+      '/images/partners/2X/Card/Issuance Attestation/OpenCert/Republic Polytechnic.png',
+    bannerLogo: '/images/partners/1X/Banner/Republic Polytechnic.png',
+    bannerLogo2x: '/images/partners/2X/Banner/Republic Polytechnic.png',
     website: 'https://www.rp.edu.sg',
     description: '',
     verticalType: 'OpenCerts',
@@ -315,7 +460,10 @@ const partners: Partner[] = [
   },
   {
     name: 'SECRO',
-    logo: '/images/partners/SECRO.svg',
+    logo: '/images/partners/1X/Card/Solution Providers/TradeTrust/SECRO.png',
+    logo2x: '/images/partners/2X/Card/Solution Provider/TradeTrust/SECRO.png',
+    bannerLogo: '/images/partners/1X/Banner/SECRO.png',
+    bannerLogo2x: '/images/partners/2X/Banner/SECRO.png',
     website: 'https://secro.io',
     description: '',
     verticalType: 'TradeTrust',
@@ -323,7 +471,11 @@ const partners: Partner[] = [
   },
   {
     name: 'SGTraDex',
-    logo: '/images/partners/SGTraDex.svg',
+    logo: '/images/partners/1X/Card/Solution Providers/TradeTrust/SGTraDex.png',
+    logo2x:
+      '/images/partners/2X/Card/Solution Provider/TradeTrust/SGTraDex.png',
+    bannerLogo: '/images/partners/1X/Banner/SGTraDex.png',
+    bannerLogo2x: '/images/partners/2X/Banner/SGTraDex.png',
     website: 'https://sgtradex.com',
     description: '',
     verticalType: 'TradeTrust',
@@ -331,7 +483,10 @@ const partners: Partner[] = [
   },
   {
     name: 'SMU',
-    logo: '/images/partners/SMU.svg',
+    logo: '/images/partners/1X/Card/Issuance Attestation/OpenCert/SMU.png',
+    logo2x: '/images/partners/2X/Card/Issuance Attestation/OpenCert/SMU.png',
+    bannerLogo: '/images/partners/1X/Banner/SMU.png',
+    bannerLogo2x: '/images/partners/2X/Banner/SMU.png',
     website: 'https://www.smu.edu.sg',
     description: '',
     verticalType: 'OpenCerts',
@@ -339,7 +494,10 @@ const partners: Partner[] = [
   },
   {
     name: 'STABILITY',
-    logo: '/images/partners/STABILITY.svg',
+    logo: '/images/partners/1X/Card/Infrastructure/TradeTrust/STABILITY.png',
+    logo2x: '/images/partners/2X/Card/Infrastructure/TradeTrust/STABILITY.png',
+    bannerLogo: '/images/partners/1X/Banner/STABILITY.png',
+    bannerLogo2x: '/images/partners/2X/Banner/STABILITY.png',
     website: 'https://stabilityprotocol.com',
     description: '',
     verticalType: 'TradeTrust',
@@ -347,7 +505,13 @@ const partners: Partner[] = [
   },
   {
     name: 'Singapore Examinations and Assessment Board',
-    logo: '/images/partners/Singapore Examinations and Assessment Board.svg',
+    logo: '/images/partners/1X/Card/Issuance Attestation/OpenCert/Singapore Examinations and Assessment Board.png',
+    logo2x:
+      '/images/partners/2X/Card/Issuance Attestation/OpenCert/Singapore Examinations and Assessment Board.png',
+    bannerLogo:
+      '/images/partners/1X/Banner/Singapore Examinations and Assessment Board.png',
+    bannerLogo2x:
+      '/images/partners/2X/Banner/Singapore Examinations and Assessment Board.png',
     website: 'https://www.seab.gov.sg',
     description: '',
     verticalType: 'OpenCerts',
@@ -355,7 +519,11 @@ const partners: Partner[] = [
   },
   {
     name: 'Singapore Polytechnic',
-    logo: '/images/partners/Singapore Polytechnic.svg',
+    logo: '/images/partners/1X/Card/Issuance Attestation/OpenCert/Singapore Polytechnic.png',
+    logo2x:
+      '/images/partners/2X/Card/Issuance Attestation/OpenCert/Singapore Polytechnic.png',
+    bannerLogo: '/images/partners/1X/Banner/Singapore Polytechnic.png',
+    bannerLogo2x: '/images/partners/2X/Banner/Singapore Polytechnic.png',
     website: 'https://www.sp.edu.sg',
     description: '',
     verticalType: 'OpenCerts',
@@ -363,7 +531,13 @@ const partners: Partner[] = [
   },
   {
     name: 'Singapore University of Social Sciences',
-    logo: '/images/partners/Singapore University of Social Sciences.svg',
+    logo: '/images/partners/1X/Card/Issuance Attestation/OpenCert/Singapore University of Social Sciences.png',
+    logo2x:
+      '/images/partners/2X/Card/Issuance Attestation/OpenCert/Singapore University of Social Sciences.png',
+    bannerLogo:
+      '/images/partners/1X/Banner/Singapore University of Social Sciences.png',
+    bannerLogo2x:
+      '/images/partners/2X/Banner/Singapore University of Social Sciences.png',
     website: 'https://www.suss.edu.sg',
     description: '',
     verticalType: 'OpenCerts',
@@ -371,7 +545,11 @@ const partners: Partner[] = [
   },
   {
     name: 'SkillsFuture SG',
-    logo: '/images/partners/SkillsFuture SG.svg',
+    logo: '/images/partners/1X/Card/Issuance Attestation/OpenCert/SkillsFuture SG.png',
+    logo2x:
+      '/images/partners/2X/Card/Issuance Attestation/OpenCert/SkillsFuture SG.png',
+    bannerLogo: '/images/partners/1X/Banner/SkillsFuture SG.png',
+    bannerLogo2x: '/images/partners/2X/Banner/SkillsFuture SG.png',
     website: 'https://www.skillsfuture.gov.sg',
     description: '',
     verticalType: 'OpenCerts',
@@ -379,7 +557,11 @@ const partners: Partner[] = [
   },
   {
     name: 'TASConnect',
-    logo: '/images/partners/TASConnect.svg',
+    logo: '/images/partners/1X/Card/Solution Providers/TradeTrust/TASConnect.png',
+    logo2x:
+      '/images/partners/2X/Card/Solution Provider/TradeTrust/TASConnect.png',
+    bannerLogo: '/images/partners/1X/Banner/TASConnect.png',
+    bannerLogo2x: '/images/partners/2X/Banner/TASConnect.png',
     website: 'https://tasconnect.com',
     description: '',
     verticalType: 'TradeTrust',
@@ -387,7 +569,10 @@ const partners: Partner[] = [
   },
   {
     name: 'TRAMÉS',
-    logo: '/images/partners/trames.svg',
+    logo: '/images/partners/1X/Card/Solution Providers/TradeTrust/TRAMÉS.png',
+    logo2x: '/images/partners/2X/Card/Solution Provider/TradeTrust/TRAMÉS.png',
+    bannerLogo: '/images/partners/1X/Banner/TRAMÉS.png',
+    bannerLogo2x: '/images/partners/2X/Banner/TRAMÉS.png',
     website: 'https://trames.io',
     description: '',
     verticalType: 'TradeTrust',
@@ -395,7 +580,11 @@ const partners: Partner[] = [
   },
   {
     name: 'Temasek Polytechnic',
-    logo: '/images/partners/Temasek Polytechnic.svg',
+    logo: '/images/partners/1X/Card/Issuance Attestation/OpenCert/Temasek Polytechnic.png',
+    logo2x:
+      '/images/partners/2X/Card/Issuance Attestation/OpenCert/Temasek Polytechnic.png',
+    bannerLogo: '/images/partners/1X/Banner/Temasek Polytechnic.png',
+    bannerLogo2x: '/images/partners/2X/Banner/Temasek Polytechnic.png',
     website: 'https://www.tp.edu.sg',
     description: '',
     verticalType: 'OpenCerts',
@@ -403,7 +592,10 @@ const partners: Partner[] = [
   },
   {
     name: 'TradeGo',
-    logo: '/images/partners/TradeGo.svg',
+    logo: '/images/partners/1X/Card/Solution Providers/TradeTrust/TradeGo.png',
+    logo2x: '/images/partners/2X/Card/Solution Provider/TradeTrust/TradeGo.png',
+    bannerLogo: '/images/partners/1X/Banner/TradeGo.png',
+    bannerLogo2x: '/images/partners/2X/Banner/TradeGo.png',
     website: 'https://tradego.com',
     description: '',
     verticalType: 'TradeTrust',
@@ -411,7 +603,11 @@ const partners: Partner[] = [
   },
   {
     name: 'UOB',
-    logo: '/images/partners/UOB.svg',
+    logo: '/images/partners/1X/Card/Verification Validation/TradeTrust/UOB.png',
+    logo2x:
+      '/images/partners/2X/Card/Verification Validation/TradeTrust/UOB.png',
+    bannerLogo: '/images/partners/1X/Banner/UOB.png',
+    bannerLogo2x: '/images/partners/2X/Banner/UOB.png',
     website: 'https://www.uobgroup.com',
     description: '',
     verticalType: 'TradeTrust',
@@ -419,7 +615,10 @@ const partners: Partner[] = [
   },
   {
     name: 'VAYANA',
-    logo: '/images/partners/VAYANA.svg',
+    logo: '/images/partners/1X/Card/Solution Providers/TradeTrust/VAYANA.png',
+    logo2x: '/images/partners/2X/Card/Solution Provider/TradeTrust/VAYANA.png',
+    bannerLogo: '/images/partners/1X/Banner/VAYANA.png',
+    bannerLogo2x: '/images/partners/2X/Banner/VAYANA.png',
     website: 'https://www.vayana.com',
     description: '',
     verticalType: 'TradeTrust',
@@ -427,7 +626,11 @@ const partners: Partner[] = [
   },
   {
     name: 'XDC Network',
-    logo: '/images/partners/XDC Network.svg',
+    logo: '/images/partners/1X/Card/Infrastructure/TradeTrust/XDC Network.png',
+    logo2x:
+      '/images/partners/2X/Card/Infrastructure/TradeTrust/XDC Network.png',
+    bannerLogo: '/images/partners/1X/Banner/XDC Network.png',
+    bannerLogo2x: '/images/partners/2X/Banner/XDC Network.png',
     website: 'https://xdc.org',
     description: '',
     verticalType: 'TradeTrust',
@@ -435,7 +638,11 @@ const partners: Partner[] = [
   },
   {
     name: 'YIT HONG PTE LTD',
-    logo: '/images/partners/YIT HONG PTE LTD.svg',
+    logo: '/images/partners/1X/Card/Issuance Attestation/TradeTrust/YIT HONG PTE LTD.png',
+    logo2x:
+      '/images/partners/2X/Card/Issuance Attestation/TradeTrust/YIT HONG PTE LTD.png',
+    bannerLogo: '/images/partners/1X/Banner/YIT HONG PTE LTD.png',
+    bannerLogo2x: '/images/partners/2X/Banner/YIT HONG PTE LTD.png',
     website: 'https://www.yithong.com',
     description: '',
     verticalType: 'TradeTrust',
@@ -443,7 +650,11 @@ const partners: Partner[] = [
   },
   {
     name: 'ZenithBlox',
-    logo: '/images/partners/ZenithBlox.svg',
+    logo: '/images/partners/1X/Card/Solution Providers/TradeTrust/ZenithBlox.png',
+    logo2x:
+      '/images/partners/2X/Card/Solution Provider/TradeTrust/ZenithBlox.png',
+    bannerLogo: '/images/partners/1X/Banner/ZenithBlox.png',
+    bannerLogo2x: '/images/partners/2X/Banner/ZenithBlox.png',
     website: 'https://zenithblox.network',
     description: '',
     verticalType: 'TradeTrust',
@@ -451,7 +662,10 @@ const partners: Partner[] = [
   },
   {
     name: 'eTEU',
-    logo: '/images/partners/eTEU.svg',
+    logo: '/images/partners/1X/Card/Solution Providers/TradeTrust/eTEU.png',
+    logo2x: '/images/partners/2X/Card/Solution Provider/TradeTrust/eTEU.png',
+    bannerLogo: '/images/partners/1X/Banner/eTEU.png',
+    bannerLogo2x: '/images/partners/2X/Banner/eTEU.png',
     website: 'https://eteu.co.uk',
     description: '',
     verticalType: 'TradeTrust',
@@ -459,7 +673,10 @@ const partners: Partner[] = [
   },
   {
     name: 'veriTAG',
-    logo: '/images/partners/veriTAG.svg',
+    logo: '/images/partners/1X/Card/Solution Providers/TradeTrust/veriTAG.png',
+    logo2x: '/images/partners/2X/Card/Solution Provider/TradeTrust/veriTAG.png',
+    bannerLogo: '/images/partners/1X/Banner/veriTAG.png',
+    bannerLogo2x: '/images/partners/2X/Banner/veriTAG.png',
     website: 'https://veritag.com',
     description: '',
     verticalType: 'TradeTrust',

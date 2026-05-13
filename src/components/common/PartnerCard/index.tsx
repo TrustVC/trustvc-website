@@ -31,7 +31,7 @@ const PartnerCard = ({ partner, isDarkMode }: PartnerCardProps) => {
   return (
     <div
       className={clsx(
-        'flex flex-col rounded-xl border p-5 transition-shadow hover:shadow-form-card',
+        'flex flex-col rounded-xl border p-5',
         isDarkMode
           ? 'bg-[#2A2D35] border-neutral-10'
           : 'bg-white border-neutral-60'
@@ -41,6 +41,11 @@ const PartnerCard = ({ partner, isDarkMode }: PartnerCardProps) => {
       <div className="h-20 flex items-center mb-4">
         <img
           src={partner.logo}
+          srcSet={
+            partner.logo2x
+              ? `${encodeURI(partner.logo)} 1x, ${encodeURI(partner.logo2x)} 2x`
+              : undefined
+          }
           alt={partner.name}
           className="w-auto max-w-[200px] object-contain"
           style={{ height: '80px' }}
