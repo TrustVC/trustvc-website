@@ -12,7 +12,7 @@ const partners: Partner[] = [
   {
     name: 'ASTROn',
     logo: '/images/partners/ASTROn.svg',
-    website: 'https://bitfactory.cn/english/',
+    website: 'https://bitfactory.cn',
     description: '',
     verticalType: 'TradeTrust',
     category: 'Infrastructure',
@@ -68,7 +68,7 @@ const partners: Partner[] = [
   {
     name: 'CALISTA',
     logo: '/images/partners/CALISTA.svg',
-    website: 'https://globaletrade.services/calista',
+    website: 'https://calistang.globaletrade.services/cng/home',
     description: '',
     verticalType: 'TradeTrust',
     category: 'Infrastructure',
@@ -92,7 +92,7 @@ const partners: Partner[] = [
   {
     name: 'ChainDoX',
     logo: '/images/partners/ChainDoX.svg',
-    website: '',
+    website: 'https://chaindox.com/',
     description: '',
     verticalType: 'TradeTrust',
     category: 'Solution Partners',
@@ -108,7 +108,7 @@ const partners: Partner[] = [
   {
     name: 'DBS Group',
     logo: '/images/partners/DBS Group.svg',
-    website: 'https://www.dbs.com',
+    website: 'https://www.dbsg.com/',
     description: '',
     verticalType: 'TradeTrust',
     category: 'Verification & Validation',
@@ -124,7 +124,7 @@ const partners: Partner[] = [
   {
     name: 'DLTLedgers',
     logo: '/images/partners/DLTLedgers.svg',
-    website: 'https://dltledgers.com',
+    website: 'https://dlt.sg/',
     description: '',
     verticalType: 'TradeTrust',
     category: 'Solution Partners',
@@ -140,7 +140,7 @@ const partners: Partner[] = [
   {
     name: 'Docsonblocks',
     logo: '/images/partners/Docsonblocks.svg',
-    website: 'https://docsonblocks.com',
+    website: 'https://app.docsonblocks.com/',
     description: '',
     verticalType: 'TradeTrust',
     category: 'Solution Partners',
@@ -148,7 +148,7 @@ const partners: Partner[] = [
   {
     name: 'DocuShield',
     logo: '/images/partners/DocuShield.svg',
-    website: '',
+    website: 'https://www.docushield.co.in/',
     description: '',
     verticalType: 'TradeTrust',
     category: 'Solution Partners',
@@ -202,14 +202,6 @@ const partners: Partner[] = [
     category: 'Issuance & Attestation',
   },
   {
-    name: 'JSLA',
-    logo: '/images/partners/JSLA.svg',
-    website: '',
-    description: '',
-    verticalType: 'TradeTrust',
-    category: 'Solution Partners',
-  },
-  {
     name: 'JUPYTON',
     logo: '/images/partners/JUPYTON.svg',
     website: 'https://jupyton.com',
@@ -242,14 +234,6 @@ const partners: Partner[] = [
     category: 'Issuance & Attestation',
   },
   {
-    name: 'LaSalle | UAS',
-    logo: '/images/partners/lasalle-uas.svg',
-    website: 'https://uas.edu.sg',
-    description: '',
-    verticalType: 'OpenCerts',
-    category: 'Issuance & Attestation',
-  },
-  {
     name: 'Linklogis',
     logo: '/images/partners/Linklogis.svg',
     website: 'https://www.linklogis.com/en/',
@@ -260,7 +244,7 @@ const partners: Partner[] = [
   {
     name: 'MAPTRASCO',
     logo: '/images/partners/MAPTRASCO.svg',
-    website: '',
+    website: 'https://khaitan.com.sg/',
     description: '',
     verticalType: 'TradeTrust',
     category: 'Solution Partners',
