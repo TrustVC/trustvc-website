@@ -24,12 +24,7 @@ const Partners = ({ isDarkMode }: PartnersProps) => {
       : partners.filter(p => p.category === activeCategory)
 
   return (
-    <div
-      className={clsx(
-        'w-full min-h-screen',
-        isDarkMode ? 'bg-[#1E2026]' : 'bg-white'
-      )}
-    >
+    <div className="w-full">
       <div className="max-w-[1440px] mx-auto px-8 sm:px-16 lg:px-20 pt-[112px] pb-16">
         {/* Heading */}
         <div className="text-center mb-10">

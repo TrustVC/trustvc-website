@@ -48,10 +48,7 @@ const PartnersSection = ({ isDarkMode }: PartnersSectionProps) => {
         }}
       >
         {/* Animated track */}
-        <div
-          className="flex animate-marquee w-max"
-          style={{ willChange: 'transform' }}
-        >
+        <div className="flex animate-marquee w-max">
           {marqueeItems.map((partner, idx) => (
             <div
               key={`${partner.name}-${idx}`}

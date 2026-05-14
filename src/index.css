@@ -184,6 +184,70 @@ body.dark-mode {
   background-repeat: no-repeat;
 }
 
+.app-shell--partners-light {
+  background-image:
+    url('/backgrounds/motif-left.png'), url('/backgrounds/motif-right.png'),
+    radial-gradient(
+      84.7% 119.21% at 50% 15.3%,
+      #ffffff 0%,
+      rgba(223, 225, 255, 0.33) 100%
+    );
+  background-size:
+    auto 100vh,
+    auto 100vh,
+    cover;
+  background-position:
+    left top,
+    right top,
+    center;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+  min-width: 320px;
+  overflow-x: hidden;
+}
+
+.app-shell--partners-dark {
+  background-image:
+    url('/backgrounds/motif-left.png'), url('/backgrounds/motif-right.png'),
+    radial-gradient(
+      84.7% 119.21% at 50% 15.3%,
+      #1e2026 0%,
+      rgba(31, 27, 69, 0.33) 100%
+    );
+  background-size:
+    auto 100vh,
+    auto 100vh,
+    cover;
+  background-position:
+    left top,
+    right top,
+    center;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+  min-width: 320px;
+  overflow-x: hidden;
+}
+
+@media (max-width: 639px) {
+  .app-shell--partners-light {
+    background-image: radial-gradient(
+      84.7% 119.21% at 50% 15.3%,
+      #ffffff 0%,
+      rgba(223, 225, 255, 0.33) 100%
+    );
+    background-size: cover;
+    background-position: center;
+  }
+
+  .app-shell--partners-dark {
+    background-image: radial-gradient(
+      84.7% 119.21% at 50% 15.3%,
+      #1e2026 0%,
+      rgba(31, 27, 69, 0.33) 100%
+    );
+    background-size: cover;
+    background-position: center;
+  }
+}
+
 .app-shell--settings-light {
   background-image:
     url('/backgrounds/motif-left.png'), url('/backgrounds/motif-right.png'),
@@ -1347,6 +1411,36 @@ p.small {
   to {
     transform: rotate(360deg);
   }
+}
+
+@-webkit-keyframes marquee {
+  from {
+    -webkit-transform: translateX(0);
+    transform: translateX(0);
+  }
+  to {
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Safari marquee fixes: use explicit webkit animation + prevent layer drops */
+.animate-marquee {
+  -webkit-animation: marquee 200s linear infinite;
+  animation: marquee 200s linear infinite;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
 }
 
 /* VerifySection - dropbox state variants */
