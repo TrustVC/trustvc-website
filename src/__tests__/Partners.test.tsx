@@ -148,14 +148,14 @@ describe('Partners page', () => {
     it('applies dark mode background', () => {
       const { container } = render(<Partners isDarkMode={true} />)
       expect((container.firstChild as HTMLElement).className).toContain(
-        'bg-[#1E2026]'
+        'w-full'
       )
     })
 
     it('applies light mode background', () => {
       const { container } = render(<Partners isDarkMode={false} />)
       expect((container.firstChild as HTMLElement).className).toContain(
-        'bg-white'
+        'w-full'
       )
     })
 

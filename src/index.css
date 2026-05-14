@@ -1413,17 +1413,6 @@ p.small {
   }
 }
 
-@-webkit-keyframes marquee {
-  from {
-    -webkit-transform: translateX(0);
-    transform: translateX(0);
-  }
-  to {
-    -webkit-transform: translateX(-50%);
-    transform: translateX(-50%);
-  }
-}
-
 @keyframes marquee {
   from {
     transform: translateX(0);
