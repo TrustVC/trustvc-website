@@ -45,6 +45,8 @@ const PartnersSection = ({ isDarkMode }: PartnersSectionProps) => {
             'linear-gradient(to right, rgba(0,0,0,0) 0%, black 18%, black 82%, rgba(0,0,0,0) 100%)',
           maskImage:
             'linear-gradient(to right, rgba(0,0,0,0) 0%, black 18%, black 82%, rgba(0,0,0,0) 100%)',
+          WebkitTransform: 'translateZ(0)',
+          transform: 'translateZ(0)',
         }}
       >
         {/* Animated track */}
