@@ -30,7 +30,7 @@ const About = ({ isDarkMode }: AboutProps) => (
           )}
           style={{ fontSize: '16px', fontWeight: 500, lineHeight: '155%' }}
         >
-          TrustVC serve as a core infrastructure layer enabling secure,
+          TrustVC serves as a core infrastructure layer enabling secure,
           verifiable digital credentials across multiple industries and use
           cases.
         </p>
