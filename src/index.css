@@ -337,10 +337,12 @@ body.dark-mode {
 }
 .about-ecosystem-card-content {
   background: #ffffff;
+.about-ecosystem-card-content {
+  background: `#ffffff`;
   padding: 16px;
   border-radius: 13px;
-  border: 1.5px solid #a9b2bb54;
-  padding: 16px;
+  border: 1.5px solid `#a9b2bb54`;
+}
 }
 .about-ecosystem-card p {
   background: none;
