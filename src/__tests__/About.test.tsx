@@ -23,7 +23,7 @@ describe('About page', () => {
     })
   })
 
-  describe('ecosystem card', () => {
+  describe('EcosystemCard integration', () => {
     it('renders the ecosystem card heading', () => {
       renderAbout()
       expect(
@@ -31,15 +31,6 @@ describe('About page', () => {
           level: 2,
           name: /How TrustVC Powers Multiple Ecosystems/i,
         })
-      ).toBeInTheDocument()
-    })
-
-    it('renders the ecosystem card subtitle', () => {
-      renderAbout()
-      expect(
-        screen.getByText(
-          /One foundational platform, unlimited verification possibilities/i
-        )
       ).toBeInTheDocument()
     })
 

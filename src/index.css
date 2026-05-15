@@ -340,7 +340,6 @@ body.dark-mode {
   padding: 16px;
   border-radius: 13px;
   border: 1.5px solid #a9b2bb54;
-  box-shadow: 0px 2px 8px 0px var(--Primary3360);
   padding: 16px;
 }
 .about-ecosystem-card p {
