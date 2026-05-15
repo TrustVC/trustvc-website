@@ -322,7 +322,7 @@ body.dark-mode {
         rgba(31, 27, 69, 0.33) 100%
       );
     background-size:
-      100% cover,
+      100% auto,
       cover;
     background-position: center, center;
   }
