@@ -35,10 +35,10 @@ describe('Navbar Component', () => {
     renderWithRouter(
       <Navbar isDarkMode={false} setIsDarkMode={mockSetIsDarkMode} />
     )
-
-    expect(screen.getByText('Home')).toBeInTheDocument()
-    // Ecosystem and Gallery temporarily removed
-    expect(screen.getByText('News & Updates')).toBeInTheDocument()
+    // home remove from navbar
+    expect(screen.getAllByText('About').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('Partners').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('News & Updates').length).toBeGreaterThan(0)
   })
 
   it('renders Contact Us button', () => {
@@ -96,8 +96,8 @@ describe('Navbar Component', () => {
     fireEvent.click(hamburgerButton!)
 
     // Mobile menu should appear with navigation items
-    const homeLinks = screen.getAllByText('Home')
-    expect(homeLinks.length).toBeGreaterThan(1) // Desktop + Mobile
+    const aboutLinks = screen.getAllByText('About')
+    expect(aboutLinks.length).toBeGreaterThan(1) // Desktop + Mobile
   })
 
   it.skip('opens ecosystem dropdown on hover', () => {
@@ -159,24 +159,24 @@ describe('Navbar Component', () => {
     expect(newsLink).toHaveStyle({ color: '#5B5BB3' })
   })
 
-  it('shows Home as inactive color on /news-updates route (light mode)', () => {
+  it('shows About as inactive color on /news-updates route (light mode)', () => {
     renderNavbar(false, '/news-updates')
 
-    const homeLink = screen.getByText('Home')
-    expect(homeLink).toHaveStyle({ color: '#5B6571' })
+    const aboutLinks = screen.getAllByText('About')
+    expect(aboutLinks[0]).toHaveStyle({ color: '#5B6571' })
   })
 
   it('shows News & Updates as inactive color on home route (light mode)', () => {
     renderNavbar(false, '/')
 
-    const newsLink = screen.getByText('News & Updates')
+    const newsLink = screen.getAllByText('News & Updates')[0]
     expect(newsLink).toHaveStyle({ color: '#5B6571' })
   })
 
-  it('shows Home as active color on home route (light mode)', () => {
-    renderNavbar(false, '/')
+  it('shows About as active color on /about route (light mode)', () => {
+    renderNavbar(false, '/about')
 
-    const homeLink = screen.getByText('Home')
-    expect(homeLink).toHaveStyle({ color: '#5B5BB3' })
+    const aboutLinks = screen.getAllByText('About')
+    expect(aboutLinks[0]).toHaveStyle({ color: '#5B5BB3' })
   })
 })
