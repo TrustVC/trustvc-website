@@ -336,13 +336,12 @@ body.dark-mode {
   padding: 20px 30px;
 }
 .about-ecosystem-card-content {
-  background: #ffffff;
-.about-ecosystem-card-content {
-  background: `#ffffff`;
+  position: relative;
+  background: #fff;
   padding: 16px;
   border-radius: 13px;
-  border: 1.5px solid `#a9b2bb54`;
-}
+  border: 1px solid rgba(169, 178, 187, 0.45);
+  box-sizing: border-box;
 }
 .about-ecosystem-card p {
   background: none;
