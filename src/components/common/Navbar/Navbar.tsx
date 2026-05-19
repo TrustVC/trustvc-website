@@ -12,10 +12,10 @@ const Navbar = ({ isDarkMode, setIsDarkMode: _setIsDarkMode }: NavbarProps) => {
   const [_isEcosystemOpen, setIsEcosystemOpen] = useState(false)
   const navRef = useRef<HTMLElement>(null)
   const location = useLocation()
-  const isHomeActive = location.pathname === '/'
   const isSettingsActive = location.pathname.startsWith('/settings')
   const isNewsActive = location.pathname.startsWith('/news-updates')
   const isPartnersActive = location.pathname.startsWith('/partners')
+  const isAboutActive = location.pathname.startsWith('/about')
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -96,11 +96,9 @@ const Navbar = ({ isDarkMode, setIsDarkMode: _setIsDarkMode }: NavbarProps) => {
           <div className="flex items-center">
             <div className="p-2">
               <Link
-                to="/"
-                className="min-w-[40px] min-h-[40px] flex items-center justify-center px-1 py-[5px] rounded-lg transition-colors duration-200 hover:bg-opacity-10"
-                style={{
-                  backgroundColor: 'transparent',
-                }}
+                to="/about"
+                className="min-w-[40px] min-h-[40px] flex items-center justify-center px-1 py-[5px] rounded-lg transition-colors duration-200"
+                style={{ backgroundColor: 'transparent' }}
                 onMouseEnter={e => {
                   e.currentTarget.style.backgroundColor = isDarkMode
                     ? 'rgba(255, 255, 255, 0.1)'
@@ -113,7 +111,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode: _setIsDarkMode }: NavbarProps) => {
                 <div
                   className="px-1 py-1 text-center text-sm font-bold font-['Gilroy'] leading-snug"
                   style={{
-                    color: isHomeActive
+                    color: isAboutActive
                       ? isDarkMode
                         ? '#7D80D7'
                         : '#5B5BB3'
@@ -122,7 +120,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode: _setIsDarkMode }: NavbarProps) => {
                         : '#5B6571',
                   }}
                 >
-                  Home
+                  About
                 </div>
               </Link>
             </div>
@@ -275,10 +273,10 @@ const Navbar = ({ isDarkMode, setIsDarkMode: _setIsDarkMode }: NavbarProps) => {
         >
           <div className="flex flex-col p-4 space-y-2">
             <Link
-              to="/"
+              to="/about"
               className="px-4 py-3 text-left text-sm font-bold font-['Gilroy'] rounded-lg transition-colors duration-200"
               style={{
-                color: isHomeActive
+                color: isAboutActive
                   ? isDarkMode
                     ? '#7D80D7'
                     : '#5B5BB3'
@@ -296,7 +294,31 @@ const Navbar = ({ isDarkMode, setIsDarkMode: _setIsDarkMode }: NavbarProps) => {
                 e.currentTarget.style.backgroundColor = 'transparent'
               }}
             >
-              Home
+              About
+            </Link>
+            <Link
+              to="/partners"
+              className="px-4 py-3 text-left text-sm font-bold font-['Gilroy'] rounded-lg transition-colors duration-200"
+              style={{
+                color: isPartnersActive
+                  ? isDarkMode
+                    ? '#7D80D7'
+                    : '#5B5BB3'
+                  : isDarkMode
+                    ? '#808894'
+                    : '#5B6571',
+                backgroundColor: 'transparent',
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.backgroundColor = isDarkMode
+                  ? 'rgba(255, 255, 255, 0.1)'
+                  : 'rgba(0, 0, 0, 0.05)'
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.backgroundColor = 'transparent'
+              }}
+            >
+              Partners
             </Link>
             {/* Ecosystem and Gallery temporarily removed - restore from git */}
             <Link
@@ -322,30 +344,6 @@ const Navbar = ({ isDarkMode, setIsDarkMode: _setIsDarkMode }: NavbarProps) => {
               }}
             >
               News &amp; Updates
-            </Link>
-            <Link
-              to="/partners"
-              className="px-4 py-3 text-left text-sm font-bold font-['Gilroy'] rounded-lg transition-colors duration-200"
-              style={{
-                color: isPartnersActive
-                  ? isDarkMode
-                    ? '#7D80D7'
-                    : '#5B5BB3'
-                  : isDarkMode
-                    ? '#808894'
-                    : '#5B6571',
-                backgroundColor: 'transparent',
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.backgroundColor = isDarkMode
-                  ? 'rgba(255, 255, 255, 0.1)'
-                  : 'rgba(0, 0, 0, 0.05)'
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.backgroundColor = 'transparent'
-              }}
-            >
-              Partners
             </Link>
             {/* Theme Toggle in Mobile - temporarily hidden */}
             {/* <div className="flex items-center gap-2 px-2 py-3">
