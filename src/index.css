@@ -1555,12 +1555,16 @@ p.small {
   }
 }
 
-/* Safari marquee fixes: use explicit webkit animation + prevent layer drops */
+/* Safari marquee fixes: pre-promote to GPU layer before animation starts */
 .animate-marquee {
   -webkit-animation: marquee 200s linear infinite;
   animation: marquee 200s linear infinite;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
+  will-change: transform;
+  /* translateZ(0) is intentionally on this element only, not its masked parent.
+     Combining WebkitMaskImage + 3D transform on the same element causes Safari
+     to drop the compositing layer, making child icons disappear. */
   -webkit-transform: translateZ(0);
   transform: translateZ(0);
 }
