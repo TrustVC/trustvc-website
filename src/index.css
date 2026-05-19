@@ -4572,7 +4572,7 @@ p.small {
   z-index: 2;
 }
 
-button,
+button.solid,
 label.solid {
   --base: var(--primary-button-color, #5b5bb3);
   --hover-overlay: var(--Primary-33-40, #4d4b9854);
