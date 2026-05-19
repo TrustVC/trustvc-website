@@ -23,8 +23,11 @@ export function AttachmentFileList({
         <button
           type="button"
           onClick={onClearAll}
-          className="inline-flex items-center gap-1.5 text-sm transition-colors"
-          style={{ color: '#5B5BB3' }}
+          className={`inline-flex items-center gap-1.5 text-sm transition-colors ${
+            isDarkMode
+              ? 'text-primary-50 hover:text-primary-60'
+              : 'text-primary-50 hover:text-primary-60'
+          }`}
         >
           <svg
             width="16"
