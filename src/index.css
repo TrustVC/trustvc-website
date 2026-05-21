@@ -184,6 +184,203 @@ body.dark-mode {
   background-repeat: no-repeat;
 }
 
+.app-shell--partners-light {
+  background-image:
+    url('/backgrounds/motif-left.png'), url('/backgrounds/motif-right.png'),
+    radial-gradient(
+      84.7% 119.21% at 50% 15.3%,
+      #ffffff 0%,
+      rgba(223, 225, 255, 0.33) 100%
+    );
+  background-size:
+    auto 100vh,
+    auto 100vh,
+    cover;
+  background-position:
+    left top,
+    right top,
+    center;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+  min-width: 320px;
+  overflow-x: hidden;
+}
+
+.app-shell--partners-dark {
+  background-image:
+    url('/backgrounds/motif-left.png'), url('/backgrounds/motif-right.png'),
+    radial-gradient(
+      84.7% 119.21% at 50% 15.3%,
+      #1e2026 0%,
+      rgba(31, 27, 69, 0.33) 100%
+    );
+  background-size:
+    auto 100vh,
+    auto 100vh,
+    cover;
+  background-position:
+    left top,
+    right top,
+    center;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+  min-width: 320px;
+  overflow-x: hidden;
+}
+
+@media (max-width: 639px) {
+  .app-shell--partners-light {
+    background-image: radial-gradient(
+      84.7% 119.21% at 50% 15.3%,
+      #ffffff 0%,
+      rgba(223, 225, 255, 0.33) 100%
+    );
+    background-size: cover;
+    background-position: center;
+  }
+
+  .app-shell--partners-dark {
+    background-image: radial-gradient(
+      84.7% 119.21% at 50% 15.3%,
+      #1e2026 0%,
+      rgba(31, 27, 69, 0.33) 100%
+    );
+    background-size: cover;
+    background-position: center;
+  }
+}
+
+.app-shell--about-light {
+  background-image:
+    url('/backgrounds/motif-left.png'), url('/backgrounds/motif-right.png'),
+    url('/backgrounds/bottom-backgound-grid.svg'),
+    radial-gradient(
+      84.7% 119.21% at 50% 15.3%,
+      #ffffff 0%,
+      rgba(223, 225, 255, 0.33) 100%
+    );
+  background-size:
+    auto 100vh,
+    auto 100vh,
+    100% auto,
+    cover;
+  background-position:
+    left top,
+    right top,
+    bottom center,
+    center;
+  background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
+  min-width: 320px;
+  overflow-x: hidden;
+}
+
+.app-shell--about-dark {
+  background-image:
+    url('/backgrounds/motif-left.png'), url('/backgrounds/motif-right.png'),
+    url('/backgrounds/bottom-backgound-grid.svg'),
+    radial-gradient(
+      84.7% 119.21% at 50% 15.3%,
+      #1e2026 0%,
+      rgba(31, 27, 69, 0.33) 100%
+    );
+  background-size:
+    auto 100vh,
+    auto 100vh,
+    100% auto,
+    cover;
+  background-position:
+    left top,
+    right top,
+    bottom center,
+    center;
+  background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
+  min-width: 320px;
+  overflow-x: hidden;
+}
+
+@media (max-width: 639px) {
+  .app-shell--about-light {
+    background-image:
+      url('/backgrounds/bottom-backgound-grid.svg'),
+      radial-gradient(
+        84.7% 119.21% at 50% 15.3%,
+        #ffffff 0%,
+        rgba(223, 225, 255, 0.33) 100%
+      );
+    background-size:
+      100% auto,
+      cover;
+    background-position:
+      bottom center,
+      center;
+  }
+
+  .app-shell--about-dark {
+    background-image:
+      url('/backgrounds/bottom-backgound-grid.svg'),
+      radial-gradient(
+        84.7% 119.21% at 50% 15.3%,
+        #1e2026 0%,
+        rgba(31, 27, 69, 0.33) 100%
+      );
+    background-size:
+      100% auto,
+      cover;
+    background-position: center, center;
+  }
+}
+
+.about-ecosystem-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+  background: linear-gradient(97.83deg, #686ad2 10%, #167eb0 90%);
+  padding: 20px 30px;
+}
+.about-ecosystem-card-content {
+  position: relative;
+  background: #fff;
+  padding: 16px;
+  border-radius: 13px;
+  border: 1px solid rgba(169, 178, 187, 0.45);
+  box-sizing: border-box;
+}
+.about-ecosystem-card p {
+  background: none;
+  -webkit-background-clip: initial;
+  background-clip: initial;
+  -webkit-text-fill-color: #ffffff;
+}
+
+.about-ecosystem-card::before {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/images/about/frame-top.svg');
+  background-size: 100% auto;
+  background-position: top right;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.about-ecosystem-card::after {
+  content: '';
+  display: block;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/images/about/frame-bottom.svg');
+  background-size: 100% auto;
+  background-position: bottom left;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  z-index: 0;
+}
 .app-shell--settings-light {
   background-image:
     url('/backgrounds/motif-left.png'), url('/backgrounds/motif-right.png'),
@@ -1347,6 +1544,29 @@ p.small {
   to {
     transform: rotate(360deg);
   }
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Safari marquee fixes: pre-promote to GPU layer before animation starts */
+.animate-marquee {
+  -webkit-animation: marquee 200s linear infinite;
+  animation: marquee 200s linear infinite;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  will-change: transform;
+  /* translateZ(0) is intentionally on this element only, not its masked parent.
+     Combining WebkitMaskImage + 3D transform on the same element causes Safari
+     to drop the compositing layer, making child icons disappear. */
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
 }
 
 /* VerifySection - dropbox state variants */
@@ -4489,7 +4709,7 @@ p.small {
   z-index: 2;
 }
 
-button,
+button.solid,
 label.solid {
   --base: var(--primary-button-color, #5b5bb3);
   --hover-overlay: var(--Primary-33-40, #4d4b9854);

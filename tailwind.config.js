@@ -70,6 +70,15 @@ export default {
         'form-card': '0px 8px 32px rgba(104, 106, 210, 0.33)',
         'form-card-dark': '0px 8px 32px 0px #686AD2',
       },
+      keyframes: {
+        marquee: {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' },
+        },
+      },
+      animation: {
+        marquee: 'marquee 200s linear infinite',
+      },
       backgroundImage: {
         'overlay-light':
           'linear-gradient(0deg, rgba(255, 255, 255, 0.66), rgba(255, 255, 255, 0.66)), linear-gradient(0deg, rgba(222, 228, 233, 0), rgba(222, 228, 233, 0))',
