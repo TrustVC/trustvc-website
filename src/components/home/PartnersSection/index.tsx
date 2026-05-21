@@ -45,8 +45,9 @@ const PartnersSection = ({ isDarkMode }: PartnersSectionProps) => {
             'linear-gradient(to right, rgba(0,0,0,0) 0%, black 18%, black 82%, rgba(0,0,0,0) 100%)',
           maskImage:
             'linear-gradient(to right, rgba(0,0,0,0) 0%, black 18%, black 82%, rgba(0,0,0,0) 100%)',
-          WebkitTransform: 'translateZ(0)',
-          transform: 'translateZ(0)',
+          // Do NOT add translateZ(0)/transform here — Safari drops the compositing layer
+          // when a 3D transform and WebkitMaskImage are combined on the same element,
+          // causing icons to disappear. GPU promotion is on the animated child only.
         }}
       >
         {/* Animated track */}
@@ -67,6 +68,7 @@ const PartnersSection = ({ isDarkMode }: PartnersSectionProps) => {
                 alt={partner.name}
                 className="h-20 w-auto object-contain"
                 loading="eager"
+                decoding="async"
               />
             </div>
           ))}
