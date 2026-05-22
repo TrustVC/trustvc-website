@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { decryptString } from '@govtechsg/oa-encryption'
+import { decryptString } from '@trustvc/trustvc'
 
 interface ActionLoaderProps {
   loadDocument: (
