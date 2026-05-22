@@ -20,9 +20,11 @@ vi.mock('react-router-dom', async () => {
   }
 })
 
-vi.mock('@govtechsg/oa-encryption', () => ({
-  decryptString: mockDecryptString,
-}))
+vi.mock('@trustvc/trustvc', async () => {
+  const actual =
+    await vi.importActual<typeof import('@trustvc/trustvc')>('@trustvc/trustvc')
+  return { ...actual, decryptString: mockDecryptString }
+})
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
