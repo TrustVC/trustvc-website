@@ -778,6 +778,147 @@ describe('useVerify', () => {
     })
   })
 
+  // ── loadDocument ──────────────────────────────────────────────────────────
+
+  describe('loadDocument', () => {
+    it('sets fileName and transitions to valid on successful verification', async () => {
+      vi.mocked(verifyDocument).mockResolvedValue([
+        {
+          name: 'OpenAttestationHash',
+          status: 'VALID',
+          type: 'DOCUMENT_INTEGRITY',
+        },
+      ])
+      vi.mocked(isTransferableRecord).mockReturnValue(false)
+      vi.mocked(isDocumentRevokable).mockReturnValue(false)
+
+      const { result } = renderHook(() => useVerify(), { wrapper })
+
+      await act(async () => {
+        await result.current.loadDocument(
+          { test: true },
+          '11155111',
+          'action-doc.json'
+        )
+      })
+
+      await waitFor(() => expect(result.current.verifyStatus).toBe('valid'))
+      expect(result.current.fileName).toBe('action-doc.json')
+    })
+
+    it('transitions through verifying before settling to valid', async () => {
+      let resolveFn!: (v: any) => void
+      vi.mocked(verifyDocument).mockReturnValue(
+        new Promise(res => {
+          resolveFn = res
+        })
+      )
+      vi.mocked(isTransferableRecord).mockReturnValue(false)
+      vi.mocked(isDocumentRevokable).mockReturnValue(false)
+
+      const { result } = renderHook(() => useVerify(), { wrapper })
+
+      act(() => {
+        result.current.loadDocument({ test: true }, '1', 'doc.json')
+      })
+
+      expect(result.current.verifyStatus).toBe('verifying')
+
+      await act(async () => {
+        resolveFn([
+          {
+            name: 'OpenAttestationHash',
+            status: 'VALID',
+            type: 'DOCUMENT_INTEGRITY',
+          },
+        ])
+      })
+      await waitFor(() => expect(result.current.verifyStatus).toBe('valid'))
+    })
+
+    it('resolves to invalid when fragments are invalid', async () => {
+      vi.mocked(verifyDocument).mockResolvedValue([
+        {
+          name: 'OpenAttestationHash',
+          status: 'INVALID',
+          type: 'DOCUMENT_INTEGRITY',
+        },
+      ])
+      vi.mocked(isTransferableRecord).mockReturnValue(false)
+      vi.mocked(isDocumentRevokable).mockReturnValue(false)
+
+      const { result } = renderHook(() => useVerify(), { wrapper })
+
+      await act(async () => {
+        await result.current.loadDocument({ test: true }, '1', 'doc.json')
+      })
+
+      await waitFor(() => expect(result.current.verifyStatus).toBe('invalid'))
+    })
+
+    it('sets error state when verifyDocument rejects', async () => {
+      vi.mocked(verifyDocument).mockRejectedValue(new Error('RPC down'))
+      vi.mocked(isTransferableRecord).mockReturnValue(false)
+      vi.mocked(isDocumentRevokable).mockReturnValue(false)
+
+      const { result } = renderHook(() => useVerify(), { wrapper })
+
+      await act(async () => {
+        await result.current.loadDocument({ test: true }, '1', 'doc.json')
+      })
+
+      await waitFor(() => expect(result.current.verifyStatus).toBe('error'))
+      expect(result.current.errorType).toBe(TYPES.VERIFICATION_ERROR)
+    })
+
+    it('overwrites fileName when called a second time', async () => {
+      vi.mocked(verifyDocument).mockResolvedValue([
+        {
+          name: 'OpenAttestationHash',
+          status: 'VALID',
+          type: 'DOCUMENT_INTEGRITY',
+        },
+      ])
+      vi.mocked(isTransferableRecord).mockReturnValue(false)
+      vi.mocked(isDocumentRevokable).mockReturnValue(false)
+
+      const { result } = renderHook(() => useVerify(), { wrapper })
+
+      await act(async () => {
+        await result.current.loadDocument({ v: 1 }, '1', 'first.json')
+      })
+      await waitFor(() => expect(result.current.verifyStatus).toBe('valid'))
+
+      await act(async () => {
+        await result.current.loadDocument({ v: 2 }, '137', 'second.json')
+      })
+      await waitFor(() => expect(result.current.verifyStatus).toBe('valid'))
+
+      expect(result.current.fileName).toBe('second.json')
+    })
+
+    it('accepts null chainId and still calls verifyDocument', async () => {
+      vi.mocked(verifyDocument).mockResolvedValue([
+        {
+          name: 'OpenAttestationHash',
+          status: 'VALID',
+          type: 'DOCUMENT_INTEGRITY',
+        },
+      ])
+      vi.mocked(isTransferableRecord).mockReturnValue(false)
+      vi.mocked(isDocumentRevokable).mockReturnValue(false)
+
+      const { result } = renderHook(() => useVerify(), { wrapper })
+
+      await act(async () => {
+        await result.current.loadDocument({ test: true }, null, 'doc.json')
+      })
+
+      await waitFor(() => expect(result.current.verifyStatus).toBe('valid'))
+      expect(verifyDocument).toHaveBeenCalledTimes(1)
+    })
+  })
+
   // ── getErrorTypeFromFragments ───────────────────────────────────────────────
 
   describe('getErrorTypeFromFragments', () => {
