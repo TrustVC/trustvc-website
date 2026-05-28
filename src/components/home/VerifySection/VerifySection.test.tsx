@@ -43,6 +43,7 @@ const defaultHook: UseVerifyReturn = {
   handleReset: vi.fn(),
   handleNetworkConfirm: vi.fn(),
   handleNetworkCancel: vi.fn(),
+  loadDocument: vi.fn(),
 }
 
 const setStatus = (overrides: Partial<UseVerifyReturn>) => {

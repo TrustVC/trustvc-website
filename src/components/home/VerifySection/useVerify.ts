@@ -75,6 +75,11 @@ export interface UseVerifyReturn {
   handleReset: () => void
   handleNetworkConfirm: (_chainId: string) => void
   handleNetworkCancel: () => void
+  loadDocument: (
+    _doc: unknown,
+    _chainId: string | null | undefined,
+    _name: string
+  ) => Promise<void>
 }
 
 const computeGroupStatus = (
@@ -508,6 +513,27 @@ export const useVerify = (): UseVerifyReturn => {
     }
   }
 
+  const loadDocument = async (
+    doc: unknown,
+    chainId: string | null | undefined,
+    name: string
+  ) => {
+    const currentId = ++verificationIdRef.current
+    setFileName(name)
+    setVerifyStatus('verifying')
+    setFragments([])
+    setPendingDoc(null)
+    clearVerificationMetadata()
+
+    try {
+      await runVerification(doc, chainId, currentId)
+    } catch (err) {
+      clearVerificationMetadata()
+      setErrorType(getErrorTypeFromError(err))
+      setVerifyStatus('error')
+    }
+  }
+
   const handleReset = () => {
     setVerifyStatus('idle')
     setFragments([])
@@ -541,5 +567,6 @@ export const useVerify = (): UseVerifyReturn => {
     handleReset,
     handleNetworkConfirm,
     handleNetworkCancel,
+    loadDocument,
   }
 }
