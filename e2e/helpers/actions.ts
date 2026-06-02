@@ -2,6 +2,18 @@ import type { Page } from '@playwright/test'
 import { MetaMask } from '@synthetixio/synpress/playwright'
 
 /**
+ * Dismisses the MetaMask "What's new" popover and any other blocking popups.
+ * Must be called after navigating to the MetaMask home page.
+ */
+async function dismissMetaMaskPopups(metamaskPage: Page) {
+  const popoverClose = metamaskPage.locator('[data-testid="popover-close"]')
+  if (await popoverClose.isVisible({ timeout: 3000 }).catch(() => false)) {
+    await popoverClose.click()
+    await metamaskPage.waitForTimeout(500)
+  }
+}
+
+/**
  * Uploads a document, waits for verification, and asserts all three checks VALID.
  */
 export async function uploadAndVerify(page: Page, documentPath: string) {
@@ -42,11 +54,9 @@ export async function uploadAndVerify(page: Page, documentPath: string) {
  * before connectToDapp() is listening.
  */
 export async function connectMetaMask(page: Page, metamask: MetaMask) {
-  // Ensure MetaMask is unlocked before triggering the connection popup.
-  // In CI the wallet may be locked despite the cache — connectToDapp() would
-  // then interact with the lock screen instead of the connection popup, causing
-  // the dapp to never receive the account.
-  // await metamask.unlock()
+  // Dismiss any MetaMask popups (e.g. "What's new") that would block the
+  // connection approval popup from being interacted with.
+  await dismissMetaMaskPopups(metamask.page)
 
   await page.locator('[data-testid="connectToWallet"]').click()
   await page

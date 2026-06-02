@@ -32,7 +32,7 @@ test.describe.serial('Transfer Owners → Reject Transfer Owners', () => {
     metamaskPage,
     extensionId,
   }) => {
-    await switchMetaMaskAccount(metamaskPage, extensionId, 'Account 1')
+    // await switchMetaMaskAccount(metamaskPage, extensionId, 'Account 1')
 
     const metamask = new MetaMask(
       context,
