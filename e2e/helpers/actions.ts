@@ -52,9 +52,11 @@ export async function connectMetaMask(page: Page, metamask: MetaMask) {
     metamask.connectToDapp(),
   ])
 
+  // In CI the accountsChanged event can be slower to propagate through React state.
+  // Wait up to 30s for the Continue button which only renders once the account is set.
   await page
     .locator('[data-testid="connect-blockchain-continue"]')
-    .waitFor({ state: 'visible', timeout: 15_000 })
+    .waitFor({ state: 'visible', timeout: 30_000 })
   await page.locator('[data-testid="connect-blockchain-continue"]').click()
 }
 
