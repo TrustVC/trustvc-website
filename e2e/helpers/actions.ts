@@ -54,8 +54,15 @@ export async function uploadAndVerify(page: Page, documentPath: string) {
  * before connectToDapp() is listening.
  */
 export async function connectMetaMask(page: Page, metamask: MetaMask) {
-  // Dismiss any MetaMask popups (e.g. "What's new") that would block the
-  // connection approval popup from being interacted with.
+  // Unlock MetaMask if locked. In CI the wallet cache may not preserve the
+  // unlocked state — if locked, connectToDapp() interacts with the lock screen
+  // popup instead of the connection popup, so the dapp never gets accounts.
+  const passwordInput = metamask.page.locator('[data-testid="unlock-password"]')
+  if (await passwordInput.isVisible({ timeout: 3000 }).catch(() => false)) {
+    await metamask.unlock()
+  }
+
+  // Dismiss "What's new" or any blocking popup on the MetaMask home page
   await dismissMetaMaskPopups(metamask.page)
 
   await page.locator('[data-testid="connectToWallet"]').click()
@@ -89,7 +96,13 @@ export async function switchMetaMaskAccount(
   await metamaskPage.goto(`chrome-extension://${extensionId}/home.html`)
   await metamaskPage.waitForLoadState('domcontentloaded')
 
-  // Dismiss "What's new" or any other popup that blocks account menu clicks
+  // Unlock if locked, then dismiss any blocking popups
+  const pw = metamaskPage.locator('[data-testid="unlock-password"]')
+  if (await pw.isVisible({ timeout: 3000 }).catch(() => false)) {
+    await metamaskPage.locator('[data-testid="unlock-password"]').fill('Tester@1234')
+    await metamaskPage.locator('[data-testid="unlock-submit"]').click()
+    await metamaskPage.waitForTimeout(1000)
+  }
   await dismissMetaMaskPopups(metamaskPage)
 
   await metamaskPage.locator('[data-testid="account-menu-icon"]').click()
