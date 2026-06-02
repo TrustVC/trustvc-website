@@ -97,6 +97,7 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
     <div className="frame-dropbox">
       <div
         className={`dropbox-area dropbox-area--home ${dragActive ? 'drag-active' : ''}`}
+        data-testid="dropzone"
         onDragEnter={handleDrag}
         onDragLeave={handleDrag}
         onDragOver={handleDrag}
@@ -138,7 +139,10 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
 
   const renderVerifying = () => (
     <div className="frame-dropbox">
-      <div className="dropbox-area dropbox-area--home dropbox-area--centered">
+      <div
+        className="dropbox-area dropbox-area--home dropbox-area--centered"
+        data-testid="verifying-state"
+      >
         <div className="flex flex-col items-center gap-2">
           <Spinner fontSize={32} />
           <span className="text-sm">Verifying {fileName}...</span>

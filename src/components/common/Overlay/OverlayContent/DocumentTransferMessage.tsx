@@ -54,6 +54,7 @@ export const ButtonClose: FunctionComponent<ButtonCloseProps> = ({
       size={ButtonSize.MD}
       className={`bg-cerulean-500 rounded-xl text-white px-3 py-2 hover:bg-cerulean-800 ${className}`}
       onClick={closeOverlay}
+      data-testid="dismiss-modal"
     >
       Dismiss
     </Button>
@@ -106,6 +107,7 @@ export const DocumentTransferMessage: FunctionComponent<
               className="w-full h-[40px] min-w-[160px] max-w-[260px] gap-[10px] flex-1"
               btnType="transparent"
               onClick={closeOverlay}
+              data-testid="dismiss-modal"
             >
               Dismiss
             </Button>
