@@ -42,15 +42,20 @@ export async function uploadAndVerify(page: Page, documentPath: string) {
  * before connectToDapp() is listening.
  */
 export async function connectMetaMask(page: Page, metamask: MetaMask) {
+  // Ensure MetaMask is unlocked before triggering the connection popup.
+  // In CI the wallet may be locked despite the cache — connectToDapp() would
+  // then interact with the lock screen instead of the connection popup, causing
+  // the dapp to never receive the account.
+  await metamask.unlock()
+
   await page.locator('[data-testid="connectToWallet"]').click()
   await page
     .locator('[data-testid="connectToMetamask"]')
     .waitFor({ state: 'visible', timeout: 10_000 })
 
-  // Start listening for the MetaMask popup BEFORE clicking so we never miss it,
-  // regardless of how fast or slow the popup appears (local vs CI/Xvfb).
+  // Start listening for the popup BEFORE clicking so we never miss it.
   const connectPromise = metamask.connectToDapp()
-  await page.waitForTimeout(500) // give the listener a moment to register
+  await page.waitForTimeout(500)
   await page.locator('[data-testid="connectToMetamask"]').click()
   await connectPromise
 
