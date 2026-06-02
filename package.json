@@ -19,7 +19,13 @@
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
     "setup:hooks": "husky",
-    "prepare": "husky"
+    "prepare": "husky",
+    "e2e": "playwright test --config e2e/playwright.config.ts",
+    "e2e:ui": "playwright test --config e2e/playwright.config.ts --ui",
+    "e2e:report": "playwright show-report",
+    "e2e:setup-wallet": "synpress e2e/wallet-setup",
+    "e2e:deploy": "npx ts-node --esm e2e/helpers/deploy.ts",
+    "e2e:setup-contracts": "node e2e/setup-contracts.cjs"
   },
   "dependencies": {
     "@sanity/client": "^7.20.0",
@@ -41,6 +47,8 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
+    "wait-on": "^8.0.1",
+    "@synthetixio/synpress": "4.0.5",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",
     "@testing-library/user-event": "^14.5.2",
@@ -56,6 +64,7 @@
     "eslint-plugin-react-hooks": "^5.1.0",
     "eslint-plugin-react-refresh": "^0.4.14",
     "globals": "^15.13.0",
+    "hardhat": "^2.28.6",
     "husky": "^9.1.7",
     "jsdom": "^25.0.1",
     "postcss": "^8.4.49",
