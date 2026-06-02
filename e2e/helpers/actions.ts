@@ -47,13 +47,13 @@ export async function connectMetaMask(page: Page, metamask: MetaMask) {
     .locator('[data-testid="connectToMetamask"]')
     .waitFor({ state: 'visible', timeout: 10_000 })
 
-  await Promise.all([
-    page.locator('[data-testid="connectToMetamask"]').click(),
-    metamask.connectToDapp(),
-  ])
+  // Start listening for the MetaMask popup BEFORE clicking so we never miss it,
+  // regardless of how fast or slow the popup appears (local vs CI/Xvfb).
+  const connectPromise = metamask.connectToDapp()
+  await page.waitForTimeout(500) // give the listener a moment to register
+  await page.locator('[data-testid="connectToMetamask"]').click()
+  await connectPromise
 
-  // In CI the accountsChanged event can be slower to propagate through React state.
-  // Wait up to 30s for the Continue button which only renders once the account is set.
   await page
     .locator('[data-testid="connect-blockchain-continue"]')
     .waitFor({ state: 'visible', timeout: 30_000 })
