@@ -86,11 +86,12 @@ export async function switchMetaMaskAccount(
   extensionId: string,
   accountName: string
 ) {
-  // Navigate to MetaMask home first so the account menu is available
   await metamaskPage.goto(`chrome-extension://${extensionId}/home.html`)
   await metamaskPage.waitForLoadState('domcontentloaded')
 
-  // Open the account list using the same selector synpress uses internally
+  // Dismiss "What's new" or any other popup that blocks account menu clicks
+  await dismissMetaMaskPopups(metamaskPage)
+
   await metamaskPage.locator('[data-testid="account-menu-icon"]').click()
 
   // Find the account by name and click it
