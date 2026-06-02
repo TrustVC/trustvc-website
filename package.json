@@ -25,7 +25,8 @@
     "e2e:report": "playwright show-report",
     "e2e:setup-wallet": "synpress e2e/wallet-setup",
     "e2e:deploy": "npx ts-node --esm e2e/helpers/deploy.ts",
-    "e2e:setup-contracts": "node e2e/setup-contracts.cjs"
+    "e2e:setup-contracts": "node e2e/setup-contracts.cjs",
+    "e2e:ci": "node e2e/scripts/run-ci.mjs"
   },
   "dependencies": {
     "@sanity/client": "^7.20.0",

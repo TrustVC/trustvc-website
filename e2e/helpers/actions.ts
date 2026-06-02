@@ -46,7 +46,7 @@ export async function connectMetaMask(page: Page, metamask: MetaMask) {
   // In CI the wallet may be locked despite the cache — connectToDapp() would
   // then interact with the lock screen instead of the connection popup, causing
   // the dapp to never receive the account.
-  await metamask.unlock()
+  // await metamask.unlock()
 
   await page.locator('[data-testid="connectToWallet"]').click()
   await page
@@ -107,8 +107,14 @@ export async function addMetaMaskAccount(
   await metamaskPage.waitForLoadState('domcontentloaded')
 
   await metamaskPage.locator('[data-testid="account-menu-icon"]').click()
-  await metamaskPage.locator('[data-testid="multichain-account-menu-popover-add-account"]').click()
-  await metamaskPage.locator('[data-testid="multichain-account-menu-popover-add-derived-account"]').click()
+  await metamaskPage
+    .locator('[data-testid="multichain-account-menu-popover-add-account"]')
+    .click()
+  await metamaskPage
+    .locator(
+      '[data-testid="multichain-account-menu-popover-add-derived-account"]'
+    )
+    .click()
 
   // Clear default name and type the desired account name
   const nameInput = metamaskPage.locator('[data-testid="account-name-field"]')
@@ -117,7 +123,9 @@ export async function addMetaMaskAccount(
     await nameInput.fill(accountName)
   }
 
-  await metamaskPage.locator('[data-testid="submit-add-account-with-name"]').click()
+  await metamaskPage
+    .locator('[data-testid="submit-add-account-with-name"]')
+    .click()
   await metamaskPage.waitForTimeout(500)
 }
 
