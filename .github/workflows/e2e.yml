@@ -36,7 +36,7 @@ jobs:
           NODE_OPTIONS: --max-old-space-size=4096
 
       - name: Wait for Hardhat node
-        run: npx wait-on http://127.0.0.1:8545 --timeout 30000
+        run: npx wait-on http://127.0.0.1:8545 --timeout 180000
 
       - name: Deploy contracts and mint tokens
         run: node e2e/setup-contracts.cjs
@@ -48,7 +48,7 @@ jobs:
           VITE_APP_NETWORK: local
 
       - name: Wait for dev server
-        run: npx wait-on http://localhost:5173 --timeout 60000
+        run: npx wait-on http://localhost:5173 --timeout 180000
 
       # ── MetaMask wallet cache ────────────────────────────────────────────
       # Cache the wallet setup so it is not rebuilt on every run.
