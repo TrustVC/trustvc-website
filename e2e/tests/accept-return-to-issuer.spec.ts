@@ -6,7 +6,7 @@ import { uploadAndVerify, connectMetaMask } from '../helpers/actions'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const DOCUMENT_PATH = path.resolve(
   __dirname,
-  '../fixtures/local/w3c/tr_accept_surrender.json'
+  '../fixtures/local/w3c/tr_accept_return_to_issuer.json'
 )
 
 test.describe('Return to Issuer → Accept Return to Issuer', () => {

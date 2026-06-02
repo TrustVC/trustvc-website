@@ -270,7 +270,7 @@ describe('AssetManagementDropdown', () => {
         <AssetManagementDropdown {...defaultProps} canReturnToIssuer={true} />
       )
 
-      expect(screen.getByTestId('surrenderDropdown')).toBeInTheDocument()
+      expect(screen.getByTestId('returnToIssuerDropdown')).toBeInTheDocument()
       expect(screen.getByText('Return ETR to issuer')).toBeInTheDocument()
     })
 
@@ -279,7 +279,7 @@ describe('AssetManagementDropdown', () => {
         <AssetManagementDropdown {...defaultProps} canReturnToIssuer={true} />
       )
 
-      fireEvent.click(screen.getByTestId('surrenderDropdown'))
+      fireEvent.click(screen.getByTestId('returnToIssuerDropdown'))
 
       expect(mockOnSetFormAction).toHaveBeenCalledWith(
         AssetManagementActions.ReturnToIssuer
@@ -293,7 +293,9 @@ describe('AssetManagementDropdown', () => {
         <AssetManagementDropdown {...defaultProps} canHandleShred={true} />
       )
 
-      expect(screen.getByTestId('acceptSurrenderDropdown')).toBeInTheDocument()
+      expect(
+        screen.getByTestId('acceptReturnToIssuerDropdown')
+      ).toBeInTheDocument()
       expect(screen.getByText('Accept ETR return')).toBeInTheDocument()
     })
 
@@ -302,7 +304,7 @@ describe('AssetManagementDropdown', () => {
         <AssetManagementDropdown {...defaultProps} canHandleShred={true} />
       )
 
-      fireEvent.click(screen.getByTestId('acceptSurrenderDropdown'))
+      fireEvent.click(screen.getByTestId('acceptReturnToIssuerDropdown'))
 
       expect(mockOnSetFormAction).toHaveBeenCalledWith(
         AssetManagementActions.AcceptReturnToIssuer
@@ -316,7 +318,9 @@ describe('AssetManagementDropdown', () => {
         <AssetManagementDropdown {...defaultProps} canHandleRestore={true} />
       )
 
-      expect(screen.getByTestId('rejectSurrenderDropdown')).toBeInTheDocument()
+      expect(
+        screen.getByTestId('rejectReturnToIssuerDropdown')
+      ).toBeInTheDocument()
       expect(screen.getByText('Reject ETR return')).toBeInTheDocument()
     })
 
@@ -325,7 +329,7 @@ describe('AssetManagementDropdown', () => {
         <AssetManagementDropdown {...defaultProps} canHandleRestore={true} />
       )
 
-      fireEvent.click(screen.getByTestId('rejectSurrenderDropdown'))
+      fireEvent.click(screen.getByTestId('rejectReturnToIssuerDropdown'))
 
       expect(mockOnSetFormAction).toHaveBeenCalledWith(
         AssetManagementActions.RejectReturnToIssuer
@@ -437,7 +441,7 @@ describe('AssetManagementDropdown', () => {
 
       expect(screen.getByTestId('transferHolderDropdown')).toBeInTheDocument()
       expect(screen.getByTestId('transferOwnerDropdown')).toBeInTheDocument()
-      expect(screen.getByTestId('surrenderDropdown')).toBeInTheDocument()
+      expect(screen.getByTestId('returnToIssuerDropdown')).toBeInTheDocument()
     })
 
     it('renders no dropdown items when all permissions are false', () => {
@@ -449,7 +453,9 @@ describe('AssetManagementDropdown', () => {
       expect(
         screen.queryByTestId('transferOwnerDropdown')
       ).not.toBeInTheDocument()
-      expect(screen.queryByTestId('surrenderDropdown')).not.toBeInTheDocument()
+      expect(
+        screen.queryByTestId('returnToIssuerDropdown')
+      ).not.toBeInTheDocument()
     })
   })
 
@@ -503,9 +509,13 @@ describe('AssetManagementDropdown', () => {
         screen.getByTestId('nominateBeneficiaryHolderDropdown')
       ).toBeInTheDocument()
       expect(screen.getByTestId('endorseTransferDropdown')).toBeInTheDocument()
-      expect(screen.getByTestId('surrenderDropdown')).toBeInTheDocument()
-      expect(screen.getByTestId('acceptSurrenderDropdown')).toBeInTheDocument()
-      expect(screen.getByTestId('rejectSurrenderDropdown')).toBeInTheDocument()
+      expect(screen.getByTestId('returnToIssuerDropdown')).toBeInTheDocument()
+      expect(
+        screen.getByTestId('acceptReturnToIssuerDropdown')
+      ).toBeInTheDocument()
+      expect(
+        screen.getByTestId('rejectReturnToIssuerDropdown')
+      ).toBeInTheDocument()
       expect(
         screen.getByTestId('rejectTransferOwnerHolderDropdown')
       ).toBeInTheDocument()
