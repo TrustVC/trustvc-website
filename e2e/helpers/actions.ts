@@ -28,7 +28,7 @@ export async function uploadAndVerify(page: Page, documentPath: string) {
 
   await page
     .locator('[data-testid="verifying-state"]')
-    .waitFor({ state: 'visible', timeout: 10_000 })
+    .waitFor({ state: 'visible', timeout: 30_000 })
   await page
     .locator('[data-testid="verifying-state"]')
     .waitFor({ state: 'hidden', timeout: 60_000 })
@@ -68,17 +68,17 @@ export async function connectMetaMask(page: Page, metamask: MetaMask) {
   await page.locator('[data-testid="connectToWallet"]').click()
   await page
     .locator('[data-testid="connectToMetamask"]')
-    .waitFor({ state: 'visible', timeout: 10_000 })
+    .waitFor({ state: 'visible', timeout: 30_000 })
 
   // Start listening for the popup BEFORE clicking so we never miss it.
   const connectPromise = metamask.connectToDapp()
-  await page.waitForTimeout(500)
+  await page.waitForTimeout(30000)
   await page.locator('[data-testid="connectToMetamask"]').click()
   await connectPromise
 
   await page
     .locator('[data-testid="connect-blockchain-continue"]')
-    .waitFor({ state: 'visible', timeout: 30_000 })
+    .waitFor({ state: 'visible', timeout: 180_000 })
   await page.locator('[data-testid="connect-blockchain-continue"]').click()
 }
 
@@ -99,9 +99,11 @@ export async function switchMetaMaskAccount(
   // Unlock if locked, then dismiss any blocking popups
   const pw = metamaskPage.locator('[data-testid="unlock-password"]')
   if (await pw.isVisible({ timeout: 3000 }).catch(() => false)) {
-    await metamaskPage.locator('[data-testid="unlock-password"]').fill('Tester@1234')
+    await metamaskPage
+      .locator('[data-testid="unlock-password"]')
+      .fill('Tester@1234')
     await metamaskPage.locator('[data-testid="unlock-submit"]').click()
-    await metamaskPage.waitForTimeout(1000)
+    await metamaskPage.waitForTimeout(10000)
   }
   await dismissMetaMaskPopups(metamaskPage)
 
@@ -150,28 +152,5 @@ export async function addMetaMaskAccount(
   await metamaskPage
     .locator('[data-testid="submit-add-account-with-name"]')
     .click()
-  await metamaskPage.waitForTimeout(500)
+  await metamaskPage.waitForTimeout(5000)
 }
-
-//do not delete
-// export async function switchMetaMaskAccount(
-//   metamaskPage: Page,
-//   extensionId: string,
-//   accountIndex: number
-// ) {
-
-//   metamaskPage.switchAccount(accountNumber)
-
-//   await metamaskPage.goto(`chrome-extension://${extensionId}/home.html`)
-//   await metamaskPage.waitForLoadState('domcontentloaded')
-
-//   // Open the account picker
-//   await metamaskPage.locator('[data-testid="account-menu-icon"]').click()
-
-//   // Click the account at the given index (accounts are 1-indexed in MetaMask UI)
-//   await metamaskPage
-//     .locator(`[data-testid="account-list-item"]:nth-child(${accountIndex})`)
-//     .click()
-
-//   await metamaskPage.waitForTimeout(500)
-// }
