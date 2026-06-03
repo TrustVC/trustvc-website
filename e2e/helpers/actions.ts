@@ -89,6 +89,7 @@ export async function connectMetaMask(page: Page, metamask: MetaMask) {
   }
 
   try {
+    await page.waitForTimeout(5000)
     await metamask.approveSwitchNetwork()
   } catch {
     // No chain switch popup — MetaMask is already on the correct network
