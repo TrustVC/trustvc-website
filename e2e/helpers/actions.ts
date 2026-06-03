@@ -72,7 +72,7 @@ export async function connectMetaMask(page: Page, metamask: MetaMask) {
 
   // Start listening for the popup BEFORE clicking so we never miss it.
   const connectPromise = metamask.connectToDapp()
-  await page.waitForTimeout(30000)
+  await page.waitForTimeout(500)
   await page.locator('[data-testid="connectToMetamask"]').click()
   await connectPromise
 
@@ -103,7 +103,7 @@ export async function switchMetaMaskAccount(
       .locator('[data-testid="unlock-password"]')
       .fill('Tester@1234')
     await metamaskPage.locator('[data-testid="unlock-submit"]').click()
-    await metamaskPage.waitForTimeout(10000)
+    await metamaskPage.waitForTimeout(1000)
   }
   await dismissMetaMaskPopups(metamaskPage)
 
