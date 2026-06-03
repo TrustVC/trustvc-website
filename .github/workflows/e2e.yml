@@ -46,6 +46,8 @@ jobs:
         run: npm run dev &
         env:
           VITE_APP_NETWORK: local
+          VITE_NETWORK_TYPE: testnet
+          VITE_RPC_URL_1337: http://127.0.0.1:8545
 
       - name: Wait for dev server
         run: npx wait-on http://localhost:5173 --timeout 180000
