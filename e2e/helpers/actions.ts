@@ -86,12 +86,12 @@ export async function connectMetaMask(page: Page, metamask: MetaMask) {
     // No second connection popup — already approved
   }
 
-  try {
-    await page.waitForTimeout(5000)
-    await metamask.approveSwitchNetwork()
-  } catch {
-    // No chain switch popup — MetaMask is already on the correct network
-  }
+  // try {
+  //   await page.waitForTimeout(5000)
+  //   await metamask.approveSwitchNetwork()
+  // } catch {
+  //   // No chain switch popup — MetaMask is already on the correct network
+  // }
 
   await page
     .locator('[data-testid="connect-blockchain-continue"]')
