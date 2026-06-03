@@ -54,9 +54,7 @@ export async function uploadAndVerify(page: Page, documentPath: string) {
  * before connectToDapp() is listening.
  */
 export async function connectMetaMask(page: Page, metamask: MetaMask) {
-  // Unlock MetaMask if locked. In CI the wallet cache may not preserve the
-  // unlocked state — if locked, connectToDapp() interacts with the lock screen
-  // popup instead of the connection popup, so the dapp never gets accounts.
+  // Unlock MetaMask if locked.
   const passwordInput = metamask.page.locator('[data-testid="unlock-password"]')
   if (await passwordInput.isVisible({ timeout: 3000 }).catch(() => false)) {
     await metamask.unlock()
@@ -64,6 +62,10 @@ export async function connectMetaMask(page: Page, metamask: MetaMask) {
 
   // Dismiss "What's new" or any blocking popup on the MetaMask home page
   await dismissMetaMaskPopups(metamask.page)
+
+  // Switch to Hardhat Local BEFORE connecting so walletSwitchChain inside
+  // initializeMetaMaskSigner is a no-op (already on correct chain → no popup).
+  await metamask.switchNetwork('Hardhat Local')
 
   await page.locator('[data-testid="connectToWallet"]').click()
   await page
