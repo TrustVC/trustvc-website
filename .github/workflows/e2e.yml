@@ -70,16 +70,34 @@ jobs:
           DISPLAY: ':99'
 
       # ── E2E tests ────────────────────────────────────────────────────────
-      - name: Run E2E tests
+      - name: Start Xvfb virtual display
         run: |
-          # Start Xvfb if not already running (may have started in wallet cache step)
           Xvfb :99 -screen 0 1280x720x24 &>/dev/null || true
-          npm run e2e
+          sleep 1
+
+      - name: Install ffmpeg
+        run: sudo apt-get install -y ffmpeg
+
+      - name: Start screen recording
+        run: |
+          ffmpeg -f x11grab -video_size 1280x720 -framerate 15 \
+            -i :99 -c:v libx264 -preset ultrafast -pix_fmt yuv420p \
+            /tmp/e2e-recording.mp4 &
+          echo $! > /tmp/ffmpeg.pid
+
+      - name: Run E2E tests
+        run: npm run e2e
         env:
           DISPLAY: ':99'
           CI: 'true'
 
-      # ── Artifacts (always upload so videos are accessible) ────────────────
+      - name: Stop screen recording
+        if: always()
+        run: |
+          kill $(cat /tmp/ffmpeg.pid) 2>/dev/null || true
+          sleep 2
+
+      # ── Artifacts ────────────────────────────────────────────────────────
       - name: Upload Playwright report
         if: always()
         uses: actions/upload-artifact@v4
@@ -88,8 +106,17 @@ jobs:
           path: playwright-report/
           retention-days: 7
 
-      - name: Upload test results (videos + screenshots)
+      - name: Upload screen recording
         if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screen-recording
+          path: /tmp/e2e-recording.mp4
+          retention-days: 7
+          if-no-files-found: ignore
+
+      - name: Upload screenshots on failure
+        if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: test-results

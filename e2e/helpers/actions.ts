@@ -78,11 +78,11 @@ export async function connectMetaMask(page: Page, metamask: MetaMask) {
 
   // After connecting, the app calls walletSwitchChain which opens a SECOND
   // MetaMask popup to approve the chain switch. Approve it if it appears.
-  try {
-    await metamask.approveSwitchNetwork()
-  } catch {
-    // No chain switch popup — MetaMask is already on the correct network
-  }
+  // try {
+  //   await metamask.approveSwitchNetwork()
+  // } catch {
+  //   // No chain switch popup — MetaMask is already on the correct network
+  // }
 
   await page
     .locator('[data-testid="connect-blockchain-continue"]')

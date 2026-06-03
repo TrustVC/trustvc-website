@@ -84,6 +84,7 @@ test.describe
     metamaskPage,
     extensionId,
   }) => {
+    await uploadAndVerify(page, DOCUMENT_PATH)
     await switchMetaMaskAccount(metamaskPage, extensionId, 'Account 2')
 
     const metamask = new MetaMask(
@@ -92,19 +93,18 @@ test.describe
       BasicSetup.walletPassword,
       extensionId
     )
+    await connectMetaMask(page, metamask)
 
-    await uploadAndVerify(page, DOCUMENT_PATH)
-
-    await page.locator('[data-testid="connectToWallet"]').click()
-    await page
-      .locator('[data-testid="connectToMetamask"]')
-      .waitFor({ state: 'visible', timeout: 10_000 })
-    await page.locator('[data-testid="connectToMetamask"]').click()
-    await metamask.connectToDapp()
-    await page
-      .locator('[data-testid="connect-blockchain-continue"]')
-      .waitFor({ state: 'visible', timeout: 15_000 })
-    await page.locator('[data-testid="connect-blockchain-continue"]').click()
+    // await page.locator('[data-testid="connectToWallet"]').click()
+    // await page
+    //   .locator('[data-testid="connectToMetamask"]')
+    //   .waitFor({ state: 'visible', timeout: 10_000 })
+    // await page.locator('[data-testid="connectToMetamask"]').click()
+    // await metamask.connectToDapp()
+    // await page
+    //   .locator('[data-testid="connect-blockchain-continue"]')
+    //   .waitFor({ state: 'visible', timeout: 15_000 })
+    // await page.locator('[data-testid="connect-blockchain-continue"]').click()
 
     await expect(
       page.locator('[data-testid="manageAssetDropdown"]')
