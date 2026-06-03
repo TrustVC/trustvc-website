@@ -70,15 +70,24 @@ export async function connectMetaMask(page: Page, metamask: MetaMask) {
     .locator('[data-testid="connectToMetamask"]')
     .waitFor({ state: 'visible', timeout: 30_000 })
 
-  // Start listening for the connection popup BEFORE clicking.
+  // Start listening for the connection popup BEFORE clicking so we never miss it.
   const connectPromise = metamask.connectToDapp()
   await page.waitForTimeout(500)
   await page.locator('[data-testid="connectToMetamask"]').click()
   await connectPromise
 
-  // After connectToDapp(), the app calls walletSwitchChain() which opens a
-  // SECOND MetaMask popup asking to switch chains. Approve it — without this
-  // setProviderType(METAMASK) is never called and the modal never updates.
+  // walletSwitchChain() calls eth_requestAccounts (2nd time) then
+  // wallet_switchEthereumChain. The 2nd eth_requestAccounts may open a
+  // new popup — handle it first, then handle the chain-switch popup.
+  try {
+    const connectPromise = metamask.connectToDapp()
+    await page.waitForTimeout(500)
+    await page.locator('[data-testid="connectToMetamask"]').click()
+    await connectPromise
+  } catch {
+    // No second connection popup — already approved
+  }
+
   try {
     await metamask.approveSwitchNetwork()
   } catch {
