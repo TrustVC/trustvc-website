@@ -70,15 +70,23 @@ export async function connectMetaMask(page: Page, metamask: MetaMask) {
     .locator('[data-testid="connectToMetamask"]')
     .waitFor({ state: 'visible', timeout: 30_000 })
 
-  // Start listening for the popup BEFORE clicking so we never miss it.
+  // Start listening for the connection popup BEFORE clicking.
   const connectPromise = metamask.connectToDapp()
   await page.waitForTimeout(500)
   await page.locator('[data-testid="connectToMetamask"]').click()
   await connectPromise
 
+  // After connecting, the app calls walletSwitchChain which opens a SECOND
+  // MetaMask popup to approve the chain switch. Approve it if it appears.
+  try {
+    await metamask.approveSwitchNetwork()
+  } catch {
+    // No chain switch popup — MetaMask is already on the correct network
+  }
+
   await page
     .locator('[data-testid="connect-blockchain-continue"]')
-    .waitFor({ state: 'visible', timeout: 180_000 })
+    .waitFor({ state: 'visible', timeout: 30_000 })
   await page.locator('[data-testid="connect-blockchain-continue"]').click()
 }
 
