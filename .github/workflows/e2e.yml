@@ -72,14 +72,14 @@ jobs:
       # ── E2E tests ────────────────────────────────────────────────────────
       - name: Run E2E tests
         run: |
-          Xvfb :99 -screen 0 1280x720x24 &
-          export DISPLAY=:99
+          # Start Xvfb if not already running (may have started in wallet cache step)
+          Xvfb :99 -screen 0 1280x720x24 &>/dev/null || true
           npm run e2e
         env:
           DISPLAY: ':99'
           CI: 'true'
 
-      # ── Artifacts ────────────────────────────────────────────────────────
+      # ── Artifacts (always upload so videos are accessible) ────────────────
       - name: Upload Playwright report
         if: always()
         uses: actions/upload-artifact@v4
@@ -88,10 +88,11 @@ jobs:
           path: playwright-report/
           retention-days: 7
 
-      - name: Upload test videos/screenshots on failure
-        if: failure()
+      - name: Upload test results (videos + screenshots)
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: e2e-failures
+          name: test-results
           path: test-results/
           retention-days: 7
+          if-no-files-found: ignore

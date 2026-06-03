@@ -15,7 +15,7 @@ export default defineConfig({
     actionTimeout: 30_000, // per-action timeout (click, fill, etc.)
     navigationTimeout: 30_000,
     trace: 'retain-on-failure',
-    video: 'on',             // record video for every test — stored in test-results/
+    video: 'retain-on-failure', // record video; keep only for failing tests
     screenshot: 'only-on-failure',
   },
   projects: [
