@@ -63,10 +63,6 @@ export async function connectMetaMask(page: Page, metamask: MetaMask) {
   // Dismiss "What's new" or any blocking popup on the MetaMask home page
   await dismissMetaMaskPopups(metamask.page)
 
-  // Switch to Hardhat Local BEFORE connecting so walletSwitchChain inside
-  // initializeMetaMaskSigner is a no-op (already on correct chain → no popup).
-  await metamask.switchNetwork('Hardhat Local')
-
   await page.locator('[data-testid="connectToWallet"]').click()
   await page
     .locator('[data-testid="connectToMetamask"]')
