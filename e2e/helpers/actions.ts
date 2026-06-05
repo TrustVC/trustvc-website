@@ -74,13 +74,6 @@ export async function connectMetaMask(page: Page, metamask: MetaMask) {
   await page.locator('[data-testid="connectToMetamask"]').click()
   await connectPromise
 
-  // walletSwitchChain() may open a chain-switch popup — approve if it appears.
-  try {
-    await metamask.approveSwitchNetwork()
-  } catch {
-    // No chain switch popup — already on the correct network
-  }
-
   await page
     .locator('[data-testid="connect-blockchain-continue"]')
     .waitFor({ state: 'visible', timeout: 30_000 })
@@ -158,4 +151,54 @@ export async function addMetaMaskAccount(
     .locator('[data-testid="submit-add-account-with-name"]')
     .click()
   await metamaskPage.waitForTimeout(5000)
+}
+
+const HARDHAT_RPC = 'http://127.0.0.1:8545'
+
+/**
+ * Calls a Hardhat JSON-RPC method from inside a test (uses page.evaluate / browser fetch).
+ */
+export async function hardhatRpc(page: Page, method: string, params: unknown[] = []) {
+  return page.evaluate(
+    async ([rpc, method, params]: [string, string, unknown[]]) => {
+      const res = await fetch(rpc, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ jsonrpc: '2.0', id: Date.now(), method, params }),
+      })
+      const data = (await res.json()) as { result?: unknown; error?: { message: string } }
+      if (data.error) throw new Error(data.error.message)
+      return data.result
+    },
+    [HARDHAT_RPC, method, params] as [string, string, unknown[]]
+  )
+}
+
+/**
+ * Calls a Hardhat JSON-RPC method from Node.js context (beforeAll / afterAll — no page available).
+ */
+export async function hardhatRpcNode(method: string, params: unknown[] = []) {
+  const res = await fetch(HARDHAT_RPC, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ jsonrpc: '2.0', id: Date.now(), method, params }),
+  })
+  const data = (await res.json()) as { result?: unknown; error?: { message: string } }
+  if ((data as any).error) throw new Error((data as any).error.message)
+  return data.result as string
+}
+
+export async function revokeMetamaskPermissions(
+  page: Page,
+  metamask: MetaMask
+) {
+  // Revoke dapp permissions so the next connect uses Account 2 (not the cached Account 1)
+  await page.evaluate(async () => {
+    try {
+      await (window as any).ethereum.request({
+        method: 'wallet_revokePermissions',
+        params: [{ eth_accounts: {} }],
+      })
+    } catch {}
+  })
 }

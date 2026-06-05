@@ -38,36 +38,6 @@ test.describe('Nominate Beneficiary', () => {
     await uploadAndVerify(page, DOCUMENT_PATH)
     await connectMetaMask(page, metamask)
 
-    //transfer holder first to enable the nomination dropdown (only beneficiary role )
-    await expect(
-      page.locator('[data-testid="manageAssetDropdown"]')
-    ).toBeVisible({ timeout: 15_000 })
-    await page.locator('[data-testid="manageAssetDropdown"]').click()
-    await expect(
-      page.locator('[data-testid="transferHolderDropdown"]')
-    ).toBeVisible()
-    await page.locator('[data-testid="transferHolderDropdown"]').click()
-
-    await expect(
-      page.locator('[data-testid="editable-input-holder"]')
-    ).toBeVisible({ timeout: 10_000 })
-    await page.locator('[data-testid="editable-input-holder"]').fill(NEW_HOLDER)
-
-    const remarkHolder = page.locator('[data-testid="editable-input-remark"]')
-    if (await remarkHolder.isVisible({ timeout: 2000 }).catch(() => false)) {
-      await remarkHolder.fill('E2E transfer holder')
-    }
-
-    await expect(page.locator('[data-testid="transferBtn"]')).toBeEnabled()
-    await page.locator('[data-testid="transferBtn"]').click()
-    await page.waitForTimeout(2_000)
-    await metamask.confirmTransaction()
-
-    await expect(page.locator('text=Transfer Holder Success')).toBeVisible({
-      timeout: 60_000,
-    })
-    await page.locator('[data-testid="dismiss-modal"]').click()
-
     // Open dropdown → Nominate Beneficiary
     await expect(
       page.locator('[data-testid="manageAssetDropdown"]')

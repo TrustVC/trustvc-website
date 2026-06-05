@@ -28,7 +28,7 @@ const v5Contracts = require('@trustvc/trustvc/token-registry-v5/contracts')
     '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'
   // Hardhat default account #1 and #2 — used as token owner / holder addresses.
   const ADDRESS_EXAMPLE_1 = '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'
-  const ADDRESS_EXAMPLE_2 = '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'
+  const ADDRESS_EXAMPLE_2 = '0x70997970C51812dc3A010C7d01b50e0d17dc79C8'
 
   const provider = new ethers.providers.JsonRpcProvider(
     'http://127.0.0.1:8545/',
@@ -120,6 +120,12 @@ const v5Contracts = require('@trustvc/trustvc/token-registry-v5/contracts')
     owner: ADDRESS_EXAMPLE_1,
     holder: ADDRESS_EXAMPLE_1,
   }
+  const nominateToken = {
+    accountKey: DEPLOYER_KEY,
+    tokenRegistryAddress: tokenRegistryContract.address, // Use the deployed contract address
+    owner: ADDRESS_EXAMPLE_1,
+    holder: ADDRESS_EXAMPLE_2,
+  }
 
   const tokensToMint = {
     tokenRegistry: [
@@ -157,7 +163,7 @@ const v5Contracts = require('@trustvc/trustvc/token-registry-v5/contracts')
         //nominate
         tokenId:
           '0xc028b0a92ed3283146ef0e35d2f15845d38d7d4b736b14d938b0500d97a8426d',
-        ...defaultToken,
+        ...nominateToken,
       },
     ],
   }

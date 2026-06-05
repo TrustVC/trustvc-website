@@ -1,3 +1,15 @@
+/**
+ * Happy-path tests for Return to Issuer → Accept Return to Issuer.
+ *
+ * Test 1 — Return to Issuer (successful):
+ *   Connected account is holder+beneficiary, returns the document.
+ *   Expects "Return of ETR Successful" overlay.
+ *
+ * Test 2 — Accept Return to Issuer (successful):
+ *   Continues from Test 1 (same page session via test.step).
+ *   Issuer accepts (shreds) the returned document.
+ *   Expects "Return of ETR Accepted" overlay.
+ */
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { test, expect, MetaMask, BasicSetup } from '../fixtures'
@@ -23,8 +35,7 @@ test.describe('Return to Issuer → Accept Return to Issuer', () => {
       extensionId
     )
 
-    // ── Step 1: Return to Issuer ─────────────────────────────────────────
-    // Requires: connected account is BOTH holder AND beneficiary
+    // ── Test 1: Return to Issuer ─────────────────────────────────────────────
     await test.step('Return to Issuer — holder+beneficiary returns document', async () => {
       await page.goto('/')
       await uploadAndVerify(page, DOCUMENT_PATH)
@@ -41,7 +52,7 @@ test.describe('Return to Issuer → Accept Return to Issuer', () => {
 
       const remark = page.locator('[data-testid="editable-input-remark"]')
       if (await remark.isVisible({ timeout: 2000 }).catch(() => false)) {
-        await remark.fill('E2E return to issuer before accept')
+        await remark.fill('E2E return to issuer')
       }
 
       await expect(
@@ -56,10 +67,9 @@ test.describe('Return to Issuer → Accept Return to Issuer', () => {
       })
     })
 
-    // ── Step 2: Accept Return to Issuer ─────────────────────────────────
-    // Continues on the same page — dismiss overlay, then accept.
-    // Requires: AccepterRole on the Token Registry (Account #0 as deployer)
-    await test.step('Accept Return to Issuer — shred the returned document', async () => {
+    // ── Test 2: Accept Return to Issuer ──────────────────────────────────────
+    await test.step('Accept Return to Issuer — issuer shreds the document', async () => {
+      // Dismiss the success overlay from Test 1 and continue on the same page
       await page.locator('[data-testid="dismiss-modal"]').click()
 
       await expect(
