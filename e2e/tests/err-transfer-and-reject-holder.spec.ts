@@ -31,7 +31,7 @@ const CURRENT_HOLDER = '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266' // Hardhat a
 const NEW_HOLDER = '0x70997970C51812dc3A010C7d01b50e0d17dc79C8' // Hardhat account #1
 const TOKEN_REGISTRY = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512'
 const TOKEN_ID =
-  '0x31884d9f2926120a5779cad07bc5c83ee4ddcf99e88307c8bddf78509cfb2467'
+  '31884d9f2926120a5779cad07bc5c83ee4ddcf99e88307c8bddf78509cfb2467'
 
 /** Successfully transfers holder to Account 2 — setup for reject-holder error tests. */
 async function transferHolderSuccess(
