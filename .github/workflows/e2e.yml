@@ -63,13 +63,10 @@ jobs:
 
       - name: Build MetaMask wallet cache
         if: steps.metamask-cache.outputs.cache-hit != 'true'
-        run: |
-          # Synpress needs a virtual display on Linux (MetaMask does not support headless)
-          Xvfb :99 -screen 0 1280x720x24 &
-          export DISPLAY=:99
-          npm run e2e:setup-wallet
+        timeout-minutes: 10
+        run: npm run e2e:setup-wallet -- --headless
         env:
-          DISPLAY: ':99'
+          HEADLESS: 'true'
 
       # ── E2E tests ────────────────────────────────────────────────────────
       - name: Start Xvfb virtual display
