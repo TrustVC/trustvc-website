@@ -71,7 +71,7 @@ jobs:
       # ── E2E tests ────────────────────────────────────────────────────────
       - name: Start Xvfb virtual display
         run: |
-          Xvfb :99 -screen 0 1280x720x24 &>/dev/null || true
+          Xvfb :99 -screen 0 1280x720x24 >/dev/null 2>&1 &
           sleep 1
 
       - name: Install ffmpeg
