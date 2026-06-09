@@ -8,7 +8,7 @@ export { NETWORK_NAME, IS_TESTNET, INFURA_API_KEY } from './env-config'
  */
 export const MAIN_NETWORKS = [
   CHAIN_ID.mainnet, //
-  CHAIN_ID.matic,
+  CHAIN_ID.pol,
   CHAIN_ID.xdc,
   CHAIN_ID.stability,
   CHAIN_ID.astron,

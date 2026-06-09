@@ -17,7 +17,7 @@ const NETWORK_OPTIONS: NetworkOption[] = [
   },
   {
     chainId: '137',
-    label: 'Polygon',
+    label: 'Polygon (POL)',
     group: 'Mainnet',
     logo: '/images/networks/polygon.gif',
   },
