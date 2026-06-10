@@ -69,6 +69,12 @@ const NETWORK_OPTIONS: NetworkOption[] = [
     group: 'Testnet',
     logo: '/images/networks/astron.png',
   },
+  {
+    chainId: '1337',
+    label: 'Localhost',
+    group: 'Testnet',
+    logo: '/images/networks/ethereum.gif',
+  },
 ]
 
 interface NetworkModalProps {

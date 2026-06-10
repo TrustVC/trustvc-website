@@ -129,7 +129,7 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
   }
   const { providerType, account } = useProviderContext()
   return (
-    <div className="vr-container">
+    <div className="vr-container" data-testid="verify-result">
       {/* ── Network info card ── */}
       {networkName && (
         <div className="vr-network-card">
@@ -214,7 +214,12 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
       <div className="vr-main-card">
         {/* Header */}
         <div className="vr-card-header">
-          <button type="button" className="vr-upload-btn" onClick={onReset}>
+          <button
+            type="button"
+            className="vr-upload-btn"
+            onClick={onReset}
+            data-testid="upload-new-file-btn"
+          >
             <span className="vr-upload-btn-label">Upload New File</span>
           </button>
         </div>
@@ -246,12 +251,17 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
           </div>
 
           {/* Middle: Verification checks */}
-          <div className="vr-col-checks">
+          <div className="vr-col-checks" data-testid="verification-checks">
             <div className="vr-checks-list">
               {VERIFICATION_CHECKS.map(({ type, label }) => {
                 const status = getGroupStatus(type)
                 return (
-                  <div key={type} className="vr-check-row">
+                  <div
+                    key={type}
+                    className="vr-check-row"
+                    data-testid={`check-${type.toLowerCase()}`}
+                    data-status={status}
+                  >
                     {status === 'VALID' ? <CheckCircle /> : <CrossCircle />}
                     <span className="vr-check-label">{label}</span>
                   </div>

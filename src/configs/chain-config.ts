@@ -23,4 +23,5 @@ export const TEST_NETWORKS = [
   CHAIN_ID.stabilitytestnet,
   CHAIN_ID.xdcapothem,
   CHAIN_ID.astrontestnet,
+  CHAIN_ID.local,
 ]

@@ -7,7 +7,7 @@ import prettier from 'eslint-config-prettier'
 import tseslint from 'typescript-eslint'
 
 export default [
-  { ignores: ['dist', 'coverage', 'scripts/**/*',  'trustvc-cms'] },
+  { ignores: ['dist', 'coverage', 'scripts/**/*', 'trustvc-cms', '.cache-synpress', 'e2e', 'playwright-report', 'test-results', 'hardhat.config.js'] },
   {
     files: ['**/*.{js,jsx,ts,tsx}'],
     languageOptions: {
