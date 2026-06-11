@@ -60,8 +60,22 @@ const needsNetworkSelect = (doc: unknown): boolean => {
   )
 }
 
+/** Public Stability mainnet RPC (chain 101010). */
+const STABILITY_MAINNET_RPC_FALLBACK =
+  'https://rpc.stabilityprotocol.com/zgt/tradeTrust'
+
 const getRpcUrl = (chainId: string): string | undefined => {
-  return process.env[`VITE_RPC_URL_${chainId}`]
+  const envUrl = process.env[`VITE_RPC_URL_${chainId}`]
+
+  // Stability mainnet fixtures use chain 101010; local .env often points at testnet RPC by mistake.
+  if (chainId === '101010') {
+    if (!envUrl || /testnet|free\.testnet/i.test(envUrl)) {
+      return STABILITY_MAINNET_RPC_FALLBACK
+    }
+    return envUrl
+  }
+
+  return envUrl
 }
 
 // ─── Tests ────────────────────────────────────────────────────────────────────
