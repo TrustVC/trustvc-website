@@ -118,6 +118,13 @@ async function assertAllValid(page: import('@playwright/test').Page) {
   await assertCheckStatus(page, 'issuer_identity',    'VALID')
 }
 
+// OA documents: DNS TXT not configured → issuer_identity is expected INVALID
+async function assertOaDocValid(page: import('@playwright/test').Page) {
+  await assertCheckStatus(page, 'document_integrity', 'VALID')
+  await assertCheckStatus(page, 'document_status',    'VALID')
+  await assertCheckStatus(page, 'issuer_identity',    'INVALID')
+}
+
 // ══════════════════════════════════════════════════════════════════════════
 // Polygon Amoy testnet  (chainId 80002)  –  OA v2
 // ══════════════════════════════════════════════════════════════════════════
@@ -131,9 +138,9 @@ test.describe('Amoy testnet – OA v2 document', () => {
     }
   })
 
-  test('[Amoy OA] valid minted document – all three checks VALID', async ({ page }) => {
+  test('[Amoy OA] valid minted document – integrity and status VALID (identity INVALID: DNS not configured)', async ({ page }) => {
     await uploadDoc(page, OA_AMOY_MINTED)
-    await assertAllValid(page)
+    await assertOaDocValid(page)
   })
 
   test('[Amoy OA] tampered document (targetHash mutated) – DOCUMENT_INTEGRITY INVALID', async ({ page }) => {
@@ -189,9 +196,9 @@ test.describe('POL mainnet – OA v2 document', () => {
     }
   })
 
-  test('[POL OA] valid minted document – all three checks VALID', async ({ page }) => {
+  test('[POL OA] valid minted document – integrity and status VALID (identity INVALID: DNS not configured)', async ({ page }) => {
     await uploadDoc(page, OA_POL_MINTED)
-    await assertAllValid(page)
+    await assertOaDocValid(page)
   })
 
   test('[POL OA] tampered document (targetHash mutated) – DOCUMENT_INTEGRITY INVALID', async ({ page }) => {
