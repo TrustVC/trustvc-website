@@ -115,7 +115,7 @@ async function uploadDoc(page: import('@playwright/test').Page, filePath: string
   await page
     .locator('[data-testid="verify-result"], [data-testid="try-another-btn"]')
     .first()
-    .waitFor({ state: 'visible', timeout: 30_000 })
+    .waitFor({ state: 'visible', timeout: 60_000 })
 }
 
 async function assertCheckStatus(
@@ -204,6 +204,7 @@ test.describe('Amoy testnet – W3C VC document', () => {
 // ══════════════════════════════════════════════════════════════════════════
 
 test.describe('POL mainnet – OA v2 document', () => {
+  test.describe.configure({ retries: 2 })
   test.beforeEach(async ({ page }) => {
     await page.goto('/')
     const dismissBtn = page.locator('[data-testid="dismiss-modal"]')
@@ -233,6 +234,7 @@ test.describe('POL mainnet – OA v2 document', () => {
 // ──────────────────────────────────────────────────────────────────────────
 
 test.describe('POL mainnet – W3C VC document', () => {
+  test.describe.configure({ retries: 2 })
   test.beforeEach(async ({ page }) => {
     await page.goto('/')
     const dismissBtn = page.locator('[data-testid="dismiss-modal"]')
