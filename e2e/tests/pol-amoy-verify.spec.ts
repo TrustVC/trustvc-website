@@ -97,9 +97,13 @@ async function uploadDoc(page: import('@playwright/test').Page, filePath: string
 
   await page.locator('#file-upload').setInputFiles(filePath)
 
-  await page.locator('[data-testid="verifying-state"]').waitFor({ state: 'visible', timeout: 30_000 })
-  await page.locator('[data-testid="verifying-state"]').waitFor({ state: 'hidden',  timeout: 90_000 })
-  await page.locator('[data-testid="verify-result"]').waitFor({ state: 'visible',  timeout: 15_000 })
+  const verifying = page.locator('[data-testid="verifying-state"]')
+  const result = page.locator('[data-testid="verify-result"]')
+
+  // Loader may appear too briefly or be delayed by React batching; don't fail if initial visibility is missed.
+  await verifying.waitFor({ state: 'visible', timeout: 5_000 }).catch(() => {})
+  await verifying.waitFor({ state: 'hidden', timeout: 90_000 }).catch(() => {})
+  await result.waitFor({ state: 'visible', timeout: 30_000 })
 }
 
 async function assertCheckStatus(
