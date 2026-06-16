@@ -19,7 +19,6 @@ export const BurnAddress = '0x000000000000000000000000000000000000dEaD'
 export type AvailableBlockChains =
   | 'ETH'
   | 'POL'
-  | 'MATIC'
   | 'XDC'
   | 'FREE'
   | 'ASTRON'
@@ -30,7 +29,7 @@ export const CHAIN: Record<CHAIN_ID, AvailableBlockChains> = {
   [CHAIN_ID.local]: 'ETH',
   [CHAIN_ID.mainnet]: 'ETH',
   [CHAIN_ID.sepolia]: 'ETH',
-  [CHAIN_ID.matic]: 'POL',
+  [CHAIN_ID.pol]: 'POL',
   [CHAIN_ID.amoy]: 'POL',
   [CHAIN_ID.xdc]: 'XDC',
   [CHAIN_ID.xdcapothem]: 'XDC',
@@ -62,7 +61,7 @@ export const ChainInfo: IChainInfo = {
 
 export const supportedMainnet = [
   ChainInfo[CHAIN_ID.mainnet].name,
-  ChainInfo[CHAIN_ID.matic].name,
+  ChainInfo[CHAIN_ID.pol].name,
   ChainInfo[CHAIN_ID.xdc].name,
   ChainInfo[CHAIN_ID.stability].name,
   ChainInfo[CHAIN_ID.astron].name,
