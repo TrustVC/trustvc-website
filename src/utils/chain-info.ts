@@ -16,12 +16,7 @@ export type Network =
 export const InitialAddress = '0x0000000000000000000000000000000000000000'
 export const BurnAddress = '0x000000000000000000000000000000000000dEaD'
 
-export type AvailableBlockChains =
-  | 'ETH'
-  | 'POL'
-  | 'XDC'
-  | 'FREE'
-  | 'ASTRON'
+export type AvailableBlockChains = 'ETH' | 'POL' | 'XDC' | 'FREE' | 'ASTRON'
 
 type IChainInfo = Record<CHAIN_ID, chainInfo>
 
