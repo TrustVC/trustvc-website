@@ -19,7 +19,7 @@ interface VerifySectionProps {
 
 const CHAIN_NAMES: Record<string, string> = {
   '1': 'Ethereum',
-  '137': 'Polygon',
+  '137': 'Polygon (POL)',
   '50': 'XDC Network',
   '101010': 'Stability (Beta)',
   '1338': 'Astron',
