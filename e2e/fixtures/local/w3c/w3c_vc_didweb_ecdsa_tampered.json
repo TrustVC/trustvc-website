@@ -1,0 +1,47 @@
+{
+  "@context": [
+    "https://www.w3.org/ns/credentials/v2",
+    "https://w3id.org/security/data-integrity/v2",
+    "https://trustvc.io/context/render-method-context-v2.json",
+    "https://trustvc.io/context/coo.json"
+  ],
+  "renderMethod": [
+    {
+      "type": "EMBEDDED_RENDERER",
+      "templateName": "CHAFTA_COO",
+      "id": "https://generic-templates.tradetrust.io"
+    }
+  ],
+  "credentialSubject": {
+    "type": [
+      "Coo"
+    ],
+    "supplyChainConsignmentId": "CONS-EX456789",
+    "exportCountryCode": "IN",
+    "exporterId": "EXP-IN-00987",
+    "exporterName": "TAMPERED",
+    "exporterLine1": "12/F, Industrial Plaza",
+    "exporterCityName": "Navi Mumbai",
+    "exporterCountryCode": "IN",
+    "importCountryCode": "GB",
+    "importerName": "XYZ Foods Ltd.",
+    "importerCityName": "London",
+    "importerCountryCode": "GB",
+    "cooId": "COO-20250604-00",
+    "issueDateTime": "2025-06-05T21:15:00.000Z"
+  },
+  "type": [
+    "VerifiableCredential"
+  ],
+  "issuer": "did:web:trustvc.github.io:did:1",
+  "validFrom": "2024-04-01T12:19:52Z",
+  "id": "urn:uuid:019ec925-3627-7bbe-99aa-54e0a129bbc0",
+  "proof": {
+    "type": "DataIntegrityProof",
+    "created": "2026-06-15T02:38:39Z",
+    "verificationMethod": "did:web:trustvc.github.io:did:1#multikey-1",
+    "cryptosuite": "ecdsa-sd-2023",
+    "proofPurpose": "assertionMethod",
+    "proofValue": "u2V0AhVhAHI77GNPn49hj5XRgbafjB2ZPlz4Mih-Tm9RdITXLjoeAPcCPp9g3S1SMFIBMYnaH6f-Yn-eheYf2zF2rvTOYW1gjgCQChlC_hXMJh9iyjURRTA8Xp7B2S_P-6Py9HgOBhKWbVu9YIMUW1ya2kuhfl6ygBMBfN7Nr7d_pectfOZzmUQRbzq2NklhAPkgi8IsZTo4vcI3Fi8bOpkvNFJofiprsQFLmv3m3ZCzlQLMt7E5h4TXICKB-XjJ0zhn_2wB_9Iq7El1RDFnMXlhAV_6jTTZQfBgAs3PLB8BLfPlqyi0Ey76Q5X7kVLvsipmC_JKDolfkWZA65jr9obHZ_Q3HZ-jU50SudMGloaz_QVhApNBNdJplqBzODpIdcZjj9v4DbztPt8T2w5q8Zl-umwBcPVmiGc1UqrwJeEzW-1hBfHrdSKEXSNxqJupKvgRFflhA0Bmvu1h_17pb_ecX5MC3tTj5VPY13wPAXm9r_J49R10wgHF2DW13gEivjLk7RGG2a2v_KL6whoxeypsH6Kkh7FhA-rqrjL2EqAUBzTr4X_Gfe5f-gE07G9FybsZPNYD5D28ioxBfDaHPjAW50QJuaIm23zArJ7z_F8UzDYt7Dj9B_FhAfU4tQzlv1Ie0chH38sA6NTPp9VhX0IWqHEClQprKU3WFXYcP-uq4Lm1Bbv5eE8ujxAWJ7P3hxPp_L2J84Ddv2VhAMx8iptZzJH5wKSR3Sp2XsqCq9vWBY_SDKj6TAtazhn3Q8yED8GX4rdvclVnMfI5bgKqYOEkYmZYuKbgPCFhwBVhA1i4tPlrFU4kaokaXoMN5rXwc3gNXhACHN9Qewwx4EHv8ITXivHE5paVl5322XnTg7pvevH3ttpHHC5wCvQbxaVhAdrE_d9N5JGNekRA_tV70MxywklHtDp9Q9iHFNSRljgVkAkqepdwGseokO3byUtcifF47VMfJZXFU3ebkBf09wlhALmEu83w8MkgUiuhMKai5pEDxiqGIsIdNydq8p06Y30sMW83GrHnCuXa3x49jfhJkKgEI8NtJnlmMeqJrlDYGP1hAao6IWUY0gdRfLZU9MNxu53mqfJu6s_RNBzhKZsUq9rAc1T_pcxou0iu-8wGBvPP8cAHkrXgD-updseBhQoscCFhA88omjuarGHlnW3CoPzY-HILsHOKPYXaGJOKRg-cLRnJ2eUmEBqjqd644ZMnhjEQsVFWspz1qB8f2CxYtZS3pclhAKunCAcg9B1SsKss4FsadWM9MmH4_O6MxGgNj0qnD980Wd0p5GXqyLvLZDZost0SVOheATNGuyF8VjQn7vRXnslhAMBwx94HZvVJ5lto6dxrRcXspTRFNktM4l-57B3S4lmWXgJkxZm3ILIzOnU8tuDAd385siohg5G3O209qGsTa0lhAjJ9pcbTyRQePg-40h_iE5cMcSwH6c2C7PvXD6nnREsCkJQqwsfklSM14bczoCHEcbbgEGtCCHWGYwFwI_0pdjlhAfUmuFoq1QlBPMWRSZZcYqU53Dw0A6hR-y0eLckJuEzVEjdSTak8m0U42R6UyHtKdBpGouyj2uPl8-mnecPTmpVhAd1U5ZAfbnW_Y8dByxpyLQIX_iqhQsH_CHIvYf2nKCptzXHYfxs3fCNavjxGFToZNHHtDmuekIa0htsGNfyRQXlhAw_sdQXMQfN7mBuCnDe4b4Tb7EXGx8UHW1geF6P3bdKqCa6543Wto8qWTptPLaXyAj1aPK-iK8xZ_QhSS_d3UyYJnL2lzc3VlcmovdmFsaWRGcm9t"
+  }
+}

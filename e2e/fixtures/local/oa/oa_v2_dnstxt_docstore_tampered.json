@@ -1,0 +1,34 @@
+{
+  "version": "https://schema.openattestation.com/2.0/schema.json",
+  "data": {
+    "$template": {
+      "type": "328ee1a9-3375-41e2-9551-a72b33e8001d:string:EMBEDDED_RENDERER",
+      "name": "985060c5-4773-4d4c-b8b5-17afdfc37b3a:string:CHAFTA_COO",
+      "url": "7a283a5e-8959-499d-b0ae-5b903c5a1fa8:string:https://generic-templates.tradetrust.io"
+    },
+    "issuers": [
+      {
+        "name": "9f6293a1-07cd-45fc-b243-867be2564745:string:My Test Issuer",
+        "documentStore": "7411ed2c-fae0-406e-88dd-eee6f1c342c6:string:0x057ef64E23666F000b34aE31332854aCBd1c8544",
+        "identityProof": {
+          "type": "fa36be4f-881a-4ae2-8aa8-a8f532dd3d78:string:DNS-TXT",
+          "location": "ef571458-fea1-4eac-ae76-376b3146068f:string:issuer.example"
+        }
+      }
+    ],
+    "network": {
+      "chain": "3617e8a0-99e8-4e35-96b5-9a0fafa31200:string:ETH",
+      "chainId": "53c9bd03-b49c-430b-81a1-9a8c41dd6f8d:string:1337"
+    },
+    "recipient": {
+      "name": "f3e2b74c-0cf3-4985-8769-d1a81cf9f6c9:string:TAMPERED VALUE"
+    },
+    "cooId": "78a19473-15e3-4fa1-bcbd-bcac8c717945:string:COO-ISSUED-001"
+  },
+  "signature": {
+    "type": "SHA3MerkleProof",
+    "targetHash": "d0359643795f10b3f69ce0a1969c67eba53ce3cdcc050fc549b768c04bb92b4a",
+    "proof": [],
+    "merkleRoot": "d0359643795f10b3f69ce0a1969c67eba53ce3cdcc050fc549b768c04bb92b4a"
+  }
+}

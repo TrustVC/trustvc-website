@@ -2,6 +2,8 @@ import { defineConfig, devices } from '@playwright/test'
 
 export default defineConfig({
   testDir: './tests',
+  // Verification (read-only) specs run via playwright.verify.config.ts — no MetaMask.
+  testIgnore: /verify-.*\.spec\.ts/,
   timeout: 120_000, // per-test timeout (2 min)
   expect: { timeout: 30_000 }, // per-assertion timeout
   fullyParallel: false,

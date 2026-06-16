@@ -1,0 +1,57 @@
+{
+  "@context": [
+    "https://www.w3.org/ns/credentials/v2",
+    "https://w3id.org/security/data-integrity/v2",
+    "https://trustvc.io/context/render-method-context-v2.json",
+    "https://trustvc.io/context/coo.json",
+    "https://trustvc.io/context/transferable-records-context.json"
+  ],
+  "renderMethod": [
+    {
+      "type": "EMBEDDED_RENDERER",
+      "templateName": "CHAFTA_COO",
+      "id": "https://generic-templates.tradetrust.io"
+    }
+  ],
+  "credentialSubject": {
+    "type": [
+      "Coo"
+    ],
+    "supplyChainConsignmentId": "CONS-EX456789",
+    "exportCountryCode": "IN",
+    "exporterId": "EXP-IN-00987",
+    "exporterName": "ABC Exports Pvt. Ltd.",
+    "exporterLine1": "12/F, Industrial Plaza",
+    "exporterCityName": "Navi Mumbai",
+    "exporterCountryCode": "IN",
+    "importCountryCode": "GB",
+    "importerName": "XYZ Foods Ltd.",
+    "importerCityName": "London",
+    "importerCountryCode": "GB",
+    "cooId": "COO-TR-VALID-01",
+    "issueDateTime": "2025-06-05T21:15:00.000Z"
+  },
+  "type": [
+    "VerifiableCredential"
+  ],
+  "issuer": "did:web:trustvc.github.io:did:1",
+  "validFrom": "2024-04-01T12:19:52Z",
+  "credentialStatus": {
+    "type": "TransferableRecords",
+    "tokenNetwork": {
+      "chain": "ETH",
+      "chainId": 1337
+    },
+    "tokenRegistry": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+    "tokenId": "844575edda1a78166f3af489dacf057f9abe3c7a21ebc4d0eb6f1460b4ebec6e"
+  },
+  "id": "urn:uuid:019ecabd-3418-7113-8704-c15c14a7d860",
+  "proof": {
+    "type": "DataIntegrityProof",
+    "created": "2026-06-15T10:04:17Z",
+    "verificationMethod": "did:web:trustvc.github.io:did:1#multikey-1",
+    "cryptosuite": "ecdsa-sd-2023",
+    "proofPurpose": "assertionMethod",
+    "proofValue": "u2V0AhVhAknlaaRSq4uHY45sJE-a1hBrmyMlPUzyezhfbQmnVFHARLAw1NE1UBAkRmvakEiYNquMGGkBWnrLcboj5atDccVgjgCQDUB-dE2Ao0Go5FwkbmIerIFzU766ylMhSG9ChmMwCASVYIKzLSlWfijXkODQrcSNqB7Xkpfg7of7-QPpwwD_CpagvmBlYQIaD0Bm-3-0dPwjkhzYRgGmjhYjXW8rwyyE_cUGcVXaJpfLfMM5l0SqiD5MXtHwsR_zV-MY4uyF2CwZap0gK7gdYQAgkZXK7eSfH_oM6NEHG-bzGkQNfEmFKmKXAyDYGA476mTzUDsZW0nnOuYo6wIADYY134msnTLmo63M8WRutg1NYQH-4Dz-LW3uHpGes4fl9QzTuzsX4Im4uuDBfn2uiW0N_qPE08WB88wWeAu0NINKc1yoDQKJ9JS-OTgI-0hxZAy5YQOg3HArXhlcB0NJNcFYcW5405L1wsLJX73PeD7NvtSvTfXDWLeQbpq0zBaOeLq_yKE2YP_oLYXg9VJGCuCcfNTlYQNNcxM_XNTXvkInbpJ84R5o8EroCY-0-jEhoheduRoliM99m8CSSxfA66PmrsaDMlMlB_rvEpDTloUoI2dfpdZxYQFH-69Fx2JZa_3tMwulbAUORs01Wdsv-WUOfkTtP2jd3h2FJNOYLGJqFdUuu7iXbnh-WF5e3vBNn5aInOq1QHzNYQA81_nX9fhHVG--DVkOTt9Sz4680hcpux8JIk3aNcBvDrF_E0TLvhODGjndq2dbwzZ5gMt8_E0E5mhAmQnqTHtdYQPDx_pbrRAgDFTpxrR0_yQLALAYT3Luria3ObAAZWBqlL-3qcah9IrW_xmv71wGHgDHgVyovTm_VNbI9NgxpbwtYQN7y597Biu3GE7zkY9kmczkSv1ADEzdewIRmowwoOo9ssaVndqFpKfTWTXqU_tfrAjt3VRmcl3hKyaUqruAey4BYQGFXnP3JSOj-spPptX9E1T2kGJYvYncO2NTo-H-3k1-IaD78-wX98CJk-MAtq4hzLf3Mq9qVloIyqjq2jWFmTEVYQBBiBpvqRtlbZAzvBU0naJI4M6ghwSOLFGBSNxYowEKk-C9vRkShKwefGUPBMG-QulkrMWW7YYAQpFsFrl7t2AVYQHox9Of7b9xGETyLtMaZA_8v_NGcLoqdhkkmGmPadFmWeYwBm3As7ivOGB410qmOumbgBjaE63NIkjcE5S80inJYQPdtPBGVGg2A4f7I3jn6qaxGrGbTidF7dcmkoOSz9Yievqwqdf1A5X_-xMkKaJ7mam15Qo-VsDY0EVeHiSUBw2VYQEERuUR6W86ndI0AerOaqU0Lr9brY-yH4nsSHMGZ5giK9W8Dk6nJC47C-gKu3kq27LzJlKcUdDGED1j00QRDohRYQCGVLuv6ly27sbQDoul1AuiWgFy54-aCjfmcsd_jj5B19MFX40RzqfdYxvH_2b5xbo42pgRC4fI1W66KfedSsBBYQEvB2-2NOgTkGLvfJ4bXE2JmpGqDHEwNl6w-FxxWAh_qQ8xtAgAqJvoMYp1rtb23-OBya7zNP-8dwEDoz1ba5cxYQMUJdpKxfQUe7BCjWMGJtAH5bBvyGDE6reB0hISf2ec1s0vpgEcXZzmzax4S1FFmsWDYmWVVQi7PbgIc75LMoUpYQBr2BDs6zUO2M8d1RSoUCmS9gYyK6af2QBjT7VkI8ArdKY98rse_eO-_FWdio6CkLYqdhZ9L9bQhwzT4oZywfvdYQLE2HCyic4hIBonjq_RQGHbTod4awMzoGhCmbPdkRRKPPiyj1nTsxgs_TfeIpnU1xis-Jdm_CbFQ3UFI9oZQdaJYQPa0sj7T1sYka1FsKbfQVohHH6gKZRadI8bKw2oAuAgTB5rG1hGuVAvTLK6NMXns31JjnpRn98FqSy5F4pPximJYQK45k2Zf9T3UNUOS6NwjNyWLdsfW0-8S5ax8T7jrvlomFV2AxlWPohTdht3v5tiiLNMj1bTqILJi41CN_AFfOwJYQN5L6cIzpBz2-XdybA7IoCPIij0cfE_HWLEJu2w12v0cELr5kM6_O2DYnmAEvpcqu9eC8mdignPnonvokh78XmNYQMaESBK2Iq7wh3yglLTBFPVLiSmM0bqgFG4Ds9i2gQu3viWqM5jJvr7ZnseSHUydTy65Z4v-H7LTgAWqCAGPOppYQMMkljF_w-4Ga5xNDNbaqNKHMz34U0bi4tc0uwFb3v4P4n3zWKN702J7Kk5QmJfIjcw4s0m0Iv6oB8JPh9b3nLlYQDGqWMQHs8-nZ-cR-3aunX6iso5ejnp6Fx1_DuHhzOXe469o5rIKyw7wHNUhRH91qZ8H6RsiQ5_3_CPVbQwS5GSCZy9pc3N1ZXJqL3ZhbGlkRnJvbQ"
+  }
+}

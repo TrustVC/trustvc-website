@@ -21,6 +21,7 @@
     "setup:hooks": "husky",
     "prepare": "husky",
     "e2e": "playwright test --config e2e/playwright.config.ts",
+    "e2e:verify": "playwright test --config e2e/playwright.verify.config.ts",
     "e2e:ui": "playwright test --config e2e/playwright.config.ts --ui",
     "e2e:report": "playwright show-report",
     "e2e:setup-wallet": "synpress e2e/wallet-setup",
@@ -32,7 +33,7 @@
     "@sanity/client": "^7.20.0",
     "@sanity/image-url": "^2.1.1",
     "@trustvc/decentralized-renderer-react-components": "^1.0.3",
-    "@trustvc/trustvc": "^2.12.4",
+    "@trustvc/trustvc": "^2.14.1",
     "@types/lodash": "^4.17.24",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
@@ -48,7 +49,6 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
-    "wait-on": "^8.0.1",
     "@synthetixio/synpress": "4.0.5",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",
@@ -75,6 +75,7 @@
     "typescript-eslint": "^8.18.2",
     "vite": "^6.0.3",
     "vite-plugin-node-polyfills": "^0.25.0",
-    "vitest": "^2.1.8"
+    "vitest": "^2.1.8",
+    "wait-on": "^8.0.1"
   }
 }
