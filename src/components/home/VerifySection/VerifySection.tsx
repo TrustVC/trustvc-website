@@ -35,6 +35,7 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
     verifyStatus,
     fileName,
     errorType,
+    errorMessage,
     dragActive,
     verifiedChainId,
     issuerName,
@@ -195,7 +196,11 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
               )}
 
               {(verifyStatus === 'invalid' || verifyStatus === 'error') && (
-                <VerifyError errorType={errorType} onReset={handleReset} />
+                <VerifyError
+                  errorType={errorType}
+                  message={errorMessage}
+                  onReset={handleReset}
+                />
               )}
               {verifyStatus === 'network-select' && (
                 <NetworkModal

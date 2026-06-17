@@ -166,6 +166,18 @@ const v5Contracts = require('@trustvc/trustvc/token-registry-v5/contracts')
           '0xc028b0a92ed3283146ef0e35d2f15845d38d7d4b736b14d938b0500d97a8426d',
         ...nominateToken,
       },
+      {
+        // OA verification: happy minted token registry (oa_v2_dnstxt_tokenregistry_valid.json)
+        tokenId:
+          '0x6e16607321ece74005eec60b063b6a4668e696139ccfd48802561d01c93deef1',
+        ...defaultToken,
+      },
+      {
+        // W3C verification: happy minted TransferableRecords (w3c_vc_didweb_tokenregistry_valid.json)
+        tokenId:
+          '0x844575edda1a78166f3af489dacf057f9abe3c7a21ebc4d0eb6f1460b4ebec6e',
+        ...defaultToken,
+      },
     ],
   }
 
