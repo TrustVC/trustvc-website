@@ -1,0 +1,33 @@
+{
+  "version": "https://schema.openattestation.com/2.0/schema.json",
+  "data": {
+    "$template": {
+      "type": "eeadf0cc-edf8-4259-a808-19843317c773:string:EMBEDDED_RENDERER",
+      "name": "ad623609-96c7-48d3-941c-2f49f03ab2e8:string:CHAFTA_COO",
+      "url": "0c9fd63d-3ba1-4716-a847-cbabd4ebf0a5:string:https://generic-templates.tradetrust.io"
+    },
+    "issuers": [
+      {
+        "name": "b5351281-591d-4474-99af-118340898cfe:string:My Test Issuer",
+        "tokenRegistry": "f232978d-4021-4162-9c8c-1130fb5cedd5:string:0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+        "identityProof": {
+          "type": "c791d193-8140-4646-9f72-d810bb7bb455:string:DNS-TXT",
+          "location": "0df47c6f-3fb8-43aa-91ca-149252053d41:string:issuer.example"
+        }
+      }
+    ],
+    "network": {
+      "chain": "77c62172-7ad9-4124-a3ac-111540b238d2:string:ETH",
+      "chainId": "6c954fe6-91a1-446d-ab02-602693e5370e:string:1337"
+    },
+    "recipient": {
+      "name": "b0ceacc0-4fff-43a6-abfb-2101d180ea88:string:TrustVC E2E Test"
+    }
+  },
+  "signature": {
+    "type": "SHA3MerkleProof",
+    "targetHash": "bacacd3d0aa1e389d32a685efdfc3ef9d9a9785b60c105a2c85b2e48e2229782",
+    "proof": [],
+    "merkleRoot": "bacacd3d0aa1e389d32a685efdfc3ef9d9a9785b60c105a2c85b2e48e2229782"
+  }
+}

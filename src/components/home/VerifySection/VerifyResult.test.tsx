@@ -18,6 +18,13 @@ vi.mock('./useVerify', async () => {
   return { ...actual, makeExplorerAddressURL: vi.fn() }
 })
 
+// Stub AssetManagementApplication to avoid DocumentProvider context dependency
+vi.mock('../../AssetManagementPanel/AssetManagementApplication', () => ({
+  AssetManagementApplication: () => (
+    <div data-testid="asset-management-application" />
+  ),
+}))
+
 import { makeExplorerAddressURL } from './useVerify'
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────

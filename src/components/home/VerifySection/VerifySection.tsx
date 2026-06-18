@@ -1,6 +1,6 @@
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
 import { useVerify } from './useVerify'
+import { ActionLoader } from './ActionLoader'
 import NetworkModal from './NetworkModal'
 import VerifyResult from './VerifyResult'
 import VerifyError from './VerifyError'
@@ -19,7 +19,7 @@ interface VerifySectionProps {
 
 const CHAIN_NAMES: Record<string, string> = {
   '1': 'Ethereum',
-  '137': 'Polygon',
+  '137': 'Polygon (POL)',
   '50': 'XDC Network',
   '101010': 'Stability (Beta)',
   '1338': 'Astron',
@@ -35,10 +35,12 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
     verifyStatus,
     fileName,
     errorType,
+    errorMessage,
     dragActive,
     verifiedChainId,
     issuerName,
     isTransferable,
+    isExpired,
     tokenRegistryAddress,
     tokenRegistryVersion,
     tags,
@@ -52,6 +54,7 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
     handleReset,
     handleNetworkConfirm,
     handleNetworkCancel,
+    loadDocument,
   } = useVerify()
   const { showOverlay, closeOverlay } = useOverlayContext()
   const handleConnectWallet = async () => {
@@ -91,12 +94,11 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
     ? (CHAIN_NAMES[verifiedChainId] ?? `Chain ${verifiedChainId}`)
     : undefined
 
-  const navigate = useNavigate()
-
   const renderDropzone = () => (
     <div className="frame-dropbox">
       <div
         className={`dropbox-area dropbox-area--home ${dragActive ? 'drag-active' : ''}`}
+        data-testid="dropzone"
         onDragEnter={handleDrag}
         onDragLeave={handleDrag}
         onDragOver={handleDrag}
@@ -138,9 +140,12 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
 
   const renderVerifying = () => (
     <div className="frame-dropbox">
-      <div className="dropbox-area dropbox-area--home dropbox-area--centered">
+      <div
+        className="dropbox-area dropbox-area--home dropbox-area--centered"
+        data-testid="verifying-state"
+      >
         <div className="flex flex-col items-center gap-2">
-          <Spinner fill="#5B5BB3" fontSize={32} />
+          <Spinner fontSize={32} />
           <span className="text-sm">Verifying {fileName}...</span>
         </div>
       </div>
@@ -148,86 +153,102 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
   )
 
   return (
-    <div className={`verify-section ${isDarkMode ? 'dark-mode' : ''}`}>
-      <div className="boundary-frame">
-        {showEndorsementChain && (
-          <EndorsementChain
-            endorsementChain={endorsementChain}
-            onReset={handleHideEndorsementChain}
-            onRetry={refreshEndorsementChain}
-            isDarkMode={isDarkMode}
-            endorsementChainStatus={endorsementChainStatus}
-            tokenRegistryVersion={tokenRegistryVersion}
-          />
-        )}
-        <div className="overlay-border-shadow">
-          <div className="frame-container">
-            {verifyStatus === 'idle' && renderDropzone()}
-            {verifyStatus === 'verifying' && renderVerifying()}
-            {verifyStatus === 'network-select' && renderDropzone()}
-            {verifyStatus === 'valid' && (
-              <VerifyResult
-                fileName={fileName}
-                networkName={networkName}
-                chainId={verifiedChainId}
-                tokenId={tokenId}
-                issuer={issuerName}
-                isTransferable={isTransferable}
-                tokenRegistryAddress={tokenRegistryAddress}
-                tags={tags}
-                rawDocument={rawDocument}
-                invalidAttachments={invalidAttachments}
-                getGroupStatus={getGroupStatus}
-                onReset={handleReset}
-                onViewEndorsementChain={handleShowEndorsementChain}
-                refreshEndorsementChain={refreshEndorsementChain}
-                onConnectWallet={handleConnectWallet}
-              />
-            )}
+    <>
+      <ActionLoader loadDocument={loadDocument} />
+      <div
+        className={`min-w-[360px] max-w-[1440px] verify-section ${isDarkMode ? 'dark-mode' : ''}`}
+      >
+        <div className="boundary-frame">
+          {showEndorsementChain && (
+            <EndorsementChain
+              endorsementChain={endorsementChain}
+              onReset={handleHideEndorsementChain}
+              onRetry={refreshEndorsementChain}
+              isDarkMode={isDarkMode}
+              endorsementChainStatus={endorsementChainStatus}
+              tokenRegistryVersion={tokenRegistryVersion}
+            />
+          )}
+          <div className="overlay-border-shadow">
+            <div className="frame-container">
+              {verifyStatus === 'idle' && renderDropzone()}
+              {verifyStatus === 'verifying' && renderVerifying()}
+              {verifyStatus === 'network-select' && renderDropzone()}
+              {verifyStatus === 'valid' && (
+                <VerifyResult
+                  fileName={fileName}
+                  networkName={networkName}
+                  chainId={verifiedChainId}
+                  tokenId={tokenId}
+                  issuer={issuerName}
+                  isTransferable={isTransferable}
+                  tokenRegistryAddress={tokenRegistryAddress}
+                  tags={tags}
+                  rawDocument={rawDocument}
+                  invalidAttachments={invalidAttachments}
+                  isExpired={isExpired}
+                  getGroupStatus={getGroupStatus}
+                  onReset={handleReset}
+                  onViewEndorsementChain={handleShowEndorsementChain}
+                  refreshEndorsementChain={refreshEndorsementChain}
+                  onConnectWallet={handleConnectWallet}
+                />
+              )}
 
-            {(verifyStatus === 'invalid' || verifyStatus === 'error') && (
-              <VerifyError errorType={errorType} onReset={handleReset} />
-            )}
-            {verifyStatus === 'network-select' && (
-              <NetworkModal
-                isDarkMode={isDarkMode}
-                fileName={fileName}
-                onConfirm={handleNetworkConfirm}
-                onCancel={handleNetworkCancel}
-              />
-            )}
-            <div className="demo-button">
-              <div className="demo-content">
-                <div className="demo-text-wrapper">
-                  <div className="demo-heading">Try our demo document!</div>
-                </div>
-                <div className="demo-description-wrapper">
-                  <div className="demo-description">
-                    Experience the interoperability of our documents from the
-                    documents gallery!
+              {(verifyStatus === 'invalid' || verifyStatus === 'error') && (
+                <VerifyError
+                  errorType={errorType}
+                  message={errorMessage}
+                  onReset={handleReset}
+                />
+              )}
+              {verifyStatus === 'network-select' && (
+                <NetworkModal
+                  isDarkMode={isDarkMode}
+                  fileName={fileName}
+                  onConfirm={handleNetworkConfirm}
+                  onCancel={handleNetworkCancel}
+                />
+              )}
+              <div className="demo-button">
+                <div className="demo-content">
+                  <div className="demo-text-wrapper">
+                    <div className="demo-heading">Try our demo document!</div>
                   </div>
-                </div>
-              </div>
-              <div className="cta-button-wrapper">
-                <button
-                  type="button"
-                  className="cta-button"
-                  onClick={() => navigate('/')}
-                >
-                  <div className="cta-boundary">
-                    <div className="cta-padding" />
-                    <div className="cta-text-frame">
-                      <div className="cta-label">Visit Document Gallery</div>
+                  <div className="demo-description-wrapper">
+                    <div className="demo-description">
+                      Experience the interoperability of our documents from the
+                      documents gallery!
                     </div>
-                    <div className="cta-padding" />
                   </div>
-                </button>
+                </div>
+                <div className="cta-button-wrapper">
+                  <button
+                    type="button"
+                    className="cta-button"
+                    onClick={() =>
+                      window.open(
+                        'https://gallery.tradetrust.io',
+                        '_blank',
+                        'noopener,noreferrer'
+                      )
+                    }
+                  >
+                    <div className="cta-boundary">
+                      <div className="cta-padding" />
+                      <div className="cta-text-frame">
+                        <div className="cta-label">Visit Document Gallery</div>
+                      </div>
+                      <div className="cta-padding" />
+                    </div>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
 

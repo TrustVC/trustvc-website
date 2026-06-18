@@ -1,0 +1,42 @@
+{
+  "version": "https://schema.openattestation.com/2.0/schema.json",
+  "data": {
+    "$template": {
+      "type": "1b342155-ae58-460d-8f41-8dea520a2126:string:EMBEDDED_RENDERER",
+      "name": "0c7723fd-b370-4e05-951c-fd79a4bce3a6:string:CHAFTA_COO",
+      "url": "c642e700-25af-48d2-a84a-316d3a866489:string:https://generic-templates.tradetrust.io"
+    },
+    "issuers": [
+      {
+        "id": "08c78bbc-2bc4-4ba3-a2a3-b1818613a639:string:did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+        "name": "4ff2f582-363b-463f-a3a3-bceb62124600:string:My Test Issuer",
+        "revocation": {
+          "type": "9fa71f1e-58fe-490f-ba97-27cb1edacb0a:string:NONE"
+        },
+        "identityProof": {
+          "type": "903996ec-0287-452b-8695-03413955f1ea:string:DNS-DID",
+          "location": "5e5a824c-2167-4964-a7ff-2fc959e0274f:string:demo-invalid-identity.tradetrust.io",
+          "key": "638f054c-b2bc-4f90-991b-f9ff854bff89:string:did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller"
+        }
+      }
+    ],
+    "recipient": {
+      "name": "d2e13886-5e36-4f72-8e93-ca75c3fe6958:string:TrustVC E2E Test"
+    }
+  },
+  "signature": {
+    "type": "SHA3MerkleProof",
+    "targetHash": "87ba72e7e1047c1e3b177ade8f8066f9c20ad1a67922ab13127cc7d6c6cbb4e2",
+    "proof": [],
+    "merkleRoot": "87ba72e7e1047c1e3b177ade8f8066f9c20ad1a67922ab13127cc7d6c6cbb4e2"
+  },
+  "proof": [
+    {
+      "type": "OpenAttestationSignature2018",
+      "created": "2026-06-10T07:20:50.260Z",
+      "proofPurpose": "assertionMethod",
+      "verificationMethod": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
+      "signature": "0xda86a67b0217bb162d2d1f8003b42231c89df3b924c8aab410cee9089516321826aeff00d516f3024af96f87bd30361f111b85e0b8b62537e01ba2a1225c5f2e1c"
+    }
+  ]
+}

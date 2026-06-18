@@ -6,7 +6,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { OverlayProvider } from './components/common/contexts/OverlayContext'
 import { ProviderContextProvider } from './components/common/contexts/providerContext'
 import { TokenInformationContextProvider } from './components/common/contexts/TokenInformationContext'
-import { NETWORK_NAME } from './configs/chain-config'
+import { NETWORK_NAME } from './configs/env-config'
 import {
   getChainInfoFromNetworkName,
   getSupportedChainInfo,

@@ -20,6 +20,16 @@ const BACKGROUND_ROUTE_RULES: BackgroundRouteRule[] = [
     lightClass: 'app-shell--settings-light',
     darkClass: 'app-shell--settings-dark',
   },
+  {
+    paths: ['/partners'],
+    lightClass: 'app-shell--partners-light',
+    darkClass: 'app-shell--partners-dark',
+  },
+  {
+    paths: ['/about'],
+    lightClass: 'app-shell--about-light',
+    darkClass: 'app-shell--about-dark',
+  },
 ]
 
 function App() {
@@ -36,6 +46,10 @@ function App() {
   useEffect(() => {
     localStorage.setItem('darkMode', JSON.stringify(isDarkMode))
   }, [isDarkMode])
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [location.pathname])
 
   useEffect(() => {
     if (isDarkMode) {

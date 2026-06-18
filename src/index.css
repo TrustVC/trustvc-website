@@ -184,6 +184,203 @@ body.dark-mode {
   background-repeat: no-repeat;
 }
 
+.app-shell--partners-light {
+  background-image:
+    url('/backgrounds/motif-left.png'), url('/backgrounds/motif-right.png'),
+    radial-gradient(
+      84.7% 119.21% at 50% 15.3%,
+      #ffffff 0%,
+      rgba(223, 225, 255, 0.33) 100%
+    );
+  background-size:
+    auto 100vh,
+    auto 100vh,
+    cover;
+  background-position:
+    left top,
+    right top,
+    center;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+  min-width: 320px;
+  overflow-x: hidden;
+}
+
+.app-shell--partners-dark {
+  background-image:
+    url('/backgrounds/motif-left.png'), url('/backgrounds/motif-right.png'),
+    radial-gradient(
+      84.7% 119.21% at 50% 15.3%,
+      #1e2026 0%,
+      rgba(31, 27, 69, 0.33) 100%
+    );
+  background-size:
+    auto 100vh,
+    auto 100vh,
+    cover;
+  background-position:
+    left top,
+    right top,
+    center;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+  min-width: 320px;
+  overflow-x: hidden;
+}
+
+@media (max-width: 639px) {
+  .app-shell--partners-light {
+    background-image: radial-gradient(
+      84.7% 119.21% at 50% 15.3%,
+      #ffffff 0%,
+      rgba(223, 225, 255, 0.33) 100%
+    );
+    background-size: cover;
+    background-position: center;
+  }
+
+  .app-shell--partners-dark {
+    background-image: radial-gradient(
+      84.7% 119.21% at 50% 15.3%,
+      #1e2026 0%,
+      rgba(31, 27, 69, 0.33) 100%
+    );
+    background-size: cover;
+    background-position: center;
+  }
+}
+
+.app-shell--about-light {
+  background-image:
+    url('/backgrounds/motif-left.png'), url('/backgrounds/motif-right.png'),
+    url('/backgrounds/bottom-backgound-grid.svg'),
+    radial-gradient(
+      84.7% 119.21% at 50% 15.3%,
+      #ffffff 0%,
+      rgba(223, 225, 255, 0.33) 100%
+    );
+  background-size:
+    auto 100vh,
+    auto 100vh,
+    100% auto,
+    cover;
+  background-position:
+    left top,
+    right top,
+    bottom center,
+    center;
+  background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
+  min-width: 320px;
+  overflow-x: hidden;
+}
+
+.app-shell--about-dark {
+  background-image:
+    url('/backgrounds/motif-left.png'), url('/backgrounds/motif-right.png'),
+    url('/backgrounds/bottom-backgound-grid.svg'),
+    radial-gradient(
+      84.7% 119.21% at 50% 15.3%,
+      #1e2026 0%,
+      rgba(31, 27, 69, 0.33) 100%
+    );
+  background-size:
+    auto 100vh,
+    auto 100vh,
+    100% auto,
+    cover;
+  background-position:
+    left top,
+    right top,
+    bottom center,
+    center;
+  background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
+  min-width: 320px;
+  overflow-x: hidden;
+}
+
+@media (max-width: 639px) {
+  .app-shell--about-light {
+    background-image:
+      url('/backgrounds/bottom-backgound-grid.svg'),
+      radial-gradient(
+        84.7% 119.21% at 50% 15.3%,
+        #ffffff 0%,
+        rgba(223, 225, 255, 0.33) 100%
+      );
+    background-size:
+      100% auto,
+      cover;
+    background-position:
+      bottom center,
+      center;
+  }
+
+  .app-shell--about-dark {
+    background-image:
+      url('/backgrounds/bottom-backgound-grid.svg'),
+      radial-gradient(
+        84.7% 119.21% at 50% 15.3%,
+        #1e2026 0%,
+        rgba(31, 27, 69, 0.33) 100%
+      );
+    background-size:
+      100% auto,
+      cover;
+    background-position: center, center;
+  }
+}
+
+.about-ecosystem-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+  background: linear-gradient(97.83deg, #686ad2 10%, #167eb0 90%);
+  padding: 20px 30px;
+}
+.about-ecosystem-card-content {
+  position: relative;
+  background: #fff;
+  padding: 16px;
+  border-radius: 13px;
+  border: 1px solid rgba(169, 178, 187, 0.45);
+  box-sizing: border-box;
+}
+.about-ecosystem-card p {
+  background: none;
+  -webkit-background-clip: initial;
+  background-clip: initial;
+  -webkit-text-fill-color: #ffffff;
+}
+
+.about-ecosystem-card::before {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/images/about/frame-top.svg');
+  background-size: 100% auto;
+  background-position: top right;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.about-ecosystem-card::after {
+  content: '';
+  display: block;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/images/about/frame-bottom.svg');
+  background-size: 100% auto;
+  background-position: bottom left;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  z-index: 0;
+}
 .app-shell--settings-light {
   background-image:
     url('/backgrounds/motif-left.png'), url('/backgrounds/motif-right.png'),
@@ -307,6 +504,42 @@ body.dark-mode {
   background-image:
     url('/images/carousel/next_article.svg'),
     linear-gradient(97.83deg, #686ad2 10%, #167eb0 90%);
+}
+
+/* Keep article body links readable (global p uses transparent text-fill). */
+.news-article-body p,
+.news-article-body a {
+  background: none;
+  -webkit-background-clip: initial;
+  background-clip: initial;
+  -webkit-text-fill-color: currentColor;
+}
+
+.news-article-body p,
+.news-article-body li {
+  text-align: left;
+}
+
+.news-article-body a,
+.news-article-link {
+  color: #5b5bb3;
+  text-decoration: underline;
+  transition: color 150ms ease;
+}
+
+.news-article-body a:hover,
+.news-article-link:hover {
+  color: #43439a;
+}
+
+.dark-mode .news-article-body a,
+.dark-mode .news-article-link {
+  color: #7d80d7;
+}
+
+.dark-mode .news-article-body a:hover,
+.dark-mode .news-article-link:hover {
+  color: #8f92e5;
 }
 
 .news-detail-page--light .news-next-card {
@@ -558,10 +791,17 @@ p.small {
   gap: 10px;
 }
 
+/* xs breakpoint */
+@media (max-width: 540px) {
+  .boundary-frame {
+    padding: 0;
+  }
+}
+
 /* Overlay Border Shadow */
 .overlay-border-shadow {
   align-self: stretch;
-  min-width: min(340px, 100%);
+  min-width: 360px;
   padding: 16px;
   background:
     linear-gradient(
@@ -1306,6 +1546,29 @@ p.small {
   }
 }
 
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Safari marquee fixes: pre-promote to GPU layer before animation starts */
+.animate-marquee {
+  -webkit-animation: marquee 200s linear infinite;
+  animation: marquee 200s linear infinite;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  will-change: transform;
+  /* translateZ(0) is intentionally on this element only, not its masked parent.
+     Combining WebkitMaskImage + 3D transform on the same element causes Safari
+     to drop the compositing layer, making child icons disappear. */
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+}
+
 /* VerifySection - dropbox state variants */
 .dropbox-area--centered {
   justify-content: center;
@@ -2036,7 +2299,8 @@ p.small {
   text-align: left;
   padding: 0;
   text-decoration: none;
-  display: block;
+  display: inline-block;
+  width: fit-content;
 }
 .dark-mode .vr-nft-link {
   color: #7d80d7;
@@ -2123,10 +2387,16 @@ p.small {
 /* Connect Wallet footer */
 
 .vr-footer {
-  align-self: stretch;
-  padding: 8px;
   display: flex;
-  justify-content: flex-end;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  align-content: flex-start;
+  padding: 8px;
+  gap: 8px;
+  order: 4;
+  align-self: stretch;
+  flex-grow: 0;
 }
 
 .vr-connect-btn {
@@ -2994,7 +3264,7 @@ p.small {
   min-width: 160px;
 }
 
-`@media` (max-width: 480px) {
+@media (max-width: 480px) {
   .endorsement-chain .footer-subsection.is-error {
     height: auto;
     flex-direction: column;
@@ -3351,7 +3621,6 @@ p.small {
 }
 
 .dropdown-btn-frame {
-  /* Auto layout */
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -3359,15 +3628,10 @@ p.small {
   align-items: flex-start;
   align-content: flex-end;
   padding: 0px;
-  gap: 8px;
+  row-gap: 0px;
 
+  min-width: 187px;
   max-width: 538px;
-  height: 40px;
-
-  /* Inside auto layout */
-  flex: none;
-  order: 0;
-  flex-grow: 1;
 }
 
 .dropdown-single-btn {
@@ -3387,15 +3651,23 @@ p.small {
   order: 0;
   flex-grow: 1;
 }
-.btn-menu-frame {
-  /* Button Menu Frame */
+.tag-frame {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  align-content: flex-start;
+  padding: 0px;
 
-  /* Auto layout */
+  min-width: 187px;
+}
+
+.btn-menu-frame {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   padding: 0px;
-  gap: 4px;
+  gap: 10px;
 
   min-width: 188px;
   max-width: 383px;
@@ -3412,23 +3684,8 @@ p.small {
   }
 }
 
-@media (max-width: 768px) {
-  .dropdown-btn-frame {
-    justify-content: center;
-  }
-}
-
-@media (max-width: 640px) {
-  .dropdown-btn-frame {
-    padding-left: 0px;
-  }
-}
-
 @media (max-width: 360px) {
   .dropdown-single-btn {
-    max-width: 100%;
-  }
-  .dropdown-btn-frame {
     max-width: 100%;
   }
 }
@@ -4452,7 +4709,7 @@ p.small {
   z-index: 2;
 }
 
-button,
+button.solid,
 label.solid {
   --base: var(--primary-button-color, #5b5bb3);
   --hover-overlay: var(--Primary-33-40, #4d4b9854);
@@ -4486,4 +4743,135 @@ label.transparent:hover {
 button.transparent:active,
 label.transparent:active {
   background: var(--Primary-33-90, #aaaee654);
+}
+
+/* Shared SelectField styles (Contact/support dropdown) */
+.select-field-trigger {
+  width: 100%;
+  min-height: 48px;
+  border-radius: 8px;
+  border: 1px solid;
+  padding: 12px 40px 12px 12px;
+  text-align: left;
+  font-size: 16px;
+  font-family: Gilroy, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: border-color 150ms ease;
+}
+
+@media (min-width: 640px) {
+  .select-field-trigger {
+    min-height: 40px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    font-size: 14px;
+  }
+}
+
+.select-field-trigger--light {
+  background-color: rgba(255, 255, 255, 0.7);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+.select-field-trigger--light:hover {
+  border-color: #5b5bb3;
+}
+
+.select-field-trigger--dark {
+  background-color: transparent;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.select-field-trigger--dark:hover {
+  border-color: #7d80d7;
+}
+
+.select-field-trigger:focus-visible,
+.select-field-trigger[aria-expanded='true'] {
+  border-color: #686ad2;
+  outline: none;
+}
+
+.select-field-trigger--error,
+.select-field-trigger--error:hover {
+  border-color: #ef4444;
+}
+
+.select-field-value--placeholder-light {
+  color: #5b6571;
+}
+
+.select-field-value--placeholder-dark {
+  color: #808894;
+}
+
+.select-field-value--selected-light {
+  color: #1e2026;
+}
+
+.select-field-value--selected-dark {
+  color: #c8cdd3;
+}
+
+.select-field-menu {
+  position: absolute;
+  z-index: 10;
+  width: 100%;
+  margin-top: 4px;
+  border-radius: 8px;
+  border: 1px solid;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+}
+
+.select-field-menu--light {
+  border-color: rgba(169, 178, 187, 0.7);
+  background-color: #ffffff;
+}
+
+.select-field-menu--dark {
+  border-color: #3d444d;
+  background-color: #1e2026;
+}
+
+.select-field-option {
+  width: 100%;
+  display: block;
+  padding: 8px 12px;
+  text-align: left;
+  font-size: 14px;
+  font-family: Gilroy, sans-serif;
+  transition: background-color 150ms ease;
+  background: transparent;
+  border: 0;
+}
+
+.select-field-option--light {
+  color: #1e2026;
+  background: #ffffff;
+}
+
+.select-field-option--light:hover {
+  background-color: rgba(222, 228, 233, 0.4);
+}
+
+.select-field-option--dark {
+  color: #a9b2bb;
+  background: #1e2026;
+}
+
+.select-field-option--dark:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.select-field-option--selected-light {
+  color: #312d62;
+  background-color: rgba(91, 91, 179, 0.1);
+}
+
+.select-field-option--selected-dark {
+  color: #c8cdd3;
+  background-color: rgba(125, 128, 215, 0.2);
 }

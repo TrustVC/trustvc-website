@@ -111,7 +111,7 @@ describe('NetworkModal', () => {
         expect(screen.getAllByText('Sepolia').length).toBeGreaterThan(0)
         expect(screen.getByText('Polygon Amoy')).toBeInTheDocument()
         expect(screen.getByText('Apothem')).toBeInTheDocument()
-        expect(screen.queryByText('Polygon')).not.toBeInTheDocument()
+        expect(screen.queryByText('Polygon (POL)')).not.toBeInTheDocument()
         expect(screen.queryByText('XDC Network')).not.toBeInTheDocument()
       })
 
@@ -146,7 +146,7 @@ describe('NetworkModal', () => {
         render(<NetworkModal {...defaultProps} networkType="mainnet" />)
         fireEvent.click(getDropdownToggle())
         expect(screen.getAllByText('Ethereum').length).toBeGreaterThan(0)
-        expect(screen.getByText('Polygon')).toBeInTheDocument()
+        expect(screen.getByText('Polygon (POL)')).toBeInTheDocument()
         expect(screen.getByText('XDC Network')).toBeInTheDocument()
         expect(screen.queryByText('Sepolia')).not.toBeInTheDocument()
         expect(screen.queryByText('Polygon Amoy')).not.toBeInTheDocument()
@@ -180,7 +180,7 @@ describe('NetworkModal', () => {
           />
         )
         fireEvent.click(getDropdownToggle())
-        fireEvent.click(screen.getByText('Polygon'))
+        fireEvent.click(screen.getByText('Polygon (POL)'))
         fireEvent.click(screen.getByRole('button', { name: /proceed/i }))
         expect(onConfirm).toHaveBeenCalledWith('137')
       })

@@ -54,6 +54,7 @@ export const ButtonClose: FunctionComponent<ButtonCloseProps> = ({
       size={ButtonSize.MD}
       className={`bg-cerulean-500 rounded-xl text-white px-3 py-2 hover:bg-cerulean-800 ${className}`}
       onClick={closeOverlay}
+      data-testid="dismiss-modal"
     >
       Dismiss
     </Button>
@@ -68,11 +69,12 @@ interface DocumentTransferMessageProps {
   isConfirmationMessage?: boolean
   onConfirmationAction?: () => void
   setShowEndorsementChain: (payload: boolean) => void
+  errorMessage?: string
 }
 
 export const DocumentTransferMessage: FunctionComponent<
   DocumentTransferMessageProps
-> = ({ title, isSuccess, setShowEndorsementChain, children }) => {
+> = ({ title, isSuccess, setShowEndorsementChain, children, errorMessage }) => {
   const { closeOverlay } = useOverlayContext()
   const handleViewEndorsementChain = () => {
     setShowEndorsementChain(true)
@@ -94,7 +96,7 @@ export const DocumentTransferMessage: FunctionComponent<
         {/* Content */}
         <div className="box-border flex flex-col items-start p-4  min-h-[184px] border-t border-b border-solid border-[rgba(169,178,187,0.33)] flex-none self-stretch grow-0">
           <div className="flex flex-col items-start p-4 px-6 gap-4 min-h-[152px]">
-            {children}
+            {errorMessage ? <p className="mt-3">{errorMessage}</p> : children}
           </div>
         </div>
         {/* Footer Buttons */}
@@ -105,6 +107,7 @@ export const DocumentTransferMessage: FunctionComponent<
               className="w-full h-[40px] min-w-[160px] max-w-[260px] gap-[10px] flex-1"
               btnType="transparent"
               onClick={closeOverlay}
+              data-testid="dismiss-modal"
             >
               Dismiss
             </Button>
@@ -303,7 +306,8 @@ interface ShowDocumentTransferMessageOptionProps {
 export const showDocumentTransferMessage = (
   title: string,
   option: ShowDocumentTransferMessageOptionProps,
-  setShowEndorsementChain: (payload: boolean) => void
+  setShowEndorsementChain: (payload: boolean) => void,
+  errorMessage?: string
 ): ReactNode => {
   return (
     <DocumentTransferMessage
@@ -313,6 +317,7 @@ export const showDocumentTransferMessage = (
       onConfirmationAction={option.onConfirmationAction}
       isConfirmationMessage={option.isConfirmationMessage}
       setShowEndorsementChain={setShowEndorsementChain}
+      errorMessage={errorMessage}
     >
       {title === MessageTitle.NO_METAMASK && <MessageNoMetamask />}
       {title === MessageTitle.NO_MANAGE_ACCESS && <MessageNoManageAccess />}
@@ -345,7 +350,9 @@ export const showDocumentTransferMessage = (
       {(title === MessageTitle.ENDORSE_BENEFICIARY_SUCCESS ||
         title === MessageTitle.TRANSFER_OWNER_SUCCESS ||
         title === MessageTitle.TRANSFER_OWNER_FAILED ||
-        title === MessageTitle.ENDORSE_BENEFICIARY_FAILED) && (
+        title === MessageTitle.ENDORSE_BENEFICIARY_FAILED ||
+        title === MessageTitle.REJECT_TRANSFER_OWNER_SUCCESS ||
+        title === MessageTitle.REJECT_TRANSFER_OWNER_FAILED) && (
         <MessageTransferBeneficiary address={option.beneficiaryAddress} />
       )}
       {(title === MessageTitle.NOMINATE_BENEFICIARY_SUCCESS ||
@@ -353,11 +360,15 @@ export const showDocumentTransferMessage = (
         <MessageNominateBeneficiary isSuccess={option.isSuccess} />
       )}
       {(title === MessageTitle.TRANSFER_HOLDER_SUCCESS ||
-        title === MessageTitle.TRANSFER_HOLDER_FAILED) && (
+        title === MessageTitle.TRANSFER_HOLDER_FAILED ||
+        title === MessageTitle.REJECT_TRANSFER_HOLDER_SUCCESS ||
+        title === MessageTitle.REJECT_TRANSFER_HOLDER_FAILED) && (
         <MessageTransferHolder address={option.holderAddress} />
       )}
       {(title === MessageTitle.TRANSFER_OWNER_HOLDER_SUCCESS ||
-        title === MessageTitle.TRANSFER_OWNER_HOLDER_FAILED) && (
+        title === MessageTitle.TRANSFER_OWNER_HOLDER_FAILED ||
+        title === MessageTitle.REJECT_TRANSFER_OWNER_HOLDER_SUCCESS ||
+        title === MessageTitle.REJECT_TRANSFER_OWNER_HOLDER_FAILED) && (
         <MessageEndorseTransfer
           beneficiaryAddress={option.beneficiaryAddress}
           holderAddress={option.holderAddress}

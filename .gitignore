@@ -38,3 +38,9 @@ trustvc-cms/.sanity
 # Misc
 *.pem
 *.tsbuildinfo
+
+# Playwright / Synpress
+.cache-synpress
+playwright-report
+test-results
+cache

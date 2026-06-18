@@ -17,9 +17,9 @@ describe('App Component', () => {
     render(<App />)
 
     // Check if navigation elements are present
-    expect(screen.getByText('Home')).toBeInTheDocument()
-    // Ecosystem temporarily removed
-    expect(screen.getByText('News & Updates')).toBeInTheDocument()
+    expect(screen.getAllByText('About').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('Partners').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('News & Updates').length).toBeGreaterThan(0)
   })
 
   it('starts with light mode by default', () => {

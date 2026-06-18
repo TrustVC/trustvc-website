@@ -4,7 +4,6 @@ import {
   getChainId,
   SUPPORTED_CHAINS,
   isTransferableRecord,
-  isDocumentRevokable,
   vc,
   isWrappedV2Document,
   isWrappedV3Document,
@@ -20,7 +19,7 @@ import {
   errorMessageHandling,
   errorMessages,
 } from '@trustvc/trustvc'
-import { getRpcUrl } from '../../../utils/helper'
+import { getRpcUrl, getIsExpired } from '../../../utils/helper'
 import { useDocumentContext } from '../../common/contexts/DocumentContext'
 import { type VerifyErrorType, getErrorTypeFromError } from './verifyErrorUtils'
 
@@ -57,10 +56,12 @@ export interface UseVerifyReturn {
   verifyStatus: VerifyStatus
   fileName: string
   errorType: VerifyErrorType
+  errorMessage?: string
   dragActive: boolean
   verifiedChainId?: string
   issuerName?: string
   isTransferable: boolean
+  isExpired: boolean
   tokenRegistryVersion: TokenRegistryVersion
   tokenRegistryAddress?: string
   tags: string[]
@@ -74,6 +75,11 @@ export interface UseVerifyReturn {
   handleReset: () => void
   handleNetworkConfirm: (_chainId: string) => void
   handleNetworkCancel: () => void
+  loadDocument: (
+    _doc: unknown,
+    _chainId: string | null | undefined,
+    _name: string
+  ) => Promise<void>
 }
 
 const computeGroupStatus = (
@@ -89,13 +95,167 @@ const computeGroupStatus = (
 }
 
 /**
+ * Whether verifying this document reads on-chain state and therefore needs a network.
+ * True for: transferable records (token registry), document/certificate stores, and
+ * REVOCATION_STORE revocation. False for OCSP_RESPONDER revocation and plain
+ * DID-signed docs — those verify off-chain (HTTP / signature), so they should NOT
+ * trigger the network-select prompt. (tt-verify has no revocation-type classifier,
+ * so we inspect the issuer the same way isDocumentRevokable does internally.)
+ */
+const requiresNetworkSelection = (doc: unknown): boolean => {
+  if (isTransferableRecord(doc as any)) return true
+  try {
+    if (isWrappedV2Document(doc as any)) {
+      const data = getDocumentDataFromWrappedDocument(doc as any) as {
+        issuers?: Array<{
+          documentStore?: string
+          certificateStore?: string
+          revocation?: { type?: string }
+        }>
+      }
+      return (data?.issuers ?? []).some(
+        i =>
+          !!i.documentStore ||
+          !!i.certificateStore ||
+          i.revocation?.type === 'REVOCATION_STORE'
+      )
+    }
+    if (isWrappedV3Document(doc as any)) {
+      const proof = (doc as any).openAttestationMetadata?.proof
+      return (
+        proof?.method === 'DOCUMENT_STORE' ||
+        proof?.revocation?.type === 'REVOCATION_STORE'
+      )
+    }
+  } catch {
+    // fall through to false
+  }
+  return false
+}
+
+/**
+ * The chainId embedded in the document's own network field. trustvc's getChainId()
+ * deliberately ignores this for DNS-DID/DID documents (it assumes they're off-chain),
+ * but such a doc can still carry a REVOCATION_STORE that lives on that chain — so use
+ * the embedded value as a fallback rather than prompting the user for a network.
+ */
+const getEmbeddedChainId = (doc: unknown): string | undefined => {
+  try {
+    const data = getDocumentDataFromWrappedDocument(doc as any) as {
+      network?: { chainId?: string | number }
+    }
+    const chainId = data?.network?.chainId
+    return chainId != null ? String(chainId) : undefined
+  } catch {
+    return undefined
+  }
+}
+
+/**
  * Detect error type from verification fragments using @trustvc/trustvc library.
  * Returns the first error type, or VERIFICATION_ERROR as fallback.
  */
+/**
+ * trustvc's OAErrorMessageHandling only recognizes the document-store DOCUMENT_REVOKED
+ * code as "revoked"; an OCSP-responder revocation carries an OCSP reason code instead,
+ * so it gets mis-bucketed as a generic ethers error. Detect it explicitly.
+ */
+const isOcspRevoked = (frags: VerificationFragment[]): boolean =>
+  frags.some(
+    f =>
+      f.type === 'DOCUMENT_STATUS' &&
+      f.status === 'INVALID' &&
+      /revoked under OCSP Responder/i.test((f as any).reason?.message ?? '')
+  )
+
+/**
+ * An unminted token registry document: ownerOf() reverts with
+ * "ERC721: owner query for nonexistent token". On some providers (e.g. local
+ * Hardhat) ethers v6 mis-decodes that revert as a BAD_DATA error, so the
+ * token-registry fragment is ERROR rather than a clean "not minted" — and falls
+ * through to a generic ethers error. Match the ownerOf revert specifically (a real
+ * RPC failure is a connection/server error → SERVER_ERROR, never this).
+ */
+const isTokenRegistryNotMinted = (frags: VerificationFragment[]): boolean =>
+  frags.some(f => {
+    if (
+      f.name !== 'OpenAttestationEthereumTokenRegistryStatus' ||
+      f.status !== 'ERROR'
+    )
+      return false
+    const msg = (f as any).reason?.message ?? ''
+    // The ownerOf() call reverted with Error(string) "…nonexistent token" — i.e. the
+    // registry exists but the token isn't minted. (0x08c379a0 = Error(string) selector.)
+    return /ownerOf/.test(msg) && /0x08c379a0/i.test(msg)
+  })
+
+/**
+ * Token registry address has no contract: ownerOf() returns empty data (value="0x"),
+ * which ethers v6 surfaces as a BAD_DATA error instead of tt-verify's CONTRACT_NOT_FOUND.
+ * (A document store reports this cleanly; the token registry doesn't.) Distinguished
+ * from "not minted" by the empty value (no 0x08c379a0 revert reason).
+ */
+const isTokenRegistryContractNotFound = (
+  frags: VerificationFragment[]
+): boolean =>
+  frags.some(f => {
+    if (
+      f.name !== 'OpenAttestationEthereumTokenRegistryStatus' ||
+      f.status !== 'ERROR'
+    )
+      return false
+    const msg = (f as any).reason?.message ?? ''
+    return /ownerOf/.test(msg) && /value="0x"/.test(msg)
+  })
+
+/**
+ * A DID-signed doc whose REVOCATION_STORE contract doesn't exist: the revocation
+ * check returns INVALID "Contract is not found", but trustvc tags it with the
+ * DOCUMENT_REVOKED code → mis-classified as REVOKED. Surface it as CONTRACT_NOT_FOUND
+ * (consistent with the document-store no-contract case). Distinct from a genuine
+ * revocation-store revoke, whose message is "…has been revoked under contract …".
+ */
+const isDidSignedContractNotFound = (frags: VerificationFragment[]): boolean =>
+  frags.some(
+    f =>
+      f.name === 'OpenAttestationDidSignedDocumentStatus' &&
+      f.status === 'INVALID' &&
+      /Contract is not found/i.test((f as any).reason?.message ?? '')
+  )
+
+/**
+ * W3C TransferableRecords status failures carry a clean, human-readable reason
+ * straight from the verifier — "Token registry is not found" (no contract) and
+ * "Document has not been issued under token registry" (not minted). For these two
+ * cases we surface the verifier's reason verbatim as the UI body (the error type
+ * stays the generic INVALID, so the title is unchanged) rather than mapping to a
+ * typed message. Scoped to those two strings; any other failure keeps its typed copy.
+ */
+const W3C_TR_REASON =
+  /(has not been issued under token registry|token registry is not found)/i
+
+export const getErrorMessageFromFragments = (
+  frags: VerificationFragment[]
+): string | undefined => {
+  const tr = frags.find(
+    f =>
+      f.name === 'TransferableRecords' &&
+      f.status === 'INVALID' &&
+      W3C_TR_REASON.test((f as any).reason?.message ?? '')
+  )
+  return (tr as any)?.reason?.message || undefined
+}
+
 export const getErrorTypeFromFragments = (
   frags: VerificationFragment[]
 ): VerifyErrorType => {
   try {
+    if (isDidSignedContractNotFound(frags))
+      return errorMessages.TYPES.CONTRACT_NOT_FOUND
+    if (isOcspRevoked(frags)) return errorMessages.TYPES.REVOKED
+    if (isTokenRegistryNotMinted(frags)) return errorMessages.TYPES.ISSUED
+    if (isTokenRegistryContractNotFound(frags))
+      return errorMessages.TYPES.CONTRACT_NOT_FOUND
     const errors = errorMessageHandling(frags as any)
     return errors[0] || errorMessages.TYPES.VERIFICATION_ERROR
   } catch {
@@ -313,6 +473,11 @@ export const useVerify = (): UseVerifyReturn => {
   const [errorType, setErrorType] = useState<VerifyErrorType>(
     errorMessages.TYPES.VERIFICATION_ERROR
   )
+  // Optional verbatim error body (overrides the typed message) — used for the W3C
+  // TransferableRecords status reasons. undefined → fall back to the typed message.
+  const [errorMessage, setErrorMessage] = useState<string | undefined>(
+    undefined
+  )
   const [dragActive, setDragActive] = useState(false)
   const [pendingDoc, setPendingDoc] = useState<unknown>(null)
   const [verifiedChainId, setVerifiedChainId] = useState<string>('')
@@ -327,6 +492,7 @@ export const useVerify = (): UseVerifyReturn => {
   const [tokenId, setTokenId] = useState<string | undefined>(undefined)
   const [keyId, setKeyId] = useState<string | undefined>(undefined)
   const [rawDocument, setRawDocument] = useState<unknown>(undefined)
+  const [isExpired, setIsExpired] = useState<boolean>(false)
   const runVerification = async (
     doc: unknown,
     chainId: string | null | undefined,
@@ -354,6 +520,7 @@ export const useVerify = (): UseVerifyReturn => {
     const isValid = hasAtLeastOneValid && hasNoInvalid
     if (!isValid) {
       setErrorType(getErrorTypeFromFragments(results))
+      setErrorMessage(getErrorMessageFromFragments(results))
     }
 
     // Compute issuer name
@@ -370,6 +537,8 @@ export const useVerify = (): UseVerifyReturn => {
       : undefined
     setTokenRegistryAddress(registryAddress)
     setTokenRegistryAddressContext(registryAddress || null)
+
+    setIsExpired(getIsExpired(doc))
 
     //add code to fetch TokenId , keyId from the document
     const _keyId = getDocumentData(doc as any)?.id
@@ -422,6 +591,7 @@ export const useVerify = (): UseVerifyReturn => {
     setTokenId(undefined)
     setKeyId(undefined)
     setRawDocument(undefined)
+    setErrorMessage(undefined)
     setTokenRegistryAddressContext(null)
     setTokenRegistryVersionContext(null)
     setTokenIdContext(null)
@@ -439,10 +609,13 @@ export const useVerify = (): UseVerifyReturn => {
     try {
       const text = await file.text()
       const doc = JSON.parse(text)
-      const chainId = getChainId(doc)
+      // Prefer the document's own chain; fall back to its embedded network field
+      // (getChainId ignores that for DNS-DID/DID docs, which can still use a
+      // REVOCATION_STORE on that chain) before asking the user to pick one.
+      const chainId = getChainId(doc) ?? getEmbeddedChainId(doc)
 
-      if (!chainId && (isTransferableRecord(doc) || isDocumentRevokable(doc))) {
-        // Document needs blockchain verification but has no embedded chain — ask the user
+      if (!chainId && requiresNetworkSelection(doc)) {
+        // Needs blockchain verification but has no chain anywhere — ask the user
         setPendingDoc(doc)
         setVerifyStatus('network-select')
         return
@@ -504,6 +677,27 @@ export const useVerify = (): UseVerifyReturn => {
     }
   }
 
+  const loadDocument = async (
+    doc: unknown,
+    chainId: string | null | undefined,
+    name: string
+  ) => {
+    const currentId = ++verificationIdRef.current
+    setFileName(name)
+    setVerifyStatus('verifying')
+    setFragments([])
+    setPendingDoc(null)
+    clearVerificationMetadata()
+
+    try {
+      await runVerification(doc, chainId, currentId)
+    } catch (err) {
+      clearVerificationMetadata()
+      setErrorType(getErrorTypeFromError(err))
+      setVerifyStatus('error')
+    }
+  }
+
   const handleReset = () => {
     setVerifyStatus('idle')
     setFragments([])
@@ -519,10 +713,12 @@ export const useVerify = (): UseVerifyReturn => {
     verifyStatus,
     fileName,
     errorType,
+    errorMessage,
     dragActive,
     verifiedChainId,
     issuerName,
     isTransferable,
+    isExpired,
     tokenRegistryVersion,
     tokenRegistryAddress,
     tags,
@@ -536,5 +732,6 @@ export const useVerify = (): UseVerifyReturn => {
     handleReset,
     handleNetworkConfirm,
     handleNetworkCancel,
+    loadDocument,
   }
 }

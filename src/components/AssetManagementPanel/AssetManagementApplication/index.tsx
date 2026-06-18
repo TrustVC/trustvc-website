@@ -11,7 +11,7 @@ import { useTokenRegistryContract } from '../../../hooks/useTokenRegistryContrac
 import { useTokenRegistryRole } from '../../../hooks/useTokenRegistryRole'
 import { AssetManagementActions } from '../AssetManagementActions'
 import { AssetManagementForm } from '../AssetManagementForm'
-import { TagBordered } from '../../common/Tag'
+import { Tag } from '../../common/Tag'
 import { useTokenRegistryVersion } from '../../../hooks/useTokenRegistryVersion'
 import { TokenRegistryVersions } from '../../../constants'
 
@@ -23,7 +23,7 @@ interface AssetManagementIsTransferableDocumentProps {
   setShowEndorsementChain: (payload: boolean) => void
   refreshEndorsementChain?: () => void
   isTransferableDocument: true
-  isExpired: boolean
+  isExpired?: boolean
 }
 
 interface AssetManagementIsNotTransferableDocumentProps {
@@ -94,7 +94,10 @@ export const AssetManagementApplication: FunctionComponent<
     // reject transfer owner holder
     rejectTransferOwnerHolder,
     rejectTransferOwnerHolderState,
+    // reset providers
     resetProviders,
+    //errorMessage
+    errorMessage,
   } = useTokenInformationContext()
   const [assetManagementAction, setAssetManagementAction] =
     useState<AssetManagementActions>(AssetManagementActions.None)
@@ -193,19 +196,17 @@ export const AssetManagementApplication: FunctionComponent<
           onRestoreToken={onRestoreToken}
           restoreTokenState={restoreTokenState}
           isExpired={isExpired}
+          errorMessage={errorMessage}
         />
       ) : (
         isExpired && (
-          <div className="flex-1 content-center space-y-2 md:space-x-2 md:space-y-0">
-            <TagBordered
-              id="expired-sign"
+          <div className="flex-1 content-center space-y-2 md:space-x-2 md:space-y-0 border-t border-gray-200 py-2">
+            <Tag
               rounded="rounded-full"
-              className="border-scarlet-100 bg-scarlet-100 text-scarlet-500 content-center justify-self-center w-full xs:w-auto h-10 px-4 py-2"
+              className="bg-[#FDDAE2] !p-2 min-w-[188px] max-w-[383px] text-center w-full flex-1"
             >
-              <h5 data-testid="expiredDoc" className="text-center break-keep">
-                Expired
-              </h5>
-            </TagBordered>
+              <h4 className="bg-alert-20">Expired</h4>
+            </Tag>
           </div>
         )
       )}

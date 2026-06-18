@@ -1,0 +1,34 @@
+{
+  "version": "https://schema.openattestation.com/2.0/schema.json",
+  "data": {
+    "$template": {
+      "type": "e8a988ca-d964-4314-8cbc-045ff6d56a99:string:EMBEDDED_RENDERER",
+      "name": "1020a1b0-602f-4267-bc4f-cb50265e44e4:string:CHAFTA_COO",
+      "url": "1aa57ba3-d9c2-49be-8670-2d9e91ed0101:string:https://generic-templates.tradetrust.io"
+    },
+    "issuers": [
+      {
+        "name": "f3240360-4a8d-4a71-b23d-4617d6891738:string:My Test Issuer",
+        "documentStore": "630eaf2e-b725-4057-9807-e28257049f84:string:0x057ef64E23666F000b34aE31332854aCBd1c8544",
+        "identityProof": {
+          "type": "7df7f6e5-ca1c-491f-93bf-65c122e48138:string:DNS-TXT",
+          "location": "e647fd92-ac54-404b-8258-de7a469d3302:string:issuer.example"
+        }
+      }
+    ],
+    "network": {
+      "chain": "2ba1e15a-9dc9-4b35-8241-efac80b9c457:string:ETH",
+      "chainId": "700dacc1-8e34-445b-8944-e44ef7d39265:string:1337"
+    },
+    "recipient": {
+      "name": "bc582725-a658-41a6-affd-98d51dfa3e6c:string:TrustVC E2E Test"
+    },
+    "cooId": "79265eb8-bf56-4350-88c4-87d0078ff330:string:COO-NOTISSUED-001"
+  },
+  "signature": {
+    "type": "SHA3MerkleProof",
+    "targetHash": "1a442765be78cc6c706a4a637cea7faa63a2841cc92b1715418d00fd6b76b895",
+    "proof": [],
+    "merkleRoot": "1a442765be78cc6c706a4a637cea7faa63a2841cc92b1715418d00fd6b76b895"
+  }
+}

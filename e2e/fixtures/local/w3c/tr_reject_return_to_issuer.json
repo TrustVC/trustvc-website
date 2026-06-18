@@ -1,0 +1,43 @@
+{
+  "@context": [
+    "https://www.w3.org/ns/credentials/v2",
+    "https://trustvc.io/context/bill-of-lading-carrier.json",
+    "https://trustvc.io/context/attachments-context.json",
+    "https://trustvc.io/context/render-method-context-v2.json",
+    "https://trustvc.io/context/transferable-records-context.json",
+    "https://w3id.org/security/data-integrity/v2"
+  ],
+  "renderMethod": [
+    {
+      "type": "EMBEDDED_RENDERER",
+      "templateName": "BILL_OF_LADING_CARRIER",
+      "id": "https://generic-templates.tradetrust.io"
+    }
+  ],
+  "credentialSubject": {
+    "type": ["BillOfLadingCarrier"],
+    "blNumber": "232323",
+    "scac": "MAEU"
+  },
+  "type": ["VerifiableCredential"],
+  "credentialStatus": {
+    "type": "TransferableRecords",
+    "tokenNetwork": {
+      "chain": "ETH",
+      "chainId": 1337
+    },
+    "tokenRegistry": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+    "tokenId": "8c67260e6f796368a680742e409d5fada0c58ac1abaa9baf38e9ebeacb7caf93"
+  },
+  "issuer": "did:web:trustvc.github.io:did:1",
+  "validFrom": "2025-09-28T03:31:39.440Z",
+  "id": "urn:uuid:019e8337-6604-711f-871c-8bcdf26ad76a",
+  "proof": {
+    "type": "DataIntegrityProof",
+    "created": "2026-06-01T12:45:06Z",
+    "verificationMethod": "did:web:trustvc.github.io:did:1#multikey-1",
+    "cryptosuite": "ecdsa-sd-2023",
+    "proofPurpose": "assertionMethod",
+    "proofValue": "u2V0AhVhAhH-THDccLgk-kGFXiT0Gm1Il8dmIsxFfCfiRy8Bvx620_6ctv67s7MFmnIQmI_Uk5m-LbL7CL0s7WOuXKSGvwVgjgCQCLIVwK1SzwbtKTwRv2ZLYuVkkUloho4ZatK0tztq9gv1YIOSpzh4waucKxiIn7LplaJKz1Nlixap6s0MuCw22cE_djlhAZ7xgk5BKgIgdVucZFp-4xMgwx80SVZQy7X9PBGlJjKu1xl-orf0Y0XBfm4GAYQCdzN6ovQIVFbDXramyLOHF6VhAZmEbNsxKgsC2DyeeLIinnqXz1USDqHguBJO8yro3AjYl71DSuvIy0egw-L_kfQ1MiT6KIbfeFWyDab3GV96rGVhAqqHdHGshTOgcadiFl090Vlrio_O0owGs2Ioiqt4AjquR-EKQLFYH5VGy4ov17b7x3k8I_j-YUKnI1pGUsmYpJFhA0kFRKW7BX9xbhLM1WUKHGZF4_HIOAO1kZTla9KbU6RLsCTF-KkusDkcnYrJeY4JijgTJKY3yOPTRKRbWHiBlSVhAI-8WNwwkQeTIEAtZA0s8YC58jQ0Np3896xZACnH05rM7Oq1mveZaD8AserBFxrG0kszHZ7dIm63LQPz4K_34aFhAQbgz0QHdywlF-B-5w6zPTVE3L2dv124cfr28mrE5LGFiN-B9n9LFO84rpn8T2UjQooDiizw6S0Ms9Fa6EN2bPVhASUSRsVCqqvNKEN6LymmczOxUOUzfO5mBAJu4Cl-wOlCnbz9Tf8d1QNthBEIHDWeFM4GknbRNlcNxXenvdcuhJFhA3lG5z5PctIC91yROIg0yPDRMviU_rjlhXhxTOyD1LFkjaycgAdrAXYF8gX6U3zMyEBPg7d0Gw_HaxutPJnakzVhAklFIK5YAjInODbDSHeMOtniALvYlEPuHc8PKvhR1qKJkSuUUViPtszRQWP4fq62kQz7S09G2wiDUSoJAAFqdHlhADWJWwFeVayrt9TI2pX78xpY2WYR2o_xTHY2mcL9K-cjbV3tOBPtJJ30UajeowVHYtLYcI7xawwICkcz--G34JFhAu0ERWg0cRqaaDKsFI9t94-yMak0DiATn1ppq6DwSFNDjbBUN1jKk5-qqzaWv5NqoUtiLhUMXrt5HiKKOdQt3xFhAorDjUPv32qY0mSOjkAp5y3wMTgk9LGdAK-rfaUlExUNWSE_1EWAdVGxNA_7yLX1ihDh4xOT2OnJRXD0zjPGrplhAtfvdCjsM5Eye15prlXTV9C5LFJuhYL9qDl8Xz-ku-mOJndJ1iVDYgVsiWUQoGyPWT8ld9yhutljPeEaP9nlRz1hA5XZyq3G58ZvCTzuR69CecMrg0SgtRcrUZyloizu74fIlk4awAnR2gO5wkUJpDjl-U-b4yiOmOwMjZWgvzsw6kYJnL2lzc3VlcmovdmFsaWRGcm9t"
+  }
+}

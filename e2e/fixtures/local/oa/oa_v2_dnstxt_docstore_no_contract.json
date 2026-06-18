@@ -1,0 +1,33 @@
+{
+  "version": "https://schema.openattestation.com/2.0/schema.json",
+  "data": {
+    "$template": {
+      "type": "6aff1491-30d0-4481-a2fd-9a7009c68775:string:EMBEDDED_RENDERER",
+      "name": "a8b368cd-1d0e-411f-99dd-f5865fc66db7:string:CHAFTA_COO",
+      "url": "534d1e8d-a1c1-4c59-93d5-edeef6af9626:string:https://generic-templates.tradetrust.io"
+    },
+    "issuers": [
+      {
+        "name": "7a8a3f9b-0d82-4277-83f7-fb240c9d0834:string:X",
+        "documentStore": "0f2dce91-e954-4599-b82d-dc98dc597821:string:0x000000000000000000000000000000000000bEEF",
+        "identityProof": {
+          "type": "7b1096af-8490-4dc3-8078-365b550e6909:string:DNS-TXT",
+          "location": "b217eff6-5d5f-4388-a22d-ecfb930b4588:string:issuer.example"
+        }
+      }
+    ],
+    "network": {
+      "chain": "87c19dbd-952d-4974-9a00-3169124325e2:string:ETH",
+      "chainId": "c09cfddf-5826-4f2f-a873-95d300a5ab0e:string:1337"
+    },
+    "recipient": {
+      "name": "4dd09d19-a24d-441e-9f27-2a44c3810d86:string:x"
+    }
+  },
+  "signature": {
+    "type": "SHA3MerkleProof",
+    "targetHash": "b39012d7890d8c0d8a1061a3e1028016c151825d4f45df7c07eec014c81583ac",
+    "proof": [],
+    "merkleRoot": "b39012d7890d8c0d8a1061a3e1028016c151825d4f45df7c07eec014c81583ac"
+  }
+}

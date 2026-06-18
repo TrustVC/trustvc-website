@@ -10,7 +10,7 @@ interface NewsDetailBodyProps {
 
 const NewsDetailBody = ({ isDarkMode, blocks }: NewsDetailBodyProps) => {
   const articleBodyClass = clsx(
-    'mt-8 max-w-3xl mx-auto space-y-6 text-[15px] leading-7',
+    'news-article-body mt-8 max-w-3xl mx-auto space-y-6 text-[15px] leading-7',
     isDarkMode ? 'text-[#A9B2BB]' : 'text-[#3D444D]'
   )
 
@@ -53,7 +53,7 @@ const NewsDetailBody = ({ isDarkMode, blocks }: NewsDetailBodyProps) => {
           href={linkDef.href}
           target={isExternal ? '_blank' : undefined}
           rel={isExternal ? 'noopener noreferrer' : undefined}
-          className="underline text-[#5B5BB3] hover:opacity-80"
+          className="news-article-link"
         >
           {content}
         </a>
