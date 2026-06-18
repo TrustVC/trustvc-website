@@ -135,7 +135,7 @@ const ConnectToMagicLink: React.FC = () => {
             <img
               src={magicIconSrc}
               alt="Magic Link"
-              className="connect-metamask-button-icon"
+              className="connect-magiclink-button-icon"
             />
             <h3>
               {isConnecting ? 'Connecting...' : 'Connect with Magic Link'}

@@ -1,0 +1,78 @@
+name: E2E Verification Tests
+
+on:
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+
+# Read-only document verification suite (OA + W3C VC). No MetaMask, runs headless.
+jobs:
+  e2e-verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install chromium --with-deps
+
+      # ── Local chain + contracts ──────────────────────────────────────────
+      - name: Start Hardhat node
+        run: npx hardhat node &
+        env:
+          NODE_OPTIONS: --max-old-space-size=4096
+
+      - name: Wait for Hardhat node
+        run: npx wait-on http://127.0.0.1:8545 --timeout 180000
+
+      # Token registry (token-registry fixtures) + document store (doc-store fixtures)
+      - name: Deploy contracts and mint tokens
+        run: node e2e/setup-contracts.cjs
+
+      - name: Deploy document store
+        run: node e2e/setup-document-store.cjs
+
+      # ── Dev server ───────────────────────────────────────────────────────
+      - name: Start dev server
+        run: npm run dev &
+        env:
+          VITE_APP_NETWORK: local
+          VITE_NETWORK_TYPE: testnet
+          VITE_RPC_URL_1337: http://127.0.0.1:8545
+
+      - name: Wait for dev server
+        run: npx wait-on http://localhost:5173 --timeout 180000
+
+      # ── Verification tests (headless, no MetaMask) ───────────────────────
+      - name: Run verification E2E tests
+        run: npm run e2e:verify
+        env:
+          CI: 'true'
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-verify
+          path: playwright-report-verify/
+          retention-days: 7
+
+      - name: Upload screenshots on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: verify-test-results
+          path: test-results/
+          retention-days: 7
+          if-no-files-found: ignore

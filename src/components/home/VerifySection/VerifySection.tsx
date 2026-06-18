@@ -19,7 +19,7 @@ interface VerifySectionProps {
 
 const CHAIN_NAMES: Record<string, string> = {
   '1': 'Ethereum',
-  '137': 'Polygon',
+  '137': 'Polygon (POL)',
   '50': 'XDC Network',
   '101010': 'Stability (Beta)',
   '1338': 'Astron',
@@ -35,6 +35,7 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
     verifyStatus,
     fileName,
     errorType,
+    errorMessage,
     dragActive,
     verifiedChainId,
     issuerName,
@@ -97,6 +98,7 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
     <div className="frame-dropbox">
       <div
         className={`dropbox-area dropbox-area--home ${dragActive ? 'drag-active' : ''}`}
+        data-testid="dropzone"
         onDragEnter={handleDrag}
         onDragLeave={handleDrag}
         onDragOver={handleDrag}
@@ -138,7 +140,10 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
 
   const renderVerifying = () => (
     <div className="frame-dropbox">
-      <div className="dropbox-area dropbox-area--home dropbox-area--centered">
+      <div
+        className="dropbox-area dropbox-area--home dropbox-area--centered"
+        data-testid="verifying-state"
+      >
         <div className="flex flex-col items-center gap-2">
           <Spinner fontSize={32} />
           <span className="text-sm">Verifying {fileName}...</span>
@@ -191,7 +196,11 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
               )}
 
               {(verifyStatus === 'invalid' || verifyStatus === 'error') && (
-                <VerifyError errorType={errorType} onReset={handleReset} />
+                <VerifyError
+                  errorType={errorType}
+                  message={errorMessage}
+                  onReset={handleReset}
+                />
               )}
               {verifyStatus === 'network-select' && (
                 <NetworkModal

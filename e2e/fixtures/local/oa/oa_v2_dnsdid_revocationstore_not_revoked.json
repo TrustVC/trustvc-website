@@ -1,0 +1,47 @@
+{
+  "version": "https://schema.openattestation.com/2.0/schema.json",
+  "data": {
+    "$template": {
+      "type": "ce7bdb69-539e-428c-8528-d6ad178dbc51:string:EMBEDDED_RENDERER",
+      "name": "6d3a8381-f4ba-4be9-8c36-fa175cf67e21:string:CHAFTA_COO",
+      "url": "86779cea-34d0-4d91-ae3a-ed2c9240ef86:string:https://generic-templates.tradetrust.io"
+    },
+    "issuers": [
+      {
+        "id": "cfe068a5-ee6c-4611-9827-d94ba8a1f43a:string:did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+        "name": "ae235687-1dec-4f7d-b305-bf02b12ab6b4:string:X",
+        "revocation": {
+          "type": "51756339-e828-4d18-8104-cc7f683ea070:string:REVOCATION_STORE",
+          "location": "60a92a70-2dea-494c-ae03-30209af13611:string:0x057ef64E23666F000b34aE31332854aCBd1c8544"
+        },
+        "identityProof": {
+          "type": "3605b23e-12d9-4962-a71d-4963b68b152a:string:DNS-DID",
+          "location": "117c957e-1d1f-4d96-a19b-d97bfc510952:string:example.tradetrust.io",
+          "key": "385ce41f-7300-4c2a-ab77-d2330b947714:string:did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller"
+        }
+      }
+    ],
+    "network": {
+      "chain": "ebf5a03e-999d-4af5-ae34-1f08abbcf57d:string:ETH",
+      "chainId": "13dfc1be-dc7a-44eb-a13d-85356e4a4160:string:1337"
+    },
+    "recipient": {
+      "name": "35cda349-7e04-497a-a0da-059d40e06198:string:REVSTORE-NOT-REVOKED"
+    }
+  },
+  "signature": {
+    "type": "SHA3MerkleProof",
+    "targetHash": "ebf9daa3ba4bb4c497a30e765e63fa37d2c234eedd9a30c23b1d84763f39e046",
+    "proof": [],
+    "merkleRoot": "ebf9daa3ba4bb4c497a30e765e63fa37d2c234eedd9a30c23b1d84763f39e046"
+  },
+  "proof": [
+    {
+      "type": "OpenAttestationSignature2018",
+      "created": "2026-06-15T08:46:03.121Z",
+      "proofPurpose": "assertionMethod",
+      "verificationMethod": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
+      "signature": "0x593dee6b3cbbc29113c838b76e40b2dcbe2891c6f8f3b70c8dc3f76771c558597ff9916a54d731af9f3d68120678ea952ee86a8fc623e757b1279ba0690a5d801b"
+    }
+  ]
+}

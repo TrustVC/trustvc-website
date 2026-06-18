@@ -105,7 +105,7 @@ export const AssetManagementDropdown: FunctionComponent<
       {canReturnToIssuer && (
         <DropdownItem
           className="dropdown-item-btn"
-          data-testid={'surrenderDropdown'}
+          data-testid={'returnToIssuerDropdown'}
           onClick={() => onSetFormAction(AssetManagementActions.ReturnToIssuer)}
         >
           Return ETR to issuer
@@ -114,7 +114,7 @@ export const AssetManagementDropdown: FunctionComponent<
       {canHandleShred && (
         <DropdownItem
           className="dropdown-item-btn"
-          data-testid={'acceptSurrenderDropdown'}
+          data-testid={'acceptReturnToIssuerDropdown'}
           onClick={() =>
             onSetFormAction(AssetManagementActions.AcceptReturnToIssuer)
           }
@@ -125,7 +125,7 @@ export const AssetManagementDropdown: FunctionComponent<
       {canHandleRestore && (
         <DropdownItem
           className="dropdown-item-btn"
-          data-testid={'rejectSurrenderDropdown'}
+          data-testid={'rejectReturnToIssuerDropdown'}
           onClick={() =>
             onSetFormAction(AssetManagementActions.RejectReturnToIssuer)
           }

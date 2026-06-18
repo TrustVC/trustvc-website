@@ -33,10 +33,16 @@ const ErrorCircleIcon: React.FC = () => (
 
 interface VerifyErrorProps {
   errorType: VerifyErrorType
+  /** Optional verbatim body text; overrides the typed failure message when set. */
+  message?: string
   onReset: () => void
 }
 
-const VerifyError: React.FC<VerifyErrorProps> = ({ errorType, onReset }) => {
+const VerifyError: React.FC<VerifyErrorProps> = ({
+  errorType,
+  message,
+  onReset,
+}) => {
   const { failureTitle, failureMessage } =
     MESSAGES[errorType] ?? MESSAGES[TYPES.VERIFICATION_ERROR]
 
@@ -74,7 +80,7 @@ const VerifyError: React.FC<VerifyErrorProps> = ({ errorType, onReset }) => {
                   data-testid="recovery-message"
                   className="text-center text-neutral-20 text-sm font-avenir font-medium leading-snug break-words"
                 >
-                  {failureMessage}
+                  {message ?? failureMessage}
                 </div>
               </div>
             </div>
