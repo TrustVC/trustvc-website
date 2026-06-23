@@ -13,6 +13,7 @@ import { AssetManagementActions } from '../AssetManagementActions'
 import { AssetManagementForm } from '../AssetManagementForm'
 import { Tag } from '../../common/Tag'
 import { useTokenRegistryVersion } from '../../../hooks/useTokenRegistryVersion'
+import { trackAssetActionInitiated } from '../../../utils/analytics'
 import { TokenRegistryVersions } from '../../../constants'
 
 interface AssetManagementIsTransferableDocumentProps {
@@ -140,8 +141,15 @@ export const AssetManagementApplication: FunctionComponent<
     (assetManagementActions: AssetManagementActions) => {
       resetProviders()
       setAssetManagementAction(assetManagementActions)
+      if (assetManagementActions !== AssetManagementActions.None) {
+        trackAssetActionInitiated(
+          assetManagementActions,
+          chainId,
+          tokenRegistryVersion ?? undefined
+        )
+      }
     },
-    [setAssetManagementAction, resetProviders]
+    [setAssetManagementAction, resetProviders, chainId, tokenRegistryVersion]
   )
 
   // Initialize the token information context with tokenId, tokenRegistryAddress and chainId

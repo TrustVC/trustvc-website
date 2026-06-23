@@ -42,3 +42,5 @@ jobs:
         env:
           VITE_RPC_URL_1: ${{ secrets.VITE_RPC_URL_1 }}
           VITE_RPC_URL_101010: ${{ secrets.VITE_RPC_URL_101010 }}
+          VITE_GTM_CONTAINER_ID: ${{ secrets.VITE_GTM_CONTAINER_ID }}
+          VITE_GA4_TAG_ID: ${{ secrets.VITE_GA4_TAG_ID }}

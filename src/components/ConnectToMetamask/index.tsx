@@ -5,6 +5,11 @@ import Connected from '../ConnectToBlockchain/Connected'
 // Warning icon - use inline SVG or import from public folder
 import { toErrorMessage } from '../../utils/helper'
 import {
+  trackWalletConnected,
+  trackWalletConnectFailed,
+  trackWalletDisconnected,
+} from '../../utils/analytics'
+import {
   SIGNER_TYPE,
   useProviderContext,
 } from '../common/contexts/providerContext'
@@ -25,6 +30,7 @@ export const ConnectToMetamaskModelComponent = ({
   const { providerType, account, disconnectWallet } = useProviderContext()
 
   const handleDisconnect = () => {
+    trackWalletDisconnected('metamask')
     disconnectWallet()
   }
   return (
@@ -121,7 +127,9 @@ const ConnectToMetamask: React.FC<ConnectToMetamaskProps> = ({
     setErrorMessage('')
     try {
       await upgradeToMetaMaskSigner()
+      trackWalletConnected('metamask')
     } catch (error: unknown) {
+      trackWalletConnectFailed('metamask', getWalletErrorMessage(error))
       console.error('Error in handleConnectWallet:', error)
       handleMetamaskError(error)
     }

@@ -1,5 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
+  trackSupportFormSubmitted,
+  trackSupportFormFailed,
+} from '../utils/analytics'
+import {
   getPresignedUrls,
   uploadToPresignedUrl,
   createServiceRequestWithKeys,
@@ -457,6 +461,7 @@ export const useContactForm = (options: UseContactFormOptions) => {
           attachmentKeys,
           recaptchaToken,
         })
+        trackSupportFormSubmitted(typeOfEnquiry || 'Unknown')
         setSubmitSuccess(
           "Request submitted successfully. We'll get back to you soon."
         )
@@ -470,6 +475,7 @@ export const useContactForm = (options: UseContactFormOptions) => {
           ?.message
         const msg =
           rawMessage && rawMessage !== 'Failed to fetch' ? rawMessage : fallback
+        trackSupportFormFailed(typeOfEnquiry || 'Unknown', msg)
         setSubmitError(msg)
       } finally {
         setIsSubmitting(false)
