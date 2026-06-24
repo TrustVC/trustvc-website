@@ -28,6 +28,3 @@ export const ANALYTICS_EVENTS = {
   /** Fired when a support form submission fails. */
   SUPPORT_FORM_FAILED: 'SUPPORT_FORM_FAILED',
 } as const
-
-export type AnalyticsEventName =
-  (typeof ANALYTICS_EVENTS)[keyof typeof ANALYTICS_EVENTS]

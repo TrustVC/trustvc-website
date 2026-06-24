@@ -70,83 +70,6 @@ export interface DocumentVerificationEvent extends GTMEvent {
   chain_id: string | null | undefined
 }
 
-export interface NetworkSelectionShownEvent extends GTMEvent {
-  event: typeof ANALYTICS_EVENTS.NETWORK_SELECTION_SHOWN
-  environment: string
-  document_schema: DocumentSchema
-}
-
-export interface NetworkSelectedEvent extends GTMEvent {
-  event: typeof ANALYTICS_EVENTS.NETWORK_SELECTED
-  environment: string
-  chain_id: string
-}
-
-export interface NetworkSelectionCancelledEvent extends GTMEvent {
-  event: typeof ANALYTICS_EVENTS.NETWORK_SELECTION_CANCELLED
-  environment: string
-}
-
-export interface VerificationResetEvent extends GTMEvent {
-  event: typeof ANALYTICS_EVENTS.VERIFICATION_RESET
-  environment: string
-}
-
-export interface WalletConnectedEvent extends GTMEvent {
-  event: typeof ANALYTICS_EVENTS.WALLET_CONNECTED
-  environment: string
-  wallet_type: WalletType
-}
-
-export interface WalletDisconnectedEvent extends GTMEvent {
-  event: typeof ANALYTICS_EVENTS.WALLET_DISCONNECTED
-  environment: string
-  wallet_type: WalletType
-}
-
-export interface WalletConnectFailedEvent extends GTMEvent {
-  event: typeof ANALYTICS_EVENTS.WALLET_CONNECT_FAILED
-  environment: string
-  wallet_type: WalletType
-  error_code: string
-}
-
-export interface AssetActionInitiatedEvent extends GTMEvent {
-  event: typeof ANALYTICS_EVENTS.ASSET_ACTION_INITIATED
-  environment: string
-  action: string
-  chain_id: string | undefined
-  token_registry_version: string | undefined
-}
-
-export interface AssetActionCompletedEvent extends GTMEvent {
-  event: typeof ANALYTICS_EVENTS.ASSET_ACTION_COMPLETED
-  environment: string
-  action: string
-  chain_id: string | undefined
-}
-
-export interface AssetActionFailedEvent extends GTMEvent {
-  event: typeof ANALYTICS_EVENTS.ASSET_ACTION_FAILED
-  environment: string
-  action: string
-  error_code: string
-  chain_id: string | undefined
-}
-
-export interface SupportFormSubmittedEvent extends GTMEvent {
-  event: typeof ANALYTICS_EVENTS.SUPPORT_FORM_SUBMITTED
-  environment: string
-  enquiry_type: string
-}
-
-export interface SupportFormFailedEvent extends GTMEvent {
-  event: typeof ANALYTICS_EVENTS.SUPPORT_FORM_FAILED
-  environment: string
-  enquiry_type: string
-  error_code: string
-}
-
 // ─── Fragment → label maps ────────────────────────────────────────────────────
 
 /**
@@ -544,6 +467,22 @@ export const trackAssetActionInitiated = (
       action,
       chain_id: chainId,
       token_registry_version: tokenRegistryVersion,
+    })
+  } catch {
+    // Analytics failures must never affect the application
+  }
+}
+
+export const trackAssetActionCompleted = (
+  action: string,
+  chainId?: string
+): void => {
+  try {
+    trackEvent({
+      event: ANALYTICS_EVENTS.ASSET_ACTION_COMPLETED,
+      environment: ENVIRONMENT,
+      action,
+      chain_id: chainId,
     })
   } catch {
     // Analytics failures must never affect the application

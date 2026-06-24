@@ -52,6 +52,7 @@ import {
   trackWalletDisconnected,
   trackWalletConnectFailed,
   trackAssetActionInitiated,
+  trackAssetActionCompleted,
   trackAssetActionFailed,
   trackSupportFormSubmitted,
   trackSupportFormFailed,
@@ -554,10 +555,28 @@ describe('trackAssetActionInitiated', () => {
   })
 })
 
+// ─── trackAssetActionCompleted ───────────────────────────────────────────────
+
+describe('trackAssetActionCompleted', () => {
+  it('pushes ASSET_ACTION_COMPLETED with action and chain_id', () => {
+    trackAssetActionCompleted('TransferHolder', '137')
+    const evt = window.dataLayer[0]
+    expect(evt.event).toBe('ASSET_ACTION_COMPLETED')
+    expect(evt.action).toBe('TransferHolder')
+    expect(evt.chain_id).toBe('137')
+  })
+
+  it('works without optional chainId', () => {
+    trackAssetActionCompleted('ReturnToIssuer')
+    expect(window.dataLayer[0].action).toBe('ReturnToIssuer')
+    expect(window.dataLayer[0].chain_id).toBeUndefined()
+  })
+})
+
 // ─── trackAssetActionFailed ───────────────────────────────────────────────────
 
 describe('trackAssetActionFailed', () => {
-  it('pushes ASSET_ACTION_FAILED with error_code', () => {
+  it('pushes ASSET_ACTION_FAILED with action, error_code, and chain_id', () => {
     trackAssetActionFailed(
       'NominateBeneficiary',
       'User Rejected Transaction',
@@ -568,6 +587,12 @@ describe('trackAssetActionFailed', () => {
     expect(evt.action).toBe('NominateBeneficiary')
     expect(evt.error_code).toBe('User Rejected Transaction')
     expect(evt.chain_id).toBe('1')
+  })
+
+  it('works without optional chainId', () => {
+    trackAssetActionFailed('ReturnToIssuer', 'TRANSACTION_ERROR')
+    expect(window.dataLayer[0].action).toBe('ReturnToIssuer')
+    expect(window.dataLayer[0].chain_id).toBeUndefined()
   })
 })
 
