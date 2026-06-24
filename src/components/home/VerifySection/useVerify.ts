@@ -88,7 +88,8 @@ export interface UseVerifyReturn {
   loadDocument: (
     _doc: unknown,
     _chainId: string | null | undefined,
-    _name: string
+    _name: string,
+    _source?: DocumentDroppedSource
   ) => Promise<void>
 }
 

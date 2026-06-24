@@ -51,7 +51,6 @@ import {
   trackWalletDisconnected,
   trackWalletConnectFailed,
   trackAssetActionInitiated,
-  trackAssetActionCompleted,
   trackAssetActionFailed,
   trackSupportFormSubmitted,
   trackSupportFormFailed,
@@ -551,16 +550,6 @@ describe('trackAssetActionInitiated', () => {
     trackAssetActionInitiated('ReturnToIssuer')
     expect(window.dataLayer[0].action).toBe('ReturnToIssuer')
     expect(window.dataLayer[0].chain_id).toBeUndefined()
-  })
-})
-
-// ─── trackAssetActionCompleted ────────────────────────────────────────────────
-
-describe('trackAssetActionCompleted', () => {
-  it('pushes ASSET_ACTION_COMPLETED', () => {
-    trackAssetActionCompleted('TransferOwner', '1')
-    expect(window.dataLayer[0].event).toBe('ASSET_ACTION_COMPLETED')
-    expect(window.dataLayer[0].chain_id).toBe('1')
   })
 })
 

@@ -550,22 +550,6 @@ export const trackAssetActionInitiated = (
   }
 }
 
-export const trackAssetActionCompleted = (
-  action: string,
-  chainId?: string
-): void => {
-  try {
-    trackEvent({
-      event: ANALYTICS_EVENTS.ASSET_ACTION_COMPLETED,
-      environment: ENVIRONMENT,
-      action,
-      chain_id: chainId,
-    })
-  } catch {
-    // Analytics failures must never affect the application
-  }
-}
-
 export const trackAssetActionFailed = (
   action: string,
   errorCode: string,
