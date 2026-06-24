@@ -19,6 +19,10 @@ export const ANALYTICS_EVENTS = {
   WALLET_CONNECT_FAILED: 'WALLET_CONNECT_FAILED',
   /** Fired when the user initiates a transferable record management action. */
   ASSET_ACTION_INITIATED: 'ASSET_ACTION_INITIATED',
+  /** Fired when a transferable record management action is confirmed on-chain. */
+  ASSET_ACTION_COMPLETED: 'ASSET_ACTION_COMPLETED',
+  /** Fired when a transferable record management action fails. */
+  ASSET_ACTION_FAILED: 'ASSET_ACTION_FAILED',
   /** Fired when a support form is successfully submitted. */
   SUPPORT_FORM_SUBMITTED: 'SUPPORT_FORM_SUBMITTED',
   /** Fired when a support form submission fails. */

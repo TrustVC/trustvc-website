@@ -3,6 +3,7 @@ import React, {
   FunctionComponent,
   useCallback,
   useEffect,
+  useRef,
   useState,
 } from 'react'
 import { useProviderContext } from '../../common/contexts/providerContext'
@@ -13,7 +14,11 @@ import { AssetManagementActions } from '../AssetManagementActions'
 import { AssetManagementForm } from '../AssetManagementForm'
 import { Tag } from '../../common/Tag'
 import { useTokenRegistryVersion } from '../../../hooks/useTokenRegistryVersion'
-import { trackAssetActionInitiated } from '../../../utils/analytics'
+import {
+  trackAssetActionInitiated,
+  trackAssetActionCompleted,
+  trackAssetActionFailed,
+} from '../../../utils/analytics'
 import { TokenRegistryVersions } from '../../../constants'
 
 interface AssetManagementIsTransferableDocumentProps {
@@ -151,6 +156,73 @@ export const AssetManagementApplication: FunctionComponent<
     },
     [setAssetManagementAction, resetProviders, chainId, tokenRegistryVersion]
   )
+
+  // Track on-chain outcome for the active asset action.
+  // outcomeRef prevents double-firing; resets to null when the state cycles back
+  // through UNINITIALIZED (which resetProviders() triggers on each new attempt).
+  const outcomeRef = useRef<string | null>(null)
+  useEffect(() => {
+    if (assetManagementAction === AssetManagementActions.None) return
+    const txState = (() => {
+      switch (assetManagementAction) {
+        case AssetManagementActions.NominateBeneficiary:
+          return nominateState
+        case AssetManagementActions.TransferHolder:
+          return changeHolderState
+        case AssetManagementActions.EndorseBeneficiary:
+        case AssetManagementActions.TransferOwner:
+          return endorseBeneficiaryState
+        case AssetManagementActions.TransferOwnerHolder:
+          return transferOwnerHoldersState
+        case AssetManagementActions.ReturnToIssuer:
+          return returnToIssuerState
+        case AssetManagementActions.AcceptReturnToIssuer:
+          return destroyTokenState
+        case AssetManagementActions.RejectReturnToIssuer:
+          return restoreTokenState
+        case AssetManagementActions.RejectTransferOwner:
+          return rejectTransferOwnerState
+        case AssetManagementActions.RejectTransferHolder:
+          return rejectTransferHolderState
+        case AssetManagementActions.RejectTransferOwnerHolder:
+          return rejectTransferOwnerHolderState
+        default:
+          return undefined
+      }
+    })()
+    if (!txState) return
+    if (txState === 'UNINITIALIZED' || txState === 'INITIALIZED') {
+      outcomeRef.current = null
+      return
+    }
+    if (txState !== 'CONFIRMED' && txState !== 'ERROR') return
+    const key = `${assetManagementAction}:${txState}`
+    if (outcomeRef.current === key) return
+    outcomeRef.current = key
+    if (txState === 'CONFIRMED') {
+      trackAssetActionCompleted(assetManagementAction, chainId)
+    } else {
+      trackAssetActionFailed(
+        assetManagementAction,
+        errorMessage ?? 'TRANSACTION_ERROR',
+        chainId
+      )
+    }
+  }, [
+    assetManagementAction,
+    chainId,
+    errorMessage,
+    nominateState,
+    changeHolderState,
+    endorseBeneficiaryState,
+    transferOwnerHoldersState,
+    returnToIssuerState,
+    destroyTokenState,
+    restoreTokenState,
+    rejectTransferOwnerState,
+    rejectTransferHolderState,
+    rejectTransferOwnerHolderState,
+  ])
 
   // Initialize the token information context with tokenId, tokenRegistryAddress and chainId
   useEffect(() => {
