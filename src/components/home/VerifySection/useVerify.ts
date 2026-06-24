@@ -529,8 +529,9 @@ export const useVerify = (): UseVerifyReturn => {
     const hasAtLeastOneValid = groupStatuses.some(s => s === 'VALID')
     const hasNoInvalid = groupStatuses.every(s => s !== 'INVALID')
     const isValid = hasAtLeastOneValid && hasNoInvalid
+    const errorType = !isValid ? getErrorTypeFromFragments(results) : undefined
     if (!isValid) {
-      setErrorType(getErrorTypeFromFragments(results))
+      setErrorType(errorType!)
       setErrorMessage(getErrorMessageFromFragments(results))
     }
 
@@ -549,7 +550,8 @@ export const useVerify = (): UseVerifyReturn => {
     setTokenRegistryAddress(registryAddress)
     setTokenRegistryAddressContext(registryAddress || null)
 
-    setIsExpired(getIsExpired(doc))
+    const isExpired = getIsExpired(doc)
+    setIsExpired(isExpired)
 
     //add code to fetch TokenId , keyId from the document
     const _keyId = getDocumentData(doc as any)?.id
@@ -591,19 +593,12 @@ export const useVerify = (): UseVerifyReturn => {
     setVerifiedChainId(chainId ?? '')
     setVerifyStatus(isValid ? 'valid' : 'invalid')
 
-    trackDocumentVerified(
-      doc,
-      results,
-      isValid,
-      issuer,
-      isValid ? undefined : getErrorTypeFromFragments(results),
-      {
-        isExpired: getIsExpired(doc),
-        isTransferable: transferable,
-        tokenRegistryVersion: trVersion,
-        chainId: chainId ?? null,
-      }
-    )
+    trackDocumentVerified(doc, results, isValid, issuer, errorType, {
+      isExpired,
+      isTransferable: transferable,
+      tokenRegistryVersion: trVersion,
+      chainId: chainId ?? null,
+    })
   }
 
   const clearVerificationMetadata = () => {
