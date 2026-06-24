@@ -26,14 +26,10 @@ vi.mock('@trustvc/trustvc', async () => {
   }
 })
 
-// Mock import.meta.env — no VITE_GTM_CONTAINER_ID so GTM_CONFIGURED = false
-Object.defineProperty(import.meta, 'env', {
-  value: { VITE_PLATFORM: 'test' },
-  writable: true,
-  configurable: true,
-})
-
-// ─── Import after mocks ───────────────────────────────────────────────────────
+// ─── Imports ──────────────────────────────────────────────────────────────────
+// GTM_CONFIGURED and ENVIRONMENT are computed at analytics.ts module load.
+// .env.test sets VITE_GTM_CONTAINER_ID= and VITE_PLATFORM=test so Vitest
+// injects the correct values before any module evaluates.
 
 import * as trustvc from '@trustvc/trustvc'
 import {
