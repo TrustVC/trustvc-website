@@ -32,6 +32,7 @@ vi.mock('@trustvc/trustvc', async () => {
 // injects the correct values before any module evaluates.
 
 import * as trustvc from '@trustvc/trustvc'
+import type { VerificationFragmentType } from '../components/home/VerifySection/useVerify'
 import {
   getDocumentSchema,
   getIssuerMethod,
@@ -72,7 +73,7 @@ const mockAllFalse = () => {
 
 const makeFragment = (
   name: string,
-  type: string,
+  type: VerificationFragmentType,
   status: 'VALID' | 'INVALID' | 'SKIPPED' | 'ERROR' = 'VALID'
 ) => ({ name, type, status, data: {} })
 

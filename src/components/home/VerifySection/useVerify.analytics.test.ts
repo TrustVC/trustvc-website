@@ -151,6 +151,7 @@ import {
   verifyDocument,
   getChainId,
   isTransferableRecord,
+  CHAIN_ID,
 } from '@trustvc/trustvc'
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -197,7 +198,7 @@ const makeInputEvent = (file: File): React.ChangeEvent<HTMLInputElement> =>
 
 beforeEach(() => {
   vi.clearAllMocks()
-  vi.mocked(getChainId).mockReturnValue('1')
+  vi.mocked(getChainId).mockReturnValue(CHAIN_ID.mainnet)
   vi.mocked(isTransferableRecord).mockReturnValue(false)
   vi.mocked(verifyDocument).mockResolvedValue(validFragments as any)
 })
