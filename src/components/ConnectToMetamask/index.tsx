@@ -29,9 +29,13 @@ export const ConnectToMetamaskModelComponent = ({
 }: ConnectToMetamaskModelProps) => {
   const { providerType, account, disconnectWallet } = useProviderContext()
 
-  const handleDisconnect = () => {
-    trackWalletDisconnected('metamask')
-    disconnectWallet()
+  const handleDisconnect = async () => {
+    try {
+      await disconnectWallet()
+      trackWalletDisconnected('metamask')
+    } catch {
+      // Optional: surface a toast/error state
+    }
   }
   return (
     <div className="frame">

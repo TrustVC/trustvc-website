@@ -24,11 +24,13 @@ export const ConnectToMagicLinkModelComponent = ({
 }: ConnectToMagicLinkModelProps) => {
   const { providerType, account, disconnectWallet } = useProviderContext()
 
-  const handleDisconnect = () => {
-    trackWalletDisconnected('magic_link')
-    void disconnectWallet().catch(() => {
+  const handleDisconnect = async () => {
+    try {
+      await disconnectWallet()
+      trackWalletDisconnected('magic_link')
+    } catch {
       // Optional: surface a toast/error state
-    })
+    }
   }
 
   return (

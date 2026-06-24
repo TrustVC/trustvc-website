@@ -263,10 +263,16 @@ export const pushGTMEvent = (eventData: GTMEvent): void => {
 
 // ─── GA4 ─────────────────────────────────────────────────────────────────────
 
+// When GTM is configured it forwards events to GA4 via its own tags — sending
+// directly to GA4 as well would double-count every event, including the
+// automatic page_view fired by ReactGA.initialize. Only use the GA4 direct
+// channel when GTM is absent.
+const GTM_CONFIGURED = Boolean(import.meta.env.VITE_GTM_CONTAINER_ID)
+
 let ga4Initialized = false
 
 export const initGA4 = (tagId: string): void => {
-  if (!tagId || ga4Initialized) return
+  if (!tagId || ga4Initialized || GTM_CONFIGURED) return
   try {
     ReactGA.initialize(tagId)
     ga4Initialized = true
@@ -288,11 +294,6 @@ const pushGA4Event = (
 }
 
 // ─── Internal: fire to both channels ─────────────────────────────────────────
-
-// When GTM is configured it forwards events to GA4 via its own tags — sending
-// directly to GA4 as well would double-count every event. Only use the GA4
-// direct channel when GTM is absent.
-const GTM_CONFIGURED = Boolean(import.meta.env.VITE_GTM_CONTAINER_ID)
 
 const trackEvent = (payload: GTMEvent): void => {
   pushGTMEvent(payload)

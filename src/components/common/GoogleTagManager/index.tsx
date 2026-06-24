@@ -1,5 +1,4 @@
 import { useEffect } from 'react'
-import { createPortal } from 'react-dom'
 import { initGA4 } from '../../../utils/analytics'
 
 interface GoogleTagManagerProps {
@@ -14,8 +13,8 @@ interface GoogleTagManagerProps {
  *   - Loads the GTM container script into <head> (if gtmContainerId is set)
  *   - Initialises GA4 direct tracking via react-ga4 (if ga4TagId is set)
  *
- * Renders nothing visible. The GTM noscript fallback is portalled into <body>
- * for browsers with JavaScript disabled.
+ * Renders nothing. The GTM noscript fallback lives in index.html so it works
+ * before JavaScript runs.
  */
 export const GoogleTagManager = ({
   gtmContainerId,
@@ -43,18 +42,5 @@ export const GoogleTagManager = ({
     }
   }, [gtmContainerId, ga4TagId])
 
-  if (!gtmContainerId) return null
-
-  return createPortal(
-    <noscript>
-      <iframe
-        src={`https://www.googletagmanager.com/ns.html?id=${gtmContainerId}`}
-        height="0"
-        width="0"
-        style={{ display: 'none', visibility: 'hidden' }}
-        title="Google Tag Manager"
-      />
-    </noscript>,
-    document.body
-  )
+  return null
 }
