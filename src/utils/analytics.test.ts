@@ -52,7 +52,6 @@ import {
   trackWalletDisconnected,
   trackWalletConnectFailed,
   trackAssetActionInitiated,
-  trackAssetActionFailed,
   trackSupportFormSubmitted,
   trackSupportFormFailed,
 } from './analytics'
@@ -551,23 +550,6 @@ describe('trackAssetActionInitiated', () => {
     trackAssetActionInitiated('ReturnToIssuer')
     expect(window.dataLayer[0].action).toBe('ReturnToIssuer')
     expect(window.dataLayer[0].chain_id).toBeUndefined()
-  })
-})
-
-// ─── trackAssetActionFailed ───────────────────────────────────────────────────
-
-describe('trackAssetActionFailed', () => {
-  it('pushes ASSET_ACTION_FAILED with error_code', () => {
-    trackAssetActionFailed(
-      'NominateBeneficiary',
-      'User Rejected Transaction',
-      '1'
-    )
-    const evt = window.dataLayer[0]
-    expect(evt.event).toBe('ASSET_ACTION_FAILED')
-    expect(evt.action).toBe('NominateBeneficiary')
-    expect(evt.error_code).toBe('User Rejected Transaction')
-    expect(evt.chain_id).toBe('1')
   })
 })
 
