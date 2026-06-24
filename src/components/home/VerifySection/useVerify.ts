@@ -638,15 +638,15 @@ export const useVerify = (): UseVerifyReturn => {
     let parsedDoc: any
     try {
       const text = await file.text()
-      const doc = JSON.parse(text)
+      parsedDoc = JSON.parse(text)
       // Prefer the document's own chain; fall back to its embedded network field
       // (getChainId ignores that for DNS-DID/DID docs, which can still use a
       // REVOCATION_STORE on that chain) before asking the user to pick one.
-      const chainId = getChainId(doc) ?? getEmbeddedChainId(doc)
+      const chainId = getChainId(parsedDoc) ?? getEmbeddedChainId(parsedDoc)
 
-      if (!chainId && requiresNetworkSelection(doc)) {
+      if (!chainId && requiresNetworkSelection(parsedDoc)) {
         // Needs blockchain verification but has no chain anywhere — ask the user
-        setPendingDoc(doc)
+        setPendingDoc(parsedDoc)
         setVerifyStatus('network-select')
         trackNetworkSelectionShown(parsedDoc)
         return
