@@ -1,5 +1,10 @@
 import React, { useState } from 'react'
 import { toErrorMessage } from '../../utils/helper'
+import {
+  trackWalletConnected,
+  trackWalletConnectFailed,
+  trackWalletDisconnected,
+} from '../../utils/analytics'
 import { getMagicLinkIconSrc } from '../../utils/magicWallet'
 import { Button, ButtonSize } from '../common/Button'
 import Connected from '../ConnectToBlockchain/Connected'
@@ -19,10 +24,13 @@ export const ConnectToMagicLinkModelComponent = ({
 }: ConnectToMagicLinkModelProps) => {
   const { providerType, account, disconnectWallet } = useProviderContext()
 
-  const handleDisconnect = () => {
-    void disconnectWallet().catch(() => {
+  const handleDisconnect = async () => {
+    try {
+      await disconnectWallet()
+      trackWalletDisconnected('magic_link')
+    } catch {
       // Optional: surface a toast/error state
-    })
+    }
   }
 
   return (
@@ -106,7 +114,9 @@ const ConnectToMagicLink: React.FC = () => {
     setIsConnecting(true)
     try {
       await upgradeToMagicSigner()
+      trackWalletConnected('magic_link')
     } catch (error: unknown) {
+      trackWalletConnectFailed('magic_link', getWalletErrorMessage(error))
       setErrorMessage(getWalletErrorMessage(error))
     } finally {
       setIsConnecting(false)

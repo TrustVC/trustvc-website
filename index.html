@@ -7,6 +7,15 @@
     <title>TrustVC</title>
   </head>
   <body>
+    <!-- GTM noscript fallback: must be static HTML so it works before JS runs -->
+    <noscript
+      ><iframe
+        src="https://www.googletagmanager.com/ns.html?id=%VITE_GTM_CONTAINER_ID%"
+        height="0"
+        width="0"
+        style="display:none;visibility:hidden"
+      ></iframe
+    ></noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
