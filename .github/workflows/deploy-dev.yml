@@ -42,6 +42,9 @@ jobs:
       VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN_DEVELOPMENT }}
       VITE_SENTRY_ENVIRONMENT: dev
       VITE_SENTRY_RELEASE: ${{ github.sha }}
+      VITE_GTM_CONTAINER_ID: ${{ secrets.VITE_GTM_CONTAINER_ID_DEVELOPMENT }}
+      VITE_GA4_TAG_ID: ${{ secrets.VITE_GA4_TAG_ID_DEVELOPMENT }}
+      VITE_PLATFORM: dev
 
     steps:
       - name: Checkout code
@@ -61,7 +64,13 @@ jobs:
           printf '%s\n' "$ENV_FILE" \
             | grep -v '^VITE_SENTRY_DSN=' \
             | grep -v '^VITE_SENTRY_ENVIRONMENT=' \
-            | grep -v '^VITE_SENTRY_RELEASE=' > .env
+            | grep -v '^VITE_SENTRY_RELEASE=' \
+            | grep -v '^VITE_GTM_CONTAINER_ID=' \
+            | grep -v '^VITE_GA4_TAG_ID=' \
+            | grep -v '^VITE_PLATFORM=' > .env
+          echo "VITE_GTM_CONTAINER_ID=${VITE_GTM_CONTAINER_ID}" >> .env
+          echo "VITE_GA4_TAG_ID=${VITE_GA4_TAG_ID}" >> .env
+          echo "VITE_PLATFORM=${VITE_PLATFORM}" >> .env
           echo "VITE_SENTRY_DSN=${VITE_SENTRY_DSN}" >> .env
           echo "VITE_SENTRY_ENVIRONMENT=${VITE_SENTRY_ENVIRONMENT}" >> .env
           echo "VITE_SENTRY_RELEASE=${VITE_SENTRY_RELEASE}" >> .env

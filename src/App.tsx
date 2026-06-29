@@ -2,6 +2,12 @@ import { useState, useEffect } from 'react'
 import { matchPath, useLocation } from 'react-router-dom'
 import Navbar from './components/common/Navbar'
 import AppRouter from './routes'
+import { GoogleTagManager } from './components/common/GoogleTagManager'
+
+const GTM_CONTAINER_ID = import.meta.env.VITE_GTM_CONTAINER_ID as
+  | string
+  | undefined
+const GA4_TAG_ID = import.meta.env.VITE_GA4_TAG_ID as string | undefined
 
 type BackgroundRouteRule = {
   paths: string[]
@@ -74,10 +80,16 @@ function App() {
   const appShellClassName = `app-shell ${backgroundClassName}`
 
   return (
-    <div className={appShellClassName}>
-      <Navbar isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
-      <AppRouter isDarkMode={isDarkMode} />
-    </div>
+    <>
+      <GoogleTagManager
+        gtmContainerId={GTM_CONTAINER_ID}
+        ga4TagId={GA4_TAG_ID}
+      />
+      <div className={appShellClassName}>
+        <Navbar isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
+        <AppRouter isDarkMode={isDarkMode} />
+      </div>
+    </>
   )
 }
 
