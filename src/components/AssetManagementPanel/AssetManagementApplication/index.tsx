@@ -170,8 +170,9 @@ export const AssetManagementApplication: FunctionComponent<
         case AssetManagementActions.TransferHolder:
           return changeHolderState
         case AssetManagementActions.EndorseBeneficiary:
-        case AssetManagementActions.TransferOwner:
           return endorseBeneficiaryState
+        case AssetManagementActions.TransferOwner:
+          return transferOwnerHoldersState
         case AssetManagementActions.TransferOwnerHolder:
           return transferOwnerHoldersState
         case AssetManagementActions.ReturnToIssuer:
