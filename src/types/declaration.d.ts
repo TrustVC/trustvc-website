@@ -20,6 +20,5 @@ declare global {
     web3: {
       currentProvider: providers.Web3Provider
     }
-    dataLayer: any
   }
 }
