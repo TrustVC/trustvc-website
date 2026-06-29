@@ -4,6 +4,16 @@ import { renderHook, act, waitFor } from '@testing-library/react'
 import { useVerify } from './useVerify'
 import { DocumentProvider } from '../../common/contexts/DocumentContext'
 
+// ─── Mock sentry — prevents @sentry/react from patching global timers ────────
+
+vi.mock('../../../lib/sentry', () => ({
+  captureVerificationBreadcrumb: vi.fn(),
+  captureVerificationException: vi.fn(),
+  captureVerificationInvalid: vi.fn(),
+  isSentryEnabled: vi.fn(() => false),
+  initSentry: vi.fn(),
+}))
+
 // ─── Mock analytics ───────────────────────────────────────────────────────────
 
 vi.mock('../../../utils/analytics', () => ({

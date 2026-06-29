@@ -26,6 +26,8 @@ import {
   captureVerificationBreadcrumb,
   captureVerificationException,
   captureVerificationInvalid,
+} from '../../../lib/sentry'
+import {
   trackDocumentDropped,
   trackDocumentVerified,
   trackDocumentVerifyError,
@@ -535,20 +537,17 @@ export const useVerify = (): UseVerifyReturn => {
     const isValid = hasAtLeastOneValid && hasNoInvalid
     const errorType = !isValid ? getErrorTypeFromFragments(results) : undefined
     if (!isValid) {
-      const errorType = getErrorTypeFromFragments(results)
       const errorMessage = getErrorMessageFromFragments(results)
-      setErrorType(errorType)
+      setErrorType(errorType!)
       setErrorMessage(errorMessage)
       captureVerificationInvalid({
         doc,
         fileName: (verificationFileName ?? fileName) || undefined,
         chainId,
-        errorType,
+        errorType: errorType!,
         errorMessage,
         fragments: results,
       })
-      setErrorType(errorType!)
-      setErrorMessage(getErrorMessageFromFragments(results))
     }
 
     // Compute issuer name
@@ -678,8 +677,7 @@ export const useVerify = (): UseVerifyReturn => {
         return
       }
 
-      await runVerification(doc, chainId, currentId, file.name)
-      await runVerification(parsedDoc, chainId, currentId)
+      await runVerification(parsedDoc, chainId, currentId, file.name)
     } catch (err) {
       const errType = getErrorTypeFromError(err)
       clearVerificationMetadata()
