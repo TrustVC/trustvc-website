@@ -39,7 +39,7 @@ jobs:
       AWS_REGION: ap-southeast-1
       S3_BUCKET: ${{ secrets.S3_BUCKET_DEV }}
       ENV_FILE: ${{ secrets.TRUSTVC_WEB_ENV_DEVELOPMENT }}
-      VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN_DEVELOPMENT }}
+      VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
       VITE_SENTRY_ENVIRONMENT: dev
       VITE_SENTRY_RELEASE: ${{ github.sha }}
 
@@ -74,7 +74,7 @@ jobs:
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
-          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT_TRUSTVC_WEB_DEV }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
 
       - name: Upload build artifact (Dev)
         uses: actions/upload-artifact@v4
