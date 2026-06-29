@@ -1,6 +1,7 @@
 import { fileURLToPath, URL } from 'node:url'
 import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
+import { sentryVitePlugin } from '@sentry/vite-plugin'
 import path from 'path'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
 
@@ -9,6 +10,16 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 export default defineConfig(({ mode }) => {
   const isTest = mode === 'test'
   const env = loadEnv(mode, process.cwd(), '')
+
+  const sentryAuthToken = env.SENTRY_AUTH_TOKEN || process.env.SENTRY_AUTH_TOKEN
+  const sentryOrg = env.SENTRY_ORG || process.env.SENTRY_ORG
+  const sentryProject =
+    env.SENTRY_PROJECT || process.env.SENTRY_PROJECT
+  const sentryRelease =
+    env.VITE_SENTRY_RELEASE || process.env.VITE_SENTRY_RELEASE
+
+  const enableSentrySourceMaps =
+    !isTest && Boolean(sentryAuthToken && sentryOrg && sentryProject)
 
   return {
     define: {
@@ -20,6 +31,7 @@ export default defineConfig(({ mode }) => {
       ...(isTest ? {} : { 'process.version': JSON.stringify('v16.0.0') })
     },
     build: {
+      sourcemap: enableSentrySourceMaps ? 'hidden' : false,
       commonjsOptions: {
         // crypto-browserify → randomfill uses `exports.*`; without this,
         // some CJS can leak into ESM chunks and throw "exports is not defined".
@@ -32,6 +44,19 @@ export default defineConfig(({ mode }) => {
         globals: { Buffer: true, global: true, process: true },
         protocolImports: true,
       }),
+      ...(enableSentrySourceMaps
+        ? [
+            sentryVitePlugin({
+              org: sentryOrg,
+              project: sentryProject,
+              authToken: sentryAuthToken,
+              release: { name: sentryRelease },
+              sourcemaps: {
+                filesToDeleteAfterUpload: ['./dist/**/*.map'],
+              },
+            }),
+          ]
+        : []),
     ],
     resolve: {
       alias: {

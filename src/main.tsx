@@ -1,7 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import './index.css'
-import App from './App'
 import { BrowserRouter } from 'react-router-dom'
 import { OverlayProvider } from './components/common/contexts/OverlayContext'
 import { ProviderContextProvider } from './components/common/contexts/providerContext'
@@ -12,6 +11,10 @@ import {
   getSupportedChainInfo,
 } from './utils/chain-utils'
 import { DocumentProvider } from './components/common/contexts/DocumentContext'
+import { initSentry, SentryErrorBoundary } from './lib/sentry'
+import App from './App'
+
+initSentry()
 
 const rootElement = document.getElementById('root')
 
@@ -31,7 +34,9 @@ ReactDOM.createRoot(rootElement).render(
         >
           <TokenInformationContextProvider>
             <OverlayProvider>
-              <App />
+              <SentryErrorBoundary>
+                <App />
+              </SentryErrorBoundary>
             </OverlayProvider>
           </TokenInformationContextProvider>
         </ProviderContextProvider>

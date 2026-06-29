@@ -22,6 +22,11 @@ import {
 import { getRpcUrl, getIsExpired } from '../../../utils/helper'
 import { useDocumentContext } from '../../common/contexts/DocumentContext'
 import { type VerifyErrorType, getErrorTypeFromError } from './verifyErrorUtils'
+import {
+  captureVerificationBreadcrumb,
+  captureVerificationException,
+  captureVerificationInvalid,
+} from '../../../lib/sentry'
 
 export type VerifyStatus =
   | 'idle'
@@ -496,7 +501,8 @@ export const useVerify = (): UseVerifyReturn => {
   const runVerification = async (
     doc: unknown,
     chainId: string | null | undefined,
-    currentId: number
+    currentId: number,
+    verificationFileName?: string
   ) => {
     const isStale = () => currentId !== verificationIdRef.current
 
@@ -519,8 +525,18 @@ export const useVerify = (): UseVerifyReturn => {
     const hasNoInvalid = groupStatuses.every(s => s !== 'INVALID')
     const isValid = hasAtLeastOneValid && hasNoInvalid
     if (!isValid) {
-      setErrorType(getErrorTypeFromFragments(results))
-      setErrorMessage(getErrorMessageFromFragments(results))
+      const errorType = getErrorTypeFromFragments(results)
+      const errorMessage = getErrorMessageFromFragments(results)
+      setErrorType(errorType)
+      setErrorMessage(errorMessage)
+      captureVerificationInvalid({
+        doc,
+        fileName: (verificationFileName ?? fileName) || undefined,
+        chainId,
+        errorType,
+        errorMessage,
+        fragments: results,
+      })
     }
 
     // Compute issuer name
@@ -579,6 +595,16 @@ export const useVerify = (): UseVerifyReturn => {
     setRawDocument(doc)
     setVerifiedChainId(chainId ?? '')
     setVerifyStatus(isValid ? 'valid' : 'invalid')
+
+    captureVerificationBreadcrumb(
+      isValid
+        ? 'Verification completed (valid)'
+        : 'Verification completed (invalid)',
+      {
+        chainId: chainId ?? undefined,
+        fileName: (verificationFileName ?? fileName) || undefined,
+      }
+    )
   }
 
   const clearVerificationMetadata = () => {
@@ -606,6 +632,11 @@ export const useVerify = (): UseVerifyReturn => {
     setPendingDoc(null)
     clearVerificationMetadata()
 
+    captureVerificationBreadcrumb('Verification started', {
+      fileName: file.name,
+      source: 'file',
+    })
+
     try {
       const text = await file.text()
       const doc = JSON.parse(text)
@@ -621,11 +652,15 @@ export const useVerify = (): UseVerifyReturn => {
         return
       }
 
-      await runVerification(doc, chainId, currentId)
+      await runVerification(doc, chainId, currentId, file.name)
     } catch (err) {
       clearVerificationMetadata()
       setErrorType(getErrorTypeFromError(err))
       setVerifyStatus('error')
+      captureVerificationException(err, {
+        stage: 'processFile',
+        fileName: file.name,
+      })
     }
   }
 
@@ -634,11 +669,16 @@ export const useVerify = (): UseVerifyReturn => {
     const currentId = ++verificationIdRef.current
     setVerifyStatus('verifying')
     try {
-      await runVerification(pendingDoc, chainId, currentId)
+      await runVerification(pendingDoc, chainId, currentId, fileName)
     } catch (err) {
       clearVerificationMetadata()
       setErrorType(getErrorTypeFromError(err))
       setVerifyStatus('error')
+      captureVerificationException(err, {
+        stage: 'handleNetworkConfirm',
+        fileName,
+        chainId,
+      })
     } finally {
       setPendingDoc(null)
     }
@@ -689,12 +729,22 @@ export const useVerify = (): UseVerifyReturn => {
     setPendingDoc(null)
     clearVerificationMetadata()
 
+    captureVerificationBreadcrumb('Verification started', {
+      fileName: name,
+      source: 'url',
+    })
+
     try {
-      await runVerification(doc, chainId, currentId)
+      await runVerification(doc, chainId, currentId, name)
     } catch (err) {
       clearVerificationMetadata()
       setErrorType(getErrorTypeFromError(err))
       setVerifyStatus('error')
+      captureVerificationException(err, {
+        stage: 'loadDocument',
+        fileName: name,
+        chainId,
+      })
     }
   }
 
