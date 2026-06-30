@@ -12,6 +12,24 @@ import { DocumentProvider } from '../../common/contexts/DocumentContext'
 
 // ─── Mocks ────────────────────────────────────────────────────────────────────
 
+vi.mock('../../../lib/sentry', () => ({
+  captureVerificationBreadcrumb: vi.fn(),
+  captureVerificationException: vi.fn(),
+  captureVerificationInvalid: vi.fn(),
+  isSentryEnabled: vi.fn(() => false),
+  initSentry: vi.fn(),
+}))
+
+vi.mock('../../../utils/analytics', () => ({
+  trackDocumentDropped: vi.fn(),
+  trackDocumentVerified: vi.fn(),
+  trackDocumentVerifyError: vi.fn(),
+  trackNetworkSelectionShown: vi.fn(),
+  trackNetworkSelected: vi.fn(),
+  trackNetworkSelectionCancelled: vi.fn(),
+  trackVerificationReset: vi.fn(),
+}))
+
 // Mock import.meta.env
 Object.defineProperty(import.meta, 'env', {
   value: {

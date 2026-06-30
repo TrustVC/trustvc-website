@@ -1,4 +1,5 @@
 import type { NewsArticle } from '../../types/news'
+import { captureSanityError } from '../sentry'
 import { isSanityConfigured, sanityClient } from './client'
 
 const NEWS_LIST_QUERY = `*[_type == "post"] | order(publishedAt desc){
@@ -75,6 +76,7 @@ export const fetchNewsArticles = async () => {
     return sortFeaturedFirst(normalized)
   } catch (err) {
     console.error('[Sanity] fetchNewsArticles failed', err)
+    captureSanityError(err, { operation: 'fetchNewsArticles' })
     return []
   }
 }
@@ -88,6 +90,7 @@ export const fetchLatestFeaturedNewsArticle = async () => {
     return normalized.find(isFeaturedPost) ?? null
   } catch (err) {
     console.error('[Sanity] fetchLatestFeaturedNewsArticle failed', err)
+    captureSanityError(err, { operation: 'fetchLatestFeaturedNewsArticle' })
     return null
   }
 }
@@ -100,6 +103,7 @@ export const fetchNewsArticleCount = async () => {
     return typeof count === 'number' ? count : 0
   } catch (err) {
     console.error('[Sanity] fetchNewsArticleCount failed', err)
+    captureSanityError(err, { operation: 'fetchNewsArticleCount' })
     return 0
   }
 }
@@ -121,6 +125,7 @@ export const fetchNewsArticlesPage = async (offset: number, limit: number) => {
     return (data ?? []).map(normalizeFeatured)
   } catch (err) {
     console.error('[Sanity] fetchNewsArticlesPage failed', err)
+    captureSanityError(err, { operation: 'fetchNewsArticlesPage' })
     return []
   }
 }
@@ -138,6 +143,7 @@ export const fetchNewsArticleBySlug = async (slug: string) => {
     return data ? normalizeFeatured(data) : null
   } catch (err) {
     console.error('[Sanity] fetchNewsArticleBySlug failed', err)
+    captureSanityError(err, { operation: 'fetchNewsArticleBySlug' })
     return null
   }
 }
