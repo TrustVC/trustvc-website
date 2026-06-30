@@ -62,6 +62,20 @@ describe('scrubObject', () => {
     expect(result.Cookie).toBe('[Redacted]')
     expect(result.apiKey).toBe('[Redacted]')
   })
+
+  it('redacts camelCase sensitive keys regardless of casing', () => {
+    const result = scrubObject({
+      targetHash: 'abc123',
+      rawDocument: { data: 'x' },
+      fileContent: 'raw bytes',
+      fileText: 'plain text',
+    })
+
+    expect(result.targetHash).toBe('[Redacted]')
+    expect(result.rawDocument).toBe('[Redacted]')
+    expect(result.fileContent).toBe('[Redacted]')
+    expect(result.fileText).toBe('[Redacted]')
+  })
 })
 
 describe('scrubEvent', () => {

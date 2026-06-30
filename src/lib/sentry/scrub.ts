@@ -5,14 +5,14 @@ const REDACTED = '[Redacted]'
 /** Keys that must never leave the browser in Sentry payloads.
  * Only list keys NOT already caught by SENSITIVE_KEY_PATTERN below. */
 const SENSITIVE_KEYS = new Set([
-  'targetHash',
+  'targethash',
   'document',
-  'rawDocument',
+  'rawdocument',
   'doc',
   'email',
   'phone',
-  'fileContent',
-  'fileText',
+  'filecontent',
+  'filetext',
   'body',
 ])
 
@@ -184,6 +184,12 @@ export const scrubEvent = (event: Event, _hint?: EventHint): Event | null => {
 
   if (event.request?.url && typeof event.request.url === 'string') {
     event.request.url = scrubUrl(event.request.url)
+  }
+
+  if (event.request?.headers && typeof event.request.headers === 'object') {
+    event.request.headers = scrubObject(
+      event.request.headers as Record<string, unknown>
+    ) as Record<string, string>
   }
 
   if (event.request?.data) {
