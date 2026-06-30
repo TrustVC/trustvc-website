@@ -1,17 +1,18 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest'
 
+const mockScope = vi.hoisted(() => ({
+  setTag: vi.fn(),
+  setContext: vi.fn(),
+}))
+
 vi.mock('@sentry/react', () => ({
   init: vi.fn(),
   captureException: vi.fn(),
   captureMessage: vi.fn(),
   addBreadcrumb: vi.fn(),
-  withScope: vi.fn((fn: (scope: unknown) => void) => {
-    fn({
-      setTag: vi.fn(),
-      setContext: vi.fn(),
-    })
+  withScope: vi.fn((fn: (scope: typeof mockScope) => void) => {
+    fn(mockScope)
   }),
-  setContext: vi.fn(),
   browserTracingIntegration: vi.fn(() => ({})),
   ErrorBoundary: ({ children }: { children: unknown }) => children,
 }))
@@ -53,7 +54,7 @@ describe('captureVerificationException', () => {
       fileName: 'private-doc.json',
     })
 
-    expect(Sentry.setContext).toHaveBeenCalledWith('details', {
+    expect(mockScope.setContext).toHaveBeenCalledWith('details', {
       fileExtension: '.json',
     })
   })
@@ -85,6 +86,21 @@ describe('captureVerificationInvalid', () => {
       'warning'
     )
     expect(Sentry.captureException).not.toHaveBeenCalled()
+  })
+
+  it('attaches context via scope, not global Sentry.setContext', () => {
+    captureVerificationInvalid({
+      doc: {},
+      fileName: 'test.json',
+      chainId: '137',
+      errorType: 'VERIFICATION_ERROR',
+      fragments: [],
+    })
+
+    expect(mockScope.setContext).toHaveBeenCalledWith(
+      'verification',
+      expect.objectContaining({ fileExtension: '.json', fragmentSummary: [] })
+    )
   })
 })
 

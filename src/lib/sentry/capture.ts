@@ -30,10 +30,15 @@ const safeFileMetadata = (
   return { hasFileName: 'true' }
 }
 
+interface SentryScope {
+  setTag(key: string, value: string): void
+  setContext(key: string, context: Record<string, unknown> | null): void
+}
+
 const withScope = (
   source: ErrorSource,
   tags: Record<string, string | undefined>,
-  fn: () => void
+  fn: (scope: SentryScope) => void
 ): void => {
   if (!isSentryEnabled()) return
 
@@ -44,7 +49,7 @@ const withScope = (
         scope.setTag(key, value)
       }
     }
-    fn()
+    fn(scope)
   })
 }
 
@@ -71,11 +76,9 @@ export const captureAppException = (
     extra?: Record<string, unknown>
   }
 ): void => {
-  if (!isSentryEnabled()) return
-
-  withScope(context?.source ?? 'app', context?.tags ?? {}, () => {
+  withScope(context?.source ?? 'app', context?.tags ?? {}, scope => {
     if (context?.extra) {
-      Sentry.setContext('details', context.extra)
+      scope.setContext('details', context.extra)
     }
     Sentry.captureException(error)
   })
@@ -117,11 +120,6 @@ export const captureVerificationInvalid = (context: {
   if (!isSentryEnabled()) return
 
   const schema = getDocumentSchemaLabel(context.doc)
-  const fragmentSummary = (context.fragments ?? []).map(fragment => ({
-    name: fragment.name,
-    status: fragment.status,
-    type: fragment.type,
-  }))
 
   withScope(
     'verification',
@@ -131,8 +129,13 @@ export const captureVerificationInvalid = (context: {
       'verification.error_type': context.errorType,
       'verification.chain_id': context.chainId ?? undefined,
     },
-    () => {
-      Sentry.setContext('verification', {
+    scope => {
+      const fragmentSummary = (context.fragments ?? []).map(fragment => ({
+        name: fragment.name,
+        status: fragment.status,
+        type: fragment.type,
+      }))
+      scope.setContext('verification', {
         ...safeFileMetadata(context.fileName),
         errorMessage: context.errorMessage,
         fragmentSummary,
@@ -164,7 +167,7 @@ export const captureFetchError = (
   }
 ): void => {
   captureAppException(error, {
-    source: context.service === 'support-api' ? 'support-api' : 'app',
+    source: context.service,
     tags: {
       'http.path': context.path,
       'http.method': context.method ?? 'GET',

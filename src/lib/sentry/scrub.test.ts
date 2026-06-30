@@ -65,7 +65,10 @@ describe('scrubEvent', () => {
 
     const event = scrubEvent({
       message: payload,
-      logentry: { message: payload, formatted: payload },
+      logentry: { message: payload, formatted: payload } as {
+        message: string
+        formatted: string
+      },
       exception: {
         values: [{ type: 'Error', value: payload }],
       },

@@ -678,6 +678,7 @@ export const useVerify = (): UseVerifyReturn => {
       })
       await runVerification(parsedDoc, chainId, currentId, file.name)
     } catch (err) {
+      if (currentId !== verificationIdRef.current) return
       const errType = getErrorTypeFromError(err)
       clearVerificationMetadata()
       setErrorType(errType)
@@ -703,6 +704,7 @@ export const useVerify = (): UseVerifyReturn => {
       })
       await runVerification(pendingDoc, chainId, currentId, fileName)
     } catch (err) {
+      if (currentId !== verificationIdRef.current) return
       const errType = getErrorTypeFromError(err)
       clearVerificationMetadata()
       setErrorType(errType)
@@ -774,6 +776,7 @@ export const useVerify = (): UseVerifyReturn => {
     try {
       await runVerification(doc, chainId, currentId, name)
     } catch (err) {
+      if (currentId !== verificationIdRef.current) return
       const errType = getErrorTypeFromError(err)
       clearVerificationMetadata()
       setErrorType(errType)

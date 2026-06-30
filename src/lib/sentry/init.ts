@@ -1,4 +1,5 @@
 import * as Sentry from '@sentry/react'
+import type { Event, EventHint } from '@sentry/react'
 import { scrubBreadcrumb, scrubEvent } from './scrub'
 
 const dsn = import.meta.env.VITE_SENTRY_DSN as string | undefined
@@ -25,7 +26,8 @@ export const initSentry = (): void => {
     // Session replay disabled — the verify UI may display credential content.
     replaysSessionSampleRate: 0,
     replaysOnErrorSampleRate: 0,
-    beforeSend: scrubEvent,
+    beforeSend: (event, hint) =>
+      scrubEvent(event as Event, hint as EventHint) as typeof event | null,
     beforeBreadcrumb: scrubBreadcrumb,
     ignoreErrors: [
       'ResizeObserver loop limit exceeded',
