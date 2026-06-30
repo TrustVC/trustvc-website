@@ -653,11 +653,6 @@ export const useVerify = (): UseVerifyReturn => {
     setPendingDoc(null)
     clearVerificationMetadata()
 
-    captureVerificationBreadcrumb('Verification started', {
-      fileName: file.name,
-      source: 'file',
-    })
-
     trackDocumentDropped(file.name, source)
 
     let parsedDoc: any
@@ -677,6 +672,10 @@ export const useVerify = (): UseVerifyReturn => {
         return
       }
 
+      captureVerificationBreadcrumb('Verification started', {
+        fileName: file.name,
+        source: 'file',
+      })
       await runVerification(parsedDoc, chainId, currentId, file.name)
     } catch (err) {
       const errType = getErrorTypeFromError(err)
@@ -698,6 +697,10 @@ export const useVerify = (): UseVerifyReturn => {
     const docRef = pendingDoc
     trackNetworkSelected(chainId)
     try {
+      captureVerificationBreadcrumb('Verification started', {
+        fileName,
+        source: 'file',
+      })
       await runVerification(pendingDoc, chainId, currentId, fileName)
     } catch (err) {
       const errType = getErrorTypeFromError(err)

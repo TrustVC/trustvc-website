@@ -32,7 +32,9 @@ export const getDocumentSchemaLabel = (doc: unknown): DocumentSchemaLabel => {
     return 'OA v3'
   }
   if (vc.isSignedDocument(d) || vc.isRawDocument(d)) {
-    return vc.isSignedDocumentV2_0(d) ? 'W3C VC V2.0' : 'W3C VC V1.1'
+    return vc.isSignedDocumentV2_0(d) || vc.isRawDocumentV2_0(d)
+      ? 'W3C VC V2.0'
+      : 'W3C VC V1.1'
   }
   return 'Unknown'
 }

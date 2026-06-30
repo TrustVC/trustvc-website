@@ -23,6 +23,7 @@ vi.mock('./init', () => ({
 import * as Sentry from '@sentry/react'
 import {
   captureSanityError,
+  captureVerificationException,
   captureVerificationInvalid,
   triggerSentryTestError,
 } from './capture'
@@ -38,6 +39,23 @@ describe('captureSanityError', () => {
 
     expect(Sentry.captureException).toHaveBeenCalledWith(error)
     expect(Sentry.withScope).toHaveBeenCalled()
+  })
+})
+
+describe('captureVerificationException', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('sends file extension metadata instead of raw filename', () => {
+    captureVerificationException(new Error('parse failed'), {
+      stage: 'processFile',
+      fileName: 'private-doc.json',
+    })
+
+    expect(Sentry.setContext).toHaveBeenCalledWith('details', {
+      fileExtension: '.json',
+    })
   })
 })
 

@@ -2,39 +2,22 @@ import type { Breadcrumb, Event, EventHint } from '@sentry/react'
 
 const REDACTED = '[Redacted]'
 
-/** Keys that must never leave the browser in Sentry payloads. */
+/** Keys that must never leave the browser in Sentry payloads.
+ * Only list keys NOT already caught by SENSITIVE_KEY_PATTERN below. */
 const SENSITIVE_KEYS = new Set([
-  'proof',
-  'proofValue',
-  'proofs',
-  'credential',
-  'verifiableCredential',
-  'merkleRoot',
   'targetHash',
-  'signature',
-  'signatures',
-  'privateKey',
-  'payload',
-  'attachments',
   'document',
   'rawDocument',
   'doc',
   'email',
   'phone',
-  'password',
-  'token',
-  'accessToken',
-  'refreshToken',
-  'captchaToken',
-  'recaptchaToken',
-  'VITE_SANITY_READ_TOKEN',
   'fileContent',
   'fileText',
   'body',
 ])
 
 const SENSITIVE_KEY_PATTERN =
-  /proof|credential|merkle|signature|payload|attachment|private|secret|password|token/i
+  /proof|credential|merkle|signature|payload|attachment|private|secret|password|token|auth|cookie|apikey|api.key|bearer/i
 
 const CREDENTIAL_JSON_PATTERN =
   /"(?:proofValue|merkleRoot|targetHash|verifiableCredential|credentialSubject)"/i
@@ -48,6 +31,13 @@ const isSensitiveKey = (key: string): boolean =>
 const looksLikeCredentialPayload = (value: string): boolean =>
   value.length > MAX_STRING_LENGTH || CREDENTIAL_JSON_PATTERN.test(value)
 
+const scrubString = (value: string): string => {
+  if (looksLikeCredentialPayload(value)) {
+    return `[Redacted string len=${value.length}]`
+  }
+  return value
+}
+
 export const scrubValue = (value: unknown, depth = 0): unknown => {
   if (depth > MAX_DEPTH) return '[Truncated]'
 
@@ -60,10 +50,7 @@ export const scrubValue = (value: unknown, depth = 0): unknown => {
   }
 
   if (typeof value === 'string') {
-    if (looksLikeCredentialPayload(value)) {
-      return `[Redacted string len=${value.length}]`
-    }
-    return value
+    return scrubString(value)
   }
 
   if (Array.isArray(value)) {
@@ -95,15 +82,52 @@ export const scrubObject = (
 }
 
 export const scrubBreadcrumb = (breadcrumb: Breadcrumb): Breadcrumb | null => {
-  if (!breadcrumb.data) return breadcrumb
+  const scrubbed: Breadcrumb = { ...breadcrumb }
 
-  return {
-    ...breadcrumb,
-    data: scrubObject(breadcrumb.data as Record<string, unknown>),
+  if (typeof scrubbed.message === 'string') {
+    scrubbed.message = scrubString(scrubbed.message)
   }
+
+  if (scrubbed.data) {
+    scrubbed.data = scrubObject(scrubbed.data as Record<string, unknown>)
+  }
+
+  return scrubbed
 }
 
 export const scrubEvent = (event: Event, _hint?: EventHint): Event | null => {
+  if (typeof event.message === 'string') {
+    event.message = scrubString(event.message)
+  }
+
+  if (event.logentry) {
+    const logentry = {
+      ...event.logentry,
+      ...(typeof event.logentry.message === 'string'
+        ? { message: scrubString(event.logentry.message) }
+        : {}),
+    } as Event['logentry'] & { formatted?: string }
+
+    if (typeof logentry.formatted === 'string') {
+      logentry.formatted = scrubString(logentry.formatted)
+    }
+
+    event.logentry = logentry
+  }
+
+  if (event.exception?.values) {
+    event.exception = {
+      ...event.exception,
+      values: event.exception.values.map(value => ({
+        ...value,
+        value:
+          typeof value.value === 'string'
+            ? scrubString(value.value)
+            : value.value,
+      })),
+    }
+  }
+
   if (event.extra) {
     event.extra = scrubObject(event.extra as Record<string, unknown>)
   }
@@ -125,10 +149,14 @@ export const scrubEvent = (event: Event, _hint?: EventHint): Event | null => {
       .filter((crumb): crumb is Breadcrumb => crumb != null)
   }
 
-  if (event.request?.data && typeof event.request.data === 'object') {
-    event.request.data = scrubObject(
-      event.request.data as Record<string, unknown>
-    )
+  if (event.request?.data) {
+    if (typeof event.request.data === 'string') {
+      event.request.data = scrubString(event.request.data)
+    } else if (typeof event.request.data === 'object') {
+      event.request.data = scrubObject(
+        event.request.data as Record<string, unknown>
+      )
+    }
   }
 
   return event

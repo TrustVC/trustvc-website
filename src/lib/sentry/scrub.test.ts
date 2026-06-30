@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { scrubObject, scrubValue } from './scrub'
+import { scrubBreadcrumb, scrubEvent, scrubObject, scrubValue } from './scrub'
 
 describe('scrubValue', () => {
   it('redacts sensitive keys in objects', () => {
@@ -42,5 +42,57 @@ describe('scrubObject', () => {
       issuer_identity: 'example.com',
       proof: '[Redacted]',
     })
+  })
+
+  it('redacts auth-related keys', () => {
+    const result = scrubObject({
+      Authorization: 'Bearer secret',
+      Cookie: 'session=abc',
+      apiKey: 'key-123',
+    })
+
+    expect(result.Authorization).toBe('[Redacted]')
+    expect(result.Cookie).toBe('[Redacted]')
+    expect(result.apiKey).toBe('[Redacted]')
+  })
+})
+
+describe('scrubEvent', () => {
+  it('scrubs string message fields and request bodies', () => {
+    const payload = JSON.stringify({
+      proofValue: 'x'.repeat(600),
+    })
+
+    const event = scrubEvent({
+      message: payload,
+      logentry: { message: payload, formatted: payload },
+      exception: {
+        values: [{ type: 'Error', value: payload }],
+      },
+      request: { data: payload },
+    })
+
+    expect(event?.message).toMatch(/^\[Redacted string len=\d+\]$/)
+    expect(event?.logentry?.message).toMatch(/^\[Redacted string len=\d+\]$/)
+    expect(
+      (event?.logentry as { formatted?: string } | undefined)?.formatted
+    ).toMatch(/^\[Redacted string len=\d+\]$/)
+    expect(event?.exception?.values?.[0]?.value).toMatch(
+      /^\[Redacted string len=\d+\]$/
+    )
+    expect(event?.request?.data).toMatch(/^\[Redacted string len=\d+\]$/)
+  })
+})
+
+describe('scrubBreadcrumb', () => {
+  it('scrubs breadcrumb message and data', () => {
+    const payload = JSON.stringify({ proofValue: 'x'.repeat(600) })
+    const breadcrumb = scrubBreadcrumb({
+      message: payload,
+      data: { authorization: 'Bearer secret' },
+    })
+
+    expect(breadcrumb?.message).toMatch(/^\[Redacted string len=\d+\]$/)
+    expect(breadcrumb?.data).toEqual({ authorization: '[Redacted]' })
   })
 })

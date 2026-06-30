@@ -11,15 +11,37 @@ export default defineConfig(({ mode }) => {
   const isTest = mode === 'test'
   const env = loadEnv(mode, process.cwd(), '')
 
-  const sentryAuthToken = env.SENTRY_AUTH_TOKEN || process.env.SENTRY_AUTH_TOKEN
-  const sentryOrg = env.SENTRY_ORG || process.env.SENTRY_ORG
-  const sentryProject =
-    env.SENTRY_PROJECT || process.env.SENTRY_PROJECT
+  const sentryAuthToken =
+    env.SENTRY_AUTH_TOKEN ?? process.env.SENTRY_AUTH_TOKEN
+  const sentryOrg = env.SENTRY_ORG ?? process.env.SENTRY_ORG
+  const sentryProject = env.SENTRY_PROJECT ?? process.env.SENTRY_PROJECT
   const sentryRelease =
-    env.VITE_SENTRY_RELEASE || process.env.VITE_SENTRY_RELEASE
+    env.VITE_SENTRY_RELEASE ?? process.env.VITE_SENTRY_RELEASE
 
-  const enableSentrySourceMaps =
-    !isTest && Boolean(sentryAuthToken && sentryOrg && sentryProject)
+  const sentryBuildVars = {
+    SENTRY_AUTH_TOKEN: sentryAuthToken,
+    SENTRY_ORG: sentryOrg,
+    SENTRY_PROJECT: sentryProject,
+    VITE_SENTRY_RELEASE: sentryRelease,
+  }
+  const sentryBuildValues = Object.values(sentryBuildVars)
+  const allSentryBuildVarsEmpty = sentryBuildValues.every(
+    value => value === undefined || value === ''
+  )
+  const allSentryBuildVarsSet = sentryBuildValues.every(
+    value => value !== undefined && value !== ''
+  )
+
+  if (!isTest && !allSentryBuildVarsEmpty && !allSentryBuildVarsSet) {
+    const missing = Object.entries(sentryBuildVars)
+      .filter(([, value]) => value === undefined || value === '')
+      .map(([key]) => key)
+    throw new Error(
+      `Incomplete Sentry build configuration. Set all of SENTRY_AUTH_TOKEN, SENTRY_ORG, SENTRY_PROJECT, and VITE_SENTRY_RELEASE, or leave them all empty to skip source map upload. Missing: ${missing.join(', ')}`
+    )
+  }
+
+  const enableSentrySourceMaps = !isTest && allSentryBuildVarsSet
 
   return {
     define: {

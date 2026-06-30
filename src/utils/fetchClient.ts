@@ -30,6 +30,11 @@ export class FetchClientError extends Error {
   }
 }
 
+const isAbortError = (error: unknown): boolean =>
+  error instanceof DOMException
+    ? error.name === 'AbortError'
+    : error instanceof Error && error.name === 'AbortError'
+
 export const createFetchClient = ({
   baseUrl,
   timeoutMs,
@@ -44,18 +49,18 @@ export const createFetchClient = ({
     const timeoutId = globalThis.setTimeout(() => controller.abort(), timeoutMs)
     const signal = init?.signal
     const method = init?.method ?? 'GET'
+    let onCallerAbort: (() => void) | undefined
 
     if (signal) {
       if (signal.aborted) controller.abort()
-      signal.addEventListener('abort', () => controller.abort(), { once: true })
+      onCallerAbort = () => controller.abort()
+      signal.addEventListener('abort', onCallerAbort, { once: true })
     }
 
     try {
       const response = await fetch(`${normalizedBaseUrl}${path}`, {
         ...init,
         signal: controller.signal,
-      }).finally(() => {
-        globalThis.clearTimeout(timeoutId)
       })
 
       const contentType = response.headers.get('content-type') || ''
@@ -93,10 +98,15 @@ export const createFetchClient = ({
 
       return data as T
     } catch (error) {
-      if (!(error instanceof FetchClientError)) {
+      if (!(error instanceof FetchClientError) && !isAbortError(error)) {
         captureFetchError(error, { service, path, method })
       }
       throw error
+    } finally {
+      globalThis.clearTimeout(timeoutId)
+      if (signal && onCallerAbort) {
+        signal.removeEventListener('abort', onCallerAbort)
+      }
     }
   }
 

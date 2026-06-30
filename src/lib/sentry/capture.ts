@@ -17,6 +17,19 @@ export type VerificationStage =
   | 'loadDocument'
   | 'runVerification'
 
+const safeFileMetadata = (
+  fileName?: string
+): Record<string, string> | undefined => {
+  if (!fileName) return undefined
+
+  const dotIndex = fileName.lastIndexOf('.')
+  if (dotIndex > 0 && dotIndex < fileName.length - 1) {
+    return { fileExtension: fileName.slice(dotIndex) }
+  }
+
+  return { hasFileName: 'true' }
+}
+
 const withScope = (
   source: ErrorSource,
   tags: Record<string, string | undefined>,
@@ -89,9 +102,7 @@ export const captureVerificationException = (
       'verification.stage': context.stage,
       'verification.chain_id': context.chainId ?? undefined,
     },
-    extra: {
-      fileName: context.fileName,
-    },
+    extra: safeFileMetadata(context.fileName),
   })
 }
 
@@ -122,7 +133,7 @@ export const captureVerificationInvalid = (context: {
     },
     () => {
       Sentry.setContext('verification', {
-        fileName: context.fileName,
+        ...safeFileMetadata(context.fileName),
         errorMessage: context.errorMessage,
         fragmentSummary,
       })
