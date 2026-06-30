@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite --mode development --open",
-    "build:dev": "vite build --mode development",
-    "build:prod": "vite build --mode production",
-    "build": "vite build --mode production",
+    "build:dev": "NODE_OPTIONS=--max-old-space-size=6144 vite build --mode development",
+    "build:prod": "NODE_OPTIONS=--max-old-space-size=6144 vite build --mode production",
+    "build": "NODE_OPTIONS=--max-old-space-size=6144 vite build --mode production",
     "preview": "npm run build && vite preview",
     "preview:dev": "npm run build:dev && vite preview --mode development",
     "preview:prod": "npm run build:prod && vite preview --mode production",
