@@ -147,6 +147,29 @@ describe('fetchClient', () => {
       expect(captureFetchError).not.toHaveBeenCalled()
     })
 
+    it('reports timeout aborts to Sentry', async () => {
+      // Fire the timeout callback synchronously so timedOut=true before fetch rejects
+      vi.stubGlobal(
+        'setTimeout',
+        vi.fn().mockImplementation((fn: () => void) => {
+          fn()
+          return 0
+        })
+      )
+      vi.stubGlobal('clearTimeout', vi.fn())
+
+      const abortError = new DOMException(
+        'The user aborted a request.',
+        'AbortError'
+      )
+      vi.stubGlobal('fetch', vi.fn().mockRejectedValue(abortError))
+
+      const client = createFetchClient({ baseUrl: 'https://api.example.com' })
+      await expect(client.request('/slow')).rejects.toThrow()
+
+      expect(captureFetchError).toHaveBeenCalledOnce()
+    })
+
     it('removes caller abort listener after request completes', async () => {
       const removeEventListener = vi.fn()
       const signal = {

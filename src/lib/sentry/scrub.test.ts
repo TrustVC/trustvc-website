@@ -27,6 +27,13 @@ describe('scrubValue', () => {
   it('preserves short non-sensitive strings', () => {
     expect(scrubValue('DNS-TXT')).toBe('DNS-TXT')
   })
+
+  it('strips hash, q, and sensitive query params from URLs', () => {
+    const url =
+      'https://trustvc.io/verify?token=abc&apiKey=xyz&safe=keep#{"key":"secret"}'
+    const result = scrubValue(url)
+    expect(result).toBe('https://trustvc.io/verify?safe=keep')
+  })
 })
 
 describe('scrubObject', () => {

@@ -108,11 +108,12 @@ describe('triggerSentryTestError', () => {
   it('blocks test errors in production environment', () => {
     vi.stubEnv('VITE_SENTRY_ENVIRONMENT', 'production')
     vi.stubEnv('VITE_SENTRY_DSN', 'https://example@o0.ingest.sentry.io/0')
-
-    expect(() => triggerSentryTestError()).toThrow(
-      'Sentry test errors are disabled in production'
-    )
-
-    vi.unstubAllEnvs()
+    try {
+      expect(() => triggerSentryTestError()).toThrow(
+        'Sentry test errors are disabled in production'
+      )
+    } finally {
+      vi.unstubAllEnvs()
+    }
   })
 })

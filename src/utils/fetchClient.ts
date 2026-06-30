@@ -46,7 +46,11 @@ export const createFetchClient = ({
   const request = async <T>(path: string, init?: RequestInit): Promise<T> => {
     const controller = new AbortController()
     const timeoutMs = defaultTimeoutMs
-    const timeoutId = globalThis.setTimeout(() => controller.abort(), timeoutMs)
+    let timedOut = false
+    const timeoutId = globalThis.setTimeout(() => {
+      timedOut = true
+      controller.abort()
+    }, timeoutMs)
     const signal = init?.signal
     const method = init?.method ?? 'GET'
     let onCallerAbort: (() => void) | undefined
@@ -98,8 +102,11 @@ export const createFetchClient = ({
 
       return data as T
     } catch (error) {
-      if (!(error instanceof FetchClientError) && !isAbortError(error)) {
-        captureFetchError(error, { service, path, method })
+      if (!(error instanceof FetchClientError)) {
+        const callerAborted = isAbortError(error) && !timedOut
+        if (!callerAborted) {
+          captureFetchError(error, { service, path, method })
+        }
       }
       throw error
     } finally {
