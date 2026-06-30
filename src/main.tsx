@@ -26,21 +26,21 @@ const defaultChainId = getChainInfoFromNetworkName(NETWORK_NAME).id
 
 ReactDOM.createRoot(rootElement).render(
   <React.StrictMode>
-    <DocumentProvider>
-      <BrowserRouter>
-        <ProviderContextProvider
-          defaultChainId={defaultChainId}
-          networks={getSupportedChainInfo()}
-        >
-          <TokenInformationContextProvider>
-            <OverlayProvider>
-              <SentryErrorBoundary>
+    <SentryErrorBoundary>
+      <DocumentProvider>
+        <BrowserRouter>
+          <ProviderContextProvider
+            defaultChainId={defaultChainId}
+            networks={getSupportedChainInfo()}
+          >
+            <TokenInformationContextProvider>
+              <OverlayProvider>
                 <App />
-              </SentryErrorBoundary>
-            </OverlayProvider>
-          </TokenInformationContextProvider>
-        </ProviderContextProvider>
-      </BrowserRouter>
-    </DocumentProvider>
+              </OverlayProvider>
+            </TokenInformationContextProvider>
+          </ProviderContextProvider>
+        </BrowserRouter>
+      </DocumentProvider>
+    </SentryErrorBoundary>
   </React.StrictMode>
 )
