@@ -150,6 +150,54 @@ export const scrubEvent = (event: Event, _hint?: EventHint): Event | null => {
   }
 
   if (event.request?.data) {
+const SENSITIVE_KEYS = new Set(
+  [
+    'proof',
+    'proofValue',
+    'proofs',
+    'credential',
+    'verifiableCredential',
+    'merkleRoot',
+    'targetHash',
+    'signature',
+    'signatures',
+    'privateKey',
+    'payload',
+    'attachments',
+    'document',
+    'rawDocument',
+    'doc',
+    'email',
+    'phone',
+    'password',
+    'token',
+    'accessToken',
+    'refreshToken',
+    'captchaToken',
+    'recaptchaToken',
+    'VITE_SANITY_READ_TOKEN',
+    'fileContent',
+    'fileText',
+    'body',
+  ].map(key => key.toLowerCase())
+)
+
+const SENSITIVE_KEY_PATTERN =
+  /proof|credential|merkle|signature|payload|attachment|private|secret|password|token|email|phone|body|document|file(?:content|text)/i
+
+const CREDENTIAL_JSON_PATTERN =
+  /"(?:proofValue|merkleRoot|targetHash|verifiableCredential|credentialSubject)"/i
+
+const MAX_STRING_LENGTH = 500
+const MAX_DEPTH = 8
+
+const isSensitiveKey = (key: string): boolean => {
+  const normalizedKey = key.toLowerCase()
+  return (
+    SENSITIVE_KEYS.has(normalizedKey) ||
+    SENSITIVE_KEY_PATTERN.test(normalizedKey)
+  )
+}
     if (typeof event.request.data === 'string') {
       event.request.data = scrubString(event.request.data)
     } else if (typeof event.request.data === 'object') {
