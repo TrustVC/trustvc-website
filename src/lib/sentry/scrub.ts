@@ -31,7 +31,23 @@ const isSensitiveKey = (key: string): boolean =>
 const looksLikeCredentialPayload = (value: string): boolean =>
   value.length > MAX_STRING_LENGTH || CREDENTIAL_JSON_PATTERN.test(value)
 
+// Strip the hash fragment (decryption key) and the `q` query param (document URI)
+// from share-link URLs before they leave the browser in Sentry payloads.
+const scrubUrl = (value: string): string => {
+  try {
+    const parsed = new URL(value)
+    parsed.hash = ''
+    parsed.searchParams.delete('q')
+    return parsed.toString()
+  } catch {
+    return value
+  }
+}
+
 const scrubString = (value: string): string => {
+  if (value.startsWith('https://') || value.startsWith('http://')) {
+    return scrubUrl(value)
+  }
   if (looksLikeCredentialPayload(value)) {
     return `[Redacted string len=${value.length}]`
   }
@@ -147,6 +163,10 @@ export const scrubEvent = (event: Event, _hint?: EventHint): Event | null => {
     event.breadcrumbs = event.breadcrumbs
       .map(crumb => scrubBreadcrumb(crumb))
       .filter((crumb): crumb is Breadcrumb => crumb != null)
+  }
+
+  if (event.request?.url && typeof event.request.url === 'string') {
+    event.request.url = scrubUrl(event.request.url)
   }
 
   if (event.request?.data) {

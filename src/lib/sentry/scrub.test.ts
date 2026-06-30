@@ -85,6 +85,21 @@ describe('scrubEvent', () => {
     )
     expect(event?.request?.data).toMatch(/^\[Redacted string len=\d+\]$/)
   })
+
+  it('strips hash and q param from request.url', () => {
+    const shareUrl =
+      'https://trustvc.io/?q=%7B%22type%22%3A%22DOCUMENT%22%7D#{"key":"secret"}'
+    const event = scrubEvent({ request: { url: shareUrl } })
+
+    expect(event?.request?.url).not.toContain('#')
+    expect(event?.request?.url).not.toContain('?q=')
+    expect(event?.request?.url).toBe('https://trustvc.io/')
+  })
+
+  it('leaves request.url unchanged when no sensitive params present', () => {
+    const event = scrubEvent({ request: { url: 'https://trustvc.io/' } })
+    expect(event?.request?.url).toBe('https://trustvc.io/')
+  })
 })
 
 describe('scrubBreadcrumb', () => {
@@ -97,5 +112,21 @@ describe('scrubBreadcrumb', () => {
 
     expect(breadcrumb?.message).toMatch(/^\[Redacted string len=\d+\]$/)
     expect(breadcrumb?.data).toEqual({ authorization: '[Redacted]' })
+  })
+
+  it('strips hash and q param from navigation breadcrumb from/to URLs', () => {
+    const sensitiveUrl =
+      'https://trustvc.io/?q=%7B%22type%22%3A%22DOCUMENT%22%7D#{"key":"secret"}'
+    const breadcrumb = scrubBreadcrumb({
+      type: 'navigation',
+      category: 'navigation',
+      data: { from: sensitiveUrl, to: 'https://trustvc.io/' },
+    })
+
+    const from = breadcrumb?.data?.from as string
+    expect(from).not.toContain('#')
+    expect(from).not.toContain('?q=')
+    expect(from).toBe('https://trustvc.io/')
+    expect(breadcrumb?.data?.to).toBe('https://trustvc.io/')
   })
 })
