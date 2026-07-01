@@ -59,6 +59,22 @@ export default defineConfig(({ mode }) => {
         // some CJS can leak into ESM chunks and throw "exports is not defined".
         transformMixedEsModules: true,
       },
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (
+              id.includes('/node_modules/ethers/') ||
+              id.includes('/node_modules/@tradetrust-tt/') ||
+              id.includes('/node_modules/@trustvc/')
+            ) return 'vendor-web3'
+            if (
+              id.includes('/node_modules/react/') ||
+              id.includes('/node_modules/react-dom/') ||
+              id.includes('/node_modules/react-router')
+            ) return 'vendor-react'
+          },
+        },
+      },
     },
     plugins: [
       react(),
