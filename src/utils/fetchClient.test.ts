@@ -1,6 +1,12 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { createFetchClient, FetchClientError } from './fetchClient'
 
+vi.mock('../lib/sentry', () => ({
+  captureFetchError: vi.fn(),
+}))
+
+import { captureFetchError } from '../lib/sentry'
+
 describe('fetchClient', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -121,6 +127,71 @@ describe('fetchClient', () => {
           'Request failed with status 500'
         )
       }
+    })
+
+    it('does not report caller aborts to Sentry', async () => {
+      const abortError = new DOMException(
+        'The user aborted a request.',
+        'AbortError'
+      )
+      vi.stubGlobal('fetch', vi.fn().mockRejectedValue(abortError))
+
+      const client = createFetchClient({ baseUrl: 'https://api.example.com' })
+      const controller = new AbortController()
+      controller.abort()
+
+      await expect(
+        client.request('/aborted', { signal: controller.signal })
+      ).rejects.toThrow()
+
+      expect(captureFetchError).not.toHaveBeenCalled()
+    })
+
+    it('reports timeout aborts to Sentry', async () => {
+      // Fire the timeout callback synchronously so timedOut=true before fetch rejects
+      vi.stubGlobal(
+        'setTimeout',
+        vi.fn().mockImplementation((fn: () => void) => {
+          fn()
+          return 0
+        })
+      )
+      vi.stubGlobal('clearTimeout', vi.fn())
+
+      const abortError = new DOMException(
+        'The user aborted a request.',
+        'AbortError'
+      )
+      vi.stubGlobal('fetch', vi.fn().mockRejectedValue(abortError))
+
+      const client = createFetchClient({ baseUrl: 'https://api.example.com' })
+      await expect(client.request('/slow')).rejects.toThrow()
+
+      expect(captureFetchError).toHaveBeenCalledOnce()
+    })
+
+    it('removes caller abort listener after request completes', async () => {
+      const removeEventListener = vi.fn()
+      const signal = {
+        aborted: false,
+        addEventListener: vi.fn(),
+        removeEventListener,
+      } as unknown as AbortSignal
+
+      vi.stubGlobal(
+        'fetch',
+        vi.fn().mockResolvedValue({
+          ok: true,
+          headers: new Headers({ 'content-type': 'application/json' }),
+          json: () => Promise.resolve({ success: true }),
+        })
+      )
+
+      const client = createFetchClient({ baseUrl: 'https://api.example.com' })
+      await client.request('/ok', { signal })
+
+      expect(signal.addEventListener).toHaveBeenCalled()
+      expect(removeEventListener).toHaveBeenCalled()
     })
   })
 

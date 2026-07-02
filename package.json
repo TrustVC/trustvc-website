@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite --mode development --open",
-    "build:dev": "vite build --mode development",
-    "build:prod": "vite build --mode production",
-    "build": "vite build --mode production",
+    "build:dev": "NODE_OPTIONS=--max-old-space-size=6144 vite build --mode development",
+    "build:prod": "NODE_OPTIONS=--max-old-space-size=6144 vite build --mode production",
+    "build": "NODE_OPTIONS=--max-old-space-size=6144 vite build --mode production",
     "preview": "npm run build && vite preview",
     "preview:dev": "npm run build:dev && vite preview --mode development",
     "preview:prod": "npm run build:prod && vite preview --mode production",
@@ -32,6 +32,7 @@
   "dependencies": {
     "@sanity/client": "^7.20.0",
     "@sanity/image-url": "^2.1.1",
+    "@sentry/react": "^10.62.0",
     "@trustvc/decentralized-renderer-react-components": "^1.0.3",
     "@trustvc/trustvc": "^2.14.1",
     "@types/lodash": "^4.17.24",
@@ -43,12 +44,14 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-feather": "^2.0.10",
+    "react-ga4": "^3.0.1",
     "react-router-dom": "^7.12.0",
     "react-tooltip": "^5.30.0",
     "swiper": "^12.0.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
+    "@sentry/vite-plugin": "^5.3.0",
     "@synthetixio/synpress": "4.0.5",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",

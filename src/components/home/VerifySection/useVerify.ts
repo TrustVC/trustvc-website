@@ -22,6 +22,21 @@ import {
 import { getRpcUrl, getIsExpired } from '../../../utils/helper'
 import { useDocumentContext } from '../../common/contexts/DocumentContext'
 import { type VerifyErrorType, getErrorTypeFromError } from './verifyErrorUtils'
+import {
+  captureVerificationBreadcrumb,
+  captureVerificationException,
+  captureVerificationInvalid,
+} from '../../../lib/sentry'
+import {
+  trackDocumentDropped,
+  trackDocumentVerified,
+  trackDocumentVerifyError,
+  trackNetworkSelectionShown,
+  trackNetworkSelected,
+  trackNetworkSelectionCancelled,
+  trackVerificationReset,
+  type DocumentDroppedSource,
+} from '../../../utils/analytics'
 
 export type VerifyStatus =
   | 'idle'
@@ -78,7 +93,8 @@ export interface UseVerifyReturn {
   loadDocument: (
     _doc: unknown,
     _chainId: string | null | undefined,
-    _name: string
+    _name: string,
+    _source?: DocumentDroppedSource
   ) => Promise<void>
 }
 
@@ -496,7 +512,8 @@ export const useVerify = (): UseVerifyReturn => {
   const runVerification = async (
     doc: unknown,
     chainId: string | null | undefined,
-    currentId: number
+    currentId: number,
+    verificationFileName?: string
   ) => {
     const isStale = () => currentId !== verificationIdRef.current
 
@@ -518,9 +535,19 @@ export const useVerify = (): UseVerifyReturn => {
     const hasAtLeastOneValid = groupStatuses.some(s => s === 'VALID')
     const hasNoInvalid = groupStatuses.every(s => s !== 'INVALID')
     const isValid = hasAtLeastOneValid && hasNoInvalid
+    const errorType = !isValid ? getErrorTypeFromFragments(results) : undefined
     if (!isValid) {
-      setErrorType(getErrorTypeFromFragments(results))
-      setErrorMessage(getErrorMessageFromFragments(results))
+      const errorMessage = getErrorMessageFromFragments(results)
+      setErrorType(errorType!)
+      setErrorMessage(errorMessage)
+      captureVerificationInvalid({
+        doc,
+        fileName: (verificationFileName ?? fileName) || undefined,
+        chainId,
+        errorType: errorType!,
+        errorMessage,
+        fragments: results,
+      })
     }
 
     // Compute issuer name
@@ -538,7 +565,8 @@ export const useVerify = (): UseVerifyReturn => {
     setTokenRegistryAddress(registryAddress)
     setTokenRegistryAddressContext(registryAddress || null)
 
-    setIsExpired(getIsExpired(doc))
+    const isExpired = getIsExpired(doc)
+    setIsExpired(isExpired)
 
     //add code to fetch TokenId , keyId from the document
     const _keyId = getDocumentData(doc as any)?.id
@@ -579,6 +607,22 @@ export const useVerify = (): UseVerifyReturn => {
     setRawDocument(doc)
     setVerifiedChainId(chainId ?? '')
     setVerifyStatus(isValid ? 'valid' : 'invalid')
+
+    captureVerificationBreadcrumb(
+      isValid
+        ? 'Verification completed (valid)'
+        : 'Verification completed (invalid)',
+      {
+        chainId: chainId ?? undefined,
+        fileName: (verificationFileName ?? fileName) || undefined,
+      }
+    )
+    trackDocumentVerified(doc, results, isValid, issuer, errorType, {
+      isExpired,
+      isTransferable: transferable,
+      tokenRegistryVersion: trVersion,
+      chainId: chainId ?? null,
+    })
   }
 
   const clearVerificationMetadata = () => {
@@ -598,7 +642,10 @@ export const useVerify = (): UseVerifyReturn => {
     setKeyIdContext(null)
   }
 
-  const processFile = async (file: File) => {
+  const processFile = async (
+    file: File,
+    source: DocumentDroppedSource = 'file_picker'
+  ) => {
     const currentId = ++verificationIdRef.current
     setFileName(file.name)
     setVerifyStatus('verifying')
@@ -606,26 +653,41 @@ export const useVerify = (): UseVerifyReturn => {
     setPendingDoc(null)
     clearVerificationMetadata()
 
+    trackDocumentDropped(file.name, source)
+
+    let parsedDoc: any
     try {
       const text = await file.text()
-      const doc = JSON.parse(text)
+      parsedDoc = JSON.parse(text)
       // Prefer the document's own chain; fall back to its embedded network field
       // (getChainId ignores that for DNS-DID/DID docs, which can still use a
       // REVOCATION_STORE on that chain) before asking the user to pick one.
-      const chainId = getChainId(doc) ?? getEmbeddedChainId(doc)
+      const chainId = getChainId(parsedDoc) ?? getEmbeddedChainId(parsedDoc)
 
-      if (!chainId && requiresNetworkSelection(doc)) {
+      if (!chainId && requiresNetworkSelection(parsedDoc)) {
         // Needs blockchain verification but has no chain anywhere — ask the user
-        setPendingDoc(doc)
+        setPendingDoc(parsedDoc)
         setVerifyStatus('network-select')
+        trackNetworkSelectionShown(parsedDoc)
         return
       }
 
-      await runVerification(doc, chainId, currentId)
+      captureVerificationBreadcrumb('Verification started', {
+        fileName: file.name,
+        source: 'file',
+      })
+      await runVerification(parsedDoc, chainId, currentId, file.name)
     } catch (err) {
+      if (currentId !== verificationIdRef.current) return
+      const errType = getErrorTypeFromError(err)
       clearVerificationMetadata()
-      setErrorType(getErrorTypeFromError(err))
+      setErrorType(errType)
       setVerifyStatus('error')
+      captureVerificationException(err, {
+        stage: 'processFile',
+        fileName: file.name,
+      })
+      trackDocumentVerifyError(parsedDoc, errType)
     }
   }
 
@@ -633,18 +695,33 @@ export const useVerify = (): UseVerifyReturn => {
     if (!pendingDoc) return
     const currentId = ++verificationIdRef.current
     setVerifyStatus('verifying')
+    const docRef = pendingDoc
+    trackNetworkSelected(chainId)
     try {
-      await runVerification(pendingDoc, chainId, currentId)
+      captureVerificationBreadcrumb('Verification started', {
+        fileName,
+        source: 'file',
+      })
+      await runVerification(pendingDoc, chainId, currentId, fileName)
     } catch (err) {
+      if (currentId !== verificationIdRef.current) return
+      const errType = getErrorTypeFromError(err)
       clearVerificationMetadata()
-      setErrorType(getErrorTypeFromError(err))
+      setErrorType(errType)
       setVerifyStatus('error')
+      captureVerificationException(err, {
+        stage: 'handleNetworkConfirm',
+        fileName,
+        chainId,
+      })
+      trackDocumentVerifyError(docRef, errType)
     } finally {
       setPendingDoc(null)
     }
   }
 
   const handleNetworkCancel = () => {
+    trackNetworkSelectionCancelled()
     setVerifyStatus('idle')
     setFileName('')
     setPendingDoc(null)
@@ -666,13 +743,13 @@ export const useVerify = (): UseVerifyReturn => {
     e.stopPropagation()
     setDragActive(false)
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      processFile(e.dataTransfer.files[0])
+      processFile(e.dataTransfer.files[0], 'drop')
     }
   }
 
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      processFile(e.target.files[0])
+      processFile(e.target.files[0], 'file_picker')
       e.target.value = ''
     }
   }
@@ -680,7 +757,8 @@ export const useVerify = (): UseVerifyReturn => {
   const loadDocument = async (
     doc: unknown,
     chainId: string | null | undefined,
-    name: string
+    name: string,
+    source: DocumentDroppedSource = 'url'
   ) => {
     const currentId = ++verificationIdRef.current
     setFileName(name)
@@ -689,16 +767,31 @@ export const useVerify = (): UseVerifyReturn => {
     setPendingDoc(null)
     clearVerificationMetadata()
 
+    captureVerificationBreadcrumb('Verification started', {
+      fileName: name,
+      source: 'url',
+    })
+    trackDocumentDropped(name, source)
+
     try {
-      await runVerification(doc, chainId, currentId)
+      await runVerification(doc, chainId, currentId, name)
     } catch (err) {
+      if (currentId !== verificationIdRef.current) return
+      const errType = getErrorTypeFromError(err)
       clearVerificationMetadata()
-      setErrorType(getErrorTypeFromError(err))
+      setErrorType(errType)
       setVerifyStatus('error')
+      captureVerificationException(err, {
+        stage: 'loadDocument',
+        fileName: name,
+        chainId,
+      })
+      trackDocumentVerifyError(doc, errType)
     }
   }
 
   const handleReset = () => {
+    trackVerificationReset()
     setVerifyStatus('idle')
     setFragments([])
     setFileName('')
