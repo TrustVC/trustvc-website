@@ -4331,6 +4331,11 @@ p.small {
   height: 24px;
 }
 
+.connect-magiclink-button-icon {
+  width: 24px;
+  height: 24px;
+}
+
 .connect-metamask-button-text {
   display: flex;
   flex-direction: row;
