@@ -8,7 +8,14 @@ declare global {
        * reCAPTCHA v2 global helper (loaded from https://www.google.com/recaptcha/api.js)
        */
       ready: (cb: () => void) => void
-      render: (container: HTMLElement, params: { sitekey: string }) => number
+      render: (
+        container: HTMLElement,
+        params: {
+          sitekey: string
+          callback?: (token: string) => void
+          'expired-callback'?: () => void
+        }
+      ) => number
       getResponse: (widgetId?: number) => string
       reset: (widgetId?: number) => void
     }

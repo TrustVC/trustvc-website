@@ -381,18 +381,10 @@ export const useContactForm = (options: UseContactFormOptions) => {
               size: a.file.size,
             }))
             const presigned = await getPresignedUrls(files)
-            const presignedByFilename = presigned.reduce<
-              Record<string, typeof presigned>
-            >((acc, current) => {
-              if (!acc[current.filename]) acc[current.filename] = []
-              acc[current.filename].push(current)
-              return acc
-            }, {})
 
             const uploadResults = await Promise.allSettled(
-              pendingItems.map(item => {
-                const candidateList = presignedByFilename[item.file.name] || []
-                const p = candidateList.shift()
+              pendingItems.map((item, index) => {
+                const p = presigned[index]
                 if (!p) {
                   setAttachmentStatus(item.id, {
                     status: 'error',
