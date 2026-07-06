@@ -8,6 +8,8 @@ import {
   uploadToPresignedUrl,
   createServiceRequestWithKeys,
 } from '@/utils/upload'
+import { captureAppException } from '@/lib/sentry'
+import { FetchClientError } from '@/utils/fetchClient'
 import {
   MAX_TOTAL_UPLOAD_BYTES,
   MAX_FILES,
@@ -114,6 +116,18 @@ export const useContactForm = (options: UseContactFormOptions) => {
       prev.recaptcha ? { ...prev, recaptcha: undefined } : prev
     )
     setRecaptchaCompleted(true)
+  }, [])
+
+  const handleRecaptchaExpired = useCallback(() => {
+    setRecaptchaCompleted(false)
+    setFieldErrors(prev => ({
+      ...prev,
+      recaptcha: 'reCAPTCHA verification expired. Please verify again.',
+    }))
+    captureAppException(new Error('reCAPTCHA verification expired'), {
+      source: 'app',
+      tags: { 'recaptcha.event': 'expired' },
+    })
   }, [])
 
   const addFiles = useCallback(
@@ -381,26 +395,28 @@ export const useContactForm = (options: UseContactFormOptions) => {
               size: a.file.size,
             }))
             const presigned = await getPresignedUrls(files)
-            const presignedByFilename = presigned.reduce<
-              Record<string, typeof presigned>
-            >((acc, current) => {
-              if (!acc[current.filename]) acc[current.filename] = []
-              acc[current.filename].push(current)
-              return acc
-            }, {})
 
             const uploadResults = await Promise.allSettled(
-              pendingItems.map(item => {
-                const candidateList = presignedByFilename[item.file.name] || []
-                const p = candidateList.shift()
+              pendingItems.map((item, index) => {
+                const p = presigned[index]
                 if (!p) {
                   setAttachmentStatus(item.id, {
                     status: 'error',
                     error: 'No upload URL was returned for this file.',
                   })
-                  return Promise.reject(
-                    new Error('No upload URL was returned for this file.')
+                  const error = new Error(
+                    'No upload URL was returned for this file.'
                   )
+                  captureAppException(error, {
+                    source: 'support-api',
+                    tags: { 'upload.stage': 'presign_mismatch' },
+                    extra: {
+                      pendingCount: pendingItems.length,
+                      presignedCount: presigned.length,
+                      missingIndex: index,
+                    },
+                  })
+                  return Promise.reject(error)
                 }
                 setAttachmentStatus(item.id, {
                   status: 'uploading',
@@ -432,6 +448,10 @@ export const useContactForm = (options: UseContactFormOptions) => {
                       status: 'error',
                       error:
                         err instanceof Error ? err.message : 'Upload failed',
+                    })
+                    captureAppException(err, {
+                      source: 'support-api',
+                      tags: { 'upload.stage': 'presigned_put' },
                     })
                     return Promise.reject(err)
                   })
@@ -476,6 +496,13 @@ export const useContactForm = (options: UseContactFormOptions) => {
         const msg =
           rawMessage && rawMessage !== 'Failed to fetch' ? rawMessage : fallback
         trackSupportFormFailed(typeOfEnquiry || 'Unknown', msg)
+        // FetchClientError failures are already captured with request context in fetchClient.ts
+        if (!(err instanceof FetchClientError)) {
+          captureAppException(err, {
+            source: 'support-api',
+            tags: { 'contact.stage': 'submit' },
+          })
+        }
         setSubmitError(msg)
       } finally {
         setIsSubmitting(false)
@@ -520,6 +547,7 @@ export const useContactForm = (options: UseContactFormOptions) => {
     validateTypeOfEnquiry,
     validateDescription,
     clearRecaptchaError,
+    handleRecaptchaExpired,
     onSubmit,
     isFormValid,
   }
