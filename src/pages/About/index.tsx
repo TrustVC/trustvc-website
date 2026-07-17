@@ -13,7 +13,7 @@ const About = ({ isDarkMode }: AboutProps) => (
       {/* Hero */}
       <div className="text-center mb-10">
         <h1
-          className="font-gilroy font-bold"
+          className="font-urbanist font-bold"
           style={{ fontSize: '36px', lineHeight: '122%' }}
         >
           <span
@@ -45,7 +45,7 @@ const About = ({ isDarkMode }: AboutProps) => (
         <div className="mb-8 text-center">
           <h2
             className={clsx(
-              'font-gilroy font-bold',
+              'font-urbanist font-bold',
               isDarkMode ? 'text-neutral-60' : 'text-[#1E2026]'
             )}
             style={{ fontSize: '28px', lineHeight: '130%' }}

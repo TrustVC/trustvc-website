@@ -254,7 +254,7 @@ const Settings = ({ isDarkMode }: SettingsProps) => {
         {/* Heading */}
         <div className="w-full max-w-[720px] p-2 flex flex-col items-center">
           <h1
-            className="self-stretch text-center font-['Gilroy'] font-bold text-[36px] leading-[43.92px]"
+            className="self-stretch text-center font-urbanist font-bold text-[36px] leading-[43.92px]"
             style={{
               color: isDarkMode ? '#C8CDD3' : '#1E2026',
             }}
@@ -332,7 +332,7 @@ const Settings = ({ isDarkMode }: SettingsProps) => {
                 />
               </svg>
               <span
-                className="font-['Gilroy'] font-bold text-[18px] leading-[24.48px]"
+                className="font-urbanist font-bold text-[18px] leading-[24.48px]"
                 style={{
                   color:
                     activeTab === 'addressBook'
@@ -389,7 +389,7 @@ const Settings = ({ isDarkMode }: SettingsProps) => {
                 />
               </svg>
               <span
-                className="text-center font-['Gilroy'] font-bold text-[18px] leading-[24.48px]"
+                className="text-center font-urbanist font-bold text-[18px] leading-[24.48px]"
                 style={{
                   color:
                     activeTab === 'resolver'
@@ -434,7 +434,7 @@ const Settings = ({ isDarkMode }: SettingsProps) => {
                 <div className="flex-1 basis-0 min-w-[290px] p-1 flex items-center overflow-visible">
                   <div className="p-1 shrink-0">
                     <span
-                      className="font-['Gilroy'] font-medium text-[16px] leading-[20px] whitespace-nowrap"
+                      className="font-urbanist font-medium text-[16px] leading-[20px] whitespace-nowrap"
                       style={{
                         color: isDarkMode ? '#808894' : '#3D444D',
                       }}
@@ -498,7 +498,7 @@ const Settings = ({ isDarkMode }: SettingsProps) => {
                         />
                       </svg>
                       <span
-                        className="font-['Gilroy'] font-bold text-[12px] leading-[19.8px]"
+                        className="font-urbanist font-bold text-[12px] leading-[19.8px]"
                         style={{
                           color: isDarkMode ? '#7D80D7' : '#5B5BB3',
                         }}
@@ -539,7 +539,7 @@ const Settings = ({ isDarkMode }: SettingsProps) => {
                         />
                       </svg>
                       <span
-                        className="font-['Gilroy'] font-bold text-[12px] leading-[19.8px]"
+                        className="font-urbanist font-bold text-[12px] leading-[19.8px]"
                         style={{
                           color: isDarkMode ? '#7D80D7' : '#5B5BB3',
                         }}
@@ -693,7 +693,7 @@ const Settings = ({ isDarkMode }: SettingsProps) => {
                                 {/* Wallet Name */}
                                 <div className="flex-1 basis-0 max-w-[320px] min-w-[240px] p-2 rounded-lg flex flex-col justify-center gap-1">
                                   <span
-                                    className="self-stretch font-['Gilroy'] font-bold text-[14px] leading-[21.7px]"
+                                    className="self-stretch font-urbanist font-bold text-[14px] leading-[21.7px]"
                                     style={{
                                       color: isDarkMode ? '#C8CDD3' : '#1E2026',
                                     }}
@@ -719,7 +719,7 @@ const Settings = ({ isDarkMode }: SettingsProps) => {
                                   <div className="p-1 flex items-center">
                                     {copiedAddress === entry.address ? (
                                       <span
-                                        className="min-w-[32px] min-h-[32px] flex items-center justify-center font-['Gilroy'] font-bold text-[11px]"
+                                        className="min-w-[32px] min-h-[32px] flex items-center justify-center font-urbanist font-bold text-[11px]"
                                         style={{
                                           color: isDarkMode
                                             ? '#7D80D7'
@@ -836,7 +836,7 @@ const Settings = ({ isDarkMode }: SettingsProps) => {
                           />
                         </svg>
                         <span
-                          className="font-['Gilroy'] font-bold text-[12px] leading-[19.8px]"
+                          className="font-urbanist font-bold text-[12px] leading-[19.8px]"
                           style={{ color: isDarkMode ? '#7D80D7' : '#5B5BB3' }}
                         >
                           Add
@@ -1053,7 +1053,7 @@ const Settings = ({ isDarkMode }: SettingsProps) => {
                                 fill="white"
                               />
                             </svg>
-                            <span className="font-['Gilroy'] font-bold text-[12px] leading-[19.8px] text-white">
+                            <span className="font-urbanist font-bold text-[12px] leading-[19.8px] text-white">
                               Cancel
                             </span>
                           </button>
@@ -1084,7 +1084,7 @@ const Settings = ({ isDarkMode }: SettingsProps) => {
                                 fill="white"
                               />
                             </svg>
-                            <span className="font-['Gilroy'] font-bold text-[12px] leading-[19.8px] text-white">
+                            <span className="font-urbanist font-bold text-[12px] leading-[19.8px] text-white">
                               Save
                             </span>
                           </button>
@@ -1131,7 +1131,7 @@ const Settings = ({ isDarkMode }: SettingsProps) => {
                             {/* Name */}
                             <div className="w-full max-w-[320px] min-w-[160px] p-2 rounded-lg">
                               <span
-                                className="font-['Gilroy'] font-bold text-[14px] leading-[21.7px]"
+                                className="font-urbanist font-bold text-[14px] leading-[21.7px]"
                                 style={{
                                   color: isDarkMode ? '#C8CDD3' : '#1E2026',
                                 }}

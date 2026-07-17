@@ -19,7 +19,7 @@ const buttonSizeStyles = {
 
 // Base styles for all button components
 const baseButtonStyles =
-  'flex flex-col justify-center items-center gap-2.5 box-border transition-colors duration-200 ease-out cursor-pointer font-gilroy font-bold text-center align-middle'
+  'flex flex-col justify-center items-center gap-2.5 box-border transition-colors duration-200 ease-out cursor-pointer font-urbanist font-bold text-center align-middle'
 
 // Button type styles
 const getButtonTypeStyles = (btnType: 'solid' | 'transparent') =>
@@ -174,7 +174,7 @@ export const TextButton: FunctionComponent<TextButtonProps> = ({
       onClick={onClick}
       disabled={disabled}
       className={clsx(
-        'bg-transparent border-none p-0 cursor-pointer font-gilroy font-bold',
+        'bg-transparent border-none p-0 cursor-pointer font-urbanist font-bold',
         'text-primary-50',
         `${disabled ? 'cursor-not-allowed opacity-50' : ''}`,
         className

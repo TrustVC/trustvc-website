@@ -223,7 +223,7 @@ export const FileIcon = ({
         fill="white"
         fontSize="9"
         fontWeight="700"
-        fontFamily="Gilroy, sans-serif"
+        fontFamily="Urbanist, sans-serif"
       >
         {ext}
       </text>

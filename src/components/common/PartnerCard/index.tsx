@@ -84,7 +84,7 @@ const PartnerCard = ({ partner, isDarkMode }: PartnerCardProps) => {
       {/* Company name */}
       <h3
         className={clsx(
-          'font-gilroy font-bold text-base leading-snug',
+          'font-urbanist font-bold text-base leading-snug',
           isDarkMode ? 'text-neutral-60' : 'text-neutral-10'
         )}
       >

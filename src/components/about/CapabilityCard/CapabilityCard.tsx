@@ -33,7 +33,7 @@ const CapabilityCard = ({ cap, isDarkMode }: CapabilityCardProps) => (
         {cap.tags.map(tag => (
           <span
             key={tag}
-            className="font-gilroy font-bold rounded-full inline-flex items-center justify-center"
+            className="font-urbanist font-bold rounded-full inline-flex items-center justify-center"
             style={{
               width: '128px',
               height: '24px',
@@ -49,7 +49,7 @@ const CapabilityCard = ({ cap, isDarkMode }: CapabilityCardProps) => (
 
     <h3
       className={clsx(
-        'font-gilroy font-bold',
+        'font-urbanist font-bold',
         isDarkMode ? 'text-neutral-60' : 'text-[#1E2026]'
       )}
       style={{ fontSize: '18px', lineHeight: '136%' }}

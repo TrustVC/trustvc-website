@@ -68,7 +68,7 @@ const VerifyError: React.FC<VerifyErrorProps> = ({
                 </span>
                 <div
                   data-testid="error-message"
-                  className="text-center text-alert-50 text-lg font-gilroy font-bold leading-relaxed break-words"
+                  className="text-center text-alert-50 text-lg font-urbanist font-bold leading-relaxed break-words"
                 >
                   {failureTitle}
                 </div>
@@ -99,7 +99,7 @@ const VerifyError: React.FC<VerifyErrorProps> = ({
                   className="self-stretch min-w-[40px] min-h-[40px] p-[5px] relative overflow-hidden rounded-lg flex justify-center items-center border border-[rgba(169,178,187,0.33)] !bg-transparent hover:!bg-alert-50/10 transition-colors cursor-pointer no-underline"
                 >
                   <div className="p-1 flex items-center gap-2.5">
-                    <span className="text-center text-alert-50 text-sm font-gilroy font-bold leading-snug">
+                    <span className="text-center text-alert-50 text-sm font-urbanist font-bold leading-snug">
                       What Should I Do?
                     </span>
                   </div>
@@ -115,7 +115,7 @@ const VerifyError: React.FC<VerifyErrorProps> = ({
                   onClick={onReset}
                 >
                   <div className="p-1 flex items-center gap-2.5">
-                    <span className="text-center text-white text-sm font-gilroy font-bold leading-snug">
+                    <span className="text-center text-white text-sm font-urbanist font-bold leading-snug">
                       Try Another Document
                     </span>
                   </div>
