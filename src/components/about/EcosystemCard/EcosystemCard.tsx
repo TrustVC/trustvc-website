@@ -4,7 +4,7 @@ const EcosystemCard = () => (
       <div className="about-ecosystem-card">
         <div className="relative z-10">
           <h2
-            className="font-gilroy font-bold text-center text-white"
+            className="font-urbanist font-bold text-center text-white"
             style={{ fontSize: '24px', lineHeight: '133%' }}
           >
             How TrustVC Powers Multiple Ecosystems

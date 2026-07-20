@@ -51,7 +51,7 @@ export const TagBorderedLg: FunctionComponent<TagProps> = ({
 }) => {
   return (
     <TagBordered
-      className={`border-4 text-4xl py-2 px-4 font-gilroy-bold ${className}`}
+      className={`border-4 text-4xl py-2 px-4 font-urbanist-bold ${className}`}
       {...props}
     >
       {children}

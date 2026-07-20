@@ -109,7 +109,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode: _setIsDarkMode }: NavbarProps) => {
                 }}
               >
                 <div
-                  className="px-1 py-1 text-center text-sm font-bold font-['Gilroy'] leading-snug"
+                  className="px-1 py-1 text-center text-sm font-bold font-urbanist leading-snug"
                   style={{
                     color: isAboutActive
                       ? isDarkMode
@@ -140,7 +140,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode: _setIsDarkMode }: NavbarProps) => {
                 }}
               >
                 <div
-                  className="px-1 py-1 text-center text-sm font-bold font-['Gilroy'] leading-snug"
+                  className="px-1 py-1 text-center text-sm font-bold font-urbanist leading-snug"
                   style={{
                     color: isPartnersActive
                       ? isDarkMode
@@ -172,7 +172,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode: _setIsDarkMode }: NavbarProps) => {
                 }}
               >
                 <div
-                  className="px-1 py-1 text-center text-sm font-bold font-['Gilroy'] leading-snug"
+                  className="px-1 py-1 text-center text-sm font-bold font-urbanist leading-snug"
                   style={{
                     color: isNewsActive
                       ? isDarkMode
@@ -246,7 +246,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode: _setIsDarkMode }: NavbarProps) => {
                 to="/contact"
                 className="contact-button w-full min-h-[48px] px-2 py-2 rounded-full overflow-hidden flex items-center justify-center"
               >
-                <div className="px-2 py-1 text-center text-white text-lg font-bold font-['Gilroy'] leading-normal">
+                <div className="px-2 py-1 text-center text-white text-lg font-bold font-urbanist leading-normal">
                   Contact Us
                 </div>
               </Link>
@@ -274,7 +274,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode: _setIsDarkMode }: NavbarProps) => {
           <div className="flex flex-col p-4 space-y-2">
             <Link
               to="/about"
-              className="px-4 py-3 text-left text-sm font-bold font-['Gilroy'] rounded-lg transition-colors duration-200"
+              className="px-4 py-3 text-left text-sm font-bold font-urbanist rounded-lg transition-colors duration-200"
               style={{
                 color: isAboutActive
                   ? isDarkMode
@@ -298,7 +298,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode: _setIsDarkMode }: NavbarProps) => {
             </Link>
             <Link
               to="/partners"
-              className="px-4 py-3 text-left text-sm font-bold font-['Gilroy'] rounded-lg transition-colors duration-200"
+              className="px-4 py-3 text-left text-sm font-bold font-urbanist rounded-lg transition-colors duration-200"
               style={{
                 color: isPartnersActive
                   ? isDarkMode
@@ -323,7 +323,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode: _setIsDarkMode }: NavbarProps) => {
             {/* Ecosystem and Gallery temporarily removed - restore from git */}
             <Link
               to="/news-updates"
-              className="px-4 py-3 text-left text-sm font-bold font-['Gilroy'] rounded-lg transition-colors duration-200"
+              className="px-4 py-3 text-left text-sm font-bold font-urbanist rounded-lg transition-colors duration-200"
               style={{
                 color: isNewsActive
                   ? isDarkMode
@@ -397,7 +397,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode: _setIsDarkMode }: NavbarProps) => {
                   />
                 </svg>
                 <span
-                  className="text-sm font-bold font-['Gilroy']"
+                  className="text-sm font-bold font-urbanist"
                   style={{
                     color: isSettingsActive
                       ? isDarkMode
@@ -414,7 +414,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode: _setIsDarkMode }: NavbarProps) => {
               <Link
                 to="/contact"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="contact-button w-full px-6 py-3 rounded-full text-white text-lg font-bold font-['Gilroy'] block text-center mt-2"
+                className="contact-button w-full px-6 py-3 rounded-full text-white text-lg font-bold font-urbanist block text-center mt-2"
               >
                 Contact Us
               </Link>

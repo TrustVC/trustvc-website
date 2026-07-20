@@ -13,7 +13,7 @@ const FormAlert = ({ isDarkMode, error, success }: FormAlertProps) => {
       role={error ? 'alert' : 'status'}
       aria-live={error ? 'assertive' : 'polite'}
       aria-atomic="true"
-      className={`form-alert w-full px-4 py-3 rounded-lg text-sm font-medium font-gilroy flex items-start gap-2 ${
+      className={`form-alert w-full px-4 py-3 rounded-lg text-sm font-medium font-urbanist flex items-start gap-2 ${
         error
           ? 'form-alert-error'
           : isDarkMode

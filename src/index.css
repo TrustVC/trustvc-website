@@ -12,47 +12,21 @@
     box-sizing: border-box;
   }
 
-  /* Gilroy Light */
+  /* Urbanist Variable (weights 100-900) */
   @font-face {
-    font-family: 'Gilroy';
-    src:
-      url('/fonts/GilroyLight/font.woff2') format('woff2'),
-      url('/fonts/GilroyLight/font.woff') format('woff');
-    font-weight: 300;
+    font-family: 'Urbanist';
+    src: url('/fonts/Urbanist/Urbanist-Variable.woff2') format('woff2');
+    font-weight: 100 900;
     font-style: normal;
     font-display: swap;
   }
 
-  /* Gilroy Medium */
+  /* Urbanist Variable Italic (weights 100-900) */
   @font-face {
-    font-family: 'Gilroy';
-    src:
-      url('/fonts/GilroyMedium/font.woff2') format('woff2'),
-      url('/fonts/GilroyMedium/font.woff') format('woff');
-    font-weight: 500;
-    font-style: normal;
-    font-display: swap;
-  }
-
-  /* Gilroy Bold */
-  @font-face {
-    font-family: 'Gilroy';
-    src:
-      url('/fonts/GilroyBold/font.woff2') format('woff2'),
-      url('/fonts/GilroyBold/font.woff') format('woff');
-    font-weight: 700;
-    font-style: normal;
-    font-display: swap;
-  }
-
-  /* Gilroy ExtraBold */
-  @font-face {
-    font-family: 'Gilroy';
-    src:
-      url('/fonts/GilroyExtraBold/font.woff2') format('woff2'),
-      url('/fonts/GilroyExtraBold/font.woff') format('woff');
-    font-weight: 800;
-    font-style: normal;
+    font-family: 'Urbanist';
+    src: url('/fonts/Urbanist/Urbanist-Italic-Variable.woff2') format('woff2');
+    font-weight: 100 900;
+    font-style: italic;
     font-display: swap;
   }
 
@@ -100,7 +74,7 @@
 body {
   margin: 0;
   font-family:
-    'Gilroy',
+    'Urbanist',
     -apple-system,
     BlinkMacSystemFont,
     'Segoe UI',
@@ -458,7 +432,7 @@ body.dark-mode {
 }
 
 .news-category-chip {
-  font-family: 'Gilroy', sans-serif;
+  font-family: 'Urbanist', sans-serif;
   font-weight: 700;
   font-size: 12px;
   line-height: 16px;
@@ -467,7 +441,7 @@ body.dark-mode {
 }
 
 .news-meta-text {
-  font-family: 'Gilroy', sans-serif;
+  font-family: 'Urbanist', sans-serif;
   font-weight: 700;
   font-size: 14px;
   line-height: 155%;
@@ -493,7 +467,7 @@ body.dark-mode {
 }
 
 .news-excerpt-font {
-  font-family: Avenir, Gilroy, sans-serif;
+  font-family: Avenir, Urbanist, sans-serif;
 }
 
 .news-read-full-btn {
@@ -567,7 +541,7 @@ body.dark-mode {
 }
 
 h4 {
-  font-family: Gilroy;
+  font-family: Urbanist;
   font-weight: 700;
   font-style: normal;
   font-size: 18px;
@@ -719,7 +693,7 @@ p.small {
   flex-wrap: wrap;
   color: #1e2026;
   font-size: 64px;
-  font-family: Gilroy, sans-serif;
+  font-family: Urbanist, sans-serif;
   font-weight: 700;
   line-height: 71.68px;
 }
@@ -745,7 +719,7 @@ p.small {
   flex-direction: column;
   color: #3d444d;
   font-size: 18px;
-  font-family: Gilroy, sans-serif;
+  font-family: Urbanist, sans-serif;
   font-weight: 500;
   line-height: 24.48px;
   margin: 0;
@@ -838,7 +812,7 @@ p.small {
 /* Typography Classes - Using Tailwind utilities */
 @layer components {
   .submit-request-title {
-    font-family: Gilroy, sans-serif;
+    font-family: Urbanist, sans-serif;
     font-weight: 700;
     vertical-align: middle;
     font-size: 24px;
@@ -897,7 +871,7 @@ p.small {
 
   /* Contact Page Heading */
   .contact-heading {
-    font-family: Gilroy, sans-serif;
+    font-family: Urbanist, sans-serif;
     font-weight: 800;
     font-size: 40px;
     line-height: 1.2;
@@ -1034,7 +1008,7 @@ p.small {
     padding: 5px;
     color: white;
     font-size: 14px;
-    font-family: Gilroy, sans-serif;
+    font-family: Urbanist, sans-serif;
     font-weight: 700;
     border: none;
     cursor: pointer;
@@ -1191,7 +1165,7 @@ p.small {
   text-align: center;
   color: #3d444d;
   font-size: 14px;
-  font-family: Gilroy, sans-serif;
+  font-family: Urbanist, sans-serif;
   font-weight: 500;
   line-height: 21.7px;
   word-wrap: break-word;
@@ -1309,7 +1283,7 @@ p.small {
   flex-direction: column;
   color: white;
   font-size: 14px;
-  font-family: Gilroy, sans-serif;
+  font-family: Urbanist, sans-serif;
   font-weight: 700;
   line-height: 19.8px;
   word-wrap: break-word;
@@ -1445,7 +1419,7 @@ p.small {
   flex-direction: column;
   color: white;
   font-size: 24px;
-  font-family: Gilroy, sans-serif;
+  font-family: Urbanist, sans-serif;
   font-weight: 700;
   line-height: 31.92px;
   word-wrap: break-word;
@@ -1467,7 +1441,7 @@ p.small {
   flex-direction: column;
   color: white;
   font-size: 14px;
-  font-family: Gilroy, sans-serif;
+  font-family: Urbanist, sans-serif;
   font-weight: 500;
   line-height: 21.7px;
   word-wrap: break-word;
@@ -1534,7 +1508,7 @@ p.small {
   flex-direction: column;
   color: white;
   font-size: 18px;
-  font-family: Gilroy, sans-serif;
+  font-family: Urbanist, sans-serif;
   font-weight: 700;
   line-height: 24.48px;
   word-wrap: break-word;
@@ -1589,7 +1563,7 @@ p.small {
   padding: 6px 16px;
   color: #5b5bb3;
   font-size: 13px;
-  font-family: Gilroy, sans-serif;
+  font-family: Urbanist, sans-serif;
   font-weight: 700;
   cursor: pointer;
 }
@@ -1599,7 +1573,7 @@ p.small {
   text-align: center;
   color: #ef4444;
   font-size: 14px;
-  font-family: Gilroy, sans-serif;
+  font-family: Urbanist, sans-serif;
   font-weight: 500;
 }
 
@@ -1646,7 +1620,7 @@ p.small {
 
 .nm-title {
   color: #1e2026;
-  font-family: Gilroy, sans-serif;
+  font-family: Urbanist, sans-serif;
   font-weight: 700;
   line-height: 1.33;
   word-wrap: break-word;
@@ -1877,7 +1851,7 @@ p.small {
 .nm-tooltip-title {
   margin: 0;
   font-size: 13px;
-  font-family: Gilroy, sans-serif;
+  font-family: Urbanist, sans-serif;
   font-weight: 700;
   color: #1e2026;
 }
@@ -1928,7 +1902,7 @@ p.small {
 
 .nm-btn-label {
   font-size: 14px;
-  font-family: Gilroy, sans-serif;
+  font-family: Urbanist, sans-serif;
   font-weight: 700;
   line-height: 21.7px;
 }
@@ -2010,7 +1984,7 @@ p.small {
 .vr-network-label {
   color: #3d444d;
   font-size: 16px;
-  font-family: Gilroy, sans-serif;
+  font-family: Urbanist, sans-serif;
   font-weight: 500;
   line-height: 20px;
   white-space: nowrap;
@@ -2129,7 +2103,7 @@ p.small {
 .vr-upload-btn-label {
   color: #5b5bb3;
   font-size: 14px;
-  font-family: Gilroy, sans-serif;
+  font-family: Urbanist, sans-serif;
   font-weight: 700;
   line-height: 21.7px;
 }
@@ -2177,7 +2151,7 @@ p.small {
 .vr-issued-by-value {
   color: #1e2026;
   font-size: 16px;
-  font-family: Gilroy, sans-serif;
+  font-family: Urbanist, sans-serif;
   font-weight: 700;
   line-height: 24.48px;
   word-break: break-all;
@@ -2217,7 +2191,7 @@ p.small {
 
 .vr-tag-text {
   font-size: 14px;
-  font-family: Gilroy, sans-serif;
+  font-family: Urbanist, sans-serif;
   font-weight: 700;
   line-height: 21.7px;
 }
@@ -2290,7 +2264,7 @@ p.small {
 .vr-nft-link {
   color: #5b5bb3;
   font-size: 16px;
-  font-family: Gilroy, sans-serif;
+  font-family: Urbanist, sans-serif;
   font-weight: 700;
   line-height: 24.48px;
   background: none;
@@ -2352,7 +2326,7 @@ p.small {
 .vr-title-col-name {
   color: #1e2026;
   font-size: 16px;
-  font-family: Gilroy, sans-serif;
+  font-family: Urbanist, sans-serif;
   font-weight: 700;
   line-height: 24.48px;
 }
@@ -2416,7 +2390,7 @@ p.small {
   padding: 4px;
   color: #ffffff;
   font-size: 14px;
-  font-family: Gilroy, sans-serif;
+  font-family: Urbanist, sans-serif;
   font-weight: 700;
   line-height: 21.7px;
 }
@@ -2467,7 +2441,7 @@ p.small {
   padding: 12px 16px;
   cursor: pointer;
   font-size: 16px;
-  font-family: Gilroy, sans-serif;
+  font-family: Urbanist, sans-serif;
   font-weight: 700;
   color: #5b6571;
   white-space: nowrap;
@@ -2550,7 +2524,7 @@ p.small {
   display: block;
   font-size: 20px;
   font-weight: 700;
-  font-family: Gilroy, sans-serif;
+  font-family: Urbanist, sans-serif;
   color: #1e2026;
   margin-bottom: 4px;
 }
@@ -2558,7 +2532,7 @@ p.small {
 .vr-doc-utility-detail {
   font-size: 14px;
   font-weight: 500;
-  font-family: Avenir, Gilroy, sans-serif;
+  font-family: Avenir, Urbanist, sans-serif;
   color: #5b6571;
   word-break: break-all;
 }
@@ -2696,7 +2670,7 @@ p.small {
 }
 
 .vr-attachment-name {
-  font-family: Gilroy, sans-serif;
+  font-family: Urbanist, sans-serif;
   font-size: 14px;
   font-weight: 700;
   color: #1e2026;
@@ -2706,7 +2680,7 @@ p.small {
 }
 
 .vr-attachment-type {
-  font-family: Avenir, Gilroy, sans-serif;
+  font-family: Avenir, Urbanist, sans-serif;
   font-size: 12px;
   color: #5b6571;
 }
@@ -2765,7 +2739,7 @@ p.small {
 }
 
 .vr-invalid-banner-title {
-  font-family: Gilroy, sans-serif;
+  font-family: Urbanist, sans-serif;
   font-weight: 700;
   font-size: 16px;
   line-height: 20px;
@@ -2797,7 +2771,7 @@ p.small {
 }
 
 .vr-invalid-banner-toggle-label {
-  font-family: Gilroy, sans-serif;
+  font-family: Urbanist, sans-serif;
   font-weight: 700;
   font-size: 12px;
   line-height: 19.8px;
@@ -3182,7 +3156,7 @@ p.small {
 .ec-header-title {
   flex: 1;
   margin: 0;
-  font-family: Gilroy, sans-serif;
+  font-family: Urbanist, sans-serif;
   font-weight: 700;
   font-size: 24px;
   line-height: 133%;
@@ -3529,7 +3503,7 @@ p.small {
   font-size: 24px;
   font-weight: 700;
   color: #1e2026;
-  font-family: 'Gilroy', sans-serif;
+  font-family: 'Urbanist', sans-serif;
   margin: 0;
 }
 
@@ -3860,7 +3834,7 @@ p.small {
   max-height: 44px;
 
   /* TrustVC/Bold/Heading 5 */
-  font-family: 'Gilroy';
+  font-family: 'Urbanist';
   font-style: normal;
   font-weight: 700;
   font-size: 14px;
@@ -3934,7 +3908,7 @@ p.small {
   font-size: 16px;
   font-weight: 600;
   margin: 0;
-  font-family: 'Gilroy', sans-serif;
+  font-family: 'Urbanist', sans-serif;
 }
 
 .connect-blockchain-button .text-left {
@@ -4344,7 +4318,7 @@ p.small {
 }
 
 .connect-metamask-button-text h3 {
-  font-family: Gilroy;
+  font-family: Urbanist;
   font-weight: 700;
   font-style: Bold;
   font-size: 18px;
@@ -4461,7 +4435,7 @@ p.small {
   height: 24px;
 
   /* TrustVC/Bold/Heading 4 */
-  font-family: 'Gilroy';
+  font-family: 'Urbanist';
   font-style: normal;
   font-weight: 700;
   font-size: 14px;
@@ -4759,7 +4733,7 @@ label.transparent:active {
   padding: 12px 40px 12px 12px;
   text-align: left;
   font-size: 16px;
-  font-family: Gilroy, sans-serif;
+  font-family: Urbanist, sans-serif;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -4847,7 +4821,7 @@ label.transparent:active {
   padding: 8px 12px;
   text-align: left;
   font-size: 14px;
-  font-family: Gilroy, sans-serif;
+  font-family: Urbanist, sans-serif;
   transition: background-color 150ms ease;
   background: transparent;
   border: 0;
