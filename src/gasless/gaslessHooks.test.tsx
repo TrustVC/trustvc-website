@@ -443,47 +443,6 @@ describe('fallback path (delegation check fails → regular tx)', () => {
     expect(mocks.checkEIP7702Delegation).not.toHaveBeenCalled()
     expect(mocks.transferHolder).toHaveBeenCalledOnce()
   })
-
-  it('falls back when whitelist check fails (caller not authorized)', async () => {
-    // Allow delegation to pass so the whitelist IS checked, then fail it.
-    mocks.checkEIP7702Delegation.mockResolvedValue(true)
-    mocks.checkPaymasterWhitelist.mockResolvedValue({
-      isCallerAuthorized: false,
-      isTitleEscrowAuthorized: true,
-    })
-
-    const { result } = renderHook(() =>
-      useGaslessTransferHolder(CONTRACT_OPTIONS, mockSigner, CHAIN_ID)
-    )
-
-    await act(async () => {
-      await result.current.send({ holderAddress: '0xNEWHOLDER' })
-    })
-
-    expect(mocks.checkPaymasterWhitelist).toHaveBeenCalled()
-    expect(mocks.transferHolder).toHaveBeenCalledOnce()
-    expect(mocks.transferHolderGasless).not.toHaveBeenCalled()
-  })
-
-  it('falls back when whitelist check fails (title escrow not authorized)', async () => {
-    mocks.checkEIP7702Delegation.mockResolvedValue(true)
-    mocks.checkPaymasterWhitelist.mockResolvedValue({
-      isCallerAuthorized: true,
-      isTitleEscrowAuthorized: false,
-    })
-
-    const { result } = renderHook(() =>
-      useGaslessTransferHolder(CONTRACT_OPTIONS, mockSigner, CHAIN_ID)
-    )
-
-    await act(async () => {
-      await result.current.send({ holderAddress: '0xNEWHOLDER' })
-    })
-
-    expect(mocks.checkPaymasterWhitelist).toHaveBeenCalled()
-    expect(mocks.transferHolder).toHaveBeenCalledOnce()
-    expect(mocks.transferHolderGasless).not.toHaveBeenCalled()
-  })
 })
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -755,6 +714,45 @@ describe('gasless path (PIMLICO_API_KEY configured)', () => {
     expect(mocks.checkEIP7702Delegation).not.toHaveBeenCalled()
     expect(mocks.transferHolder).toHaveBeenCalledOnce()
     expect(result.current.state).toBe('CONFIRMED')
+  })
+
+  it('falls back when whitelist check fails (caller not authorized)', async () => {
+    // delegation passes but whitelist rejects the caller — must use regular tx
+    mocks.checkPaymasterWhitelist.mockResolvedValue({
+      isCallerAuthorized: false,
+      isTitleEscrowAuthorized: true,
+    })
+
+    const { result } = renderHook(() =>
+      hooks.transferHolder(CONTRACT_OPTIONS, mockSigner, CHAIN_ID)
+    )
+
+    await act(async () => {
+      await result.current.send({ holderAddress: '0xNEWHOLDER' })
+    })
+
+    expect(mocks.checkPaymasterWhitelist).toHaveBeenCalled()
+    expect(mocks.transferHolder).toHaveBeenCalledOnce()
+    expect(mocks.transferHolderGasless).not.toHaveBeenCalled()
+  })
+
+  it('falls back when whitelist check fails (title escrow not authorized)', async () => {
+    mocks.checkPaymasterWhitelist.mockResolvedValue({
+      isCallerAuthorized: true,
+      isTitleEscrowAuthorized: false,
+    })
+
+    const { result } = renderHook(() =>
+      hooks.transferHolder(CONTRACT_OPTIONS, mockSigner, CHAIN_ID)
+    )
+
+    await act(async () => {
+      await result.current.send({ holderAddress: '0xNEWHOLDER' })
+    })
+
+    expect(mocks.checkPaymasterWhitelist).toHaveBeenCalled()
+    expect(mocks.transferHolder).toHaveBeenCalledOnce()
+    expect(mocks.transferHolderGasless).not.toHaveBeenCalled()
   })
 })
 
