@@ -46,7 +46,7 @@ jobs:
           VITE_APP_NETWORK: local
           VITE_NETWORK_TYPE: testnet
           VITE_RPC_URL_1337: http://127.0.0.1:8545
-          VITE_RPC_URL_80002: https://rpc-amoy.polygon.technology/
+          VITE_RPC_URL_80002: https://polygon-amoy.drpc.org
           VITE_RPC_URL_137: https://rpc.ankr.com/polygon
           # Analytics disabled in E2E — no events sent to GA4/GTM during test runs
           VITE_GTM_CONTAINER_ID: ''
