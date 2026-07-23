@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import NetworkTooltip from './NetworkTooltip'
 import DocumentRenderer from './DocumentRenderer'
 import InvalidAttachmentsBanner from './InvalidAttachmentsBanner'
 import ObfuscatedMessage from './ObfuscatedMessage'
 import { makeExplorerAddressURL } from './useVerify'
-import { CheckCircle, CrossCircle } from '../../common/Icons'
+import { CheckCircle, CrossCircle, InfoMsgIcon } from '../../common/Icons'
 import { DocumentAttachment } from '../../../utils/helper'
 import { getMagicLinkIconSrc } from '../../../utils/magicWallet'
 import Connected from '../../ConnectToBlockchain/Connected'
@@ -14,6 +14,11 @@ import {
 } from '../../common/contexts/providerContext'
 import { AssetManagementApplication } from '../../AssetManagementPanel/AssetManagementApplication'
 import { TextButton } from '../../common/Button/Button'
+import { checkPaymasterWhitelist } from '../../../gasless/checkPaymasterWhitelist'
+import { checkEIP7702Delegation } from '../../../gasless/checkDelegation'
+import { getRpcUrl } from '../../../utils/helper'
+import { isAddress, createPublicClient, http } from 'viem'
+import InfoIcon from '../../../../src/components/icons/info'
 
 interface VerifyResultProps {
   fileName: string
@@ -61,7 +66,8 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
   refreshEndorsementChain,
   isExpired,
 }) => {
-  const { changeNetwork, currentChainId } = useProviderContext()
+  const { changeNetwork, currentChainId, providerType, account } =
+    useProviderContext()
 
   // Switch provider to the document's chain when a transferable document is loaded
   useEffect(() => {
@@ -69,6 +75,126 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
       changeNetwork(Number(chainId) as any)
     }
   }, [isTransferable, chainId, currentChainId, changeNetwork])
+
+  // ── EIP-7702 delegation check ────────────────────────────────────────────
+  const [isDelegated, setIsDelegated] = useState(false)
+
+  useEffect(() => {
+    if (!account || !chainId) {
+      setIsDelegated(false)
+      return
+    }
+    const rpcUrl = getRpcUrl(chainId)
+    if (!rpcUrl) {
+      setIsDelegated(false)
+      return
+    }
+    checkEIP7702Delegation(account, rpcUrl).then(setIsDelegated)
+  }, [account, chainId])
+
+  // ── Gasless card state ───────────────────────────────────────────────────
+  const [paymasterAddress, setPaymasterAddress] = useState('')
+  const [gaslessStatus, setGaslessStatus] = useState<
+    'idle' | 'checking' | 'success' | 'error'
+  >('idle')
+  const [gaslessError, setGaslessError] = useState('')
+
+  // Reset gasless state whenever the wallet changes
+  useEffect(() => {
+    setGaslessStatus('idle')
+    setGaslessError('')
+    setPaymasterAddress('')
+  }, [account])
+
+  const checkGasless = useCallback(
+    async (address: string) => {
+      const trimmed = address.trim()
+      if (!isAddress(trimmed, { strict: false })) return
+
+      if (!chainId || !tokenRegistryAddress || !tokenId) {
+        setGaslessError(
+          'Document information missing — cannot verify paymaster.'
+        )
+        setGaslessStatus('error')
+        return
+      }
+      if (!account) {
+        setGaslessError('Please connect your wallet first.')
+        setGaslessStatus('error')
+        return
+      }
+
+      setGaslessStatus('checking')
+      setGaslessError('')
+      try {
+        const rpcUrl = getRpcUrl(chainId)
+        console.log('[checkGasless] rpcUrl:', rpcUrl, 'chainId:', chainId)
+        if (!rpcUrl) throw new Error('No RPC URL for chain')
+
+        const publicClient = createPublicClient({ transport: http(rpcUrl) })
+        const titleEscrowAddress = await publicClient.readContract({
+          address: tokenRegistryAddress as `0x${string}`,
+          abi: [
+            {
+              name: 'ownerOf',
+              type: 'function',
+              inputs: [{ name: 'tokenId', type: 'uint256' }],
+              outputs: [{ name: '', type: 'address' }],
+              stateMutability: 'view',
+            },
+          ],
+          functionName: 'ownerOf',
+          args: [BigInt(tokenId)],
+        })
+        console.log('[checkGasless] titleEscrowAddress:', titleEscrowAddress)
+
+        const result = await checkPaymasterWhitelist(
+          trimmed,
+          account,
+          titleEscrowAddress as string,
+          rpcUrl
+        )
+        console.log('[checkGasless] whitelist result:', result)
+
+        if (result.isCallerAuthorized && result.isTitleEscrowAuthorized) {
+          // localStorage.setItem(`trustvc_paymaster_${account}`, trimmed)
+          setGaslessStatus('success')
+        } else {
+          console.warn(
+            '[checkGasless] not whitelisted — isCallerAuthorized:',
+            result.isCallerAuthorized,
+            'isTitleEscrowAuthorized:',
+            result.isTitleEscrowAuthorized
+          )
+          setGaslessError('This address is not applicable to you')
+          setGaslessStatus('error')
+        }
+      } catch (err) {
+        console.error('[checkGasless] error:', err)
+        const msg = err instanceof Error ? err.message : String(err)
+        if (
+          msg.includes('No RPC URL') ||
+          msg.includes('network') ||
+          msg.includes('fetch')
+        ) {
+          setGaslessError('Network error — please try again.')
+        } else {
+          setGaslessError('Invalid Paymaster Address')
+        }
+        setGaslessStatus('error')
+      }
+    },
+    [account, chainId, tokenRegistryAddress, tokenId]
+  )
+
+  // Auto-verify stored paymaster once delegation is confirmed
+  useEffect(() => {
+    if (!isDelegated || !account) return
+    const stored = localStorage.getItem(`trustvc_paymaster_${account}`)
+    if (!stored) return
+    setPaymasterAddress(stored)
+    checkGasless(stored)
+  }, [isDelegated, account, checkGasless])
 
   const showNftLinks = !!isTransferable
 
@@ -127,7 +253,6 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
     })
     setIsTooltipVisible(true)
   }
-  const { providerType, account } = useProviderContext()
   return (
     <div className="vr-container" data-testid="verify-result">
       {/* ── Network info card ── */}
@@ -213,7 +338,69 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
       {/* ── Main result card ── */}
       <div className="vr-main-card">
         {/* Header */}
-        <div className="vr-card-header">
+        <div
+          className="vr-card-header"
+          style={!isDelegated ? { justifyContent: 'flex-end' } : undefined}
+        >
+          {isDelegated && gaslessStatus === 'success' ? (
+            <div className="check-gasless-content-success">
+              <div className="check-gasless-content-success-frame">
+                <CheckCircle />
+                <span className="check-gasless-content-success-text">
+                  This wallet has Pay-on-Behalf enabled. Transaction fees are
+                  covered for you, so you&apos;ll see a Signature Request
+                  instead of a Transaction Request when confirming.
+                </span>
+              </div>
+            </div>
+          ) : isDelegated ? (
+            <div className="check-gasless-card">
+              <div className="check-gasless-frame">
+                <div className="check-gasless-content">
+                  <InfoMsgIcon />
+                  <div className="check-gasless-text">
+                    <span className="gasless-text">
+                      We have detected that you have the pay-on-behalf feature.
+                      To enable it, please enter your paymaster address:
+                    </span>
+                    <div className="gasless-address-input">
+                      <input
+                        className="gasless-address-input-field"
+                        type="text"
+                        placeholder="Enter your paymaster address"
+                        value={paymasterAddress}
+                        onChange={e => {
+                          const val = e.target.value
+                          setPaymasterAddress(val)
+                          const trimmed = val.trim()
+                          if (isAddress(trimmed, { strict: false })) {
+                            checkGasless(trimmed)
+                          } else if (trimmed.length > 0) {
+                            setGaslessStatus('error')
+                            setGaslessError('Invalid Paymaster Address')
+                          } else {
+                            setGaslessStatus('idle')
+                            setGaslessError('')
+                          }
+                        }}
+                        disabled={gaslessStatus === 'checking'}
+                      />
+                      {gaslessStatus === 'error' && (
+                        <div className="gasless-error-frame">
+                          <div className="gasless-guidance-frame">
+                            <InfoIcon fontSize={13.5} fill="#B83152" />
+                            <span className="gasless-error-text">
+                              {gaslessError}
+                            </span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : null}
           <button
             type="button"
             className="vr-upload-btn"

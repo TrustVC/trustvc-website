@@ -30,24 +30,26 @@
   "dependencies": {
     "@sanity/client": "^7.20.0",
     "@sanity/image-url": "^2.1.1",
+    "@testing-library/dom": "^10.4.1",
     "@trustvc/decentralized-renderer-react-components": "^1.0.3",
-    "@trustvc/trustvc": "^2.12.4",
+    "@trustvc/trustvc": "^2.15.0-beta.2",
     "@types/lodash": "^4.17.24",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "lucide-react": "^0.563.0",
     "magic-sdk": "^33.6.2",
+    "permissionless": "^0.3.7",
     "qrcode.react": "^4.2.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-feather": "^2.0.10",
     "react-router-dom": "^7.12.0",
     "react-tooltip": "^5.30.0",
-    "swiper": "^12.0.3"
+    "swiper": "^12.0.3",
+    "viem": "^2.55.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
-    "wait-on": "^8.0.1",
     "@synthetixio/synpress": "4.0.5",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",
@@ -74,6 +76,7 @@
     "typescript-eslint": "^8.18.2",
     "vite": "^6.0.3",
     "vite-plugin-node-polyfills": "^0.25.0",
-    "vitest": "^2.1.8"
+    "vitest": "^2.1.8",
+    "wait-on": "^8.0.1"
   }
 }
