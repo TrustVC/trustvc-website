@@ -175,7 +175,11 @@ const DocumentRenderer: React.FC<DocumentRendererProps> = ({
   if (!templateSource) return null
 
   return (
-    <div className="vr-renderer-wrapper">
+    <div
+      className="vr-renderer-wrapper"
+      data-testid="document-renderer"
+      data-renderer-ready={isRendererReady ? 'true' : 'false'}
+    >
       {/* Template tabs — hidden until renderer is ready */}
       <div
         className="vr-template-tabs-wrapper"
@@ -239,7 +243,10 @@ const DocumentRenderer: React.FC<DocumentRendererProps> = ({
               {selectedTemplate && selectedTemplate !== 'default-template' && (
                 <div className="vr-doc-utility-info">
                   <div className="vr-doc-utility-label">Rendered View:</div>
-                  <div className="vr-doc-utility-detail">
+                  <div
+                    className="vr-doc-utility-detail"
+                    data-testid="rendered-view"
+                  >
                     {(
                       templates.find(t => t.id === selectedTemplate)?.label ??
                       selectedTemplate

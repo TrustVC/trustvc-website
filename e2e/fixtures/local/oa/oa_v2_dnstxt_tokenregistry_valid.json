@@ -1,0 +1,33 @@
+{
+  "version": "https://schema.openattestation.com/2.0/schema.json",
+  "data": {
+    "$template": {
+      "type": "9ee643ee-7f4c-443f-8a1c-c9e070c6d772:string:EMBEDDED_RENDERER",
+      "name": "7437372f-42f2-44f9-a3a0-7638beee02ba:string:CHAFTA_COO",
+      "url": "88054edb-b480-43ed-9219-a5d0da0b6948:string:https://generic-templates.tradetrust.io"
+    },
+    "issuers": [
+      {
+        "name": "0e9cab70-bcc9-4c47-81bb-ae0e6843e7eb:string:My Test Issuer",
+        "tokenRegistry": "bc43f046-69ee-4881-ae37-ac21f9d767f1:string:0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+        "identityProof": {
+          "type": "86490b7c-db89-4969-8de9-d96f796612b3:string:DNS-TXT",
+          "location": "e135ffd9-74de-4efd-b548-890002affb2b:string:issuer.example"
+        }
+      }
+    ],
+    "network": {
+      "chain": "3d25a260-2df0-4fd3-b97d-8234c91fbcb9:string:ETH",
+      "chainId": "294817ee-e937-4dc3-ad60-79811e935ba3:string:1337"
+    },
+    "recipient": {
+      "name": "4b9c952f-038f-4d16-bc0e-e05b795c615a:string:TrustVC E2E Test"
+    }
+  },
+  "signature": {
+    "type": "SHA3MerkleProof",
+    "targetHash": "6e16607321ece74005eec60b063b6a4668e696139ccfd48802561d01c93deef1",
+    "proof": [],
+    "merkleRoot": "6e16607321ece74005eec60b063b6a4668e696139ccfd48802561d01c93deef1"
+  }
+}

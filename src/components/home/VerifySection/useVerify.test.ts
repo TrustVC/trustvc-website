@@ -5,11 +5,30 @@ import {
   useVerify,
   makeExplorerAddressURL,
   getErrorTypeFromFragments,
+  getErrorMessageFromFragments,
 } from './useVerify'
 import { TYPES } from './verifyErrorUtils'
 import { DocumentProvider } from '../../common/contexts/DocumentContext'
 
 // ─── Mocks ────────────────────────────────────────────────────────────────────
+
+vi.mock('../../../lib/sentry', () => ({
+  captureVerificationBreadcrumb: vi.fn(),
+  captureVerificationException: vi.fn(),
+  captureVerificationInvalid: vi.fn(),
+  isSentryEnabled: vi.fn(() => false),
+  initSentry: vi.fn(),
+}))
+
+vi.mock('../../../utils/analytics', () => ({
+  trackDocumentDropped: vi.fn(),
+  trackDocumentVerified: vi.fn(),
+  trackDocumentVerifyError: vi.fn(),
+  trackNetworkSelectionShown: vi.fn(),
+  trackNetworkSelected: vi.fn(),
+  trackNetworkSelectionCancelled: vi.fn(),
+  trackVerificationReset: vi.fn(),
+}))
 
 // Mock import.meta.env
 Object.defineProperty(import.meta, 'env', {
@@ -148,6 +167,8 @@ import {
   getChainId,
   isTransferableRecord,
   isDocumentRevokable,
+  isWrappedV2Document,
+  getDocumentData,
 } from '@trustvc/trustvc'
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -415,10 +436,13 @@ describe('useVerify', () => {
       expect(result.current.fileName).toBe('tr.tt')
     })
 
-    it('transitions to network-select for a revokable document with no chainId', async () => {
+    it('transitions to network-select for a document-store document with no chainId', async () => {
       vi.mocked(getChainId).mockReturnValue(null as any)
       vi.mocked(isTransferableRecord).mockReturnValue(false)
-      vi.mocked(isDocumentRevokable).mockReturnValue(true)
+      vi.mocked(isWrappedV2Document).mockReturnValue(true)
+      vi.mocked(getDocumentData).mockReturnValue({
+        issuers: [{ documentStore: '0xabc' }],
+      } as any)
 
       const { result } = renderHook(() => useVerify(), { wrapper })
       await act(async () => {
@@ -427,6 +451,29 @@ describe('useVerify', () => {
       await waitFor(() =>
         expect(result.current.verifyStatus).toBe('network-select')
       )
+    })
+
+    it('proceeds to verify (not network-select) for an OCSP-revocable doc with no chainId', async () => {
+      vi.mocked(getChainId).mockReturnValue(null as any)
+      vi.mocked(isTransferableRecord).mockReturnValue(false)
+      vi.mocked(isWrappedV2Document).mockReturnValue(true)
+      // OCSP revocation is verified off-chain (HTTP) → no network prompt needed
+      vi.mocked(getDocumentData).mockReturnValue({
+        issuers: [{ revocation: { type: 'OCSP_RESPONDER' } }],
+      } as any)
+      vi.mocked(verifyDocument).mockResolvedValue([
+        {
+          name: 'OpenAttestationHash',
+          status: 'VALID',
+          type: 'DOCUMENT_INTEGRITY',
+        },
+      ])
+
+      const { result } = renderHook(() => useVerify(), { wrapper })
+      await act(async () => {
+        triggerFileInput(result, makeFile({ test: true }))
+      })
+      await waitFor(() => expect(result.current.verifyStatus).toBe('valid'))
     })
 
     it('proceeds to verify (not network-select) for a plain doc with no chainId', async () => {
@@ -1050,6 +1097,189 @@ describe('useVerify', () => {
 
     it('returns VERIFICATION_ERROR as fallback when no errors', () => {
       expect(getErrorTypeFromFragments([])).toBe(TYPES.VERIFICATION_ERROR)
+    })
+
+    // ── App-side overrides for trustvc classification gaps ──────────────────
+    it('returns REVOKED for an OCSP-responder revoked document', () => {
+      const frags = [
+        {
+          name: 'OpenAttestationHash',
+          status: 'VALID' as const,
+          type: 'DOCUMENT_INTEGRITY' as const,
+        },
+        {
+          name: 'OpenAttestationDidSignedDocumentStatus',
+          status: 'INVALID' as const,
+          type: 'DOCUMENT_STATUS' as const,
+          reason: {
+            code: 1,
+            codeString: 'KEY_COMPROMISE',
+            message:
+              'Document 0xabc has been revoked under OCSP Responder: https://ocsp.example.com',
+          },
+        },
+        {
+          name: 'OpenAttestationDnsDidIdentityProof',
+          status: 'VALID' as const,
+          type: 'ISSUER_IDENTITY' as const,
+        },
+      ]
+      expect(getErrorTypeFromFragments(frags)).toBe(TYPES.REVOKED)
+    })
+
+    it('returns ISSUED for a token registry with an unminted token (ownerOf reverts)', () => {
+      const frags = [
+        {
+          name: 'OpenAttestationHash',
+          status: 'VALID' as const,
+          type: 'DOCUMENT_INTEGRITY' as const,
+        },
+        {
+          name: 'OpenAttestationEthereumTokenRegistryStatus',
+          status: 'ERROR' as const,
+          type: 'DOCUMENT_STATUS' as const,
+          reason: {
+            code: 0,
+            codeString: 'BAD_DATA',
+            message:
+              'invalid length for result data (value="0x08c379a0…", info={ "method": "ownerOf" }, code=BAD_DATA)',
+          },
+        },
+        {
+          name: 'OpenAttestationDnsTxtIdentityProof',
+          status: 'VALID' as const,
+          type: 'ISSUER_IDENTITY' as const,
+        },
+      ]
+      expect(getErrorTypeFromFragments(frags)).toBe(TYPES.ISSUED)
+    })
+
+    it('returns CONTRACT_NOT_FOUND for a token registry with no contract (empty ownerOf result)', () => {
+      const frags = [
+        {
+          name: 'OpenAttestationHash',
+          status: 'VALID' as const,
+          type: 'DOCUMENT_INTEGRITY' as const,
+        },
+        {
+          name: 'OpenAttestationEthereumTokenRegistryStatus',
+          status: 'ERROR' as const,
+          type: 'DOCUMENT_STATUS' as const,
+          reason: {
+            code: 0,
+            codeString: 'BAD_DATA',
+            message:
+              'could not decode result data (value="0x", info={ "method": "ownerOf" }, code=BAD_DATA)',
+          },
+        },
+        {
+          name: 'OpenAttestationDnsTxtIdentityProof',
+          status: 'VALID' as const,
+          type: 'ISSUER_IDENTITY' as const,
+        },
+      ]
+      expect(getErrorTypeFromFragments(frags)).toBe(TYPES.CONTRACT_NOT_FOUND)
+    })
+
+    // W3C TransferableRecords status failures keep the generic INVALID type (title
+    // "Document is invalid") but surface the verifier's own reason as the UI body via
+    // getErrorMessageFromFragments — see below.
+    it('keeps generic INVALID type for W3C TransferableRecords no-contract', () => {
+      const frags = [
+        {
+          name: 'EcdsaW3CSignatureIntegrity',
+          status: 'VALID' as const,
+          type: 'DOCUMENT_INTEGRITY' as const,
+        },
+        {
+          name: 'TransferableRecords',
+          status: 'INVALID' as const,
+          type: 'DOCUMENT_STATUS' as const,
+          reason: {
+            code: 0,
+            codeString: 'INVALID',
+            message: 'Token registry is not found',
+          },
+        },
+        {
+          name: 'W3CIssuerIdentity',
+          status: 'VALID' as const,
+          type: 'ISSUER_IDENTITY' as const,
+        },
+      ]
+      expect(getErrorTypeFromFragments(frags)).toBe(TYPES.INVALID)
+    })
+
+    it('keeps generic INVALID type for W3C TransferableRecords not minted', () => {
+      const frags = [
+        {
+          name: 'EcdsaW3CSignatureIntegrity',
+          status: 'VALID' as const,
+          type: 'DOCUMENT_INTEGRITY' as const,
+        },
+        {
+          name: 'TransferableRecords',
+          status: 'INVALID' as const,
+          type: 'DOCUMENT_STATUS' as const,
+          reason: {
+            code: 0,
+            codeString: 'INVALID',
+            message: 'Document has not been issued under token registry',
+          },
+        },
+        {
+          name: 'W3CIssuerIdentity',
+          status: 'VALID' as const,
+          type: 'ISSUER_IDENTITY' as const,
+        },
+      ]
+      expect(getErrorTypeFromFragments(frags)).toBe(TYPES.INVALID)
+    })
+  })
+
+  // ── getErrorMessageFromFragments ────────────────────────────────────────────
+  describe('getErrorMessageFromFragments', () => {
+    const trFrag = (message: string) => [
+      {
+        name: 'EcdsaW3CSignatureIntegrity',
+        status: 'VALID' as const,
+        type: 'DOCUMENT_INTEGRITY' as const,
+      },
+      {
+        name: 'TransferableRecords',
+        status: 'INVALID' as const,
+        type: 'DOCUMENT_STATUS' as const,
+        reason: { code: 0, codeString: 'INVALID', message },
+      },
+      {
+        name: 'W3CIssuerIdentity',
+        status: 'VALID' as const,
+        type: 'ISSUER_IDENTITY' as const,
+      },
+    ]
+
+    it('returns the verbatim reason for a W3C TransferableRecords no-contract', () => {
+      expect(
+        getErrorMessageFromFragments(trFrag('Token registry is not found'))
+      ).toBe('Token registry is not found')
+    })
+
+    it('returns the verbatim reason for a W3C TransferableRecords not minted', () => {
+      expect(
+        getErrorMessageFromFragments(
+          trFrag('Document has not been issued under token registry')
+        )
+      ).toBe('Document has not been issued under token registry')
+    })
+
+    it('returns undefined for other TransferableRecords reasons', () => {
+      expect(
+        getErrorMessageFromFragments(trFrag('some other failure'))
+      ).toBeUndefined()
+    })
+
+    it('returns undefined when there is no TransferableRecords failure', () => {
+      expect(getErrorMessageFromFragments([])).toBeUndefined()
     })
   })
 })

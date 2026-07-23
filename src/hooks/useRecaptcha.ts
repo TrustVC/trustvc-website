@@ -5,22 +5,30 @@ const SCRIPT_ID = 'recaptcha-v2-script'
 type UseRecaptchaOptions = {
   siteKey: string | null | undefined
   onChange?: (token: string) => void
+  onExpire?: () => void
 }
 
-export const useRecaptcha = ({ siteKey, onChange }: UseRecaptchaOptions) => {
+export const useRecaptcha = ({
+  siteKey,
+  onChange,
+  onExpire,
+}: UseRecaptchaOptions) => {
   const containerRef = useRef<HTMLDivElement | null>(null)
   const widgetIdRef = useRef<number | null>(null)
   const siteKeyRef = useRef(siteKey)
   const onChangeRef = useRef(onChange)
+  const onExpireRef = useRef(onExpire)
 
   siteKeyRef.current = siteKey
   onChangeRef.current = onChange
+  onExpireRef.current = onExpire
 
   useEffect(() => {
     if (!siteKeyRef.current) return
 
     const ensureRendered = () => {
       if (!containerRef.current || widgetIdRef.current !== null) return
+      if (!siteKeyRef.current) return
       const grecaptcha = globalThis.window?.grecaptcha
       if (!grecaptcha || typeof grecaptcha.render !== 'function') return
 
@@ -29,7 +37,10 @@ export const useRecaptcha = ({ siteKey, onChange }: UseRecaptchaOptions) => {
         callback: (token: string) => {
           onChangeRef.current?.(token)
         },
-      } as unknown as { sitekey: string })
+        'expired-callback': () => {
+          onExpireRef.current?.()
+        },
+      })
     }
 
     const loadScript = () => {

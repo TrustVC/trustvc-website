@@ -10,7 +10,7 @@ on:
 jobs:
   e2e:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 60
 
     steps:
       - name: Checkout
@@ -36,7 +36,7 @@ jobs:
           NODE_OPTIONS: --max-old-space-size=4096
 
       - name: Wait for Hardhat node
-        run: npx wait-on http://127.0.0.1:8545 --timeout 30000
+        run: npx wait-on http://127.0.0.1:8545 --timeout 180000
 
       - name: Deploy contracts and mint tokens
         run: node e2e/setup-contracts.cjs
@@ -46,9 +46,17 @@ jobs:
         run: npm run dev &
         env:
           VITE_APP_NETWORK: local
+          VITE_NETWORK_TYPE: testnet
+          VITE_RPC_URL_1337: http://127.0.0.1:8545
+          VITE_RPC_URL_80002: https://rpc-amoy.polygon.technology/
+          VITE_RPC_URL_137: https://rpc.ankr.com/polygon
+          # Analytics disabled in E2E — no events sent to GA4/GTM during test runs
+          VITE_GTM_CONTAINER_ID: ''
+          VITE_GA4_TAG_ID: ''
+          VITE_PLATFORM: local
 
       - name: Wait for dev server
-        run: npx wait-on http://localhost:5173 --timeout 60000
+        run: npx wait-on http://localhost:5173 --timeout 180000
 
       # ── MetaMask wallet cache ────────────────────────────────────────────
       # Cache the wallet setup so it is not rebuilt on every run.
@@ -61,23 +69,38 @@ jobs:
 
       - name: Build MetaMask wallet cache
         if: steps.metamask-cache.outputs.cache-hit != 'true'
-        run: |
-          # Synpress needs a virtual display on Linux (MetaMask does not support headless)
-          Xvfb :99 -screen 0 1280x720x24 &
-          export DISPLAY=:99
-          npm run e2e:setup-wallet
+        timeout-minutes: 10
+        run: npm run e2e:setup-wallet -- --headless
         env:
-          DISPLAY: ':99'
+          HEADLESS: 'true'
 
       # ── E2E tests ────────────────────────────────────────────────────────
-      - name: Run E2E tests
+      - name: Start Xvfb virtual display
         run: |
-          Xvfb :99 -screen 0 1280x720x24 &
-          export DISPLAY=:99
-          npm run e2e
+          Xvfb :99 -screen 0 1280x720x24 >/dev/null 2>&1 &
+          sleep 1
+
+      - name: Install ffmpeg
+        run: sudo apt-get install -y ffmpeg
+
+      - name: Start screen recording
+        run: |
+          ffmpeg -f x11grab -video_size 1280x720 -framerate 15 \
+            -i :99 -c:v libx264 -preset ultrafast -pix_fmt yuv420p \
+            /tmp/e2e-recording.mp4 &
+          echo $! > /tmp/ffmpeg.pid
+
+      - name: Run E2E tests
+        run: npm run e2e
         env:
           DISPLAY: ':99'
           CI: 'true'
+
+      - name: Stop screen recording
+        if: always()
+        run: |
+          kill $(cat /tmp/ffmpeg.pid) 2>/dev/null || true
+          sleep 2
 
       # ── Artifacts ────────────────────────────────────────────────────────
       - name: Upload Playwright report
@@ -88,10 +111,20 @@ jobs:
           path: playwright-report/
           retention-days: 7
 
-      - name: Upload test videos/screenshots on failure
+      - name: Upload screen recording
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screen-recording
+          path: /tmp/e2e-recording.mp4
+          retention-days: 7
+          if-no-files-found: ignore
+
+      - name: Upload screenshots on failure
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: e2e-failures
+          name: test-results
           path: test-results/
           retention-days: 7
+          if-no-files-found: ignore

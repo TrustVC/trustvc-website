@@ -1,0 +1,206 @@
+import type { Breadcrumb, Event, EventHint } from '@sentry/react'
+
+const REDACTED = '[Redacted]'
+
+/** Keys that must never leave the browser in Sentry payloads.
+ * Only list keys NOT already caught by SENSITIVE_KEY_PATTERN below. */
+const SENSITIVE_KEYS = new Set([
+  'targethash',
+  'document',
+  'rawdocument',
+  'doc',
+  'email',
+  'phone',
+  'filecontent',
+  'filetext',
+  'body',
+])
+
+const SENSITIVE_KEY_PATTERN =
+  /proof|credential|merkle|signature|payload|attachment|private|secret|password|token|auth|cookie|apikey|api[._-]key|bearer/i
+
+const CREDENTIAL_JSON_PATTERN =
+  /"(?:proofValue|merkleRoot|targetHash|verifiableCredential|credentialSubject)"/i
+
+const MAX_STRING_LENGTH = 500
+const MAX_DEPTH = 8
+
+const isSensitiveKey = (key: string): boolean =>
+  SENSITIVE_KEYS.has(key.toLowerCase()) || SENSITIVE_KEY_PATTERN.test(key)
+
+const looksLikeCredentialPayload = (value: string): boolean =>
+  value.length > MAX_STRING_LENGTH || CREDENTIAL_JSON_PATTERN.test(value)
+
+// Strip the hash fragment (decryption key), the `q` query param (document URI),
+// and any param whose name is sensitive before the URL leaves the browser in Sentry payloads.
+const scrubUrl = (value: string): string => {
+  try {
+    const parsed = new URL(value)
+    parsed.hash = ''
+    for (const key of [...parsed.searchParams.keys()]) {
+      if (key === 'q' || isSensitiveKey(key)) {
+        parsed.searchParams.delete(key)
+      }
+    }
+    return parsed.toString()
+  } catch {
+    return value
+  }
+}
+
+const scrubString = (value: string): string => {
+  if (value.startsWith('https://') || value.startsWith('http://')) {
+    return scrubUrl(value)
+  }
+  if (looksLikeCredentialPayload(value)) {
+    return `[Redacted string len=${value.length}]`
+  }
+  return value
+}
+
+export const scrubValue = (value: unknown, depth = 0): unknown => {
+  if (depth > MAX_DEPTH) return '[Truncated]'
+
+  if (
+    value == null ||
+    typeof value === 'boolean' ||
+    typeof value === 'number'
+  ) {
+    return value
+  }
+
+  if (typeof value === 'string') {
+    return scrubString(value)
+  }
+
+  if (Array.isArray(value)) {
+    return value.map(item => scrubValue(item, depth + 1))
+  }
+
+  if (typeof value === 'object') {
+    return scrubObject(value as Record<string, unknown>, depth + 1)
+  }
+
+  return value
+}
+
+export const scrubObject = (
+  obj: Record<string, unknown>,
+  depth = 0
+): Record<string, unknown> => {
+  const result: Record<string, unknown> = {}
+
+  for (const [key, val] of Object.entries(obj)) {
+    if (isSensitiveKey(key)) {
+      result[key] = REDACTED
+      continue
+    }
+    result[key] = scrubValue(val, depth + 1)
+  }
+
+  return result
+}
+
+export const scrubBreadcrumb = (breadcrumb: Breadcrumb): Breadcrumb | null => {
+  const scrubbed: Breadcrumb = { ...breadcrumb }
+
+  if (typeof scrubbed.message === 'string') {
+    scrubbed.message = scrubString(scrubbed.message)
+  }
+
+  if (scrubbed.data) {
+    scrubbed.data = scrubObject(scrubbed.data as Record<string, unknown>)
+  }
+
+  return scrubbed
+}
+
+export const scrubEvent = (event: Event, _hint?: EventHint): Event | null => {
+  if (typeof event.message === 'string') {
+    event.message = scrubString(event.message)
+  }
+
+  if (event.logentry) {
+    const logentry = {
+      ...event.logentry,
+      ...(typeof event.logentry.message === 'string'
+        ? { message: scrubString(event.logentry.message) }
+        : {}),
+    } as Event['logentry'] & { formatted?: string }
+
+    if (typeof logentry.formatted === 'string') {
+      logentry.formatted = scrubString(logentry.formatted)
+    }
+
+    event.logentry = logentry
+  }
+
+  if (event.exception?.values) {
+    event.exception = {
+      ...event.exception,
+      values: event.exception.values.map(value => ({
+        ...value,
+        value:
+          typeof value.value === 'string'
+            ? scrubString(value.value)
+            : value.value,
+      })),
+    }
+  }
+
+  if (event.extra) {
+    event.extra = scrubObject(event.extra as Record<string, unknown>)
+  }
+
+  if (event.contexts) {
+    const contexts: Record<string, unknown> = {}
+    for (const [key, ctx] of Object.entries(event.contexts)) {
+      contexts[key] =
+        ctx && typeof ctx === 'object'
+          ? scrubObject(ctx as Record<string, unknown>)
+          : ctx
+    }
+    event.contexts = contexts as Event['contexts']
+  }
+
+  if (event.tags) {
+    event.tags = Object.fromEntries(
+      Object.entries(event.tags).map(([key, value]) => [
+        key,
+        isSensitiveKey(key)
+          ? REDACTED
+          : typeof value === 'string'
+            ? scrubString(value)
+            : value,
+      ])
+    ) as Event['tags']
+  }
+
+  if (event.breadcrumbs) {
+    event.breadcrumbs = event.breadcrumbs
+      .map(crumb => scrubBreadcrumb(crumb))
+      .filter((crumb): crumb is Breadcrumb => crumb != null)
+  }
+
+  if (event.request?.url && typeof event.request.url === 'string') {
+    event.request.url = scrubUrl(event.request.url)
+  }
+
+  if (event.request?.headers && typeof event.request.headers === 'object') {
+    event.request.headers = scrubObject(
+      event.request.headers as Record<string, unknown>
+    ) as Record<string, string>
+  }
+
+  if (event.request?.data) {
+    if (typeof event.request.data === 'string') {
+      event.request.data = scrubString(event.request.data)
+    } else if (typeof event.request.data === 'object') {
+      event.request.data = scrubObject(
+        event.request.data as Record<string, unknown>
+      )
+    }
+  }
+
+  return event
+}

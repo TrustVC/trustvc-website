@@ -19,7 +19,7 @@ interface VerifySectionProps {
 
 const CHAIN_NAMES: Record<string, string> = {
   '1': 'Ethereum',
-  '137': 'Polygon',
+  '137': 'Polygon (POL)',
   '50': 'XDC Network',
   '101010': 'Stability (Beta)',
   '1338': 'Astron',
@@ -35,6 +35,7 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
     verifyStatus,
     fileName,
     errorType,
+    errorMessage,
     dragActive,
     verifiedChainId,
     issuerName,
@@ -195,7 +196,11 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
               )}
 
               {(verifyStatus === 'invalid' || verifyStatus === 'error') && (
-                <VerifyError errorType={errorType} onReset={handleReset} />
+                <VerifyError
+                  errorType={errorType}
+                  message={errorMessage}
+                  onReset={handleReset}
+                />
               )}
               {verifyStatus === 'network-select' && (
                 <NetworkModal

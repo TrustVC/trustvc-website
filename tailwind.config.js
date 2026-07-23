@@ -52,7 +52,7 @@ export default {
         },
       },
       fontFamily: {
-        gilroy: ['Gilroy', 'sans-serif'],
+        urbanist: ['Urbanist', 'sans-serif'],
         avenir: ['Avenir', 'ui-sans-serif', 'system-ui'],
       },
       fontSize: {

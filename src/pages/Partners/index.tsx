@@ -29,7 +29,7 @@ const Partners = ({ isDarkMode }: PartnersProps) => {
         {/* Heading */}
         <div className="text-center mb-10">
           <h1
-            className="font-gilroy font-bold"
+            className="font-urbanist font-bold"
             style={{ fontSize: '36px', lineHeight: '122%' }}
           >
             <span

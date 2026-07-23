@@ -28,7 +28,7 @@ const v5Contracts = require('@trustvc/trustvc/token-registry-v5/contracts')
     '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'
   // Hardhat default account #1 and #2 — used as token owner / holder addresses.
   const ADDRESS_EXAMPLE_1 = '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'
-  const ADDRESS_EXAMPLE_2 = '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'
+  const ADDRESS_EXAMPLE_2 = '0x70997970C51812dc3A010C7d01b50e0d17dc79C8'
 
   const provider = new ethers.providers.JsonRpcProvider(
     'http://127.0.0.1:8545/',
@@ -120,13 +120,19 @@ const v5Contracts = require('@trustvc/trustvc/token-registry-v5/contracts')
     owner: ADDRESS_EXAMPLE_1,
     holder: ADDRESS_EXAMPLE_1,
   }
+  const nominateToken = {
+    accountKey: DEPLOYER_KEY,
+    tokenRegistryAddress: tokenRegistryContract.address, // Use the deployed contract address
+    owner: ADDRESS_EXAMPLE_1,
+    holder: ADDRESS_EXAMPLE_2,
+  }
 
   const tokensToMint = {
     tokenRegistry: [
       {
         // Transfer/Reject Holder
         tokenId:
-          '0xecb542b947553af17be191b445d28133a7c9e74de54ea3e27373c8421ce8e8fd',
+          '0x31884d9f2926120a5779cad07bc5c83ee4ddcf99e88307c8bddf78509cfb2467',
         ...defaultToken,
       },
       {
@@ -157,6 +163,18 @@ const v5Contracts = require('@trustvc/trustvc/token-registry-v5/contracts')
         //nominate
         tokenId:
           '0xc028b0a92ed3283146ef0e35d2f15845d38d7d4b736b14d938b0500d97a8426d',
+        ...nominateToken,
+      },
+      {
+        // OA verification: happy minted token registry (oa_v2_dnstxt_tokenregistry_valid.json)
+        tokenId:
+          '0x6e16607321ece74005eec60b063b6a4668e696139ccfd48802561d01c93deef1',
+        ...defaultToken,
+      },
+      {
+        // W3C verification: happy minted TransferableRecords (w3c_vc_didweb_tokenregistry_valid.json)
+        tokenId:
+          '0x844575edda1a78166f3af489dacf057f9abe3c7a21ebc4d0eb6f1460b4ebec6e',
         ...defaultToken,
       },
     ],

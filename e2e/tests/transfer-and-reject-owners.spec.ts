@@ -32,7 +32,7 @@ test.describe.serial('Transfer Owners → Reject Transfer Owners', () => {
     metamaskPage,
     extensionId,
   }) => {
-    await switchMetaMaskAccount(metamaskPage, extensionId, 'Account 1')
+    // await switchMetaMaskAccount(metamaskPage, extensionId, 'Account 1')
 
     const metamask = new MetaMask(
       context,
@@ -77,13 +77,6 @@ test.describe.serial('Transfer Owners → Reject Transfer Owners', () => {
     await expect(
       page.locator('text=Transfer Ownership/Holdership Success')
     ).toBeVisible({ timeout: 60_000 })
-    // const dialog = page.getByRole('dialog')
-    // await expect(dialog.getByText(NEW_OWNER, { exact: false })).toBeVisible({
-    //   timeout: 10_000,
-    // })
-    // await expect(dialog.getByText(NEW_HOLDER, { exact: false })).toBeVisible({
-    //   timeout: 10_000,
-    // })
   })
 
   // ── Test 2: Reject Transfer Owners ──────────────────────────────────────
@@ -104,16 +97,7 @@ test.describe.serial('Transfer Owners → Reject Transfer Owners', () => {
 
     await uploadAndVerify(page, DOCUMENT_PATH)
 
-    await page.locator('[data-testid="connectToWallet"]').click()
-    await page
-      .locator('[data-testid="connectToMetamask"]')
-      .waitFor({ state: 'visible', timeout: 10_000 })
-    await page.locator('[data-testid="connectToMetamask"]').click()
-    await metamask.connectToDapp()
-    await page
-      .locator('[data-testid="connect-blockchain-continue"]')
-      .waitFor({ state: 'visible', timeout: 15_000 })
-    await page.locator('[data-testid="connect-blockchain-continue"]').click()
+    await connectMetaMask(page, metamask)
 
     await expect(
       page.locator('[data-testid="manageAssetDropdown"]')

@@ -816,8 +816,8 @@ describe('ActionForm - ReturnToIssuer', () => {
     )
 
     expect(screen.getAllByText('Remark').length).toBeGreaterThan(0)
-    expect(screen.getByTestId('cancelSurrenderBtn')).toBeInTheDocument()
-    expect(screen.getByTestId('surrenderBtn')).toBeInTheDocument()
+    expect(screen.getByTestId('cancelReturnToIssuerBtn')).toBeInTheDocument()
+    expect(screen.getByTestId('returnToIssuerBtn')).toBeInTheDocument()
   })
 
   it('displays only remark field without owner and holder', () => {
@@ -845,7 +845,7 @@ describe('ActionForm - ReturnToIssuer', () => {
       />
     )
 
-    const returnBtn = screen.getByTestId('surrenderBtn')
+    const returnBtn = screen.getByTestId('returnToIssuerBtn')
     expect(returnBtn).not.toBeDisabled()
   })
 
@@ -859,7 +859,7 @@ describe('ActionForm - ReturnToIssuer', () => {
       />
     )
 
-    const returnBtn = screen.getByTestId('surrenderBtn')
+    const returnBtn = screen.getByTestId('returnToIssuerBtn')
     fireEvent.click(returnBtn)
 
     expect(mockHandleReturnToIssuer).toHaveBeenCalledWith({
@@ -882,7 +882,7 @@ describe('ActionForm - ReturnToIssuer', () => {
       target: { value: 'Returning document to issuer' },
     })
 
-    const returnBtn = screen.getByTestId('surrenderBtn')
+    const returnBtn = screen.getByTestId('returnToIssuerBtn')
     fireEvent.click(returnBtn)
 
     expect(mockHandleReturnToIssuer).toHaveBeenCalledWith({
@@ -914,8 +914,8 @@ describe('ActionForm - ReturnToIssuer', () => {
       />
     )
 
-    expect(screen.getByTestId('cancelSurrenderBtn')).toBeDisabled()
-    expect(screen.getByTestId('surrenderBtn')).toBeDisabled()
+    expect(screen.getByTestId('cancelReturnToIssuerBtn')).toBeDisabled()
+    expect(screen.getByTestId('returnToIssuerBtn')).toBeDisabled()
   })
 
   it('disables buttons when state is initialized', () => {
@@ -928,8 +928,8 @@ describe('ActionForm - ReturnToIssuer', () => {
       />
     )
 
-    expect(screen.getByTestId('cancelSurrenderBtn')).toBeDisabled()
-    expect(screen.getByTestId('surrenderBtn')).toBeDisabled()
+    expect(screen.getByTestId('cancelReturnToIssuerBtn')).toBeDisabled()
+    expect(screen.getByTestId('returnToIssuerBtn')).toBeDisabled()
   })
 
   it('calls setFormActionNone when cancel button is clicked', () => {
@@ -942,7 +942,7 @@ describe('ActionForm - ReturnToIssuer', () => {
       />
     )
 
-    const cancelBtn = screen.getByTestId('cancelSurrenderBtn')
+    const cancelBtn = screen.getByTestId('cancelReturnToIssuerBtn')
     fireEvent.click(cancelBtn)
 
     expect(mockSetFormActionNone).toHaveBeenCalled()
@@ -1015,7 +1015,7 @@ describe('ActionForm - RejectReturnToIssuer', () => {
     expect(screen.getByText('Owner')).toBeInTheDocument()
     expect(screen.getByText('Holder')).toBeInTheDocument()
     expect(screen.getAllByText('Remark').length).toBeGreaterThan(0)
-    expect(screen.getByTestId('cancelSurrenderBtn')).toBeInTheDocument()
+    expect(screen.getByTestId('cancelReturnToIssuerBtn')).toBeInTheDocument()
     expect(screen.getByTestId('rejectReturnToIssuerBtn')).toBeInTheDocument()
   })
 
@@ -1112,7 +1112,7 @@ describe('ActionForm - RejectReturnToIssuer', () => {
       />
     )
 
-    expect(screen.getByTestId('cancelSurrenderBtn')).toBeDisabled()
+    expect(screen.getByTestId('cancelReturnToIssuerBtn')).toBeDisabled()
     expect(screen.getByTestId('rejectReturnToIssuerBtn')).toBeDisabled()
   })
 
@@ -1126,7 +1126,7 @@ describe('ActionForm - RejectReturnToIssuer', () => {
       />
     )
 
-    expect(screen.getByTestId('cancelSurrenderBtn')).toBeDisabled()
+    expect(screen.getByTestId('cancelReturnToIssuerBtn')).toBeDisabled()
     expect(screen.getByTestId('rejectReturnToIssuerBtn')).toBeDisabled()
   })
 
@@ -1140,7 +1140,7 @@ describe('ActionForm - RejectReturnToIssuer', () => {
       />
     )
 
-    const cancelBtn = screen.getByTestId('cancelSurrenderBtn')
+    const cancelBtn = screen.getByTestId('cancelReturnToIssuerBtn')
     fireEvent.click(cancelBtn)
 
     expect(mockSetFormActionNone).toHaveBeenCalled()
@@ -1230,7 +1230,7 @@ describe('ActionForm - AcceptReturnToIssuer', () => {
     )
 
     expect(screen.getAllByText('Remark').length).toBeGreaterThan(0)
-    expect(screen.getByTestId('cancelSurrenderBtn')).toBeInTheDocument()
+    expect(screen.getByTestId('cancelReturnToIssuerBtn')).toBeInTheDocument()
     expect(screen.getByTestId('acceptReturnToIssuerBtn')).toBeInTheDocument()
   })
 
@@ -1324,7 +1324,7 @@ describe('ActionForm - AcceptReturnToIssuer', () => {
       />
     )
 
-    expect(screen.getByTestId('cancelSurrenderBtn')).toBeDisabled()
+    expect(screen.getByTestId('cancelReturnToIssuerBtn')).toBeDisabled()
     expect(screen.getByTestId('acceptReturnToIssuerBtn')).toBeDisabled()
   })
 
@@ -1338,7 +1338,7 @@ describe('ActionForm - AcceptReturnToIssuer', () => {
       />
     )
 
-    expect(screen.getByTestId('cancelSurrenderBtn')).toBeDisabled()
+    expect(screen.getByTestId('cancelReturnToIssuerBtn')).toBeDisabled()
     expect(screen.getByTestId('acceptReturnToIssuerBtn')).toBeDisabled()
   })
 
@@ -1352,7 +1352,7 @@ describe('ActionForm - AcceptReturnToIssuer', () => {
       />
     )
 
-    const cancelBtn = screen.getByTestId('cancelSurrenderBtn')
+    const cancelBtn = screen.getByTestId('cancelReturnToIssuerBtn')
     fireEvent.click(cancelBtn)
 
     expect(mockSetFormActionNone).toHaveBeenCalled()

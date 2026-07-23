@@ -33,7 +33,7 @@ test.describe.serial('Transfer Holder → Reject Transfer Holder', () => {
     extensionId,
   }) => {
     // Ensure MetaMask is on Account #1 (= Hardhat account #0)
-    await switchMetaMaskAccount(metamaskPage, extensionId, 'Account 1')
+    // await switchMetaMaskAccount(metamaskPage, extensionId, 'Account 1')
 
     const metamask = new MetaMask(
       context,

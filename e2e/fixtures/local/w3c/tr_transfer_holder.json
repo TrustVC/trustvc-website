@@ -5,7 +5,6 @@
     "https://trustvc.io/context/attachments-context.json",
     "https://trustvc.io/context/render-method-context-v2.json",
     "https://trustvc.io/context/transferable-records-context.json",
-    "https://trustvc.io/context/qrcode-context.json",
     "https://w3id.org/security/data-integrity/v2"
   ],
   "renderMethod": [
@@ -17,14 +16,10 @@
   ],
   "credentialSubject": {
     "type": ["BillOfLadingCarrier"],
-    "blNumber": "1234567",
-    "scac": "12345678"
+    "blNumber": "232323",
+    "scac": "MAEU"
   },
   "type": ["VerifiableCredential"],
-  "qrCode": {
-    "type": "TrustVCQRCode",
-    "uri": "https://actions.tradetrust.io?q=%7B%22type%22%3A%22DOCUMENT%22%2C%22payload%22%3A%7B%22uri%22%3A%22https%3A%2F%2Ftradetrust-functions.netlify.app%2F.netlify%2Ffunctions%2Fstorage%2Ff0ec7b77-3a0b-4939-9eae-09470f6c2edf%22%2C%22key%22%3A%22f4aeb788aa47f2f920d9b0f0fed1af256b7894fa9d96046b7869d64608eca7e2%22%2C%22permittedActions%22%3A%5B%22STORE%22%5D%2C%22redirect%22%3A%22https%3A%2F%2Fdev.tradetrust.io%2F%22%2C%22chainId%22%3A%2211155111%22%7D%7D"
-  },
   "credentialStatus": {
     "type": "TransferableRecords",
     "tokenNetwork": {
@@ -32,17 +27,17 @@
       "chainId": 1337
     },
     "tokenRegistry": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
-    "tokenId": "ecb542b947553af17be191b445d28133a7c9e74de54ea3e27373c8421ce8e8fd"
+    "tokenId": "31884d9f2926120a5779cad07bc5c83ee4ddcf99e88307c8bddf78509cfb2467"
   },
-  "issuer": "did:web:responsible-olive-hummingbird.playground.fyntech.io",
-  "validFrom": "2026-06-01T08:16:51.533Z",
-  "id": "urn:uuid:019e8245-f32d-7552-9fa2-3ccc0871fabe",
+  "issuer": "did:web:trustvc.github.io:did:1",
+  "validFrom": "2022-04-28T03:31:39.440Z",
+  "id": "urn:uuid:019e9559-79e7-7332-aeea-8a661a265109",
   "proof": {
     "type": "DataIntegrityProof",
-    "created": "2026-06-01T08:21:22Z",
-    "verificationMethod": "did:web:responsible-olive-hummingbird.playground.fyntech.io#keys-1",
+    "created": "2026-06-05T01:15:29Z",
+    "verificationMethod": "did:web:trustvc.github.io:did:1#multikey-1",
     "cryptosuite": "ecdsa-sd-2023",
     "proofPurpose": "assertionMethod",
-    "proofValue": "u2V0AhVhA9ft-J3HiXPEVantsDFL7m5T8LwiuLkzfFOCEFMzd1gWXTqkERC3CNg3mmJUx6-YjaeHHhG-l9aZUsDwnxlMotlgjgCQDNag1b4G56tCaTtEGqFzInLgvh3iFDSx-n4PFqHiw1aNYIEwfGAwOwrp1AzMyKHwKMMZyyjXp1urkakC8Jo8TGvbqkVhAvegUyYAIH1shh6siUb6A23ftlIM8WMoWLMwDwnYX1LV6Ol09BjegjMWLzxE4J6nS72Q3YmEpA4r90odPl5-hDlhAagBm9RruN_riqzZTMtNznLnuj9fd_AqKeDf44XNg6gTozuDud7x1C1eP10XDZ6qzAaJfd3NyVd2fU-_pLGQQjFhAH5btQDodv3E3mfRLqFrovKaVY5ucUg8XZj_BJWr-l820yyMEgrjb3HPhdAETm26EtjZitWkIDnUOQ07S7MkCkVhABeoD8X3VU6ku4PyVb0UtsdiihaW_ekeWKSQ3xGsAvdM18notYATRoRHTcVNEXlAJTM_Jh7C_vSy94BgjKhOUNFhAVs2VqkvhN0kw4WyiONC6i6nIXlVVdnCCfCbK6pkLvG3ZJZJcELS-z8myQBbaFMmOPqMxOzLlH6xGtk0zTTaKTFhAWkoYc1E_Z-SpZ0FDnSvJSLgZRQfIePpk0qs3ClvRGbgopDvR-8xFjzzUKwxdIhhuZ7fUMgEd8riKCSjQXEQy-1hAvBQHcLJJxsImvtgrTMlgOsG8y0dZ8N8O33wdskmRxAyeRE9ZMXwG9DrhMNTxZtNI_iZ7SRxs5GKl3T2aylh_JVhANpLhZHfGBWMGVZjLcFtjchKYszXfMVUALIgq_6HBiPYlmI7bX7TQV2kuzU7Z2SiszfARWNT35Vs8hUqUX49SHlhACKHIcBYrZ16-rKoosGbUcVFXZlpYScfJUbfD5McPhuMAOZ-9zvkroP_tRay9IiQiEdunOFfeDvWSggMVF6DUVlhAonRMbpe-EJ-49BBXuY1uxCBlw66rQtCj3Z6icQlJx63PoFELS2lb-HGAEDe06YERi9QkchtNY7FH8uvO2RsszVhAO0Q5Qp9qN1BqQogT6kz8vlzwn-cPZ4_RzJeIO1PvbUhYgnZSVGDJtj8cIprBTmq1zn-liaGO_0eeW7KEXalH8VhAYUcIn2d8kIi6AeXPwLA6Iv7IRB8Jpt7NyHPp5SIoK-R6a9JHUS6HqQCRuDiAMH7vbe-yfMvHDhRX2gBn8HkEp1hACQ0oY65b_bZi-L9YPiHf_IVYloLSlfgICqJI3FC1Vmav4nLNjxo1H7-oWIJDbnBuwdPqTz-Op7D_TnBo0ZbF4FhAoTL3wdwkGDDxkEukGSMtREBAuCHECcbMCpnwiQuvdvifIqBdreFX_hehQeCmv7XqYIRSsc1UEDgI-mYUJeq7CFhA_cR6eIahl1Vx3epHCqqjo6aPBksci6vEsoKwPBmSVD0TgXtFXlu7vNWDz9nGMY9XgfIGyEvmNsis_BuLgIkQz1hAnuNK18I7zysa1iIDePNc5SkMDmx-RqKGnfzVsS4Lx0u56PdYC8nOZIDyRZWV7Ixe2JFkL_XJoGgFKsUGWFnDWFhAZLiKCljHMA18KD0wUUPDXJCyrDgkGOgqRB6wD-RPYZSoUkkiq9KXwY6L_KZKRgY8SMNCbFbqZiILdq2KzAqnjoJnL2lzc3VlcmovdmFsaWRGcm9t"
+    "proofValue": "u2V0AhVhAbJBU78Z228przCwJVyut6f6aSfJcs1id3fksuyDmsmpRRcPwoQcr6GHvy8zel8xQW0uBK9e-FXtK_blEHIY3JFgjgCQCFK-FrPumD5dYNQ7dAxaEuExm_aVZClEqRszUFPxMlxNYIK7IR8a3ErSikRe7ECZCuMOraaQc4hGgM5-9-BJ4OnLzjlhAeM8LkRLPknB3RRoVm0NBKfW1Bf-YhxKrI6JvCVAV_cWT9kBWBPlCW8JEJl1D5dyRKMyJAHGA5_MTlEOJeWLGYVhAOF9hcpFdJwTVwYEnWVChcOnM-jNtox9AmVubDVnr2w1QW3lu4Zi04JVY59MOK3KxqbM9liEdAfGxqVCXyIxDv1hAWR3BcA58YBMv5u3M2qYiYsitam7X4GewnSqTqTx_UMJiTF58uLAKFiFpWLZCpTLZPWh9-ucPZ0RW__7sr1tOtlhAbxtAIKsH4K0OYRXb52sZuUFp4qz57aGpxPuyHD3O_mYNPxX837ohqvVsAxT1Ra_C1iGvE5wQ_-qn-TFjkFd8M1hAa7sb8ETWCX4wb-GjJD_tsapJx-7Cju8Q1K7j0axQTS_o2PLmKF1g9s9-_zcs0xw-4eTcc1SfgVueuj6_w2IQxVhAwcWawns62ok0D0QHw8q0_D5PbNGNI2J_4XxfQu9N4bCV1ALjZCZqrNxrp3Yjlo83aeAp1cy7iFGjdGDHE8q35FhAHTNrrOepfgqXiDNnAu2vjxPpdf4B2E51EHotVWMe-xSvUf9etm1FcT7UhwA2oKHUSkarJLja0Xp7_Jy8Hxz-KFhAAyX05QrrQ7Sksd3FTzOVdSO4fvxK-Fb6LqkcU_1XlfdGUuXdknEQ5PczV-hahi4ZundhwBmEFOe5136JNo4ctlhAq_U8zntQlRXIT8Xu5CbWOFYXA6F8VRYaboxRyRc2sMhlhCU6RqDQPVNBS5Ck0HMIxqiotWE7Meh1tCmkLXc11lhAtuH8kXiQD6vdx27-5yhKZBY5bDcAat5RlIaG6rrhCOzqfxwXEAHlYwyw0EMutNBlRjZG1MhQoqupjxA3tGACg1hAijyXKUtd0szxLEy1ZUtyJ-2MprqPgXUDam99k647G_RZbP_HBGgskECl7NOzWGByZ5K96fBeJ3sxA9tnRO18_1hAhdYPqxdG9FUok1LNTjm8ghO_P_6mUnZk99u5YWD1z1cUAodjzQ97elIYLTPUgy4Iar-a2KHdSZXbdK2MpJDh1FhAZQr9ztpTF9QW1JA-CTEcOz0MKddqvIFFiGO2vPmXKm0Q5FEaWR3pRRJWTLT7nY64wsd_2ZH572maCA6AbLSPllhA9FwWgEkt36ZEAAB6Y-2GXtg1lGrz6ae2xhmhw2p4SfFyw7WoWAv1eRcHYcROKmdHKIRQnkj_OUDiggaG7p4lxIJnL2lzc3VlcmovdmFsaWRGcm9t"
   }
 }
