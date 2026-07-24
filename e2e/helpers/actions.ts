@@ -1,12 +1,27 @@
 import type { Page } from '@playwright/test'
 import { MetaMask } from '@synthetixio/synpress/playwright'
 
+// Pages that already have the popover auto-dismiss handler registered.
+const popoverHandlerRegistered = new WeakSet<Page>()
+
 /**
  * Dismisses the MetaMask "What's new" popover and any other blocking popups.
- * Must be called after navigating to the MetaMask home page.
+ * MetaMask renders announcement popovers asynchronously after home.html
+ * loads, so a one-shot visibility check can miss one that appears late and
+ * then blocks every subsequent click. addLocatorHandler makes Playwright
+ * auto-dismiss the popover whenever it shows up, including mid-action.
  */
 async function dismissMetaMaskPopups(metamaskPage: Page) {
   const popoverClose = metamaskPage.locator('[data-testid="popover-close"]')
+
+  if (!popoverHandlerRegistered.has(metamaskPage)) {
+    popoverHandlerRegistered.add(metamaskPage)
+    await metamaskPage.addLocatorHandler(popoverClose, async () => {
+      await popoverClose.click()
+    })
+  }
+
+  // Also dismiss immediately if it is already showing.
   if (await popoverClose.isVisible({ timeout: 3000 }).catch(() => false)) {
     await popoverClose.click()
     await metamaskPage.waitForTimeout(500)
@@ -129,6 +144,8 @@ export async function addMetaMaskAccount(
 ) {
   await metamaskPage.goto(`chrome-extension://${extensionId}/home.html`)
   await metamaskPage.waitForLoadState('domcontentloaded')
+
+  await dismissMetaMaskPopups(metamaskPage)
 
   await metamaskPage.locator('[data-testid="account-menu-icon"]').click()
   await metamaskPage
