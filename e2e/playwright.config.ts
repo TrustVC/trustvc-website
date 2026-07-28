@@ -9,7 +9,7 @@ export default defineConfig({
   expect: { timeout: 30_000 }, // per-assertion timeout
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
+  retries: 0, // all specs here mutate Hardhat chain state; retries hit dirty state
   workers: 1, // MetaMask requires a single browser context
   reporter: 'html',
   use: {
