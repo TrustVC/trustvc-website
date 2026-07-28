@@ -864,7 +864,7 @@ describe('error handling', () => {
     expect(result.current.errorMessage).toBe('User Rejected Transaction')
   })
 
-  it('returns empty string for unknown error codes', async () => {
+  it('returns fallback message for unknown error codes', async () => {
     mocks.returnToIssuer.mockRejectedValue({ code: 9999 })
 
     const { result } = renderHook(() =>
@@ -876,7 +876,26 @@ describe('error handling', () => {
     })
 
     expect(result.current.state).toBe('ERROR')
-    expect(result.current.errorMessage).toBe('')
+    expect(result.current.errorMessage).toBe('Transaction failed')
+  })
+
+  it('uses error.message for Error instances with unknown codes', async () => {
+    mocks.returnToIssuer.mockRejectedValue(
+      new Error('Bundler rejected: insufficient funds')
+    )
+
+    const { result } = renderHook(() =>
+      useGaslessReturnToIssuer(CONTRACT_OPTIONS, mockSigner, CHAIN_ID)
+    )
+
+    await act(async () => {
+      await result.current.send({})
+    })
+
+    expect(result.current.state).toBe('ERROR')
+    expect(result.current.errorMessage).toBe(
+      'Bundler rejected: insufficient funds'
+    )
   })
 
   it('useGaslessAcceptReturned — throws when tokenRegistryAddress is missing in fallback', async () => {
@@ -945,6 +964,8 @@ describe('reset()', () => {
   })
 
   it('clears state after a successful transaction', async () => {
+    mocks.checkEIP7702Delegation.mockResolvedValue(false)
+
     const { result } = renderHook(() =>
       useGaslessNominate(CONTRACT_OPTIONS, mockSigner, CHAIN_ID)
     )

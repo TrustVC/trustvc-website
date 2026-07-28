@@ -16,6 +16,11 @@ import { AssetManagementApplication } from '../../AssetManagementPanel/AssetMana
 import { TextButton } from '../../common/Button/Button'
 import { checkPaymasterWhitelist } from '../../../gasless/checkPaymasterWhitelist'
 import { checkEIP7702Delegation } from '../../../gasless/checkDelegation'
+import {
+  getPaymasterAddress,
+  setPaymasterAddress as savePaymasterAddress,
+  removePaymasterAddress as clearPaymasterAddress,
+} from '../../../gasless/paymasterStorage'
 import { getRpcUrl } from '../../../utils/helper'
 import { isAddress, createPublicClient, http } from 'viem'
 import InfoIcon from '../../../../src/components/icons/info'
@@ -89,7 +94,13 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
       setIsDelegated(false)
       return
     }
-    checkEIP7702Delegation(account, rpcUrl).then(setIsDelegated)
+    let cancelled = false
+    checkEIP7702Delegation(account, rpcUrl).then(result => {
+      if (!cancelled) setIsDelegated(result)
+    })
+    return () => {
+      cancelled = true
+    }
   }, [account, chainId])
 
   // ── Gasless card state ───────────────────────────────────────────────────
@@ -157,7 +168,7 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
         console.log('[checkGasless] whitelist result:', result)
 
         if (result.isCallerAuthorized && result.isTitleEscrowAuthorized) {
-          // localStorage.setItem(`trustvc_paymaster_${account}`, trimmed)
+          savePaymasterAddress(account, trimmed)
           setGaslessStatus('success')
         } else {
           console.warn(
@@ -166,6 +177,7 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
             'isTitleEscrowAuthorized:',
             result.isTitleEscrowAuthorized
           )
+          clearPaymasterAddress(account)
           setGaslessError('This address is not applicable to you')
           setGaslessStatus('error')
         }
@@ -190,7 +202,7 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
   // Auto-verify stored paymaster once delegation is confirmed
   useEffect(() => {
     if (!isDelegated || !account) return
-    const stored = localStorage.getItem(`trustvc_paymaster_${account}`)
+    const stored = getPaymasterAddress(account)
     if (!stored) return
     setPaymasterAddress(stored)
     checkGasless(stored)
@@ -365,8 +377,16 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
                     </span>
                     <div className="gasless-address-input">
                       <input
+                        id="gasless-paymaster-address"
                         className="gasless-address-input-field"
                         type="text"
+                        aria-label="Paymaster address"
+                        aria-invalid={gaslessStatus === 'error'}
+                        aria-describedby={
+                          gaslessStatus === 'error'
+                            ? 'gasless-paymaster-error'
+                            : undefined
+                        }
                         placeholder="Enter your paymaster address"
                         value={paymasterAddress}
                         onChange={e => {
@@ -386,7 +406,11 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
                         disabled={gaslessStatus === 'checking'}
                       />
                       {gaslessStatus === 'error' && (
-                        <div className="gasless-error-frame">
+                        <div
+                          id="gasless-paymaster-error"
+                          className="gasless-error-frame"
+                          role="alert"
+                        >
                           <div className="gasless-guidance-frame">
                             <InfoIcon fontSize={13.5} fill="#B83152" />
                             <span className="gasless-error-text">

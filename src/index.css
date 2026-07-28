@@ -2305,29 +2305,18 @@ p.small {
 }
 
 .check-gasless-content-success-text {
-  /* Auto layout */
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   padding: 0px;
   gap: 8px;
-}
-
-.check-gasless-content-success-text {
-  /* This wallet has Pay-on-Behalf enabled. Transaction fees are covered for you, so you'll see a Signature Request instead of a Transaction Request when confirming. */
-
   width: 100%;
   height: auto;
-
   font-family: 'Avenir';
   font-style: normal;
   font-weight: 400;
   font-size: 16px;
   line-height: 22px;
-  display: flex;
-  align-items: center;
-
-  /* TrustVC/Text Area/Label */
   color: #1e2026;
 }
 
@@ -2339,8 +2328,8 @@ p.small {
   padding: 0px;
   gap: 10px;
 
-  width: 546px;
-  height: 21px;
+  width: 100%;
+  height: auto;
 
   border-radius: 5px;
 }
@@ -2352,12 +2341,12 @@ p.small {
   padding: 0px;
   gap: 8px;
 
-  width: 315px;
-  height: 21px;
+  max-width: 315px;
+  height: auto;
 }
 .pay-on-behalf-note-text {
-  width: 278px;
-  height: 21px;
+  max-width: 278px;
+  height: auto;
 
   font-family: 'Avenir';
   font-style: normal;
@@ -3879,7 +3868,7 @@ p.small {
   align-content: flex-end;
   padding: 0px;
   row-gap: 0px;
-  gap: 10px;
+  column-gap: 10px;
 
   min-width: 187px;
   max-width: 538px;
