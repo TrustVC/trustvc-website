@@ -96,7 +96,8 @@ export const DocumentTransferMessage: FunctionComponent<
         {/* Content */}
         <div className="box-border flex flex-col items-start p-4  min-h-[184px] border-t border-b border-solid border-[rgba(169,178,187,0.33)] flex-none self-stretch grow-0">
           <div className="flex flex-col items-start p-4 px-6 gap-4 min-h-[152px]">
-            {errorMessage ? <p className="mt-3">{errorMessage}</p> : children}
+            {children}
+            {errorMessage && <p className="mt-3">{errorMessage}</p>}
           </div>
         </div>
         {/* Footer Buttons */}
