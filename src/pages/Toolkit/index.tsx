@@ -2,6 +2,7 @@ import React from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { Repeat, Globe, Lock, AlertTriangle } from 'react-feather'
 import { TOOLKIT_TABS, ToolkitTabId, isToolkitTabId } from './tabs'
+import WrapUnwrap from '@/components/toolkit/WrapUnwrap'
 
 const TAB_ICONS: Record<ToolkitTabId, React.JSX.Element> = {
   wrap: <Repeat size={18} />,
@@ -12,7 +13,7 @@ const TAB_ICONS: Record<ToolkitTabId, React.JSX.Element> = {
 
 // Placeholder panels — replaced by real tools in Tasks 5–8
 const PANELS: Record<ToolkitTabId, React.JSX.Element> = {
-  wrap: <div data-testid="panel-wrap" />,
+  wrap: <WrapUnwrap />,
   'dns-resolver': <div data-testid="panel-dns-resolver" />,
   'encrypt-decrypt': <div data-testid="panel-encrypt-decrypt" />,
   revoke: <div data-testid="panel-revoke" />,
