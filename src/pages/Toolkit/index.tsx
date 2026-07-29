@@ -5,6 +5,7 @@ import { TOOLKIT_TABS, ToolkitTabId, isToolkitTabId } from './tabs'
 import WrapUnwrap from '@/components/toolkit/WrapUnwrap'
 import DnsResolver from '@/components/toolkit/DnsResolver'
 import EncryptDecrypt from '@/components/toolkit/EncryptDecrypt'
+import RevokeDocument from '@/components/toolkit/RevokeDocument'
 
 const TAB_ICONS: Record<ToolkitTabId, React.JSX.Element> = {
   wrap: <Repeat size={18} />,
@@ -13,12 +14,11 @@ const TAB_ICONS: Record<ToolkitTabId, React.JSX.Element> = {
   revoke: <AlertTriangle size={18} />,
 }
 
-// Placeholder panels — replaced by real tools in Tasks 5–8
 const PANELS: Record<ToolkitTabId, React.JSX.Element> = {
   wrap: <WrapUnwrap />,
   'dns-resolver': <DnsResolver />,
   'encrypt-decrypt': <EncryptDecrypt />,
-  revoke: <div data-testid="panel-revoke" />,
+  revoke: <RevokeDocument />,
 }
 
 const Toolkit = () => {
