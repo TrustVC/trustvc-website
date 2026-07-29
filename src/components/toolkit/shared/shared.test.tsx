@@ -10,7 +10,7 @@ describe('StatusAlert', () => {
     render(<StatusAlert variant="error">Something failed</StatusAlert>)
     const alert = screen.getByRole('alert')
     expect(alert).toHaveTextContent('Something failed')
-    expect(alert.className).toContain('alert')
+    expect(alert).toHaveAttribute('data-variant', 'error')
   })
 })
 
