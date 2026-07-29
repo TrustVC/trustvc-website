@@ -4,6 +4,7 @@ import { Repeat, Globe, Lock, AlertTriangle } from 'react-feather'
 import { TOOLKIT_TABS, ToolkitTabId, isToolkitTabId } from './tabs'
 import WrapUnwrap from '@/components/toolkit/WrapUnwrap'
 import DnsResolver from '@/components/toolkit/DnsResolver'
+import EncryptDecrypt from '@/components/toolkit/EncryptDecrypt'
 
 const TAB_ICONS: Record<ToolkitTabId, React.JSX.Element> = {
   wrap: <Repeat size={18} />,
@@ -16,7 +17,7 @@ const TAB_ICONS: Record<ToolkitTabId, React.JSX.Element> = {
 const PANELS: Record<ToolkitTabId, React.JSX.Element> = {
   wrap: <WrapUnwrap />,
   'dns-resolver': <DnsResolver />,
-  'encrypt-decrypt': <div data-testid="panel-encrypt-decrypt" />,
+  'encrypt-decrypt': <EncryptDecrypt />,
   revoke: <div data-testid="panel-revoke" />,
 }
 
