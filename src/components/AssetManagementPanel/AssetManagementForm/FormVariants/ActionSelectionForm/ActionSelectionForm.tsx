@@ -120,10 +120,8 @@ export const ActionSelectionForm: FunctionComponent<
     const update = () => setSavedPaymaster(getPaymasterAddress(account))
     update()
     window.addEventListener(PAYMASTER_CHANGE_EVENT, update)
-    window.addEventListener('storage', update)
     return () => {
       window.removeEventListener(PAYMASTER_CHANGE_EVENT, update)
-      window.removeEventListener('storage', update)
     }
   }, [account])
 
