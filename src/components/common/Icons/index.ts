@@ -9,4 +9,5 @@ export {
   ExclamationCircle,
   ChevronUp,
   ChevronDown,
+  InfoMsgIcon,
 } from './Icons'

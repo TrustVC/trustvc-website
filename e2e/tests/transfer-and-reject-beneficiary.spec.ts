@@ -95,17 +95,6 @@ test.describe
     )
     await connectMetaMask(page, metamask)
 
-    // await page.locator('[data-testid="connectToWallet"]').click()
-    // await page
-    //   .locator('[data-testid="connectToMetamask"]')
-    //   .waitFor({ state: 'visible', timeout: 10_000 })
-    // await page.locator('[data-testid="connectToMetamask"]').click()
-    // await metamask.connectToDapp()
-    // await page
-    //   .locator('[data-testid="connect-blockchain-continue"]')
-    //   .waitFor({ state: 'visible', timeout: 15_000 })
-    // await page.locator('[data-testid="connect-blockchain-continue"]').click()
-
     await expect(
       page.locator('[data-testid="manageAssetDropdown"]')
     ).toBeVisible({ timeout: 15_000 })

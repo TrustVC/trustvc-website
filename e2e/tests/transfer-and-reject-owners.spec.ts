@@ -77,13 +77,6 @@ test.describe.serial('Transfer Owners → Reject Transfer Owners', () => {
     await expect(
       page.locator('text=Transfer Ownership/Holdership Success')
     ).toBeVisible({ timeout: 60_000 })
-    // const dialog = page.getByRole('dialog')
-    // await expect(dialog.getByText(NEW_OWNER, { exact: false })).toBeVisible({
-    //   timeout: 10_000,
-    // })
-    // await expect(dialog.getByText(NEW_HOLDER, { exact: false })).toBeVisible({
-    //   timeout: 10_000,
-    // })
   })
 
   // ── Test 2: Reject Transfer Owners ──────────────────────────────────────
