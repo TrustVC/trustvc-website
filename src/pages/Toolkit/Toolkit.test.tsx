@@ -14,10 +14,11 @@ describe('Toolkit page shell', () => {
   it('renders hero and defaults to the Wrap tab', () => {
     renderAt('/toolkit')
     expect(
-      screen.getByText(
-        (content, element) =>
+      screen.getByText((content, element) =>
+        Boolean(
           content.includes('The TrustVC') &&
           element?.textContent?.includes('Toolkit')
+        )
       )
     ).toBeInTheDocument()
     expect(
