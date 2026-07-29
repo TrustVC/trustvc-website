@@ -104,4 +104,18 @@ describe('RevokeDocument', () => {
       'user rejected transaction'
     )
   })
+
+  it('keeps the tx hash visible when confirmation fails after broadcast', async () => {
+    vi.mocked(documentStoreRevoke).mockResolvedValue({
+      hash: '0xtxhash',
+      wait: vi.fn().mockRejectedValue(new Error('execution reverted')),
+    } as never)
+    render(<RevokeDocument />)
+    fillForm()
+    fireEvent.click(screen.getByRole('button', { name: /revoke document/i }))
+    fireEvent.click(screen.getByRole('button', { name: /confirm/i }))
+    const alert = await screen.findByRole('alert')
+    expect(alert).toHaveTextContent('execution reverted')
+    expect(alert).toHaveTextContent('0xtxhash')
+  })
 })

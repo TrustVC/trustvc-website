@@ -79,7 +79,15 @@ const RevokeDocument = () => {
       ) : (
         <div className="flex max-w-xl flex-col gap-5">
           {status === 'error' && (
-            <StatusAlert variant="error">{error}</StatusAlert>
+            <StatusAlert variant="error">
+              {error}
+              {txHash && (
+                <>
+                  {' '}
+                  Transaction: <span className="font-mono">{txHash}</span>
+                </>
+              )}
+            </StatusAlert>
           )}
           {status === 'success' && (
             <StatusAlert variant="success">
