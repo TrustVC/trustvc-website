@@ -48,4 +48,10 @@ describe('Toolkit page shell', () => {
       screen.getByRole('tab', { name: /encrypt \/ decrypt/i })
     ).toHaveAttribute('aria-selected', 'true')
   })
+
+  it('renders a floating Verify Document link', () => {
+    renderAt('/toolkit')
+    const verify = screen.getByRole('link', { name: /verify document/i })
+    expect(verify).toBeInTheDocument()
+  })
 })

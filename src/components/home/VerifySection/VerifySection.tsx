@@ -156,6 +156,7 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
     <>
       <ActionLoader loadDocument={loadDocument} />
       <div
+        id="verify"
         className={`min-w-[360px] max-w-[1440px] verify-section ${isDarkMode ? 'dark-mode' : ''}`}
       >
         <div className="boundary-frame">
