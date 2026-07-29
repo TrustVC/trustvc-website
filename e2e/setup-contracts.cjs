@@ -133,7 +133,6 @@ const v5Contracts = require('@trustvc/trustvc/token-registry-v5/contracts')
         // Transfer/Reject Holder
         tokenId:
           '0x31884d9f2926120a5779cad07bc5c83ee4ddcf99e88307c8bddf78509cfb2467',
-
         ...defaultToken,
       },
       {
