@@ -6,6 +6,7 @@ import {
   isWrappedV3Document,
   isRawV2Document,
   isRawV3Document,
+  diagnose,
 } from '@trustvc/trustvc'
 
 export type WrapMode = 'wrap' | 'unwrap'
@@ -43,7 +44,26 @@ export const useWrapUnwrap = () => {
     try {
       if (mode === 'wrap') {
         if (!isRawV2Document(parsed) && !isRawV3Document(parsed)) {
-          fail('This does not look like a raw OpenAttestation v2/v3 document.')
+          let errors = diagnose({
+            version: '2.0',
+            kind: 'raw',
+            document: parsed,
+            debug: false,
+            mode: 'non-strict',
+          })
+          if (errors.length === 0) {
+            errors = diagnose({
+              version: '3.0',
+              kind: 'raw',
+              document: parsed,
+              debug: false,
+              mode: 'non-strict',
+            })
+          }
+          fail(
+            errors[0]?.message ??
+              'This does not look like a raw OpenAttestation v2/v3 document.'
+          )
           return
         }
         const wrapped = await wrapOADocument(parsed as never)

@@ -17,6 +17,8 @@ import {
   getDataV2,
   isWrappedV2Document,
   isRawV2Document,
+  isRawV3Document,
+  diagnose,
 } from '@trustvc/trustvc'
 
 describe('WrapUnwrap', () => {
@@ -72,5 +74,22 @@ describe('WrapUnwrap', () => {
     })
     fireEvent.click(screen.getByRole('button', { name: /run/i }))
     expect(await screen.findByRole('alert')).toHaveTextContent('bad schema')
+  })
+
+  it('surfaces diagnose output when wrap validation fails', async () => {
+    vi.mocked(isRawV2Document).mockReturnValue(false)
+    vi.mocked(isRawV3Document).mockReturnValue(false)
+    vi.mocked(diagnose).mockReturnValue([
+      { message: 'missing issuers' },
+    ] as never)
+    render(<WrapUnwrap />)
+    fireEvent.change(screen.getByLabelText('Raw JSON'), {
+      target: { value: '{"name":"Alice"}' },
+    })
+    fireEvent.click(screen.getByRole('button', { name: /run/i }))
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'missing issuers'
+    )
+    expect(wrapOADocument).not.toHaveBeenCalled()
   })
 })
