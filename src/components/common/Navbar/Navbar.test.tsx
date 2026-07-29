@@ -179,4 +179,28 @@ describe('Navbar Component', () => {
     const aboutLinks = screen.getAllByText('About')
     expect(aboutLinks[0]).toHaveStyle({ color: '#5B5BB3' })
   })
+
+  it('renders Toolkit dropdown with links to each tool', () => {
+    renderWithRouter(
+      <Navbar isDarkMode={false} setIsDarkMode={mockSetIsDarkMode} />
+    )
+    const toolkitTrigger = screen.getByText('Toolkit')
+    fireEvent.click(toolkitTrigger)
+    expect(screen.getByText('Wrap / Unwrap').closest('a')).toHaveAttribute(
+      'href',
+      '/toolkit?tab=wrap'
+    )
+    expect(screen.getByText('DNS Resolver').closest('a')).toHaveAttribute(
+      'href',
+      '/toolkit?tab=dns-resolver'
+    )
+    expect(screen.getByText('Encrypt / Decrypt').closest('a')).toHaveAttribute(
+      'href',
+      '/toolkit?tab=encrypt-decrypt'
+    )
+    expect(screen.getByText('Revoke Document').closest('a')).toHaveAttribute(
+      'href',
+      '/toolkit?tab=revoke'
+    )
+  })
 })

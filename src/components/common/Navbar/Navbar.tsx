@@ -7,30 +7,40 @@ interface NavbarProps {
   setIsDarkMode: Dispatch<SetStateAction<boolean>>
 }
 
+const TOOLKIT_LINKS = [
+  { label: 'Wrap / Unwrap', to: '/toolkit?tab=wrap' },
+  { label: 'DNS Resolver', to: '/toolkit?tab=dns-resolver' },
+  { label: 'Encrypt / Decrypt', to: '/toolkit?tab=encrypt-decrypt' },
+  { label: 'Revoke Document', to: '/toolkit?tab=revoke' },
+]
+
 const Navbar = ({ isDarkMode, setIsDarkMode: _setIsDarkMode }: NavbarProps) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [_isEcosystemOpen, setIsEcosystemOpen] = useState(false)
+  const [isToolkitOpen, setIsToolkitOpen] = useState(false)
   const navRef = useRef<HTMLElement>(null)
   const location = useLocation()
   const isSettingsActive = location.pathname.startsWith('/settings')
   const isNewsActive = location.pathname.startsWith('/news-updates')
   const isPartnersActive = location.pathname.startsWith('/partners')
   const isAboutActive = location.pathname.startsWith('/about')
+  const isToolkitActive = location.pathname.startsWith('/toolkit')
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (
-        isMobileMenuOpen &&
-        navRef.current &&
-        !navRef.current.contains(e.target as Node)
-      ) {
-        setIsMobileMenuOpen(false)
-        setIsEcosystemOpen(false)
+      if (navRef.current && !navRef.current.contains(e.target as Node)) {
+        if (isMobileMenuOpen) {
+          setIsMobileMenuOpen(false)
+          setIsEcosystemOpen(false)
+        }
+        if (isToolkitOpen) {
+          setIsToolkitOpen(false)
+        }
       }
     }
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [isMobileMenuOpen])
+  }, [isMobileMenuOpen, isToolkitOpen])
 
   return (
     <nav
@@ -48,6 +58,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode: _setIsDarkMode }: NavbarProps) => {
                 setIsMobileMenuOpen(!isMobileMenuOpen)
                 if (isMobileMenuOpen) {
                   setIsEcosystemOpen(false)
+                  setIsToolkitOpen(false)
                 }
               }}
               aria-label="Toggle mobile menu"
@@ -156,7 +167,115 @@ const Navbar = ({ isDarkMode, setIsDarkMode: _setIsDarkMode }: NavbarProps) => {
               </Link>
             </div>
 
-            {/* Ecosystem and Gallery temporarily removed - restore from git */}
+            <div className="p-2 relative">
+              <button
+                type="button"
+                onClick={() => setIsToolkitOpen(!isToolkitOpen)}
+                aria-haspopup="true"
+                aria-expanded={isToolkitOpen}
+                aria-controls="toolkit-menu-desktop"
+                className="min-w-[40px] min-h-[40px] flex items-center justify-center px-1 py-[5px] rounded-lg transition-colors duration-200"
+                style={{ backgroundColor: 'transparent' }}
+                onMouseEnter={e => {
+                  setIsToolkitOpen(true)
+                  e.currentTarget.style.backgroundColor = isDarkMode
+                    ? 'rgba(255, 255, 255, 0.1)'
+                    : 'rgba(0, 0, 0, 0.05)'
+                }}
+                onMouseLeave={e => {
+                  setIsToolkitOpen(false)
+                  e.currentTarget.style.backgroundColor = 'transparent'
+                }}
+              >
+                <div
+                  className="px-1 py-1 text-center text-sm font-bold font-urbanist leading-snug"
+                  style={{
+                    color: isToolkitActive
+                      ? isDarkMode
+                        ? '#7D80D7'
+                        : '#5B5BB3'
+                      : isDarkMode
+                        ? '#808894'
+                        : '#5B6571',
+                  }}
+                >
+                  Toolkit
+                </div>
+                <div className="p-[3px]">
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    style={{
+                      transform: isToolkitOpen
+                        ? 'rotate(180deg)'
+                        : 'rotate(0deg)',
+                      transition: 'transform 200ms',
+                    }}
+                  >
+                    <path
+                      d="M18.6067 7.69946C18.8911 7.3986 19.3662 7.38487 19.6672 7.66919C19.9676 7.95344 19.9811 8.42776 19.6975 8.72876L12.5452 16.301C12.5432 16.3031 12.5403 16.3049 12.5383 16.3069C12.5307 16.3147 12.5239 16.3237 12.5159 16.3313C12.4636 16.3807 12.4039 16.418 12.343 16.4495C12.3224 16.4602 12.3019 16.4711 12.2805 16.4797C12.2594 16.4882 12.2377 16.4947 12.2161 16.5012C12.1912 16.5087 12.1663 16.5159 12.1409 16.5208C12.1189 16.5249 12.0967 16.5273 12.0745 16.5295C12.0498 16.532 12.0251 16.5344 12.0002 16.5344C11.9751 16.5344 11.9501 16.5321 11.925 16.5295C11.9028 16.5273 11.8806 16.525 11.8586 16.5208C11.8332 16.5159 11.8083 16.5087 11.7834 16.5012C11.7619 16.4947 11.74 16.4892 11.719 16.4807C11.6952 16.4711 11.6726 16.4587 11.6497 16.4465C11.627 16.4345 11.6039 16.423 11.5823 16.4084C11.5718 16.4014 11.5612 16.3946 11.551 16.387C11.5433 16.3812 11.5361 16.3745 11.5286 16.3684C11.5194 16.361 11.5101 16.3538 11.5012 16.3459C11.4959 16.3412 11.4908 16.3362 11.4856 16.3313L11.4553 16.301L4.30396 8.72876C4.01958 8.42762 4.0331 7.95359 4.33423 7.66919C4.63537 7.38508 5.10948 7.39845 5.3938 7.69946L11.927 14.6174C11.9665 14.6592 12.033 14.6592 12.0725 14.6174L18.6067 7.69946Z"
+                      fill={
+                        isToolkitActive
+                          ? isDarkMode
+                            ? '#7D80D7'
+                            : '#5B5BB3'
+                          : isDarkMode
+                            ? '#808894'
+                            : '#5B6571'
+                      }
+                    />
+                  </svg>
+                </div>
+              </button>
+
+              {/* Toolkit Dropdown */}
+              {isToolkitOpen && (
+                <div
+                  id="toolkit-menu-desktop"
+                  role="menu"
+                  className="absolute left-0 min-w-[200px] rounded-lg shadow-lg border transition-all duration-200 z-50 pt-2"
+                  style={{
+                    top: 'calc(100% - 8px)',
+                    backgroundColor: isDarkMode
+                      ? 'rgba(30, 32, 38, 0.95)'
+                      : 'rgba(255, 255, 255, 0.95)',
+                    borderColor: isDarkMode
+                      ? 'rgba(255, 255, 255, 0.1)'
+                      : 'rgba(0, 0, 0, 0.1)',
+                    backdropFilter: 'blur(10px)',
+                  }}
+                  onMouseEnter={() => setIsToolkitOpen(true)}
+                  onMouseLeave={() => setIsToolkitOpen(false)}
+                >
+                  <div className="py-2">
+                    {TOOLKIT_LINKS.map(link => (
+                      <Link
+                        key={link.to}
+                        to={link.to}
+                        className="block px-4 py-2 text-sm font-medium font-urbanist transition-colors duration-200"
+                        style={{
+                          color: isDarkMode ? '#AAAEE6' : '#403D7D',
+                        }}
+                        onClick={() => setIsToolkitOpen(false)}
+                        onMouseEnter={e => {
+                          e.currentTarget.style.backgroundColor = isDarkMode
+                            ? 'rgba(255, 255, 255, 0.1)'
+                            : 'rgba(0, 0, 0, 0.05)'
+                        }}
+                        onMouseLeave={e => {
+                          e.currentTarget.style.backgroundColor = 'transparent'
+                        }}
+                      >
+                        {link.label}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
             <div className="p-2">
               <Link
                 to="/news-updates"
@@ -320,7 +439,97 @@ const Navbar = ({ isDarkMode, setIsDarkMode: _setIsDarkMode }: NavbarProps) => {
             >
               Partners
             </Link>
-            {/* Ecosystem and Gallery temporarily removed - restore from git */}
+            <div>
+              <button
+                type="button"
+                onClick={() => setIsToolkitOpen(!isToolkitOpen)}
+                aria-haspopup="true"
+                aria-expanded={isToolkitOpen}
+                aria-controls="toolkit-menu-mobile"
+                className="w-full px-4 py-3 text-left text-sm font-bold font-urbanist rounded-lg transition-colors duration-200 flex items-center justify-between"
+                style={{
+                  color: isToolkitActive
+                    ? isDarkMode
+                      ? '#7D80D7'
+                      : '#5B5BB3'
+                    : isDarkMode
+                      ? '#808894'
+                      : '#5B6571',
+                  backgroundColor: 'transparent',
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.backgroundColor = isDarkMode
+                    ? 'rgba(255, 255, 255, 0.1)'
+                    : 'rgba(0, 0, 0, 0.05)'
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.backgroundColor = 'transparent'
+                }}
+              >
+                <span>Toolkit</span>
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  style={{
+                    transform: isToolkitOpen
+                      ? 'rotate(180deg)'
+                      : 'rotate(0deg)',
+                    transition: 'transform 200ms',
+                  }}
+                >
+                  <path
+                    d="M18.6067 7.69946C18.8911 7.3986 19.3662 7.38487 19.6672 7.66919C19.9676 7.95344 19.9811 8.42776 19.6975 8.72876L12.5452 16.301C12.5432 16.3031 12.5403 16.3049 12.5383 16.3069C12.5307 16.3147 12.5239 16.3237 12.5159 16.3313C12.4636 16.3807 12.4039 16.418 12.343 16.4495C12.3224 16.4602 12.3019 16.4711 12.2805 16.4797C12.2594 16.4882 12.2377 16.4947 12.2161 16.5012C12.1912 16.5087 12.1663 16.5159 12.1409 16.5208C12.1189 16.5249 12.0967 16.5273 12.0745 16.5295C12.0498 16.532 12.0251 16.5344 12.0002 16.5344C11.9751 16.5344 11.9501 16.5321 11.925 16.5295C11.9028 16.5273 11.8806 16.525 11.8586 16.5208C11.8332 16.5159 11.8083 16.5087 11.7834 16.5012C11.7619 16.4947 11.74 16.4892 11.719 16.4807C11.6952 16.4711 11.6726 16.4587 11.6497 16.4465C11.627 16.4345 11.6039 16.423 11.5823 16.4084C11.5718 16.4014 11.5612 16.3946 11.551 16.387C11.5433 16.3812 11.5361 16.3745 11.5286 16.3684C11.5194 16.361 11.5101 16.3538 11.5012 16.3459C11.4959 16.3412 11.4908 16.3362 11.4856 16.3313L11.4553 16.301L4.30396 8.72876C4.01958 8.42762 4.0331 7.95359 4.33423 7.66919C4.63537 7.38508 5.10948 7.39845 5.3938 7.69946L11.927 14.6174C11.9665 14.6592 12.033 14.6592 12.0725 14.6174L18.6067 7.69946Z"
+                    fill={
+                      isToolkitActive
+                        ? isDarkMode
+                          ? '#7D80D7'
+                          : '#5B5BB3'
+                        : isDarkMode
+                          ? '#808894'
+                          : '#5B6571'
+                    }
+                  />
+                </svg>
+              </button>
+
+              {/* Toolkit Sub-items */}
+              {isToolkitOpen && (
+                <div
+                  id="toolkit-menu-mobile"
+                  role="menu"
+                  className="ml-4 mt-2 space-y-1"
+                >
+                  {TOOLKIT_LINKS.map(link => (
+                    <Link
+                      key={link.to}
+                      to={link.to}
+                      onClick={() => {
+                        setIsToolkitOpen(false)
+                        setIsMobileMenuOpen(false)
+                      }}
+                      className="block px-4 py-2 text-left text-sm font-medium font-urbanist rounded-lg transition-colors duration-200"
+                      style={{
+                        color: isDarkMode ? '#AAAEE6' : '#403D7D',
+                        backgroundColor: 'transparent',
+                      }}
+                      onMouseEnter={e => {
+                        e.currentTarget.style.backgroundColor = isDarkMode
+                          ? 'rgba(255, 255, 255, 0.1)'
+                          : 'rgba(0, 0, 0, 0.05)'
+                      }}
+                      onMouseLeave={e => {
+                        e.currentTarget.style.backgroundColor = 'transparent'
+                      }}
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
             <Link
               to="/news-updates"
               className="px-4 py-3 text-left text-sm font-bold font-urbanist rounded-lg transition-colors duration-200"

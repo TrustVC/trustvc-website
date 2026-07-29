@@ -10,6 +10,7 @@ import NewsRouteFallback from './components/common/NewsRouteFallback'
 
 const News = lazy(() => import('./pages/News'))
 const NewsDetail = lazy(() => import('./pages/NewsDetail'))
+const Toolkit = lazy(() => import('./pages/Toolkit'))
 
 interface AppRouterProps {
   isDarkMode: boolean
@@ -40,6 +41,14 @@ const AppRouter = ({ isDarkMode }: AppRouterProps) => {
       <Route path="/about" element={<About isDarkMode={isDarkMode} />} />
       <Route path="/settings" element={<Settings isDarkMode={isDarkMode} />} />
       <Route path="/contact" element={<Contact isDarkMode={isDarkMode} />} />
+      <Route
+        path="/toolkit"
+        element={
+          <Suspense fallback={null}>
+            <Toolkit />
+          </Suspense>
+        }
+      />
       <Route path="*" element={<NotFound isDarkMode={isDarkMode} />} />
     </Routes>
   )
