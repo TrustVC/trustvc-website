@@ -396,24 +396,6 @@ export const useContactForm = (options: UseContactFormOptions) => {
             }))
             const presigned = await getPresignedUrls(files)
 
-            if (presigned.length !== pendingItems.length) {
-              const error = new Error(
-                `Presign count mismatch: expected ${pendingItems.length}, got ${presigned.length}`
-              )
-              captureAppException(error, {
-                source: 'support-api',
-                tags: { 'upload.stage': 'presign_count_mismatch' },
-                extra: {
-                  pendingCount: pendingItems.length,
-                  presignedCount: presigned.length,
-                },
-              })
-              setSubmitError(
-                'An error occurred preparing your uploads. Please try again.'
-              )
-              return
-            }
-
             const uploadResults = await Promise.allSettled(
               pendingItems.map((item, index) => {
                 const p = presigned[index]
