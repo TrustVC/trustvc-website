@@ -1,4 +1,5 @@
 import React from 'react'
+import { useLocation } from 'react-router-dom'
 import { useVerify } from './useVerify'
 import { ActionLoader } from './ActionLoader'
 import NetworkModal from './NetworkModal'
@@ -60,6 +61,19 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
   const handleConnectWallet = async () => {
     showOverlay(<ConnectToBlockchainModel onClose={closeOverlay} />)
   }
+  const location = useLocation()
+  const sectionRef = React.useRef<HTMLDivElement>(null)
+
+  // App.tsx scrolls to (0, 0) on every pathname change, which fires after
+  // this component mounts and would otherwise cancel a hash-based scroll.
+  // Defer this scroll so it runs after that reset.
+  React.useEffect(() => {
+    if (location.hash !== '#verify') return
+    const timeoutId = setTimeout(() => {
+      sectionRef.current?.scrollIntoView({ behavior: 'smooth' })
+    }, 100)
+    return () => clearTimeout(timeoutId)
+  }, [location.hash])
   // Fetch endorsement chain data only when file is verified as valid and transferable
   const isValidTransferable =
     verifyStatus === 'valid' && isTransferable === true
@@ -157,6 +171,7 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
       <ActionLoader loadDocument={loadDocument} />
       <div
         id="verify"
+        ref={sectionRef}
         className={`min-w-[360px] max-w-[1440px] verify-section ${isDarkMode ? 'dark-mode' : ''}`}
       >
         <div className="boundary-frame">
