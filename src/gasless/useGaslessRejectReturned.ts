@@ -14,9 +14,10 @@ export const useGaslessRejectReturned =
     }),
     buildDirectArgs: ({ tokenRegistryAddress }) => ({ tokenRegistryAddress }),
     buildParams: (params, { tokenId }) => ({ tokenId: tokenId!, ...params }),
-    directGuard: ({ tokenRegistryAddress }) => {
+    directGuard: ({ tokenRegistryAddress, tokenId }) => {
       if (!tokenRegistryAddress)
         throw new Error('tokenRegistryAddress is required')
+      if (!tokenId) throw new Error('tokenId is required')
     },
     extraEligibility: ({ tokenRegistryAddress, tokenId }) =>
       !!tokenRegistryAddress && !!tokenId,

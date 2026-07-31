@@ -258,12 +258,12 @@ export const InfoMsgIcon = ({
         y1="5.39288"
         x2="10.75"
         y2="12.4643"
-        stroke="#FF8200"
+        stroke={stroke}
         strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-      <circle cx="10.5357" cy="15.1786" r="0.535714" fill="#FF8200" />
+      <circle cx="10.5357" cy="15.1786" r="0.535714" fill={stroke} />
     </svg>
   )
 }
