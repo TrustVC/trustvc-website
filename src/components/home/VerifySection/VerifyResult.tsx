@@ -139,7 +139,6 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
       setGaslessError('')
       try {
         const rpcUrl = getRpcUrl(chainId)
-        console.log('[checkGasless] rpcUrl:', rpcUrl, 'chainId:', chainId)
         if (!rpcUrl) throw new Error('No RPC URL for chain')
 
         const publicClient = createPublicClient({ transport: http(rpcUrl) })
@@ -157,7 +156,6 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
           functionName: 'ownerOf',
           args: [BigInt(tokenId)],
         })
-        console.log('[checkGasless] titleEscrowAddress:', titleEscrowAddress)
 
         const result = await checkPaymasterWhitelist(
           trimmed,
@@ -165,24 +163,15 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
           titleEscrowAddress as string,
           rpcUrl
         )
-        console.log('[checkGasless] whitelist result:', result)
-
         if (result.isCallerAuthorized && result.isTitleEscrowAuthorized) {
           savePaymasterAddress(account, trimmed)
           setGaslessStatus('success')
         } else {
-          console.warn(
-            '[checkGasless] not whitelisted — isCallerAuthorized:',
-            result.isCallerAuthorized,
-            'isTitleEscrowAuthorized:',
-            result.isTitleEscrowAuthorized
-          )
           clearPaymasterAddress(account)
           setGaslessError('This address is not applicable to you')
           setGaslessStatus('error')
         }
       } catch (err) {
-        console.error('[checkGasless] error:', err)
         const msg = err instanceof Error ? err.message : String(err)
         if (
           msg.includes('No RPC URL') ||

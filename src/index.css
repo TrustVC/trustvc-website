@@ -2232,7 +2232,8 @@ p.small {
   align-items: flex-start;
   padding: 0px;
   gap: 10px;
-  height: 22px;
+  min-height: 22px;
+  height: auto;
 
   /* Inside auto layout */
   flex: none;
@@ -2248,13 +2249,16 @@ p.small {
   align-items: center;
   padding: 0px;
   gap: 8px;
-  height: 22px;
+  min-height: 22px;
+  height: auto;
 }
 .gasless-error-text {
   /* This paymaster address is not applicable to you. */
 
-  width: 355px;
-  height: 22px;
+  max-width: 355px;
+  width: 100%;
+  min-height: 22px;
+  height: auto;
 
   /* TrustVC/Medium/Paragraph S */
   font-family: 'Avenir';
