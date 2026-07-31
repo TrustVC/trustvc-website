@@ -1,6 +1,7 @@
 interface ConfirmRevokeModalProps {
   storeAddress: string
   documentHash: string
+  network: string
   onConfirm: () => void
   onCancel: () => void
 }
@@ -8,6 +9,7 @@ interface ConfirmRevokeModalProps {
 const ConfirmRevokeModal = ({
   storeAddress,
   documentHash,
+  network,
   onConfirm,
   onCancel,
 }: ConfirmRevokeModalProps) => (
@@ -24,6 +26,10 @@ const ConfirmRevokeModal = ({
           cannot be undone.
         </p>
         <dl className="mt-4 space-y-2 font-mono text-xs">
+          <div>
+            <dt className="font-sans font-semibold text-neutral-10">Network</dt>
+            <dd className="break-all">{network}</dd>
+          </div>
           <div>
             <dt className="font-sans font-semibold text-neutral-10">
               Store Address

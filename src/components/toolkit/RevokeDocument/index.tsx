@@ -1,12 +1,13 @@
 import { useState } from 'react'
 import { AlertTriangle } from 'react-feather'
-import { documentStoreRevoke } from '@trustvc/trustvc'
+import { CHAIN_ID, documentStoreRevoke } from '@trustvc/trustvc'
 import {
   SIGNER_TYPE,
   useProviderContext,
 } from '@/components/common/contexts/providerContext'
 import { ConnectToMetamaskModelComponent } from '@/components/ConnectToMetamask'
 import { ToolCard, StatusAlert } from '@/components/toolkit/shared'
+import { ChainInfo } from '@/utils/chain-info'
 import ConfirmRevokeModal from './ConfirmRevokeModal'
 
 // ethers is not a direct dependency of this package — derive the signer type
@@ -18,8 +19,17 @@ type RevokeStatus = 'idle' | 'confirming' | 'pending' | 'success' | 'error'
 const ADDRESS_RE = /^0x[0-9a-fA-F]{40}$/
 const HASH_RE = /^0x[0-9a-fA-F]{64}$/
 
+const getNetworkLabel = (chainId: CHAIN_ID | undefined): string => {
+  if (chainId === undefined) return 'Unknown network'
+  return ChainInfo[chainId]?.label ?? `Chain ID ${chainId}`
+}
+
+const truncateAddress = (address: string): string =>
+  `${address.slice(0, 6)}…${address.slice(-4)}`
+
 const RevokeDocument = () => {
-  const { providerType, account, providerOrSigner } = useProviderContext()
+  const { providerType, account, providerOrSigner, currentChainId } =
+    useProviderContext()
   const [storeAddress, setStoreAddress] = useState('')
   const [documentHash, setDocumentHash] = useState('')
   const [status, setStatus] = useState<RevokeStatus>('idle')
@@ -27,6 +37,7 @@ const RevokeDocument = () => {
   const [txHash, setTxHash] = useState('')
 
   const isConnected = providerType === SIGNER_TYPE.METAMASK && !!account
+  const networkLabel = getNetworkLabel(currentChainId)
 
   const requestRevoke = () => {
     setError('')
@@ -65,7 +76,7 @@ const RevokeDocument = () => {
     <ToolCard
       icon={<AlertTriangle size={22} />}
       title="Revoke Document"
-      description="Submit a document's hash to revoke (or target hash) to its document store smart contract to permanently revoke it on-chain. This is irreversible — only revoke documents that are void, superseded, or issued in error."
+      description="Submit a document's target hash and its document store address to permanently revoke the document on-chain. This is irreversible — only revoke documents that are void, superseded, or issued in error."
     >
       {!isConnected ? (
         <div className="flex flex-col items-center gap-4 py-8">
@@ -78,6 +89,20 @@ const RevokeDocument = () => {
         </div>
       ) : (
         <div className="flex max-w-xl flex-col gap-5">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-neutral-30">
+            <span>
+              Connected:{' '}
+              <span className="font-mono text-neutral-10">
+                {truncateAddress(account ?? '')}
+              </span>
+            </span>
+            <span>
+              Network:{' '}
+              <span className="font-semibold text-neutral-10">
+                {networkLabel}
+              </span>
+            </span>
+          </div>
           {status === 'error' && (
             <StatusAlert variant="error">
               {error}
@@ -158,6 +183,7 @@ const RevokeDocument = () => {
         <ConfirmRevokeModal
           storeAddress={storeAddress.trim()}
           documentHash={documentHash.trim()}
+          network={networkLabel}
           onConfirm={confirmRevoke}
           onCancel={() => setStatus('idle')}
         />

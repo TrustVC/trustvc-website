@@ -6,6 +6,7 @@ const mockContext = {
   providerType: 'metamask',
   account: '0x1111111111111111111111111111111111111111',
   providerOrSigner: { provider: {} },
+  currentChainId: 11155111,
 }
 
 vi.mock('@/components/common/contexts/providerContext', () => ({
@@ -17,9 +18,13 @@ vi.mock('@/components/ConnectToMetamask', () => ({
   ConnectToMetamaskModelComponent: () => <div data-testid="connect-metamask" />,
 }))
 
-vi.mock('@trustvc/trustvc', () => ({
-  documentStoreRevoke: vi.fn(),
-}))
+vi.mock('@trustvc/trustvc', async importOriginal => {
+  const actual = await importOriginal<typeof import('@trustvc/trustvc')>()
+  return {
+    ...actual,
+    documentStoreRevoke: vi.fn(),
+  }
+})
 
 import { documentStoreRevoke } from '@trustvc/trustvc'
 
@@ -40,6 +45,21 @@ describe('RevokeDocument', () => {
     vi.clearAllMocks()
     mockContext.providerType = 'metamask'
     mockContext.account = '0x1111111111111111111111111111111111111111'
+    mockContext.currentChainId = 11155111
+  })
+
+  it('shows the connected account and network once connected', () => {
+    render(<RevokeDocument />)
+    expect(screen.getByText(/0x1111…1111/i)).toBeInTheDocument()
+    expect(screen.getByText('Sepolia')).toBeInTheDocument()
+  })
+
+  it('shows the network in the confirm modal', () => {
+    render(<RevokeDocument />)
+    fillForm()
+    fireEvent.click(screen.getByRole('button', { name: /revoke document/i }))
+    expect(screen.getByText('Network')).toBeInTheDocument()
+    expect(screen.getAllByText('Sepolia').length).toBeGreaterThanOrEqual(2)
   })
 
   it('shows connect state when wallet is not connected', () => {
