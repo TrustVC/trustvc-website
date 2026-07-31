@@ -33,10 +33,16 @@ const ErrorCircleIcon: React.FC = () => (
 
 interface VerifyErrorProps {
   errorType: VerifyErrorType
+  /** Optional verbatim body text; overrides the typed failure message when set. */
+  message?: string
   onReset: () => void
 }
 
-const VerifyError: React.FC<VerifyErrorProps> = ({ errorType, onReset }) => {
+const VerifyError: React.FC<VerifyErrorProps> = ({
+  errorType,
+  message,
+  onReset,
+}) => {
   const { failureTitle, failureMessage } =
     MESSAGES[errorType] ?? MESSAGES[TYPES.VERIFICATION_ERROR]
 
@@ -62,7 +68,7 @@ const VerifyError: React.FC<VerifyErrorProps> = ({ errorType, onReset }) => {
                 </span>
                 <div
                   data-testid="error-message"
-                  className="text-center text-alert-50 text-lg font-gilroy font-bold leading-relaxed break-words"
+                  className="text-center text-alert-50 text-lg font-urbanist font-bold leading-relaxed break-words"
                 >
                   {failureTitle}
                 </div>
@@ -74,7 +80,7 @@ const VerifyError: React.FC<VerifyErrorProps> = ({ errorType, onReset }) => {
                   data-testid="recovery-message"
                   className="text-center text-neutral-20 text-sm font-avenir font-medium leading-snug break-words"
                 >
-                  {failureMessage}
+                  {message ?? failureMessage}
                 </div>
               </div>
             </div>
@@ -93,7 +99,7 @@ const VerifyError: React.FC<VerifyErrorProps> = ({ errorType, onReset }) => {
                   className="self-stretch min-w-[40px] min-h-[40px] p-[5px] relative overflow-hidden rounded-lg flex justify-center items-center border border-[rgba(169,178,187,0.33)] !bg-transparent hover:!bg-alert-50/10 transition-colors cursor-pointer no-underline"
                 >
                   <div className="p-1 flex items-center gap-2.5">
-                    <span className="text-center text-alert-50 text-sm font-gilroy font-bold leading-snug">
+                    <span className="text-center text-alert-50 text-sm font-urbanist font-bold leading-snug">
                       What Should I Do?
                     </span>
                   </div>
@@ -109,7 +115,7 @@ const VerifyError: React.FC<VerifyErrorProps> = ({ errorType, onReset }) => {
                   onClick={onReset}
                 >
                   <div className="p-1 flex items-center gap-2.5">
-                    <span className="text-center text-white text-sm font-gilroy font-bold leading-snug">
+                    <span className="text-center text-white text-sm font-urbanist font-bold leading-snug">
                       Try Another Document
                     </span>
                   </div>

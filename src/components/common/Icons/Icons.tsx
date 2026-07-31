@@ -1,3 +1,4 @@
+import { SVGProps } from 'react'
 import { getFileExtension } from '../../../utils/helper'
 
 export const CheckCircle = () => (
@@ -223,10 +224,46 @@ export const FileIcon = ({
         fill="white"
         fontSize="9"
         fontWeight="700"
-        fontFamily="Gilroy, sans-serif"
+        fontFamily="Urbanist, sans-serif"
       >
         {ext}
       </text>
+    </svg>
+  )
+}
+
+export const InfoMsgIcon = ({
+  fontSize = 24,
+  stroke = '#FF8200',
+  ...props
+}: SVGProps<SVGSVGElement>) => {
+  return (
+    <svg
+      width={fontSize}
+      height={fontSize}
+      viewBox="0 0 20 20"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <path
+        d="M18.5215 8.30118L18.6228 9.06112C18.8594 10.8425 18.5139 12.6526 17.6377 14.2216C16.7614 15.7905 15.4015 17.0341 13.7608 17.767C12.12 18.4999 10.2863 18.6828 8.53307 18.2884C6.77987 17.894 5.20113 16.9435 4.0323 15.5785C2.86348 14.2135 2.16719 12.5073 2.04729 10.7143C1.92739 8.92127 2.39031 7.13754 3.36699 5.6291C4.34367 4.12067 5.78179 2.96836 7.46687 2.34404C9.15195 1.71972 10.9937 1.65683 12.7174 2.16475"
+        stroke={stroke}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <line
+        x1="10.75"
+        y1="5.39288"
+        x2="10.75"
+        y2="12.4643"
+        stroke={stroke}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <circle cx="10.5357" cy="15.1786" r="0.535714" fill={stroke} />
     </svg>
   )
 }

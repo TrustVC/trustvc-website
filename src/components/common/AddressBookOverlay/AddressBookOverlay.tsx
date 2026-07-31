@@ -73,7 +73,7 @@ const AddressBookOverlay: React.FC<AddressBookOverlayProps> = ({
       {/* Header */}
       <div className="self-stretch pt-6 pb-4 px-6 flex items-start gap-4">
         <span
-          className="flex-1 font-['Gilroy'] font-bold text-[24px] leading-[31.92px]"
+          className="flex-1 font-urbanist font-bold text-[24px] leading-[31.92px]"
           style={{ color: isDarkMode ? '#C8CDD3' : '#1E2026' }}
         >
           Address Book
@@ -102,7 +102,7 @@ const AddressBookOverlay: React.FC<AddressBookOverlayProps> = ({
             <div className="flex-1 basis-0 min-w-[290px] max-w-[600px] p-1 flex items-center overflow-visible">
               <div className="p-1 shrink-0">
                 <span
-                  className="font-['Gilroy'] font-medium text-[16px] leading-[20px] whitespace-nowrap"
+                  className="font-urbanist font-medium text-[16px] leading-[20px] whitespace-nowrap"
                   style={{ color: isDarkMode ? '#808894' : '#3D444D' }}
                 >
                   Address Book
@@ -241,7 +241,7 @@ const AddressBookOverlay: React.FC<AddressBookOverlayProps> = ({
                         {/* Wallet Name */}
                         <div className="flex-1 basis-0 max-w-[320px] min-w-[240px] p-2 rounded-lg flex flex-col justify-center gap-1">
                           <span
-                            className="self-stretch font-['Gilroy'] font-bold text-[14px] leading-[21.7px]"
+                            className="self-stretch font-urbanist font-bold text-[14px] leading-[21.7px]"
                             style={{
                               color: isDarkMode ? '#C8CDD3' : '#1E2026',
                             }}
@@ -264,7 +264,7 @@ const AddressBookOverlay: React.FC<AddressBookOverlayProps> = ({
                           <div className="p-1 flex items-center">
                             {copiedAddress === entry.address ? (
                               <span
-                                className="min-w-[32px] min-h-[32px] flex items-center justify-center font-['Gilroy'] font-bold text-[11px]"
+                                className="min-w-[32px] min-h-[32px] flex items-center justify-center font-urbanist font-bold text-[11px]"
                                 style={{
                                   color: isDarkMode ? '#7D80D7' : '#5B5BB3',
                                 }}
@@ -339,7 +339,7 @@ const AddressBookOverlay: React.FC<AddressBookOverlayProps> = ({
               border: '1px solid rgba(169, 178, 187, 0.33)',
             }}
           >
-            <span className="px-1 py-1 text-center text-white text-[14px] font-bold font-['Gilroy'] leading-[21.7px]">
+            <span className="px-1 py-1 text-center text-white text-[14px] font-bold font-urbanist leading-[21.7px]">
               Dismiss
             </span>
           </button>

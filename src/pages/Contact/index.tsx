@@ -44,6 +44,7 @@ const Contact = ({ isDarkMode }: ContactProps) => {
     handleDrop,
     handleFileInput,
     clearRecaptchaError,
+    handleRecaptchaExpired,
     onSubmit,
   } = useContactForm({
     getRecaptchaToken: () =>
@@ -169,6 +170,7 @@ const Contact = ({ isDarkMode }: ContactProps) => {
                         siteKey={RECAPTCHA_SITE_KEY}
                         className="flex justify-center"
                         onChange={clearRecaptchaError}
+                        onExpire={handleRecaptchaExpired}
                       />
                       {fieldErrors.recaptcha && (
                         <FieldError

@@ -17,7 +17,7 @@ const NETWORK_OPTIONS: NetworkOption[] = [
   },
   {
     chainId: '137',
-    label: 'Polygon',
+    label: 'Polygon (POL)',
     group: 'Mainnet',
     logo: '/images/networks/polygon.gif',
   },
@@ -68,6 +68,12 @@ const NETWORK_OPTIONS: NetworkOption[] = [
     label: 'Astron Testnet',
     group: 'Testnet',
     logo: '/images/networks/astron.png',
+  },
+  {
+    chainId: '1337',
+    label: 'Localhost',
+    group: 'Testnet',
+    logo: '/images/networks/ethereum.gif',
   },
 ]
 

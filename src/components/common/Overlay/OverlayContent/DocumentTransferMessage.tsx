@@ -54,6 +54,7 @@ export const ButtonClose: FunctionComponent<ButtonCloseProps> = ({
       size={ButtonSize.MD}
       className={`bg-cerulean-500 rounded-xl text-white px-3 py-2 hover:bg-cerulean-800 ${className}`}
       onClick={closeOverlay}
+      data-testid="dismiss-modal"
     >
       Dismiss
     </Button>
@@ -95,7 +96,8 @@ export const DocumentTransferMessage: FunctionComponent<
         {/* Content */}
         <div className="box-border flex flex-col items-start p-4  min-h-[184px] border-t border-b border-solid border-[rgba(169,178,187,0.33)] flex-none self-stretch grow-0">
           <div className="flex flex-col items-start p-4 px-6 gap-4 min-h-[152px]">
-            {errorMessage ? <p className="mt-3">{errorMessage}</p> : children}
+            {children}
+            {errorMessage && <p className="mt-3">{errorMessage}</p>}
           </div>
         </div>
         {/* Footer Buttons */}
@@ -106,6 +108,7 @@ export const DocumentTransferMessage: FunctionComponent<
               className="w-full h-[40px] min-w-[160px] max-w-[260px] gap-[10px] flex-1"
               btnType="transparent"
               onClick={closeOverlay}
+              data-testid="dismiss-modal"
             >
               Dismiss
             </Button>

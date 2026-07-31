@@ -1081,7 +1081,7 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
                 className="!flex-1 !min-w-[188px] !max-w-[383px]"
                 onClick={setFormActionNone}
                 disabled={isPendingConfirmation}
-                data-testid={'cancelSurrenderBtn'}
+                data-testid={'cancelReturnToIssuerBtn'}
                 btnType="transparent"
                 size={ButtonSize.SM}
               >
@@ -1092,7 +1092,7 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
                 className="!flex-1 !min-w-[188px] !max-w-[383px]"
                 onClick={() => handleReturnToIssuer({ remarks: remark })}
                 disabled={isPendingConfirmation}
-                data-testid={'surrenderBtn'}
+                data-testid={'returnToIssuerBtn'}
                 size={ButtonSize.SM}
               >
                 {isPendingConfirmation ? (
@@ -1153,7 +1153,7 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
                 className="!flex-1 !min-w-[188px] !max-w-[383px]"
                 onClick={setFormActionNone}
                 disabled={isRestoreTokenPendingConfirmation}
-                data-testid={'cancelSurrenderBtn'}
+                data-testid={'cancelReturnToIssuerBtn'}
                 btnType="transparent"
                 size={ButtonSize.SM}
               >
@@ -1211,7 +1211,7 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
                 className="!flex-1 !min-w-[188px] !max-w-[383px]"
                 onClick={setFormActionNone}
                 disabled={isDestroyTokenPendingConfirmation}
-                data-testid={'cancelSurrenderBtn'}
+                data-testid={'cancelReturnToIssuerBtn'}
                 btnType="transparent"
                 size={ButtonSize.SM}
               >
