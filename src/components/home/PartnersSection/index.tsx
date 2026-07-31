@@ -17,7 +17,7 @@ const PartnersSection = ({ isDarkMode }: PartnersSectionProps) => {
     <div className="w-full py-12">
       <div className="text-center mb-10">
         <h2
-          className="font-gilroy font-bold"
+          className="font-urbanist font-bold"
           style={{ fontSize: '36px', lineHeight: '122%', letterSpacing: '0%' }}
         >
           <span
@@ -80,7 +80,7 @@ const PartnersSection = ({ isDarkMode }: PartnersSectionProps) => {
         <button
           type="button"
           onClick={() => navigate('/partners')}
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-white font-gilroy font-bold text-sm transition-opacity hover:opacity-90"
+          className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-white font-urbanist font-bold text-sm transition-opacity hover:opacity-90"
           style={{ backgroundColor: '#5B5BB3' }}
         >
           View All Partners
