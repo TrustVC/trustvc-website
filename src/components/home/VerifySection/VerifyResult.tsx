@@ -135,14 +135,31 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
         return
       }
 
+      const rpcUrl = getRpcUrl(chainId)
+      if (!rpcUrl) {
+        setGaslessError('Network error — please try again.')
+        setGaslessStatus('error')
+        return
+      }
+
       setGaslessStatus('checking')
       setGaslessError('')
-      try {
-        const rpcUrl = getRpcUrl(chainId)
-        if (!rpcUrl) throw new Error('No RPC URL for chain')
 
+      // Stage 1: tokenId must be a valid integer
+      let tokenIdBigInt: bigint
+      try {
+        tokenIdBigInt = BigInt(tokenId)
+      } catch {
+        setGaslessError('This document has a malformed token ID.')
+        setGaslessStatus('error')
+        return
+      }
+
+      // Stage 2: resolve the title escrow address from the token registry
+      let titleEscrowAddress: string
+      try {
         const publicClient = createPublicClient({ transport: http(rpcUrl) })
-        const titleEscrowAddress = await publicClient.readContract({
+        titleEscrowAddress = (await publicClient.readContract({
           address: tokenRegistryAddress as `0x${string}`,
           abi: [
             {
@@ -154,13 +171,22 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
             },
           ],
           functionName: 'ownerOf',
-          args: [BigInt(tokenId)],
-        })
+          args: [tokenIdBigInt],
+        })) as string
+      } catch {
+        setGaslessError(
+          'Could not look up this document on-chain — please check the network.'
+        )
+        setGaslessStatus('error')
+        return
+      }
 
+      // Stage 3: paymaster whitelist check
+      try {
         const result = await checkPaymasterWhitelist(
           trimmed,
           account,
-          titleEscrowAddress as string,
+          titleEscrowAddress,
           rpcUrl
         )
         if (result.isCallerAuthorized && result.isTitleEscrowAuthorized) {
@@ -171,17 +197,8 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
           setGaslessError('This address is not applicable to you')
           setGaslessStatus('error')
         }
-      } catch (err) {
-        const msg = err instanceof Error ? err.message : String(err)
-        if (
-          msg.includes('No RPC URL') ||
-          msg.includes('network') ||
-          msg.includes('fetch')
-        ) {
-          setGaslessError('Network error — please try again.')
-        } else {
-          setGaslessError('Invalid Paymaster Address')
-        }
+      } catch {
+        setGaslessError('Network error — please try again.')
         setGaslessStatus('error')
       }
     },
