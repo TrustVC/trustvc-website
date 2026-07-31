@@ -47,7 +47,7 @@ const ETHERS_STRING_CODES: Record<string, string> = {
   REPLACEMENT_UNDERPRICED: 'Replacement Transaction Underpriced',
 }
 
-const getMetaMaskErrorMessage = (e: unknown): string => {
+export const getMetaMaskErrorMessage = (e: unknown): string => {
   const code = (e as any)?.code
   if (typeof code === 'number' && code in METAMASK_NUMERIC_CODES) {
     return METAMASK_NUMERIC_CODES[code]

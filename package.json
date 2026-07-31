@@ -34,12 +34,13 @@
     "@sanity/image-url": "^2.1.1",
     "@sentry/react": "^10.62.0",
     "@trustvc/decentralized-renderer-react-components": "^1.0.3",
-    "@trustvc/trustvc": "^2.14.1",
+    "@trustvc/trustvc": "2.15.0-beta.2",
     "@types/lodash": "^4.17.24",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "lucide-react": "^0.563.0",
     "magic-sdk": "^33.6.2",
+    "permissionless": "^0.3.7",
     "qrcode.react": "^4.2.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -47,12 +48,20 @@
     "react-ga4": "^3.0.1",
     "react-router-dom": "^7.12.0",
     "react-tooltip": "^5.30.0",
-    "swiper": "^12.0.3"
+    "swiper": "^12.0.3",
+    "viem": "^2.55.1"
+  },
+  "overrides": {
+    "permissionless": {
+      "ox": "0.14.30"
+    }
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
+    "@playwright/test": "1.48.2",
     "@sentry/vite-plugin": "^5.3.0",
     "@synthetixio/synpress": "4.0.5",
+    "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",
     "@testing-library/user-event": "^14.5.2",

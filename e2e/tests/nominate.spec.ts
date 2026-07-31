@@ -5,8 +5,6 @@ import { uploadAndVerify, connectMetaMask } from '../helpers/actions'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
-const NEW_HOLDER = '0x70997970C51812dc3A010C7d01b50e0d17dc79C8' // Hardhat account #1
-
 const NEW_BENEFICIARY = '0x70997970C51812dc3A010C7d01b50e0d17dc79C8' // Hardhat account #1
 const DOCUMENT_PATH = path.resolve(
   __dirname,

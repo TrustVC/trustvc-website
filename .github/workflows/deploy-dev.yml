@@ -45,6 +45,7 @@ jobs:
       VITE_GTM_CONTAINER_ID: ${{ secrets.VITE_GTM_CONTAINER_ID_DEVELOPMENT }}
       VITE_GA4_TAG_ID: ${{ secrets.VITE_GA4_TAG_ID_DEVELOPMENT }}
       VITE_PLATFORM: dev
+      VITE_PIMLICO_API_KEY: ${{ secrets.VITE_PIMLICO_API_KEY }}
 
     steps:
       - name: Checkout code
@@ -67,13 +68,15 @@ jobs:
             | grep -v '^VITE_SENTRY_RELEASE=' \
             | grep -v '^VITE_GTM_CONTAINER_ID=' \
             | grep -v '^VITE_GA4_TAG_ID=' \
-            | grep -v '^VITE_PLATFORM=' > .env
+            | grep -v '^VITE_PLATFORM=' \
+            | grep -v '^VITE_PIMLICO_API_KEY=' > .env
           echo "VITE_GTM_CONTAINER_ID=${VITE_GTM_CONTAINER_ID}" >> .env
           echo "VITE_GA4_TAG_ID=${VITE_GA4_TAG_ID}" >> .env
           echo "VITE_PLATFORM=${VITE_PLATFORM}" >> .env
           echo "VITE_SENTRY_DSN=${VITE_SENTRY_DSN}" >> .env
           echo "VITE_SENTRY_ENVIRONMENT=${VITE_SENTRY_ENVIRONMENT}" >> .env
           echo "VITE_SENTRY_RELEASE=${VITE_SENTRY_RELEASE}" >> .env
+          echo "VITE_PIMLICO_API_KEY=${VITE_PIMLICO_API_KEY}" >> .env
 
       - name: Install dependencies
         run: npm ci
