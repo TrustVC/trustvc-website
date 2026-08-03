@@ -7,14 +7,22 @@ interface NavbarProps {
   setIsDarkMode: Dispatch<SetStateAction<boolean>>
 }
 
+const VERTICAL_LINKS = [
+  { label: 'TradeTrust', href: 'https://tradetrust.io/' },
+  { label: 'OpenCerts', href: 'https://opencerts.io/' },
+  { label: 'SAL', href: 'https://legalisation.sal.sg/' },
+]
+
 const Navbar = ({ isDarkMode, setIsDarkMode: _setIsDarkMode }: NavbarProps) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [_isEcosystemOpen, setIsEcosystemOpen] = useState(false)
+  const [isVerticalsOpen, setIsVerticalsOpen] = useState(false)
   const navRef = useRef<HTMLElement>(null)
+  const verticalsRef = useRef<HTMLDivElement>(null)
+  const mobileMenuRef = useRef<HTMLDivElement>(null)
   const location = useLocation()
   const isSettingsActive = location.pathname.startsWith('/settings')
   const isNewsActive = location.pathname.startsWith('/news-updates')
-  const isPartnersActive = location.pathname.startsWith('/partners')
   const isAboutActive = location.pathname.startsWith('/about')
 
   useEffect(() => {
@@ -26,11 +34,20 @@ const Navbar = ({ isDarkMode, setIsDarkMode: _setIsDarkMode }: NavbarProps) => {
       ) {
         setIsMobileMenuOpen(false)
         setIsEcosystemOpen(false)
+        setIsVerticalsOpen(false)
+      }
+      if (
+        isVerticalsOpen &&
+        verticalsRef.current &&
+        !verticalsRef.current.contains(e.target as Node) &&
+        !mobileMenuRef.current?.contains(e.target as Node)
+      ) {
+        setIsVerticalsOpen(false)
       }
     }
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [isMobileMenuOpen])
+  }, [isMobileMenuOpen, isVerticalsOpen])
 
   return (
     <nav
@@ -48,6 +65,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode: _setIsDarkMode }: NavbarProps) => {
                 setIsMobileMenuOpen(!isMobileMenuOpen)
                 if (isMobileMenuOpen) {
                   setIsEcosystemOpen(false)
+                  setIsVerticalsOpen(false)
                 }
               }}
               aria-label="Toggle mobile menu"
@@ -125,9 +143,13 @@ const Navbar = ({ isDarkMode, setIsDarkMode: _setIsDarkMode }: NavbarProps) => {
               </Link>
             </div>
 
-            <div className="p-2">
-              <Link
-                to="/partners"
+            <div className="p-2 relative" ref={verticalsRef}>
+              <button
+                type="button"
+                onClick={() => setIsVerticalsOpen(!isVerticalsOpen)}
+                aria-label="Toggle verticals menu"
+                aria-expanded={isVerticalsOpen}
+                aria-haspopup="menu"
                 className="min-w-[40px] min-h-[40px] flex items-center justify-center px-1 py-[5px] rounded-lg transition-colors duration-200"
                 style={{ backgroundColor: 'transparent' }}
                 onMouseEnter={e => {
@@ -140,9 +162,9 @@ const Navbar = ({ isDarkMode, setIsDarkMode: _setIsDarkMode }: NavbarProps) => {
                 }}
               >
                 <div
-                  className="px-1 py-1 text-center text-sm font-bold font-urbanist leading-snug"
+                  className="px-1 py-1 flex items-center gap-1 text-center text-sm font-bold font-urbanist leading-snug"
                   style={{
-                    color: isPartnersActive
+                    color: isVerticalsOpen
                       ? isDarkMode
                         ? '#7D80D7'
                         : '#5B5BB3'
@@ -151,9 +173,67 @@ const Navbar = ({ isDarkMode, setIsDarkMode: _setIsDarkMode }: NavbarProps) => {
                         : '#5B6571',
                   }}
                 >
-                  Partners
+                  Verticals
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className={`transition-transform duration-200 ${isVerticalsOpen ? 'rotate-180' : ''}`}
+                  >
+                    <path
+                      d="M6 9L12 15L18 9"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
                 </div>
-              </Link>
+              </button>
+              {isVerticalsOpen && (
+                <div
+                  role="menu"
+                  aria-label="Verticals menu"
+                  className="absolute top-full left-0 mt-1 min-w-[180px] rounded-lg border shadow-lg py-2 z-50"
+                  style={{
+                    backgroundColor: isDarkMode
+                      ? 'rgba(30, 32, 38, 0.98)'
+                      : 'rgba(255, 255, 255, 0.98)',
+                    borderColor: isDarkMode
+                      ? 'rgba(255, 255, 255, 0.1)'
+                      : 'rgba(0, 0, 0, 0.1)',
+                    backdropFilter: 'blur(8px)',
+                  }}
+                >
+                  {VERTICAL_LINKS.map(({ label, href }) => (
+                    <a
+                      key={label}
+                      role="menuitem"
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setIsVerticalsOpen(false)}
+                      className="block px-4 py-2 text-sm font-bold font-urbanist transition-colors duration-200"
+                      style={{
+                        color: isDarkMode ? '#808894' : '#5B6571',
+                        backgroundColor: 'transparent',
+                      }}
+                      onMouseEnter={e => {
+                        e.currentTarget.style.backgroundColor = isDarkMode
+                          ? 'rgba(255, 255, 255, 0.1)'
+                          : 'rgba(0, 0, 0, 0.05)'
+                      }}
+                      onMouseLeave={e => {
+                        e.currentTarget.style.backgroundColor = 'transparent'
+                      }}
+                    >
+                      {label}
+                    </a>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Ecosystem and Gallery temporarily removed - restore from git */}
@@ -258,6 +338,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode: _setIsDarkMode }: NavbarProps) => {
       {/* Mobile Menu Dropdown */}
       {isMobileMenuOpen && (
         <div
+          ref={mobileMenuRef}
           role="navigation"
           aria-label="Mobile navigation menu"
           className="lg:hidden absolute top-[88px] left-0 right-0 border-t shadow-lg"
@@ -296,11 +377,14 @@ const Navbar = ({ isDarkMode, setIsDarkMode: _setIsDarkMode }: NavbarProps) => {
             >
               About
             </Link>
-            <Link
-              to="/partners"
-              className="px-4 py-3 text-left text-sm font-bold font-urbanist rounded-lg transition-colors duration-200"
+            <button
+              type="button"
+              onClick={() => setIsVerticalsOpen(!isVerticalsOpen)}
+              aria-label="Toggle verticals menu"
+              aria-expanded={isVerticalsOpen}
+              className="px-4 py-3 flex items-center justify-between text-left text-sm font-bold font-urbanist rounded-lg transition-colors duration-200"
               style={{
-                color: isPartnersActive
+                color: isVerticalsOpen
                   ? isDarkMode
                     ? '#7D80D7'
                     : '#5B5BB3'
@@ -318,8 +402,55 @@ const Navbar = ({ isDarkMode, setIsDarkMode: _setIsDarkMode }: NavbarProps) => {
                 e.currentTarget.style.backgroundColor = 'transparent'
               }}
             >
-              Partners
-            </Link>
+              Verticals
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className={`transition-transform duration-200 ${isVerticalsOpen ? 'rotate-180' : ''}`}
+              >
+                <path
+                  d="M6 9L12 15L18 9"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </button>
+            {isVerticalsOpen && (
+              <div className="flex flex-col">
+                {VERTICAL_LINKS.map(({ label, href }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => {
+                      setIsVerticalsOpen(false)
+                      setIsMobileMenuOpen(false)
+                    }}
+                    className="pl-8 pr-4 py-3 text-left text-sm font-bold font-urbanist rounded-lg transition-colors duration-200"
+                    style={{
+                      color: isDarkMode ? '#808894' : '#5B6571',
+                      backgroundColor: 'transparent',
+                    }}
+                    onMouseEnter={e => {
+                      e.currentTarget.style.backgroundColor = isDarkMode
+                        ? 'rgba(255, 255, 255, 0.1)'
+                        : 'rgba(0, 0, 0, 0.05)'
+                    }}
+                    onMouseLeave={e => {
+                      e.currentTarget.style.backgroundColor = 'transparent'
+                    }}
+                  >
+                    {label}
+                  </a>
+                ))}
+              </div>
+            )}
             {/* Ecosystem and Gallery temporarily removed - restore from git */}
             <Link
               to="/news-updates"
