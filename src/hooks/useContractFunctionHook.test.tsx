@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { useContractFunctionHook } from './useContractFunctionHook'
 
 vi.mock('../components/common/contexts/DocumentContext', () => ({
-  useDocumentContext: () => ({ keyId: 'test-key' }),
+  useDocumentContext: () => ({ keyId: 'test-key', isObligation: false }),
 }))
 
 const { mockTransferHolder } = vi.hoisted(() => ({
@@ -21,6 +21,19 @@ vi.mock('@trustvc/trustvc', () => ({
   returnToIssuer: vi.fn(),
   rejectReturned: vi.fn(),
   acceptReturned: vi.fn(),
+  acceptObligationRegistry: vi.fn(),
+  rejectObligationRegistry: vi.fn(),
+  dischargeObligationRegistry: vi.fn(),
+  transferHolderObligationRegistry: vi.fn(),
+  transferBeneficiaryObligationRegistry: vi.fn(),
+  transferOwnersObligationRegistry: vi.fn(),
+  nominateObligationRegistry: vi.fn(),
+  returnToIssuerObligationRegistry: vi.fn(),
+  rejectTransferHolderObligationRegistry: vi.fn(),
+  rejectTransferBeneficiaryObligationRegistry: vi.fn(),
+  rejectTransferOwnersObligationRegistry: vi.fn(),
+  acceptReturnedObligationRegistry: vi.fn(),
+  rejectReturnedObligationRegistry: vi.fn(),
 }))
 
 const mockContract = { address: '0xabc' } as any

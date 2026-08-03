@@ -40,6 +40,7 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
     verifiedChainId,
     issuerName,
     isTransferable,
+    isObligation,
     isExpired,
     tokenRegistryAddress,
     tokenRegistryVersion,
@@ -60,9 +61,9 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
   const handleConnectWallet = async () => {
     showOverlay(<ConnectToBlockchainModel onClose={closeOverlay} />)
   }
-  // Fetch endorsement chain data only when file is verified as valid and transferable
-  const isValidTransferable =
-    verifyStatus === 'valid' && isTransferable === true
+  // Fetch endorsement chain when file is a valid classic ETR or BoE
+  const isOnChainTitle =
+    verifyStatus === 'valid' && (isTransferable || isObligation)
   const {
     endorsementChain,
     endorsementChainStatus,
@@ -71,12 +72,11 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
     handleHideEndorsementChain,
     refreshEndorsementChain,
   } = useEndorsementChain({
-    tokenRegistryAddress: isValidTransferable
-      ? tokenRegistryAddress
-      : undefined,
-    tokenId: isValidTransferable ? tokenId : undefined,
-    verifiedChainId: isValidTransferable ? verifiedChainId : undefined,
-    keyId: isValidTransferable ? keyId : undefined,
+    tokenRegistryAddress: isOnChainTitle ? tokenRegistryAddress : undefined,
+    tokenId: isOnChainTitle ? tokenId : undefined,
+    verifiedChainId: isOnChainTitle ? verifiedChainId : undefined,
+    keyId: isOnChainTitle ? keyId : undefined,
+    isObligation,
   })
 
   const invalidAttachments = React.useMemo(() => {
@@ -181,7 +181,7 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
                   chainId={verifiedChainId}
                   tokenId={tokenId}
                   issuer={issuerName}
-                  isTransferable={isTransferable}
+                  isTransferable={isTransferable || isObligation}
                   tokenRegistryAddress={tokenRegistryAddress}
                   tags={tags}
                   rawDocument={rawDocument}

@@ -18,6 +18,11 @@ export interface AssetManagementDropdownProps {
   canRejectOwnerHolderTransfer: boolean
   canRejectOwnerTransfer: boolean
   canRejectHolderTransfer: boolean
+  canAcceptObligation?: boolean
+  canRejectObligation?: boolean
+  canDischargeObligation?: boolean
+  /** Defaults to classic ETR copy; pass "BoE" for obligation documents. */
+  documentLabel?: string
   isRejectPendingConfirmation?: boolean
 }
 
@@ -36,6 +41,10 @@ export const AssetManagementDropdown: FunctionComponent<
   canRejectOwnerHolderTransfer,
   canRejectHolderTransfer,
   canRejectOwnerTransfer,
+  canAcceptObligation,
+  canRejectObligation,
+  canDischargeObligation,
+  documentLabel = 'ETR',
   isRejectPendingConfirmation,
 }) => {
   return isRejectPendingConfirmation ? (
@@ -49,6 +58,40 @@ export const AssetManagementDropdown: FunctionComponent<
       data-testid="manageAssetDropdown"
       dropdownButtonText="Manage Assets"
     >
+      {/* Additive BoE lifecycle actions (shown only when allowed) */}
+      {canAcceptObligation && (
+        <DropdownItem
+          className="dropdown-item-btn"
+          data-testid={'acceptObligationDropdown'}
+          onClick={() =>
+            onSetFormAction(AssetManagementActions.AcceptObligation)
+          }
+        >
+          Accept the bill
+        </DropdownItem>
+      )}
+      {canRejectObligation && (
+        <DropdownItem
+          className="dropdown-item-btn"
+          data-testid={'rejectObligationDropdown'}
+          onClick={() =>
+            onSetFormAction(AssetManagementActions.RejectObligation)
+          }
+        >
+          Reject the bill
+        </DropdownItem>
+      )}
+      {canDischargeObligation && (
+        <DropdownItem
+          className="dropdown-item-btn"
+          data-testid={'dischargeObligationDropdown'}
+          onClick={() =>
+            onSetFormAction(AssetManagementActions.DischargeObligation)
+          }
+        >
+          Discharge the bill
+        </DropdownItem>
+      )}
       {canTransferHolder && (
         <DropdownItem
           className="dropdown-item-btn"
@@ -108,7 +151,7 @@ export const AssetManagementDropdown: FunctionComponent<
           data-testid={'returnToIssuerDropdown'}
           onClick={() => onSetFormAction(AssetManagementActions.ReturnToIssuer)}
         >
-          Return ETR to issuer
+          Return {documentLabel} to issuer
         </DropdownItem>
       )}
       {canHandleShred && (
@@ -119,7 +162,7 @@ export const AssetManagementDropdown: FunctionComponent<
             onSetFormAction(AssetManagementActions.AcceptReturnToIssuer)
           }
         >
-          Accept ETR return
+          Accept {documentLabel} return
         </DropdownItem>
       )}
       {canHandleRestore && (
@@ -130,7 +173,7 @@ export const AssetManagementDropdown: FunctionComponent<
             onSetFormAction(AssetManagementActions.RejectReturnToIssuer)
           }
         >
-          Reject ETR return
+          Reject {documentLabel} return
         </DropdownItem>
       )}
       {canRejectOwnerHolderTransfer && (

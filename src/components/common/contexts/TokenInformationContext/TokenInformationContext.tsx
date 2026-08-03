@@ -17,6 +17,7 @@ import { useTokenRegistryContract } from '../../../../hooks/useTokenRegistryCont
 import { useTitleEscrowContract } from '../../../../hooks/useTitleEscrowContract'
 import { BurnAddress, ChainInfo } from '../../../../utils/chain-info'
 import { useTokenRegistryVersion } from '../../../../hooks/useTokenRegistryVersion'
+import { useIsObligation } from '../../../../hooks/useIsObligation'
 import { providers } from 'ethers'
 import { CHAIN_ID } from '@trustvc/trustvc'
 import { getRpcUrl } from '../../../../utils/helper'
@@ -66,6 +67,14 @@ interface ITokenInformationContext {
   restoreTokenState: ContractFunctionState
   resetProviders: () => void
   errorMessage?: string
+  /** BoE document status (Issued/Accepted/Rejected/Discharged). Undefined for classic ETR. */
+  obligationStatus?: number
+  acceptObligation: (...args: any[]) => Promise<any>
+  acceptObligationState: ContractFunctionState
+  rejectObligation: (...args: any[]) => Promise<any>
+  rejectObligationState: ContractFunctionState
+  dischargeObligation: (...args: any[]) => Promise<any>
+  dischargeObligationState: ContractFunctionState
 }
 
 const contractFunctionStub: any = () => {
@@ -100,6 +109,12 @@ export const TokenInformationContext = createContext<ITokenInformationContext>({
   restoreToken: contractFunctionStub,
   restoreTokenState: 'UNINITIALIZED',
   resetProviders: () => {},
+  acceptObligation: contractFunctionStub,
+  acceptObligationState: 'UNINITIALIZED',
+  rejectObligation: contractFunctionStub,
+  rejectObligationState: 'UNINITIALIZED',
+  dischargeObligation: contractFunctionStub,
+  dischargeObligationState: 'UNINITIALIZED',
 })
 
 interface TokenInformationContextProviderProps {
@@ -158,6 +173,7 @@ export const TokenInformationContextProvider: FunctionComponent<
   const isTokenBurnt =
     documentOwner?.toLowerCase() === BurnAddress?.toLowerCase() // check if the token belongs to burn address.
   const isTitleEscrow = !!useTokenRegistryVersion() || undefined
+  const isObligation = useIsObligation()
 
   // First check whether Contract is TitleEscrow
   // Contract Read Functions
@@ -181,6 +197,12 @@ export const TokenInformationContextProvider: FunctionComponent<
     titleEscrow,
     'remark'
   )
+  const { call: getObligationStatus, value: obligationStatusRaw } =
+    useContractFunctionHook(titleEscrow, 'status')
+  const obligationStatus =
+    obligationStatusRaw !== undefined && obligationStatusRaw !== null
+      ? Number(obligationStatusRaw)
+      : undefined
 
   const {
     send: changeHolder,
@@ -302,6 +324,42 @@ export const TokenInformationContextProvider: FunctionComponent<
     providerOrSigner
   )
 
+  const {
+    send: acceptObligation,
+    state: acceptObligationState,
+    reset: resetAcceptObligation,
+    errorMessage: acceptObligationErrorMessage,
+  } = useContractFunctionHook(
+    titleEscrow,
+    'accept',
+    { titleEscrowAddress, tokenRegistryAddress, tokenId },
+    providerOrSigner
+  )
+
+  const {
+    send: rejectObligation,
+    state: rejectObligationState,
+    reset: resetRejectObligation,
+    errorMessage: rejectObligationErrorMessage,
+  } = useContractFunctionHook(
+    titleEscrow,
+    'reject',
+    { titleEscrowAddress, tokenRegistryAddress, tokenId },
+    providerOrSigner
+  )
+
+  const {
+    send: dischargeObligation,
+    state: dischargeObligationState,
+    reset: resetDischargeObligation,
+    errorMessage: dischargeObligationErrorMessage,
+  } = useContractFunctionHook(
+    titleEscrow,
+    'discharge',
+    { titleEscrowAddress, tokenRegistryAddress, tokenId },
+    providerOrSigner
+  )
+
   const resetProviders = useCallback(() => {
     resetChangeHolder()
     resetDestroyingTokenState()
@@ -313,6 +371,9 @@ export const TokenInformationContextProvider: FunctionComponent<
     resetRestoreTokenState()
     resetReturnToIssuer()
     resetTransferOwners()
+    resetAcceptObligation()
+    resetRejectObligation()
+    resetDischargeObligation()
   }, [
     resetChangeHolder,
     resetDestroyingTokenState,
@@ -324,6 +385,9 @@ export const TokenInformationContextProvider: FunctionComponent<
     resetRestoreTokenState,
     resetReturnToIssuer,
     resetTransferOwners,
+    resetAcceptObligation,
+    resetRejectObligation,
+    resetDischargeObligation,
   ])
 
   const resetStates = useCallback(() => {
@@ -350,6 +414,7 @@ export const TokenInformationContextProvider: FunctionComponent<
       getPrevBeneficiary()
       getPrevHolder()
       getRemark()
+      if (isObligation) getObligationStatus()
     }
   }, [
     getApprovedBeneficiary,
@@ -358,7 +423,9 @@ export const TokenInformationContextProvider: FunctionComponent<
     getPrevBeneficiary,
     getPrevHolder,
     getRemark,
+    getObligationStatus,
     isTitleEscrow,
+    isObligation,
   ])
 
   // Update holder whenever holder transfer is successful
@@ -409,6 +476,22 @@ export const TokenInformationContextProvider: FunctionComponent<
     if (rejectTransferOwnerHolderState === 'CONFIRMED') updateTitleEscrow()
   }, [rejectTransferOwnerHolderState, updateTitleEscrow])
 
+  // Refresh escrow after BoE lifecycle actions
+  useEffect(() => {
+    if (
+      acceptObligationState === 'CONFIRMED' ||
+      rejectObligationState === 'CONFIRMED' ||
+      dischargeObligationState === 'CONFIRMED'
+    ) {
+      updateTitleEscrow()
+    }
+  }, [
+    acceptObligationState,
+    rejectObligationState,
+    dischargeObligationState,
+    updateTitleEscrow,
+  ])
+
   // Reset states for all write functions when provider changes to allow methods to be called again without refreshing
   useEffect(resetProviders, [resetProviders, providerOrSigner])
 
@@ -422,7 +505,10 @@ export const TokenInformationContextProvider: FunctionComponent<
     rejectTransferHolderErrorMessage ||
     rejectTransferOwnerHolderErrorMessage ||
     restoreTokenErrorMessage ||
-    returnToIssuerErrorMessage
+    returnToIssuerErrorMessage ||
+    acceptObligationErrorMessage ||
+    rejectObligationErrorMessage ||
+    dischargeObligationErrorMessage
 
   return (
     <TokenInformationContext.Provider
@@ -464,6 +550,13 @@ export const TokenInformationContextProvider: FunctionComponent<
         restoreTokenState,
         resetProviders,
         errorMessage,
+        obligationStatus: isObligation ? obligationStatus : undefined,
+        acceptObligation,
+        acceptObligationState,
+        rejectObligation,
+        rejectObligationState,
+        dischargeObligation,
+        dischargeObligationState,
       }}
     >
       {children}

@@ -33,6 +33,7 @@ const defaultHook: UseVerifyReturn = {
   errorType: TYPES.VERIFICATION_ERROR,
   dragActive: false,
   isTransferable: false,
+  isObligation: false,
   isExpired: false,
   tokenRegistryVersion: null,
   tags: [],

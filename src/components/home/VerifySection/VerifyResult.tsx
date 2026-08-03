@@ -63,10 +63,14 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
 }) => {
   const { changeNetwork, currentChainId } = useProviderContext()
 
-  // Switch provider to the document's chain when a transferable document is loaded
+  // Switch provider to the document's chain when a transferable / BoE document is loaded
   useEffect(() => {
-    if (isTransferable && chainId && String(currentChainId) !== chainId) {
-      changeNetwork(Number(chainId) as any)
+    if (
+      isTransferable &&
+      chainId &&
+      String(currentChainId) !== String(chainId)
+    ) {
+      changeNetwork(String(chainId) as any)
     }
   }, [isTransferable, chainId, currentChainId, changeNetwork])
 

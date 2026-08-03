@@ -22,6 +22,9 @@ import type {
   RejectTransferOwnerHolderFormProps,
   RejectTransferOwnerFormProps,
   RejectTransferHolderFormProps,
+  AcceptObligationFormProps,
+  RejectObligationFormProps,
+  DischargeObligationFormProps,
 } from './types'
 
 // Union type for all possible props
@@ -37,6 +40,9 @@ type ActionFormProps =
   | RejectTransferOwnerHolderFormProps
   | RejectTransferOwnerFormProps
   | RejectTransferHolderFormProps
+  | AcceptObligationFormProps
+  | RejectObligationFormProps
+  | DischargeObligationFormProps
 
 export const ActionForm: FunctionComponent<ActionFormProps> = props => {
   const {
@@ -350,6 +356,78 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
       const title = isConfirmed
         ? MessageTitle.ACCEPT_RETURN_TO_ISSUER_DOCUMENT_SUCCESS
         : MessageTitle.ACCEPT_RETURN_TO_ISSUER_DOCUMENT_FAILED
+
+      if (isConfirmed || isFailed) {
+        if (refreshEndorsementChain && isConfirmed) {
+          refreshEndorsementChain()
+        }
+        showOverlay(
+          showDocumentTransferMessage(
+            title,
+            { isSuccess: isConfirmed },
+            setShowEndorsementChain,
+            errorMessage
+          )
+        )
+        setFormActionNone()
+      }
+    }
+    // Handle AcceptObligation confirmation/ failure
+    if (type === AssetManagementActions.AcceptObligation) {
+      const { acceptObligationState } = props
+      const isConfirmed = acceptObligationState === FormState.CONFIRMED
+      const isFailed = acceptObligationState === FormState.ERROR
+      const title = isConfirmed
+        ? MessageTitle.ACCEPT_OBLIGATION_SUCCESS
+        : MessageTitle.ACCEPT_OBLIGATION_FAILED
+
+      if (isConfirmed || isFailed) {
+        if (refreshEndorsementChain && isConfirmed) {
+          refreshEndorsementChain()
+        }
+        showOverlay(
+          showDocumentTransferMessage(
+            title,
+            { isSuccess: isConfirmed },
+            setShowEndorsementChain,
+            errorMessage
+          )
+        )
+        setFormActionNone()
+      }
+    }
+    // Handle RejectObligation confirmation/ failure
+    if (type === AssetManagementActions.RejectObligation) {
+      const { rejectObligationState } = props
+      const isConfirmed = rejectObligationState === FormState.CONFIRMED
+      const isFailed = rejectObligationState === FormState.ERROR
+      const title = isConfirmed
+        ? MessageTitle.REJECT_OBLIGATION_SUCCESS
+        : MessageTitle.REJECT_OBLIGATION_FAILED
+
+      if (isConfirmed || isFailed) {
+        if (refreshEndorsementChain && isConfirmed) {
+          refreshEndorsementChain()
+        }
+        showOverlay(
+          showDocumentTransferMessage(
+            title,
+            { isSuccess: isConfirmed },
+            setShowEndorsementChain,
+            errorMessage
+          )
+        )
+        setFormActionNone()
+      }
+    }
+    // Handle DischargeObligation confirmation/ failure
+    if (type === AssetManagementActions.DischargeObligation) {
+      const { dischargeObligationState } = props
+      const isConfirmed = dischargeObligationState === FormState.CONFIRMED
+      const isFailed = dischargeObligationState === FormState.ERROR
+      const title = isConfirmed
+        ? MessageTitle.DISCHARGE_OBLIGATION_SUCCESS
+        : MessageTitle.DISCHARGE_OBLIGATION_FAILED
 
       if (isConfirmed || isFailed) {
         if (refreshEndorsementChain && isConfirmed) {
@@ -1232,6 +1310,180 @@ export const ActionForm: FunctionComponent<ActionFormProps> = props => {
                   </div>
                 ) : (
                   'Accept ETR Return'
+                )}
+              </ButtonIcon>
+            </div>
+          </div>
+        </>
+      )
+    }
+
+    case AssetManagementActions.AcceptObligation: {
+      const { handleAcceptObligation, acceptObligationState } = props
+      const isPendingConfirmation =
+        acceptObligationState === FormState.PENDING_CONFIRMATION ||
+        acceptObligationState === FormState.INITIALIZED
+
+      return (
+        <>
+          <div
+            className={`justify-end action-form-frame ${isPendingConfirmation ? 'opacity-[0.33] pointer-events-none' : ''}`}
+          >
+            <div className="editable-asset-title max-w-[100%] lg:max-w-[383px]">
+              <EditableAssetTitle
+                role="Remark"
+                value="Remark"
+                newValue={remark}
+                onSetNewValue={setRemark}
+                isEditable={true}
+                isRemark={true}
+                isSubmitted={isPendingConfirmation}
+              />
+            </div>
+          </div>
+          <div className="form-action-btn-outer-frame">
+            <div className="form-action-btn-inner-frame">
+              <Button
+                className="!flex-1 !min-w-[188px] !max-w-[383px]"
+                onClick={setFormActionNone}
+                disabled={isPendingConfirmation}
+                data-testid={'cancelAcceptObligationBtn'}
+                btnType="transparent"
+                size={ButtonSize.SM}
+              >
+                Cancel
+              </Button>
+
+              <ButtonIcon
+                className="!flex-1 !min-w-[188px] !max-w-[383px]"
+                onClick={() => handleAcceptObligation({ remarks: remark })}
+                disabled={isPendingConfirmation}
+                data-testid={'acceptObligationBtn'}
+                size={ButtonSize.SM}
+              >
+                {isPendingConfirmation ? (
+                  <div className="flex flex-row items-center gap-2">
+                    <Spinner data-testid={'loader'} fill="white" />
+                    Accepting..
+                  </div>
+                ) : (
+                  'Accept the bill'
+                )}
+              </ButtonIcon>
+            </div>
+          </div>
+        </>
+      )
+    }
+
+    case AssetManagementActions.RejectObligation: {
+      const { handleRejectObligation, rejectObligationState } = props
+      const isPendingConfirmation =
+        rejectObligationState === FormState.PENDING_CONFIRMATION ||
+        rejectObligationState === FormState.INITIALIZED
+
+      return (
+        <>
+          <div
+            className={`justify-end action-form-frame ${isPendingConfirmation ? 'opacity-[0.33] pointer-events-none' : ''}`}
+          >
+            <div className="editable-asset-title max-w-[100%] lg:max-w-[383px]">
+              <EditableAssetTitle
+                role="Remark"
+                value="Remark"
+                newValue={remark}
+                onSetNewValue={setRemark}
+                isEditable={true}
+                isRemark={true}
+                isSubmitted={isPendingConfirmation}
+              />
+            </div>
+          </div>
+          <div className="form-action-btn-outer-frame">
+            <div className="form-action-btn-inner-frame">
+              <Button
+                className="!flex-1 !min-w-[188px] !max-w-[383px]"
+                onClick={setFormActionNone}
+                disabled={isPendingConfirmation}
+                data-testid={'cancelRejectObligationBtn'}
+                btnType="transparent"
+                size={ButtonSize.SM}
+              >
+                Cancel
+              </Button>
+
+              <ButtonIcon
+                className="!flex-1 !min-w-[188px] !max-w-[383px]"
+                onClick={() => handleRejectObligation({ remarks: remark })}
+                disabled={isPendingConfirmation}
+                data-testid={'rejectObligationBtn'}
+                size={ButtonSize.SM}
+              >
+                {isPendingConfirmation ? (
+                  <div className="flex flex-row items-center gap-2">
+                    <Spinner data-testid={'loader'} fill="white" />
+                    Rejecting..
+                  </div>
+                ) : (
+                  'Reject the bill'
+                )}
+              </ButtonIcon>
+            </div>
+          </div>
+        </>
+      )
+    }
+
+    case AssetManagementActions.DischargeObligation: {
+      const { handleDischargeObligation, dischargeObligationState } = props
+      const isPendingConfirmation =
+        dischargeObligationState === FormState.PENDING_CONFIRMATION ||
+        dischargeObligationState === FormState.INITIALIZED
+
+      return (
+        <>
+          <div
+            className={`justify-end action-form-frame ${isPendingConfirmation ? 'opacity-[0.33] pointer-events-none' : ''}`}
+          >
+            <div className="editable-asset-title max-w-[100%] lg:max-w-[383px]">
+              <EditableAssetTitle
+                role="Remark"
+                value="Remark"
+                newValue={remark}
+                onSetNewValue={setRemark}
+                isEditable={true}
+                isRemark={true}
+                isSubmitted={isPendingConfirmation}
+              />
+            </div>
+          </div>
+          <div className="form-action-btn-outer-frame">
+            <div className="form-action-btn-inner-frame">
+              <Button
+                className="!flex-1 !min-w-[188px] !max-w-[383px]"
+                onClick={setFormActionNone}
+                disabled={isPendingConfirmation}
+                data-testid={'cancelDischargeObligationBtn'}
+                btnType="transparent"
+                size={ButtonSize.SM}
+              >
+                Cancel
+              </Button>
+
+              <ButtonIcon
+                className="!flex-1 !min-w-[188px] !max-w-[383px]"
+                onClick={() => handleDischargeObligation({ remarks: remark })}
+                disabled={isPendingConfirmation}
+                data-testid={'dischargeObligationBtn'}
+                size={ButtonSize.SM}
+              >
+                {isPendingConfirmation ? (
+                  <div className="flex flex-row items-center gap-2">
+                    <Spinner data-testid={'loader'} fill="white" />
+                    Discharging..
+                  </div>
+                ) : (
+                  'Discharge the bill'
                 )}
               </ButtonIcon>
             </div>

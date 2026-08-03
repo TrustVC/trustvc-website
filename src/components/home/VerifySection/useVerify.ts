@@ -4,6 +4,8 @@ import {
   getChainId,
   SUPPORTED_CHAINS,
   isTransferableRecord,
+  isObligationRecord,
+  getObligationRegistryAddress,
   vc,
   isWrappedV2Document,
   isWrappedV3Document,
@@ -76,6 +78,7 @@ export interface UseVerifyReturn {
   verifiedChainId?: string
   issuerName?: string
   isTransferable: boolean
+  isObligation: boolean
   isExpired: boolean
   tokenRegistryVersion: TokenRegistryVersion
   tokenRegistryAddress?: string
@@ -119,7 +122,8 @@ const computeGroupStatus = (
  * so we inspect the issuer the same way isDocumentRevokable does internally.)
  */
 const requiresNetworkSelection = (doc: unknown): boolean => {
-  if (isTransferableRecord(doc as any)) return true
+  if (isTransferableRecord(doc as any) || isObligationRecord(doc as any))
+    return true
   try {
     if (isWrappedV2Document(doc as any)) {
       const data = getDocumentDataFromWrappedDocument(doc as any) as {
@@ -250,6 +254,8 @@ const isDidSignedContractNotFound = (frags: VerificationFragment[]): boolean =>
 const W3C_TR_REASON =
   /(has not been issued under token registry|token registry is not found)/i
 
+const W3C_OR_REASON = /(has not been issued under contract)/i
+
 export const getErrorMessageFromFragments = (
   frags: VerificationFragment[]
 ): string | undefined => {
@@ -259,7 +265,15 @@ export const getErrorMessageFromFragments = (
       f.status === 'INVALID' &&
       W3C_TR_REASON.test((f as any).reason?.message ?? '')
   )
-  return (tr as any)?.reason?.message || undefined
+  if ((tr as any)?.reason?.message) return (tr as any).reason.message
+
+  const orFrag = frags.find(
+    f =>
+      f.name === 'ObligationRecords' &&
+      f.status === 'INVALID' &&
+      W3C_OR_REASON.test((f as any).reason?.message ?? '')
+  )
+  return (orFrag as any)?.reason?.message || undefined
 }
 
 export const getErrorTypeFromFragments = (
@@ -409,15 +423,18 @@ const detectTokenRegistryVersion = async (
 
 const getDocumentTags = (
   document: any,
-  tokenRegistryVersion: TokenRegistryVersion
+  tokenRegistryVersion: TokenRegistryVersion,
+  isObligationDocument = false
 ): string[] => {
   if (!document) return []
 
   const tags: string[] = []
 
-  // Check if transferable - adds both Transferable and Negotiable tags
-  const isTransferableDocument = isTransferableRecord(document)
-  if (isTransferableDocument) {
+  if (isObligationDocument) {
+    tags.push('Obligation')
+    tags.push('BoE')
+    tags.push('Negotiable')
+  } else if (isTransferableRecord(document)) {
     tags.push('Transferable')
     tags.push('Negotiable')
   }
@@ -445,11 +462,13 @@ const getDocumentTags = (
     }
   }
 
-  // Add token registry version tag if available
-  if (tokenRegistryVersion === 'V4') {
-    tags.push('TR V4')
-  } else if (tokenRegistryVersion === 'V5') {
-    tags.push('TR V5')
+  // Add token registry version tag if available (classic ETR only)
+  if (!isObligationDocument) {
+    if (tokenRegistryVersion === 'V4') {
+      tags.push('TR V4')
+    } else if (tokenRegistryVersion === 'V5') {
+      tags.push('TR V5')
+    }
   }
 
   return tags
@@ -482,6 +501,7 @@ export const useVerify = (): UseVerifyReturn => {
     setTokenRegistryVersion: setTokenRegistryVersionContext,
     setTokenId: setTokenIdContext,
     setTokenRegistryAddress: setTokenRegistryAddressContext,
+    setIsObligation: setIsObligationContext,
   } = useDocumentContext()
   const [verifyStatus, setVerifyStatus] = useState<VerifyStatus>('idle')
   const [fragments, setFragments] = useState<VerificationFragment[]>([])
@@ -499,6 +519,7 @@ export const useVerify = (): UseVerifyReturn => {
   const [verifiedChainId, setVerifiedChainId] = useState<string>('')
   const [issuerName, setIssuerName] = useState<string>('')
   const [isTransferable, setIsTransferable] = useState<boolean>(false)
+  const [isObligation, setIsObligation] = useState<boolean>(false)
   const [tokenRegistryVersion, setTokenRegistryVersion] =
     useState<TokenRegistryVersion>(null)
   const [tokenRegistryAddress, setTokenRegistryAddress] = useState<
@@ -554,14 +575,19 @@ export const useVerify = (): UseVerifyReturn => {
     const issuer = getIssuerName(doc, results)
     setIssuerName(issuer)
 
-    // Check if document is transferable
-    const transferable = isTransferableRecord(doc as any)
+    // Check if document is transferable (classic ETR) or obligation (BoE)
+    const obligation = isObligationRecord(doc as any)
+    const transferable = !obligation && isTransferableRecord(doc as any)
     setIsTransferable(transferable)
+    setIsObligation(obligation)
+    setIsObligationContext(obligation)
 
-    // Extract token registry address
-    const registryAddress = transferable
-      ? getTokenRegistryAddress(doc as any)
-      : undefined
+    // Extract registry address (tokenRegistry or obligationRegistry)
+    const registryAddress = obligation
+      ? getObligationRegistryAddress(doc as any)
+      : transferable
+        ? getTokenRegistryAddress(doc as any)
+        : undefined
     setTokenRegistryAddress(registryAddress)
     setTokenRegistryAddressContext(registryAddress || null)
 
@@ -573,7 +599,7 @@ export const useVerify = (): UseVerifyReturn => {
     setKeyId(_keyId)
     setKeyIdContext(_keyId || null)
 
-    if (transferable) {
+    if (transferable || obligation) {
       const _tokenId = getTokenId(doc as any)
       setTokenId(_tokenId)
       setTokenIdContext(_tokenId || null)
@@ -582,9 +608,11 @@ export const useVerify = (): UseVerifyReturn => {
       setTokenIdContext(null)
     }
 
-    // Detect token registry version (async)
+    // Detect token registry version (async). Obligation registries are always V5-style.
     let trVersion: TokenRegistryVersion = null
-    if (transferable && rpcUrl) {
+    if (obligation) {
+      trVersion = 'V5'
+    } else if (transferable && rpcUrl) {
       try {
         // Create a simple provider for the detection
         const { ethers } = await import('ethers')
@@ -601,7 +629,7 @@ export const useVerify = (): UseVerifyReturn => {
     setTokenRegistryVersionContext(trVersion)
 
     // Compute document tags
-    const documentTags = getDocumentTags(doc, trVersion)
+    const documentTags = getDocumentTags(doc, trVersion, obligation)
     setTags(documentTags)
 
     setRawDocument(doc)
@@ -619,7 +647,7 @@ export const useVerify = (): UseVerifyReturn => {
     )
     trackDocumentVerified(doc, results, isValid, issuer, errorType, {
       isExpired,
-      isTransferable: transferable,
+      isTransferable: transferable || obligation,
       tokenRegistryVersion: trVersion,
       chainId: chainId ?? null,
     })
@@ -629,6 +657,7 @@ export const useVerify = (): UseVerifyReturn => {
     setVerifiedChainId('')
     setIssuerName('')
     setIsTransferable(false)
+    setIsObligation(false)
     setTokenRegistryVersion(null)
     setTokenRegistryAddress(undefined)
     setTags([])
@@ -640,6 +669,7 @@ export const useVerify = (): UseVerifyReturn => {
     setTokenRegistryVersionContext(null)
     setTokenIdContext(null)
     setKeyIdContext(null)
+    setIsObligationContext(false)
   }
 
   const processFile = async (
@@ -811,6 +841,7 @@ export const useVerify = (): UseVerifyReturn => {
     verifiedChainId,
     issuerName,
     isTransferable,
+    isObligation,
     isExpired,
     tokenRegistryVersion,
     tokenRegistryAddress,

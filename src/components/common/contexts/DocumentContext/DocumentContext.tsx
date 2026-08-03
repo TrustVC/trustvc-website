@@ -11,6 +11,9 @@ interface DocumentContextValue {
   setTokenId: (tokenId: string | null) => void
   tokenRegistryAddress: string | null
   setTokenRegistryAddress: (address: string | null) => void
+  /** True when the verified document is a BoE / Obligation Record. */
+  isObligation: boolean
+  setIsObligation: (isObligation: boolean) => void
 }
 
 const DocumentContext = createContext<DocumentContextValue | undefined>(
@@ -27,6 +30,7 @@ export const DocumentProvider: React.FC<{ children: ReactNode }> = ({
   const [tokenRegistryAddress, setTokenRegistryAddress] = useState<
     string | null
   >(null)
+  const [isObligation, setIsObligation] = useState(false)
 
   return (
     <DocumentContext.Provider
@@ -39,6 +43,8 @@ export const DocumentProvider: React.FC<{ children: ReactNode }> = ({
         setTokenId,
         tokenRegistryAddress,
         setTokenRegistryAddress,
+        isObligation,
+        setIsObligation,
       }}
     >
       {children}

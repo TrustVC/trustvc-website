@@ -11,6 +11,19 @@ import {
   rejectReturned,
   acceptReturned,
   rejectTransferOwners,
+  acceptObligationRegistry,
+  rejectObligationRegistry,
+  dischargeObligationRegistry,
+  transferHolderObligationRegistry,
+  transferBeneficiaryObligationRegistry,
+  transferOwnersObligationRegistry,
+  nominateObligationRegistry,
+  returnToIssuerObligationRegistry,
+  rejectTransferHolderObligationRegistry,
+  rejectTransferBeneficiaryObligationRegistry,
+  rejectTransferOwnersObligationRegistry,
+  acceptReturnedObligationRegistry,
+  rejectReturnedObligationRegistry,
 } from '@trustvc/trustvc'
 import { TitleEscrow, TradeTrustToken } from '../types'
 import { TypedContractMethod } from '@trustvc/trustvc'
@@ -58,7 +71,7 @@ const getMetaMaskErrorMessage = (e: unknown): string => {
   return ''
 }
 
-// Create a mapping of method names to trustvc functions
+// Classic ETR title-escrow / token-registry methods
 const trustvcFunctions: Record<string, (...args: any[]) => any> = {
   transferHolder,
   transferBeneficiary,
@@ -70,6 +83,36 @@ const trustvcFunctions: Record<string, (...args: any[]) => any> = {
   returnToIssuer,
   rejectReturned,
   acceptReturned,
+}
+
+// BoE obligation-registry / obligation-escrow methods (same UI method names)
+const obligationFunctions: Record<string, (...args: any[]) => any> = {
+  transferHolder: transferHolderObligationRegistry,
+  transferBeneficiary: transferBeneficiaryObligationRegistry,
+  transferOwners: transferOwnersObligationRegistry,
+  rejectTransferHolder: rejectTransferHolderObligationRegistry,
+  rejectTransferBeneficiary: rejectTransferBeneficiaryObligationRegistry,
+  rejectTransferOwners: rejectTransferOwnersObligationRegistry,
+  nominate: nominateObligationRegistry,
+  returnToIssuer: returnToIssuerObligationRegistry,
+  rejectReturned: rejectReturnedObligationRegistry,
+  acceptReturned: acceptReturnedObligationRegistry,
+  accept: acceptObligationRegistry,
+  reject: rejectObligationRegistry,
+  discharge: dischargeObligationRegistry,
+}
+
+/** Map classic { tokenRegistryAddress, titleEscrowAddress, tokenId } → obligation options. */
+const toObligationContractOptions = (opts: any) => {
+  if (!opts) return opts
+  if (opts.obligationRegistryAddress || opts.obligationEscrowAddress) {
+    return opts
+  }
+  return {
+    obligationRegistryAddress: opts.tokenRegistryAddress,
+    obligationEscrowAddress: opts.titleEscrowAddress,
+    tokenId: opts.tokenId,
+  }
 }
 export type ContractFunctionState =
   | 'UNINITIALIZED'
@@ -138,7 +181,7 @@ export function useContractFunctionHook<
     setValue(undefined)
   }
 
-  const { keyId } = useDocumentContext()
+  const { keyId, isObligation } = useDocumentContext()
   const sendFn = (async (params: any) => {
     if (!contract || !method) {
       setState('ERROR')
@@ -148,21 +191,24 @@ export function useContractFunctionHook<
     resetState()
 
     try {
-      // Check if the method name exists in our trustvc functions mapping
       const methodName = method as string
-      const trustvcContractMethod = trustvcFunctions[methodName]
+      const methodMap = isObligation ? obligationFunctions : trustvcFunctions
+      const trustvcContractMethod = methodMap[methodName]
 
       if (!trustvcContractMethod) {
         throw new Error(
-          `Unsupported method '${methodName}' for trustvcFunctions mapping`
+          `Unsupported method '${methodName}' for ${
+            isObligation ? 'obligation' : 'title escrow'
+          } trustvcFunctions mapping`
         )
       }
 
-      // If it's a trustvc function, call it with the contract and params
-      // Only include id in options if keyIdFromStore is not null
       const options = { id: keyId ?? '' }
+      const resolvedOptions = isObligation
+        ? toObligationContractOptions(contractOptions)
+        : contractOptions
       const deferredTx = trustvcContractMethod(
-        contractOptions,
+        resolvedOptions,
         providerOrSigner,
         params,
         options
@@ -220,6 +266,7 @@ export function useContractFunctionHook<
     contract,
     method,
     keyId,
+    isObligation,
     contractOptions,
     providerOrSigner,
   ])

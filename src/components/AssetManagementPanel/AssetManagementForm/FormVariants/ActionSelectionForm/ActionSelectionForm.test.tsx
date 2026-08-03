@@ -5,6 +5,10 @@ import { ActionSelectionForm } from './ActionSelectionForm'
 import { OverlayProvider } from '../../../../common/contexts/OverlayContext'
 import { AssetManagementActions } from '../../../AssetManagementActions'
 
+vi.mock('../../../../../hooks/useIsObligation', () => ({
+  useIsObligation: () => false,
+}))
+
 // Mock AssetManagementDropdown
 vi.mock('../../AssetManagementDropdown', () => ({
   AssetManagementDropdown: ({ onSetFormAction }: any) => (
