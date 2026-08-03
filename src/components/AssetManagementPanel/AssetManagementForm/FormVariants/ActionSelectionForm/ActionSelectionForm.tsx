@@ -12,6 +12,11 @@ import ConnectToBlockchainModel from '../../../../ConnectToBlockchain'
 import { Button, ButtonSize } from '../../../../common/Button'
 import { Tag } from '../../../../common/Tag'
 import { OBLIGATION_STATUS_LABEL } from '../../../../../constants'
+import { CheckCircle } from '../../../../../../src/components/common/Icons'
+import {
+  getPaymasterAddress,
+  PAYMASTER_CHANGE_EVENT,
+} from '../../../../../gasless/paymasterStorage'
 
 interface ActionSelectionFormProps {
   beneficiary?: string
@@ -119,6 +124,18 @@ export const ActionSelectionForm: FunctionComponent<
     }
   }, [holder, resolveAddress])
 
+  const [savedPaymaster, setSavedPaymaster] = useState(() =>
+    getPaymasterAddress(account)
+  )
+  useEffect(() => {
+    const update = () => setSavedPaymaster(getPaymasterAddress(account))
+    update()
+    window.addEventListener(PAYMASTER_CHANGE_EVENT, update)
+    return () => {
+      window.removeEventListener(PAYMASTER_CHANGE_EVENT, update)
+    }
+  }, [account])
+
   const canManage =
     canTransferHolder ||
     canTransferBeneficiary ||
@@ -218,6 +235,16 @@ export const ActionSelectionForm: FunctionComponent<
         </div>
         {!isTokenBurnt && (
           <div className="dropdown-btn-frame flex-1">
+            {!!account && !!savedPaymaster && (
+              <div className="pay-on-behalf-note">
+                <div className="pay-on-behalf-note-frame">
+                  <CheckCircle />
+                  <span className="pay-on-behalf-note-text">
+                    Pay-on-behalf is enabled for all transactions.
+                  </span>
+                </div>
+              </div>
+            )}
             <div className="vr-footer-dropdown-placeholder flex-1" />
             {account ? (
               <>

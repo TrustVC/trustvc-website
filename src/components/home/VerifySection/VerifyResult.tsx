@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import NetworkTooltip from './NetworkTooltip'
 import DocumentRenderer from './DocumentRenderer'
 import InvalidAttachmentsBanner from './InvalidAttachmentsBanner'
 import ObfuscatedMessage from './ObfuscatedMessage'
 import { makeExplorerAddressURL } from './useVerify'
-import { CheckCircle, CrossCircle } from '../../common/Icons'
+import { CheckCircle, CrossCircle, InfoMsgIcon } from '../../common/Icons'
 import { DocumentAttachment } from '../../../utils/helper'
 import { getMagicLinkIconSrc } from '../../../utils/magicWallet'
 import Connected from '../../ConnectToBlockchain/Connected'
@@ -14,6 +14,16 @@ import {
 } from '../../common/contexts/providerContext'
 import { AssetManagementApplication } from '../../AssetManagementPanel/AssetManagementApplication'
 import { TextButton } from '../../common/Button/Button'
+import { checkPaymasterWhitelist } from '../../../gasless/checkPaymasterWhitelist'
+import { checkEIP7702Delegation } from '../../../gasless/checkDelegation'
+import {
+  getPaymasterAddress,
+  setPaymasterAddress as savePaymasterAddress,
+  removePaymasterAddress as clearPaymasterAddress,
+} from '../../../gasless/paymasterStorage'
+import { getRpcUrl } from '../../../utils/helper'
+import { isAddress, createPublicClient, http } from 'viem'
+import InfoIcon from '../../../../src/components/icons/info'
 
 interface VerifyResultProps {
   fileName: string
@@ -61,7 +71,8 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
   refreshEndorsementChain,
   isExpired,
 }) => {
-  const { changeNetwork, currentChainId } = useProviderContext()
+  const { changeNetwork, currentChainId, providerType, account } =
+    useProviderContext()
 
   // Switch provider to the document's chain when a transferable / BoE document is loaded
   useEffect(() => {
@@ -73,6 +84,139 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
       changeNetwork(String(chainId) as any)
     }
   }, [isTransferable, chainId, currentChainId, changeNetwork])
+
+  // ── EIP-7702 delegation check ────────────────────────────────────────────
+  const [isDelegated, setIsDelegated] = useState(false)
+
+  useEffect(() => {
+    if (!account || !chainId) {
+      setIsDelegated(false)
+      return
+    }
+    const rpcUrl = getRpcUrl(chainId)
+    if (!rpcUrl) {
+      setIsDelegated(false)
+      return
+    }
+    let cancelled = false
+    checkEIP7702Delegation(account, rpcUrl).then(result => {
+      if (!cancelled) setIsDelegated(result)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [account, chainId])
+
+  // ── Gasless card state ───────────────────────────────────────────────────
+  const [paymasterAddress, setPaymasterAddress] = useState('')
+  const [gaslessStatus, setGaslessStatus] = useState<
+    'idle' | 'checking' | 'success' | 'error'
+  >('idle')
+  const [gaslessError, setGaslessError] = useState('')
+
+  // Reset gasless state whenever the wallet changes
+  useEffect(() => {
+    setGaslessStatus('idle')
+    setGaslessError('')
+    setPaymasterAddress('')
+  }, [account])
+
+  const checkGasless = useCallback(
+    async (address: string) => {
+      const trimmed = address.trim()
+      if (!isAddress(trimmed, { strict: false })) return
+
+      if (!chainId || !tokenRegistryAddress || !tokenId) {
+        setGaslessError(
+          'Document information missing — cannot verify paymaster.'
+        )
+        setGaslessStatus('error')
+        return
+      }
+      if (!account) {
+        setGaslessError('Please connect your wallet first.')
+        setGaslessStatus('error')
+        return
+      }
+
+      const rpcUrl = getRpcUrl(chainId)
+      if (!rpcUrl) {
+        setGaslessError('Network error — please try again.')
+        setGaslessStatus('error')
+        return
+      }
+
+      setGaslessStatus('checking')
+      setGaslessError('')
+
+      // Stage 1: tokenId must be a valid integer
+      let tokenIdBigInt: bigint
+      try {
+        tokenIdBigInt = BigInt(tokenId)
+      } catch {
+        setGaslessError('This document has a malformed token ID.')
+        setGaslessStatus('error')
+        return
+      }
+
+      // Stage 2: resolve the title escrow address from the token registry
+      let titleEscrowAddress: string
+      try {
+        const publicClient = createPublicClient({ transport: http(rpcUrl) })
+        titleEscrowAddress = (await publicClient.readContract({
+          address: tokenRegistryAddress as `0x${string}`,
+          abi: [
+            {
+              name: 'ownerOf',
+              type: 'function',
+              inputs: [{ name: 'tokenId', type: 'uint256' }],
+              outputs: [{ name: '', type: 'address' }],
+              stateMutability: 'view',
+            },
+          ],
+          functionName: 'ownerOf',
+          args: [tokenIdBigInt],
+        })) as string
+      } catch {
+        setGaslessError(
+          'Could not look up this document on-chain — please check the network.'
+        )
+        setGaslessStatus('error')
+        return
+      }
+
+      // Stage 3: paymaster whitelist check
+      try {
+        const result = await checkPaymasterWhitelist(
+          trimmed,
+          account,
+          titleEscrowAddress,
+          rpcUrl
+        )
+        if (result.isCallerAuthorized && result.isTitleEscrowAuthorized) {
+          savePaymasterAddress(account, trimmed)
+          setGaslessStatus('success')
+        } else {
+          clearPaymasterAddress(account)
+          setGaslessError('This address is not applicable to you')
+          setGaslessStatus('error')
+        }
+      } catch {
+        setGaslessError('Network error — please try again.')
+        setGaslessStatus('error')
+      }
+    },
+    [account, chainId, tokenRegistryAddress, tokenId]
+  )
+
+  // Auto-verify stored paymaster once delegation is confirmed
+  useEffect(() => {
+    if (!isDelegated || !account) return
+    const stored = getPaymasterAddress(account)
+    if (!stored) return
+    setPaymasterAddress(stored)
+    checkGasless(stored)
+  }, [isDelegated, account, checkGasless])
 
   const showNftLinks = !!isTransferable
 
@@ -131,7 +275,6 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
     })
     setIsTooltipVisible(true)
   }
-  const { providerType, account } = useProviderContext()
   return (
     <div className="vr-container" data-testid="verify-result">
       {/* ── Network info card ── */}
@@ -217,7 +360,81 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
       {/* ── Main result card ── */}
       <div className="vr-main-card">
         {/* Header */}
-        <div className="vr-card-header">
+        <div
+          className="vr-card-header"
+          style={!isDelegated ? { justifyContent: 'flex-end' } : undefined}
+        >
+          {isDelegated && gaslessStatus === 'success' ? (
+            <div className="check-gasless-content-success">
+              <div className="check-gasless-content-success-frame">
+                <CheckCircle />
+                <span className="check-gasless-content-success-text">
+                  This wallet has Pay-on-Behalf enabled. Transaction fees are
+                  covered for you, so you&apos;ll see a Signature Request
+                  instead of a Transaction Request when confirming.
+                </span>
+              </div>
+            </div>
+          ) : isDelegated ? (
+            <div className="check-gasless-card">
+              <div className="check-gasless-frame">
+                <div className="check-gasless-content">
+                  <InfoMsgIcon />
+                  <div className="check-gasless-text">
+                    <span className="gasless-text">
+                      We have detected that you have the pay-on-behalf feature.
+                      To enable it, please enter your paymaster address:
+                    </span>
+                    <div className="gasless-address-input">
+                      <input
+                        id="gasless-paymaster-address"
+                        className="gasless-address-input-field"
+                        type="text"
+                        aria-label="Paymaster address"
+                        aria-invalid={gaslessStatus === 'error'}
+                        aria-describedby={
+                          gaslessStatus === 'error'
+                            ? 'gasless-paymaster-error'
+                            : undefined
+                        }
+                        placeholder="Enter your paymaster address"
+                        value={paymasterAddress}
+                        onChange={e => {
+                          const val = e.target.value
+                          setPaymasterAddress(val)
+                          const trimmed = val.trim()
+                          if (isAddress(trimmed, { strict: false })) {
+                            checkGasless(trimmed)
+                          } else if (trimmed.length > 0) {
+                            setGaslessStatus('error')
+                            setGaslessError('Invalid Paymaster Address')
+                          } else {
+                            setGaslessStatus('idle')
+                            setGaslessError('')
+                          }
+                        }}
+                        disabled={gaslessStatus === 'checking'}
+                      />
+                      {gaslessStatus === 'error' && (
+                        <div
+                          id="gasless-paymaster-error"
+                          className="gasless-error-frame"
+                          role="alert"
+                        >
+                          <div className="gasless-guidance-frame">
+                            <InfoIcon fontSize={13.5} fill="#B83152" />
+                            <span className="gasless-error-text">
+                              {gaslessError}
+                            </span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : null}
           <button
             type="button"
             className="vr-upload-btn"

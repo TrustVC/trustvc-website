@@ -2075,25 +2075,294 @@ p.small {
 /* Header */
 
 .vr-card-header {
-  align-self: stretch;
-  height: 64px;
+  /* Frame 449 */
+
+  /* Auto layout */
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 8px;
   padding: 8px;
+}
+
+@media (max-width: 712px) {
+  .vr-card-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+.check-gasless-card {
+  /* Doc Type */
+
+  box-sizing: border-box;
+
+  /* Auto layout */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 8px;
+  flex: 1;
+  min-width: 0;
+  background: #fff7e2;
+  border: 1px solid #ff8200;
+  border-radius: 12px;
+}
+.check-gasless-frame {
+  /* Frame 365 */
+
+  /* Auto layout */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 8px;
+  gap: 8px;
+}
+.check-gasless-content {
+  /* Frame 1171276455 */
+
+  /* Auto layout */
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 0px;
+  gap: 8px;
+}
+.check-gasless-text {
+  /* Frame 1171276454 */
+
+  /* Auto layout */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0px;
+  gap: 8px;
+}
+.check-gasless-text .gasless-text {
+  font-family: 'Avenir';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 150%;
+  /* identical to box height, or 24px */
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  gap: 8px;
+
+  /* TrustVC/Text Area/Label */
+  color: #1e2026;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+}
+.gasless-address-input {
+  /* Frame 1171276456 */
+
+  /* Auto layout */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0px;
+  gap: 4px;
+  width: 100%;
+}
+
+.gasless-address-input-field {
+  /* Field Configurator */
+
+  /* Auto layout */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 4px;
+  isolation: isolate;
+  height: 40px;
+  width: 100%;
+  max-width: 444px;
+
+  /* TrustVC/Surface/Base/BG/Default */
+  background: #ffffff;
+  border-radius: 8px;
+  /* TrustVC/Stroke/Base/Enabled */
+  border: 1px solid #a9b2bb;
+  border-radius: 8px;
+}
+
+.gasless-address-input-field:focus-visible {
+  outline: none;
 }
 
 .vr-upload-btn {
-  min-height: 40px;
-  padding: 5px 12px;
-  background: #ffffff;
+  /* Standard Button - Primary */
+
+  /* Auto layout */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0px;
+  gap: 10px;
+
+  flex: 1 1 186px;
+  min-width: 48px;
+  max-width: 186px;
+  height: 40px;
+  align-self: flex-start;
   border-radius: 8px;
   border: 1px solid rgba(169, 178, 187, 0.33);
-  cursor: pointer;
-  display: inline-flex;
+}
+
+@media (max-width: 712px) {
+  .vr-upload-btn {
+    flex: none;
+    width: 100%;
+    max-width: none;
+    height: 40px;
+  }
+}
+
+.gasless-error-frame {
+  /* Frame 1171276326 */
+
+  /* Auto layout */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0px;
+  gap: 10px;
+  min-height: 22px;
+  height: auto;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 1;
+  flex-grow: 0;
+}
+.gasless-guidance-frame {
+  /* Guidance Frame */
+
+  /* Auto layout */
+  display: flex;
+  flex-direction: row;
   align-items: center;
+  padding: 0px;
+  gap: 8px;
+  min-height: 22px;
+  height: auto;
+}
+.gasless-error-text {
+  /* This paymaster address is not applicable to you. */
+
+  max-width: 355px;
+  width: 100%;
+  min-height: 22px;
+  height: auto;
+
+  /* TrustVC/Medium/Paragraph S */
+  font-family: 'Avenir';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 155%;
+  /* identical to box height, or 22px */
+  display: flex;
+  align-items: center;
+
+  /* TrustVC/Content/On-Transparent/Alert */
+  color: #b83152;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 1;
+  flex-grow: 0;
+}
+
+.check-gasless-content-success {
+  /* Doc Type */
+
+  box-sizing: border-box;
+
+  /* Auto layout */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  align-self: flex-start;
+  padding: 16px 8px;
+  min-width: 0;
+  flex: 1;
+
+  background: #e3f5ed;
+  border: 1px solid #3aaf86;
+  border-radius: 12px;
+}
+
+.check-gasless-content-success-frame {
+  /* Auto layout */
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 0px 8px;
+  gap: 8px;
+}
+
+.check-gasless-content-success-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0px;
+  gap: 8px;
+  width: 100%;
+  height: auto;
+  font-family: 'Avenir';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 22px;
+  color: #1e2026;
+}
+
+.pay-on-behalf-note {
+  display: flex;
+  flex-direction: column;
   justify-content: center;
+  align-items: flex-end;
+  padding: 0px;
+  gap: 10px;
+
+  width: 100%;
+  height: auto;
+
+  border-radius: 5px;
+}
+.pay-on-behalf-note-frame {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: flex-start;
+  padding: 0px;
+  gap: 8px;
+
+  max-width: 315px;
+  height: auto;
+}
+.pay-on-behalf-note-text {
+  max-width: 280px;
+  height: auto;
+
+  font-family: 'Avenir';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 150%;
+
+  display: flex;
+  align-items: center;
+
+  /* Current/Grey/100 */
+  color: #29313d;
 }
 .dark-mode .vr-upload-btn {
   background: #1c2128;
@@ -3603,6 +3872,7 @@ p.small {
   align-content: flex-end;
   padding: 0px;
   row-gap: 0px;
+  column-gap: 10px;
 
   min-width: 187px;
   max-width: 538px;

@@ -49,7 +49,7 @@ describe('DocumentTransferMessage', () => {
   })
 
   describe('errorMessage prop', () => {
-    it('renders errorMessage text instead of children when errorMessage is provided', () => {
+    it('renders both errorMessage and children when errorMessage is provided', () => {
       renderWithOverlay(
         <DocumentTransferMessage
           title="Transfer Holder Failed"
@@ -62,9 +62,7 @@ describe('DocumentTransferMessage', () => {
       )
 
       expect(screen.getByText('User Rejected Transaction')).toBeInTheDocument()
-      expect(
-        screen.queryByText('default child content')
-      ).not.toBeInTheDocument()
+      expect(screen.getByText('default child content')).toBeInTheDocument()
     })
 
     it('renders children when errorMessage is undefined', () => {

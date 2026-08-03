@@ -190,7 +190,7 @@ export async function hardhatRpcNode(method: string, params: unknown[] = []) {
 
 export async function revokeMetamaskPermissions(
   page: Page,
-  metamask: MetaMask
+  _metamask: MetaMask
 ) {
   // Revoke dapp permissions so the next connect uses Account 2 (not the cached Account 1)
   await page.evaluate(async () => {

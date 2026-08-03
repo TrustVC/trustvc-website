@@ -95,8 +95,5 @@ test.describe('Return to Issuer → Reject Return to Issuer', () => {
         timeout: 10_000,
       })
     })
-    // ── Step 2: Accept Return to Issuer ─────────────────────────────────
-    // Continues on the same page — dismiss overlay, then accept.
-    // Requires: RestorerRole on the Token Registry (Account #0 as deployer)
   })
 })
