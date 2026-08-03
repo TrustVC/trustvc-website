@@ -4,7 +4,6 @@ import Home from './pages/Home'
 import Contact from './pages/Contact'
 import Settings from './pages/Settings'
 import NotFound from './pages/NotFound'
-import Partners from './pages/Partners'
 import About from './pages/About'
 import NewsRouteFallback from './components/common/NewsRouteFallback'
 
@@ -36,7 +35,6 @@ const AppRouter = ({ isDarkMode }: AppRouterProps) => {
           </Suspense>
         }
       />
-      <Route path="/partners" element={<Partners isDarkMode={isDarkMode} />} />
       <Route path="/about" element={<About isDarkMode={isDarkMode} />} />
       <Route path="/settings" element={<Settings isDarkMode={isDarkMode} />} />
       <Route path="/contact" element={<Contact isDarkMode={isDarkMode} />} />
