@@ -37,8 +37,32 @@ describe('Navbar Component', () => {
     )
     // home remove from navbar
     expect(screen.getAllByText('About').length).toBeGreaterThan(0)
-    expect(screen.getAllByText('Partners').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('Verticals').length).toBeGreaterThan(0)
     expect(screen.getAllByText('News & Updates').length).toBeGreaterThan(0)
+  })
+
+  it('opens the Verticals dropdown with external links', () => {
+    renderWithRouter(
+      <Navbar isDarkMode={false} setIsDarkMode={mockSetIsDarkMode} />
+    )
+
+    fireEvent.click(
+      screen.getByRole('button', { name: /toggle verticals menu/i })
+    )
+
+    const menu = screen.getByRole('menu', { name: /verticals menu/i })
+    expect(menu).toBeInTheDocument()
+    expect(
+      screen.getByRole('menuitem', { name: 'TradeTrust' })
+    ).toHaveAttribute('href', 'https://tradetrust.io/')
+    expect(screen.getByRole('menuitem', { name: 'OpenCerts' })).toHaveAttribute(
+      'href',
+      'https://opencerts.io/'
+    )
+    expect(screen.getByRole('menuitem', { name: 'SAL' })).toHaveAttribute(
+      'href',
+      'https://legalisation.sal.sg/'
+    )
   })
 
   it('renders Contact Us button', () => {
