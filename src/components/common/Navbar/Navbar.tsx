@@ -19,6 +19,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode: _setIsDarkMode }: NavbarProps) => {
   const [isVerticalsOpen, setIsVerticalsOpen] = useState(false)
   const navRef = useRef<HTMLElement>(null)
   const verticalsRef = useRef<HTMLDivElement>(null)
+  const mobileMenuRef = useRef<HTMLDivElement>(null)
   const location = useLocation()
   const isSettingsActive = location.pathname.startsWith('/settings')
   const isNewsActive = location.pathname.startsWith('/news-updates')
@@ -38,7 +39,8 @@ const Navbar = ({ isDarkMode, setIsDarkMode: _setIsDarkMode }: NavbarProps) => {
       if (
         isVerticalsOpen &&
         verticalsRef.current &&
-        !verticalsRef.current.contains(e.target as Node)
+        !verticalsRef.current.contains(e.target as Node) &&
+        !mobileMenuRef.current?.contains(e.target as Node)
       ) {
         setIsVerticalsOpen(false)
       }
@@ -336,6 +338,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode: _setIsDarkMode }: NavbarProps) => {
       {/* Mobile Menu Dropdown */}
       {isMobileMenuOpen && (
         <div
+          ref={mobileMenuRef}
           role="navigation"
           aria-label="Mobile navigation menu"
           className="lg:hidden absolute top-[88px] left-0 right-0 border-t shadow-lg"
