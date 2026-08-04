@@ -32,6 +32,13 @@ type SmartClientLike = {
   }): Promise<`0x${string}`>
 }
 
+type DirectFn = (
+  contractArgs: object,
+  signer: any,
+  params: any,
+  opts: { id: string }
+) => Promise<{ wait(): Promise<{ transactionHash: string }> }>
+
 export interface MakeGaslessHookConfig<P> {
   gaslessFn: (
     contractArgs: object,
@@ -39,18 +46,21 @@ export interface MakeGaslessHookConfig<P> {
     params: any,
     opts: { id: string }
   ) => Promise<string>
-  directFn: (
-    contractArgs: object,
-    signer: any,
-    params: any,
-    opts: { id: string }
-  ) => Promise<{ wait(): Promise<{ transactionHash: string }> }>
+  directFn: DirectFn
+  /** BoE / obligation-registry paid path (no EIP-7702 gasless). */
+  obligationFn?: DirectFn
   buildGaslessArgs: (opts: GaslessContractOptions) => object
   buildDirectArgs: (opts: GaslessContractOptions) => object
   buildParams?: (params: P, opts: GaslessContractOptions) => any
   directGuard?: (opts: GaslessContractOptions) => void
   extraEligibility?: (opts: GaslessContractOptions) => boolean
 }
+
+const toObligationArgs = (opts: GaslessContractOptions) => ({
+  obligationRegistryAddress: opts.tokenRegistryAddress,
+  obligationEscrowAddress: opts.titleEscrowAddress,
+  tokenId: opts.tokenId,
+})
 
 export function makeGaslessHook<P>(config: MakeGaslessHookConfig<P>) {
   return function (
@@ -62,7 +72,7 @@ export function makeGaslessHook<P>(config: MakeGaslessHookConfig<P>) {
     const [errorMessage, setErrorMessage] = useState<string | undefined>()
     const [transactionHash, setTransactionHash] = useState<string | undefined>()
 
-    const { keyId } = useDocumentContext()
+    const { keyId, isObligation } = useDocumentContext()
     const { account } = useProviderContext()
 
     const reset = useCallback(() => {
@@ -79,6 +89,31 @@ export function makeGaslessHook<P>(config: MakeGaslessHookConfig<P>) {
 
         try {
           setState('INITIALIZED')
+
+          const resolvedParams = config.buildParams
+            ? config.buildParams(params, contractOptions)
+            : params
+          const opts = { id: keyId ?? '' }
+
+          // BoE: always use obligation-registry functions (not Token Registry V4/V5 / gasless).
+          if (isObligation) {
+            if (!config.obligationFn) {
+              throw new Error(
+                'This action is not supported for Bill of Exchange (obligation registry) documents'
+              )
+            }
+            setState('PENDING_CONFIRMATION')
+            const tx = await config.obligationFn(
+              toObligationArgs(contractOptions),
+              providerOrSigner,
+              resolvedParams,
+              opts
+            )
+            const receipt = await tx.wait()
+            setTransactionHash(receipt.transactionHash)
+            setState('CONFIRMED')
+            return
+          }
 
           let useGasless = false
           const resolvedPaymasterAddress =
@@ -120,11 +155,6 @@ export function makeGaslessHook<P>(config: MakeGaslessHookConfig<P>) {
 
           setState('PENDING_CONFIRMATION')
 
-          const resolvedParams = config.buildParams
-            ? config.buildParams(params, contractOptions)
-            : params
-          const opts = { id: keyId ?? '' }
-
           if (useGasless) {
             const { smartAccountClient } = await buildSmartAccountClient(
               account as `0x${string}`,
@@ -161,7 +191,7 @@ export function makeGaslessHook<P>(config: MakeGaslessHookConfig<P>) {
           setState('ERROR')
         }
       },
-      [contractOptions, providerOrSigner, chainId, account, keyId]
+      [contractOptions, providerOrSigner, chainId, account, keyId, isObligation]
     )
 
     return { send, state, transactionHash, errorMessage, reset }

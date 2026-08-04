@@ -1,4 +1,8 @@
-import { acceptReturned, acceptReturnedGasless } from '@trustvc/trustvc'
+import {
+  acceptReturned,
+  acceptReturnedGasless,
+  acceptReturnedObligationRegistry,
+} from '@trustvc/trustvc'
 import { makeGaslessHook } from './makeGaslessHook'
 
 interface AcceptReturnedSendParams {
@@ -9,6 +13,7 @@ export const useGaslessAcceptReturned =
   makeGaslessHook<AcceptReturnedSendParams>({
     gaslessFn: acceptReturnedGasless as any,
     directFn: acceptReturned as any,
+    obligationFn: acceptReturnedObligationRegistry as any,
     buildGaslessArgs: ({ tokenRegistryAddress }) => ({
       tokenRegistryAddress: tokenRegistryAddress!,
     }),

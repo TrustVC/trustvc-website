@@ -1,4 +1,8 @@
-import { transferHolder, transferHolderGasless } from '@trustvc/trustvc'
+import {
+  transferHolder,
+  transferHolderGasless,
+  transferHolderObligationRegistry,
+} from '@trustvc/trustvc'
 import { makeGaslessHook } from './makeGaslessHook'
 
 interface TransferHolderParams {
@@ -9,6 +13,7 @@ interface TransferHolderParams {
 export const useGaslessTransferHolder = makeGaslessHook<TransferHolderParams>({
   gaslessFn: transferHolderGasless as any,
   directFn: transferHolder as any,
+  obligationFn: transferHolderObligationRegistry as any,
   buildGaslessArgs: ({ titleEscrowAddress }) => ({
     titleEscrowAddress: titleEscrowAddress!,
   }),
