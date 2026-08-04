@@ -1,9 +1,37 @@
-import { FunctionComponent } from 'react'
+import { ButtonHTMLAttributes, FunctionComponent } from 'react'
 
 import { Dropdown, DropdownItem } from '../../../Dropdown'
 import { AssetManagementActions } from './../../AssetManagementActions'
 import Spinner from '../../../icons/Spinner'
 import { ButtonIcon } from '../../../common/Button'
+
+// DropdownItem (shared with classic ETR actions) renders a non-focusable <div>.
+// Render the additive BoE lifecycle actions as real buttons so they're
+// keyboard-operable (Tab to focus, Enter/Space to activate) without touching
+// the shared component or any existing ETR dropdown item.
+interface ObligationDropdownItemProps extends Omit<
+  ButtonHTMLAttributes<HTMLButtonElement>,
+  'onClick' | 'type'
+> {
+  onClick: () => void
+}
+
+const ObligationDropdownItem: FunctionComponent<
+  ObligationDropdownItemProps
+> = ({ className, children, onClick, ...rest }) => (
+  <button
+    type="button"
+    className={`truncate cursor-pointer text-left ${className ?? ''}`}
+    onClick={onClick}
+    {...rest}
+  >
+    <div className="dropdown-item-frame">
+      <div className="dropdown-item-text-frame">
+        <h5>{children}</h5>
+      </div>
+    </div>
+  </button>
+)
 
 export interface AssetManagementDropdownProps {
   onSetFormAction: (nextFormAction: AssetManagementActions) => void
@@ -60,7 +88,7 @@ export const AssetManagementDropdown: FunctionComponent<
     >
       {/* Additive BoE lifecycle actions (shown only when allowed) */}
       {canAcceptObligation && (
-        <DropdownItem
+        <ObligationDropdownItem
           className="dropdown-item-btn"
           data-testid={'acceptObligationDropdown'}
           onClick={() =>
@@ -68,10 +96,10 @@ export const AssetManagementDropdown: FunctionComponent<
           }
         >
           Accept the bill
-        </DropdownItem>
+        </ObligationDropdownItem>
       )}
       {canRejectObligation && (
-        <DropdownItem
+        <ObligationDropdownItem
           className="dropdown-item-btn"
           data-testid={'rejectObligationDropdown'}
           onClick={() =>
@@ -79,10 +107,10 @@ export const AssetManagementDropdown: FunctionComponent<
           }
         >
           Reject the bill
-        </DropdownItem>
+        </ObligationDropdownItem>
       )}
       {canDischargeObligation && (
-        <DropdownItem
+        <ObligationDropdownItem
           className="dropdown-item-btn"
           data-testid={'dischargeObligationDropdown'}
           onClick={() =>
@@ -90,7 +118,7 @@ export const AssetManagementDropdown: FunctionComponent<
           }
         >
           Discharge the bill
-        </DropdownItem>
+        </ObligationDropdownItem>
       )}
       {canTransferHolder && (
         <DropdownItem

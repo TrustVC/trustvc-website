@@ -181,7 +181,8 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
                   chainId={verifiedChainId}
                   tokenId={tokenId}
                   issuer={issuerName}
-                  isTransferable={isTransferable || isObligation}
+                  isTransferable={isTransferable}
+                  isObligation={isObligation}
                   tokenRegistryAddress={tokenRegistryAddress}
                   tags={tags}
                   rawDocument={rawDocument}

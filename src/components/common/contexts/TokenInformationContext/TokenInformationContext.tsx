@@ -33,7 +33,7 @@ import { useIsObligation } from '../../../../hooks/useIsObligation'
 import { providers } from 'ethers'
 import { CHAIN_ID } from '@trustvc/trustvc'
 import { getRpcUrl } from '../../../../utils/helper'
-import { getChainInfo } from '../../../../utils/chain-utils'
+import { getChainInfo, toChainId } from '../../../../utils/chain-utils'
 
 interface ITokenInformationContext {
   tokenRegistryAddress?: string
@@ -139,7 +139,24 @@ export const TokenInformationContextProvider: FunctionComponent<
   const [tokenId, setTokenId] = useState<string>()
   const [tokenRegistryAddress, setTokenRegistryAddress] = useState<string>()
   const [documentChainId, setDocumentChainId] = useState<string>()
-  const { providerOrSigner } = useProviderContext()
+  const { providerOrSigner, currentChainId } = useProviderContext()
+
+  // BoE obligation writes must never be broadcast on the wrong chain — the same
+  // contract address can exist on multiple chains. Since browser wallets can't
+  // be silently rebound to another chain's RPC, guard at send-time as a safety
+  // net alongside the network-switch prompt in VerifyResult.
+  const assertSignerOnDocumentChain = useCallback(() => {
+    if (!documentChainId) return
+    const normalizedDocumentChainId = toChainId(documentChainId)
+    const normalizedCurrentChainId = currentChainId
+      ? toChainId(currentChainId)
+      : undefined
+    if (normalizedCurrentChainId !== normalizedDocumentChainId) {
+      throw new Error(
+        `Wrong network: switch your wallet to chain ${normalizedDocumentChainId} before continuing.`
+      )
+    }
+  }, [currentChainId, documentChainId])
 
   // Create a dedicated v5 provider for the document's chain
   const [documentProvider, setDocumentProvider] = useState<providers.Provider>()
@@ -335,7 +352,8 @@ export const TokenInformationContextProvider: FunctionComponent<
     titleEscrow,
     'accept',
     { titleEscrowAddress, tokenRegistryAddress, tokenId },
-    providerOrSigner
+    providerOrSigner,
+    assertSignerOnDocumentChain
   )
 
   const {
@@ -347,7 +365,8 @@ export const TokenInformationContextProvider: FunctionComponent<
     titleEscrow,
     'reject',
     { titleEscrowAddress, tokenRegistryAddress, tokenId },
-    providerOrSigner
+    providerOrSigner,
+    assertSignerOnDocumentChain
   )
 
   const {
@@ -359,7 +378,8 @@ export const TokenInformationContextProvider: FunctionComponent<
     titleEscrow,
     'discharge',
     { titleEscrowAddress, tokenRegistryAddress, tokenId },
-    providerOrSigner
+    providerOrSigner,
+    assertSignerOnDocumentChain
   )
 
   const resetProviders = useCallback(() => {

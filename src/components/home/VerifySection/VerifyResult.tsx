@@ -24,6 +24,7 @@ import {
 import { getRpcUrl } from '../../../utils/helper'
 import { isAddress, createPublicClient, http } from 'viem'
 import InfoIcon from '../../../../src/components/icons/info'
+import { toChainId } from '../../../utils/chain-utils'
 
 interface VerifyResultProps {
   fileName: string
@@ -32,6 +33,8 @@ interface VerifyResultProps {
   tokenId?: string
   issuer?: string
   isTransferable?: boolean
+  /** BoE / obligation record, distinct from classic ETR (isTransferable). */
+  isObligation?: boolean
   isExpired?: boolean
   tokenRegistryAddress?: string
   tags?: string[]
@@ -60,6 +63,7 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
   tokenId,
   issuer,
   isTransferable,
+  isObligation,
   tokenRegistryAddress,
   tags,
   rawDocument,
@@ -74,22 +78,41 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
   const { changeNetwork, currentChainId, providerType, account } =
     useProviderContext()
 
+  // Any on-chain title (classic ETR transferable record or BoE obligation record).
+  const isOnChainRecord = !!isTransferable || !!isObligation
+
+  const normalizedCurrentChainId = currentChainId
+    ? toChainId(currentChainId)
+    : undefined
+  const normalizedDocumentChainId = chainId ? toChainId(chainId) : undefined
+  const isChainMatched =
+    !!normalizedDocumentChainId &&
+    normalizedCurrentChainId === normalizedDocumentChainId
+
   // Switch provider to the document's chain when a transferable / BoE document is loaded
   useEffect(() => {
     if (
-      isTransferable &&
-      chainId &&
-      String(currentChainId) !== String(chainId)
+      isOnChainRecord &&
+      normalizedDocumentChainId &&
+      normalizedCurrentChainId !== normalizedDocumentChainId
     ) {
-      changeNetwork(String(chainId) as any)
+      changeNetwork(normalizedDocumentChainId)
     }
-  }, [isTransferable, chainId, currentChainId, changeNetwork])
+  }, [
+    isOnChainRecord,
+    normalizedDocumentChainId,
+    normalizedCurrentChainId,
+    changeNetwork,
+  ])
 
   // ── EIP-7702 delegation check ────────────────────────────────────────────
+  // Gasless / paymaster is a classic-ETR-only feature; BoE obligations always
+  // pay their own gas (see makeGaslessHook's obligation branch), so skip the
+  // delegation + paymaster checks entirely for obligation documents.
   const [isDelegated, setIsDelegated] = useState(false)
 
   useEffect(() => {
-    if (!account || !chainId) {
+    if (isObligation || !account || !chainId) {
       setIsDelegated(false)
       return
     }
@@ -105,7 +128,7 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
     return () => {
       cancelled = true
     }
-  }, [account, chainId])
+  }, [isObligation, account, chainId])
 
   // ── Gasless card state ───────────────────────────────────────────────────
   const [paymasterAddress, setPaymasterAddress] = useState('')
@@ -218,7 +241,9 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
     checkGasless(stored)
   }, [isDelegated, account, checkGasless])
 
-  const showNftLinks = !!isTransferable
+  // BoE obligation records are on-chain NFTs too — keep the registry /
+  // endorsement chain links visible for both, matching pre-existing behavior.
+  const showNftLinks = isOnChainRecord
 
   const [isTooltipVisible, setIsTooltipVisible] = useState(false)
   const [tooltipPosition, setTooltipPosition] = useState({
@@ -540,10 +565,10 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
         )}
 
         {/* Footer: Connect Wallet */}
-        {!isTransferable && (
+        {!isOnChainRecord && (
           <AssetManagementApplication
             isMagicDemo={false}
-            isTransferableDocument={!!isTransferable}
+            isTransferableDocument={false}
             isExpired={!!isExpired}
             isSampleDocument={false}
           />
@@ -562,6 +587,27 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
             }}
             refreshEndorsementChain={refreshEndorsementChain}
             isTransferableDocument={isTransferable}
+            isSampleDocument={false}
+            isExpired={isExpired}
+          />
+        )}
+
+        {/* BoE: wait for the wallet to actually be on the document's chain
+            before exposing accept/reject/discharge — otherwise a write could
+            target the wrong chain's contract at the same address. */}
+        {isObligation && tokenRegistryAddress && tokenId && isChainMatched && (
+          <AssetManagementApplication
+            isMagicDemo={false}
+            tokenId={tokenId}
+            tokenRegistryAddress={tokenRegistryAddress}
+            chainId={chainId}
+            setShowEndorsementChain={(show: boolean) => {
+              if (show && onViewEndorsementChain) {
+                onViewEndorsementChain()
+              }
+            }}
+            refreshEndorsementChain={refreshEndorsementChain}
+            isTransferableDocument={true}
             isSampleDocument={false}
             isExpired={isExpired}
           />

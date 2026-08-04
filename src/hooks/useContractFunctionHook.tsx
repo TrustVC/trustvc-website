@@ -141,7 +141,9 @@ export function useContractFunctionHook<
   contract?: T,
   method?: S,
   contractOptions?: any,
-  providerOrSigner?: any
+  providerOrSigner?: any,
+  /** Optional synchronous guard run before dispatch; throw to reject with a normal error message. */
+  preflightCheck?: () => void
 ): {
   call: TypedContractMethod<
     any[],
@@ -191,6 +193,8 @@ export function useContractFunctionHook<
     resetState()
 
     try {
+      preflightCheck?.()
+
       const methodName = method as string
       const methodMap = isObligation ? obligationFunctions : trustvcFunctions
       const trustvcContractMethod = methodMap[methodName]
@@ -222,7 +226,10 @@ export function useContractFunctionHook<
       setState('CONFIRMED')
       setReceipt(_receipt)
     } catch (e) {
-      setErrorMessage(getMetaMaskErrorMessage(e))
+      setErrorMessage(
+        getMetaMaskErrorMessage(e) ||
+          (e instanceof Error ? e.message : 'Transaction failed')
+      )
       setState('ERROR')
     }
   }) as TypedContractMethod<
@@ -269,6 +276,7 @@ export function useContractFunctionHook<
     isObligation,
     contractOptions,
     providerOrSigner,
+    preflightCheck,
   ])
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const call = useCallback(callFn, [contract, method])

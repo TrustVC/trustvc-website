@@ -253,10 +253,12 @@ describe('useContractFunctionHook', () => {
         await result.current.send({})
       })
 
-      expect(result.current.errorMessage).toBe('')
+      expect(result.current.errorMessage).toBe(
+        'Transaction failed: unknown error'
+      )
     })
 
-    it('returns empty string for errors with unknown numeric code and no message', async () => {
+    it('returns fallback message for errors with unknown numeric code and no message', async () => {
       mockTransferHolder.mockRejectedValueOnce({ code: 9999 })
 
       const { result } = renderHook(() =>
@@ -267,10 +269,10 @@ describe('useContractFunctionHook', () => {
         await result.current.send({})
       })
 
-      expect(result.current.errorMessage).toBe('')
+      expect(result.current.errorMessage).toBe('Transaction failed')
     })
 
-    it('returns empty string for errors with unknown string code and no message', async () => {
+    it('returns fallback message for errors with unknown string code and no message', async () => {
       mockTransferHolder.mockRejectedValueOnce({ code: 'UNKNOWN_CODE' })
 
       const { result } = renderHook(() =>
@@ -281,7 +283,7 @@ describe('useContractFunctionHook', () => {
         await result.current.send({})
       })
 
-      expect(result.current.errorMessage).toBe('')
+      expect(result.current.errorMessage).toBe('Transaction failed')
     })
   })
 
