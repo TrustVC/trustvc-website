@@ -484,7 +484,9 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
                   <div
                     key={tag}
                     className={`vr-tag ${
-                      tag === 'Transferable' || tag === 'Negotiable'
+                      tag === 'Transferable' ||
+                      tag === 'Negotiable' ||
+                      tag === 'Obligation'
                         ? 'vr-tag--primary'
                         : 'vr-tag--secondary'
                     }`}

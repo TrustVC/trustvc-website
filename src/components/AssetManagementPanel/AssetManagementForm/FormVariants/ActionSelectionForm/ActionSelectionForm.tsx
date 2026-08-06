@@ -10,7 +10,7 @@ import { AssetManagementActions } from '../../../AssetManagementActions'
 import { AssetManagementDropdown } from '../../AssetManagementDropdown'
 import ConnectToBlockchainModel from '../../../../ConnectToBlockchain'
 import { Button, ButtonSize } from '../../../../common/Button'
-import { Tag } from '../../../../common/Tag'
+import { Tag, TagBordered } from '../../../../common/Tag'
 import { OBLIGATION_STATUS_LABEL } from '../../../../../constants'
 import { CheckCircle } from '../../../../../../src/components/common/Icons'
 import {
@@ -205,13 +205,22 @@ export const ActionSelectionForm: FunctionComponent<
             )}
             <span className="vr-title-col-addr">{holder ?? ''}</span>
           </div>
-          <div className="vr-title-col">
+          <div className="vr-title-col" data-testid="asset-title-status">
             {isObligation && obligationStatusLabel && (
               <>
                 <span className="vr-title-col-label">Status:</span>
-                <span className="vr-title-col-name">
-                  {obligationStatusLabel}
-                </span>
+                <TagBordered
+                  id="obligation-status-sign"
+                  rounded="rounded-full"
+                  className="inline-flex items-center w-fit border-secondary-100 bg-secondary-100 text-secondary-60 px-4 py-2"
+                >
+                  <span
+                    data-testid="obligationStatus"
+                    className="font-urbanist font-bold text-base leading-normal"
+                  >
+                    {obligationStatusLabel}
+                  </span>
+                </TagBordered>
               </>
             )}
           </div>

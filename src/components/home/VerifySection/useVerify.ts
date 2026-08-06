@@ -432,7 +432,6 @@ const getDocumentTags = (
 
   if (isObligationDocument) {
     tags.push('Obligation')
-    tags.push('BoE')
     tags.push('Negotiable')
   } else if (isTransferableRecord(document)) {
     tags.push('Transferable')

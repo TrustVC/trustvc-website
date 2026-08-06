@@ -821,8 +821,9 @@ describe('useVerify', () => {
       expect(result.current.tokenId).toBe('0xboeToken')
       expect(result.current.tokenRegistryVersion).toBe('V5')
       expect(result.current.tags).toEqual(
-        expect.arrayContaining(['Obligation', 'BoE', 'Negotiable'])
+        expect.arrayContaining(['Obligation', 'Negotiable'])
       )
+      expect(result.current.tags).not.toContain('BoE')
       expect(result.current.tags).not.toContain('TR V5')
       expect(result.current.tags).not.toContain('Transferable')
     })

@@ -60,7 +60,8 @@ describe('ActionSelectionForm — BoE / obligation registry', () => {
     )
 
     expect(screen.getByText('Status:')).toBeInTheDocument()
-    expect(screen.getByText('Accepted')).toBeInTheDocument()
+    expect(screen.getByTestId('asset-title-status')).toBeInTheDocument()
+    expect(screen.getByTestId('obligationStatus')).toHaveTextContent('Accepted')
   })
 
   it('labels returned-to-issuer banner as BoE', () => {
