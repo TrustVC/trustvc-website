@@ -18,7 +18,7 @@ describe('App Component', () => {
 
     // Check if navigation elements are present
     expect(screen.getAllByText('About').length).toBeGreaterThan(0)
-    expect(screen.getAllByText('Partners').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('Verticals').length).toBeGreaterThan(0)
     expect(screen.getAllByText('News & Updates').length).toBeGreaterThan(0)
   })
 
