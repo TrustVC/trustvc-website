@@ -21,7 +21,7 @@ const ObligationDropdownItem: FunctionComponent<
 > = ({ className, children, onClick, ...rest }) => (
   <button
     type="button"
-    className={`truncate cursor-pointer text-left ${className ?? ''}`}
+    className={`cursor-pointer text-left w-full ${className ?? ''}`}
     onClick={onClick}
     {...rest}
   >
