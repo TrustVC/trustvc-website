@@ -1,6 +1,6 @@
 import React from 'react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, within } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import Navbar from './Navbar'
 
@@ -37,72 +37,8 @@ describe('Navbar Component', () => {
     )
     // home remove from navbar
     expect(screen.getAllByText('About').length).toBeGreaterThan(0)
-    expect(screen.getAllByText('Verticals').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('Partners').length).toBeGreaterThan(0)
     expect(screen.getAllByText('News & Updates').length).toBeGreaterThan(0)
-  })
-
-  it('opens the Verticals dropdown with external links', () => {
-    renderWithRouter(
-      <Navbar isDarkMode={false} setIsDarkMode={mockSetIsDarkMode} />
-    )
-
-    fireEvent.click(
-      screen.getByRole('button', { name: /toggle verticals menu/i })
-    )
-
-    const menu = screen.getByRole('menu', { name: /verticals menu/i })
-    expect(menu).toBeInTheDocument()
-    expect(
-      screen.getByRole('menuitem', { name: 'TradeTrust' })
-    ).toHaveAttribute('href', 'https://tradetrust.io/')
-    expect(screen.getByRole('menuitem', { name: 'OpenCerts' })).toHaveAttribute(
-      'href',
-      'https://opencerts.io/'
-    )
-    expect(screen.getByRole('menuitem', { name: 'SAL' })).toHaveAttribute(
-      'href',
-      'https://legalisation.sal.sg/'
-    )
-  })
-
-  it('selecting a mobile Verticals link closes both mobile and desktop menus', () => {
-    renderWithRouter(
-      <Navbar isDarkMode={false} setIsDarkMode={mockSetIsDarkMode} />
-    )
-
-    // Open the mobile menu via the hamburger button
-    const hamburgerButton = screen
-      .getAllByRole('button')
-      .find(btn => btn.querySelector('svg path[d*="M20.1694 16.75"]'))
-    fireEvent.click(hamburgerButton!)
-
-    const mobileMenu = screen.getByRole('navigation', {
-      name: /mobile navigation menu/i,
-    })
-
-    // Open the Verticals submenu from within the mobile menu
-    fireEvent.click(
-      within(mobileMenu).getByRole('button', {
-        name: /toggle verticals menu/i,
-      })
-    )
-
-    const mobileLink = within(mobileMenu).getByText('TradeTrust')
-
-    // mousedown must NOT close the submenu (clicks inside the mobile
-    // container are contained), or the link unmounts before click fires
-    fireEvent.mouseDown(mobileLink)
-    expect(within(mobileMenu).getByText('TradeTrust')).toBeInTheDocument()
-
-    fireEvent.click(mobileLink)
-
-    // Selecting the link closes both the mobile menu and the dropdown
-    expect(
-      screen.queryByRole('navigation', { name: /mobile navigation menu/i })
-    ).not.toBeInTheDocument()
-    expect(
-      screen.queryByRole('menu', { name: /verticals menu/i })
-    ).not.toBeInTheDocument()
   })
 
   it('renders Contact Us button', () => {

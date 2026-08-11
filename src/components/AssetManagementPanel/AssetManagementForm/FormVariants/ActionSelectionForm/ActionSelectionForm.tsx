@@ -1,5 +1,6 @@
 import React, { FunctionComponent, useEffect, useState } from 'react'
 import { useAddressBook } from '../../../../../hooks/useAddressBook'
+import { useIsObligation } from '../../../../../hooks/useIsObligation'
 import { useOverlayContext } from '../../../../common/contexts/OverlayContext'
 import {
   MessageTitle,
@@ -9,7 +10,8 @@ import { AssetManagementActions } from '../../../AssetManagementActions'
 import { AssetManagementDropdown } from '../../AssetManagementDropdown'
 import ConnectToBlockchainModel from '../../../../ConnectToBlockchain'
 import { Button, ButtonSize } from '../../../../common/Button'
-import { Tag } from '../../../../common/Tag'
+import { Tag, TagBordered } from '../../../../common/Tag'
+import { OBLIGATION_STATUS_LABEL } from '../../../../../constants'
 import { CheckCircle } from '../../../../../../src/components/common/Icons'
 import {
   getPaymasterAddress,
@@ -41,6 +43,10 @@ interface ActionSelectionFormProps {
   canRejectOwnerHolderTransfer: boolean
   canRejectHolderTransfer: boolean
   canRejectOwnerTransfer: boolean
+  canAcceptObligation?: boolean
+  canRejectObligation?: boolean
+  canDischargeObligation?: boolean
+  obligationStatus?: number
 }
 
 export const ActionSelectionForm: FunctionComponent<
@@ -65,8 +71,13 @@ export const ActionSelectionForm: FunctionComponent<
   canRejectOwnerHolderTransfer,
   canRejectHolderTransfer,
   canRejectOwnerTransfer,
+  canAcceptObligation,
+  canRejectObligation,
+  canDischargeObligation,
+  obligationStatus,
   setShowEndorsementChain,
 }) => {
+  const isObligation = useIsObligation()
   const { resolveAddress } = useAddressBook()
   const [beneficiaryResolved, setBeneficiaryResolved] = useState<{
     name: string
@@ -136,7 +147,16 @@ export const ActionSelectionForm: FunctionComponent<
     canHandleRestore ||
     canRejectOwnerHolderTransfer ||
     canRejectHolderTransfer ||
-    canRejectOwnerTransfer
+    canRejectOwnerTransfer ||
+    !!canAcceptObligation ||
+    !!canRejectObligation ||
+    !!canDischargeObligation
+
+  const documentLabel = isObligation ? 'BoE' : 'ETR'
+  const obligationStatusLabel =
+    obligationStatus != null
+      ? OBLIGATION_STATUS_LABEL[obligationStatus]
+      : undefined
 
   const { showOverlay, closeOverlay } = useOverlayContext()
   const handleNoAccess = () => {
@@ -185,7 +205,25 @@ export const ActionSelectionForm: FunctionComponent<
             )}
             <span className="vr-title-col-addr">{holder ?? ''}</span>
           </div>
-          <div className="vr-title-col" />
+          <div className="vr-title-col" data-testid="asset-title-status">
+            {isObligation && obligationStatusLabel && (
+              <>
+                <span className="vr-title-col-label">Status:</span>
+                <TagBordered
+                  id="obligation-status-sign"
+                  rounded="rounded-full"
+                  className="inline-flex items-center w-fit border-secondary-100 bg-secondary-100 text-secondary-60 px-4 py-2"
+                >
+                  <span
+                    data-testid="obligationStatus"
+                    className="font-urbanist font-bold text-base leading-normal"
+                  >
+                    {obligationStatusLabel}
+                  </span>
+                </TagBordered>
+              </>
+            )}
+          </div>
         </div>
       )}
       <div className="vr-footer">
@@ -197,8 +235,8 @@ export const ActionSelectionForm: FunctionComponent<
             >
               <h4 className="bg-alert-20">
                 {isReturnedToIssuer
-                  ? 'ETR Returned to Issuer'
-                  : 'ETR Taken Out of Circulation'}
+                  ? `${documentLabel} Returned to Issuer`
+                  : `${documentLabel} Taken Out of Circulation`}
               </h4>
             </Tag>
           )}
@@ -233,6 +271,10 @@ export const ActionSelectionForm: FunctionComponent<
                     canRejectOwnerHolderTransfer={canRejectOwnerHolderTransfer}
                     canRejectHolderTransfer={canRejectHolderTransfer}
                     canRejectOwnerTransfer={canRejectOwnerTransfer}
+                    canAcceptObligation={canAcceptObligation}
+                    canRejectObligation={canRejectObligation}
+                    canDischargeObligation={canDischargeObligation}
+                    documentLabel={documentLabel}
                     isRejectPendingConfirmation={isRejectPendingConfirmation}
                   />
                 ) : (

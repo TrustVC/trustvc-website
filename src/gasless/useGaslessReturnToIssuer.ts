@@ -1,4 +1,8 @@
-import { returnToIssuer, returnToIssuerGasless } from '@trustvc/trustvc'
+import {
+  returnToIssuer,
+  returnToIssuerGasless,
+  returnToIssuerObligationRegistry,
+} from '@trustvc/trustvc'
 import { makeGaslessHook } from './makeGaslessHook'
 
 interface ReturnToIssuerParams {
@@ -8,6 +12,7 @@ interface ReturnToIssuerParams {
 export const useGaslessReturnToIssuer = makeGaslessHook<ReturnToIssuerParams>({
   gaslessFn: returnToIssuerGasless as any,
   directFn: returnToIssuer as any,
+  obligationFn: returnToIssuerObligationRegistry as any,
   buildGaslessArgs: ({ titleEscrowAddress }) => ({
     titleEscrowAddress: titleEscrowAddress!,
   }),

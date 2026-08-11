@@ -159,7 +159,7 @@ export const DropdownItem: FunctionComponent<DropdownItemProps> = ({
   ...props
 }) => {
   return (
-    <div className={`truncate cursor-pointer ${className}`} {...props}>
+    <div className={`cursor-pointer ${className ?? ''}`} {...props}>
       <div className="dropdown-item-frame">
         <div className="dropdown-item-text-frame">
           <h5>{children}</h5>

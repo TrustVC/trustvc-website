@@ -1,4 +1,8 @@
-import { transferOwners, transferOwnersGasless } from '@trustvc/trustvc'
+import {
+  transferOwners,
+  transferOwnersGasless,
+  transferOwnersObligationRegistry,
+} from '@trustvc/trustvc'
 import { makeGaslessHook } from './makeGaslessHook'
 
 interface TransferOwnersParams {
@@ -10,6 +14,7 @@ interface TransferOwnersParams {
 export const useGaslessTransferOwners = makeGaslessHook<TransferOwnersParams>({
   gaslessFn: transferOwnersGasless as any,
   directFn: transferOwners as any,
+  obligationFn: transferOwnersObligationRegistry as any,
   buildGaslessArgs: ({ titleEscrowAddress }) => ({
     titleEscrowAddress: titleEscrowAddress!,
   }),

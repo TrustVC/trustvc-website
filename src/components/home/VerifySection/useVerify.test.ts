@@ -74,6 +74,7 @@ vi.mock('@trustvc/trustvc', async importOriginal => {
     verifyDocument: vi.fn(),
     getChainId: vi.fn(),
     isTransferableRecord: vi.fn(),
+    isObligationRecord: vi.fn().mockReturnValue(false),
     isDocumentRevokable: vi.fn(),
     SUPPORTED_CHAINS: {
       '1': createMockChainInfo(
@@ -148,6 +149,7 @@ vi.mock('@trustvc/trustvc', async importOriginal => {
     isTitleEscrowVersion: vi.fn().mockResolvedValue(false),
     TitleEscrowInterface: { V4: 'V4', V5: 'V5' },
     getTokenRegistryAddress: vi.fn().mockReturnValue(undefined),
+    getObligationRegistryAddress: vi.fn().mockReturnValue(undefined),
     getTokenId: vi.fn().mockReturnValue(undefined),
     getDocumentData: vi.fn().mockReturnValue({ id: 'test-key-id' }),
     // Namespace objects (only methods used in the source are stubbed)
@@ -166,9 +168,12 @@ import {
   verifyDocument,
   getChainId,
   isTransferableRecord,
+  isObligationRecord,
   isDocumentRevokable,
   isWrappedV2Document,
   getDocumentData,
+  getObligationRegistryAddress,
+  getTokenId,
 } from '@trustvc/trustvc'
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -728,6 +733,11 @@ describe('useVerify', () => {
       expect(result.current.isTransferable).toBe(false)
     })
 
+    it('starts with isObligation false', () => {
+      const { result } = renderHook(() => useVerify(), { wrapper })
+      expect(result.current.isObligation).toBe(false)
+    })
+
     it('starts with an empty tags array', () => {
       const { result } = renderHook(() => useVerify(), { wrapper })
       expect(result.current.tags).toEqual([])
@@ -777,6 +787,62 @@ describe('useVerify', () => {
       expect(result.current.isTransferable).toBe(false)
     })
 
+    it('detects BoE obligation registry documents and sets tags', async () => {
+      vi.mocked(verifyDocument).mockResolvedValue([
+        {
+          name: 'W3CSignatureIntegrity',
+          status: 'VALID',
+          type: 'DOCUMENT_INTEGRITY',
+        },
+      ])
+      vi.mocked(getChainId).mockReturnValue('11155111' as any)
+      vi.mocked(isObligationRecord).mockReturnValue(true)
+      // BoE may also satisfy isTransferableRecord; obligation takes precedence
+      vi.mocked(isTransferableRecord).mockReturnValue(true)
+      vi.mocked(isDocumentRevokable).mockReturnValue(false)
+      vi.mocked(getObligationRegistryAddress).mockReturnValue('0xObligRegistry')
+      vi.mocked(getTokenId).mockReturnValue('0xboeToken')
+      vi.mocked(getDocumentData).mockReturnValue({ id: 'boe-key' })
+
+      const { result } = renderHook(() => useVerify(), { wrapper })
+      await act(async () => {
+        triggerFileInput(
+          result,
+          makeFile({ credentialStatus: { obligationRegistry: '0x' } })
+        )
+      })
+      await waitFor(() =>
+        expect(['valid', 'invalid']).toContain(result.current.verifyStatus)
+      )
+
+      expect(result.current.isObligation).toBe(true)
+      expect(result.current.isTransferable).toBe(false)
+      expect(result.current.tokenRegistryAddress).toBe('0xObligRegistry')
+      expect(result.current.tokenId).toBe('0xboeToken')
+      expect(result.current.tokenRegistryVersion).toBe('V5')
+      expect(result.current.tags).toEqual(
+        expect.arrayContaining(['Obligation', 'Negotiable'])
+      )
+      expect(result.current.tags).not.toContain('BoE')
+      expect(result.current.tags).not.toContain('TR V5')
+      expect(result.current.tags).not.toContain('Transferable')
+    })
+
+    it('prompts network-select for BoE obligation docs without chainId', async () => {
+      vi.mocked(isObligationRecord).mockReturnValue(true)
+      vi.mocked(isTransferableRecord).mockReturnValue(false)
+      vi.mocked(isDocumentRevokable).mockReturnValue(false)
+      vi.mocked(getChainId).mockReturnValue(undefined as any)
+
+      const { result } = renderHook(() => useVerify(), { wrapper })
+      await act(async () => {
+        triggerFileInput(result, makeFile({ test: true }))
+      })
+      await waitFor(() =>
+        expect(result.current.verifyStatus).toBe('network-select')
+      )
+    })
+
     it('resets issuerName, isTransferable, and tags on handleReset', async () => {
       vi.mocked(verifyDocument).mockResolvedValue([
         {
@@ -801,6 +867,7 @@ describe('useVerify', () => {
 
       expect(result.current.issuerName).toBe('')
       expect(result.current.isTransferable).toBe(false)
+      expect(result.current.isObligation).toBe(false)
       expect(result.current.tags).toEqual([])
     })
   })

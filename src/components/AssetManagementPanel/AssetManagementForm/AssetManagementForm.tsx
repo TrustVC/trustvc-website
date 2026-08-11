@@ -5,7 +5,11 @@ import { ActionSelectionForm } from './FormVariants/ActionSelectionForm'
 import { FormState } from '../../../utils/common/FormState'
 import { InitialAddress } from '../../../utils/chain-info'
 import { useTokenRegistryVersion } from '../../../hooks/useTokenRegistryVersion'
-import { TokenRegistryVersions } from '../../../constants'
+import { useIsObligation } from '../../../hooks/useIsObligation'
+import {
+  TokenRegistryVersions,
+  ObligationDocumentStatus,
+} from '../../../constants'
 
 interface RejectTransferActions {
   rejectTransferOwnerHolder: ({ remarks }: { remarks: string }) => void
@@ -62,6 +66,16 @@ interface ReturnToIssuerActions {
   restoreTokenState: string
 }
 
+interface ObligationLifecycleActions {
+  obligationStatus?: number
+  onAcceptObligation?: ({ remarks }: { remarks: string }) => void
+  acceptObligationState?: string
+  onRejectObligation?: ({ remarks }: { remarks: string }) => void
+  rejectObligationState?: string
+  onDischargeObligation?: ({ remarks }: { remarks: string }) => void
+  dischargeObligationState?: string
+}
+
 interface ContractState {
   beneficiary?: string
   holder?: string
@@ -75,7 +89,8 @@ interface AssetManagementFormProps
     ContractState,
     RejectTransferActions,
     TransferActions,
-    ReturnToIssuerActions {
+    ReturnToIssuerActions,
+    ObligationLifecycleActions {
   isRestorer?: boolean
   isAcceptor?: boolean
   isTitleEscrow: boolean
@@ -134,13 +149,29 @@ export const AssetManagementForm: FunctionComponent<
   destroyTokenState,
   onRestoreToken,
   restoreTokenState,
+  obligationStatus,
+  onAcceptObligation,
+  acceptObligationState,
+  onRejectObligation,
+  rejectObligationState,
+  onDischargeObligation,
+  dischargeObligationState,
   errorMessage,
 }) => {
   const tokenRegistryVersion = useTokenRegistryVersion()
+  const isObligation = useIsObligation()
   const isTokenRegistryV5 = tokenRegistryVersion === TokenRegistryVersions.V5
   const isActiveTitleEscrow = isTitleEscrow && !isReturnedToIssuer
-  const isHolder = isTitleEscrow && account === holder
-  const isBeneficiary = isTitleEscrow && account === beneficiary
+  const isHolder =
+    isTitleEscrow &&
+    !!account &&
+    !!holder &&
+    account.toLowerCase() === holder.toLowerCase()
+  const isBeneficiary =
+    isTitleEscrow &&
+    !!account &&
+    !!beneficiary &&
+    account.toLowerCase() === beneficiary.toLowerCase()
   const isHolderAndBeneficiary = isHolder && isBeneficiary
   const hasNominee = !!nominee && nominee !== InitialAddress
   const hasPreviousBeneficiary =
@@ -149,6 +180,7 @@ export const AssetManagementForm: FunctionComponent<
   const canRejectAfterTransferOwners =
     hasPreviousHolder && hasPreviousBeneficiary
 
+  // BoE return-to-issuer matches classic ETR: dual role, title still in escrow.
   const canReturnToIssuer = isBeneficiary && isHolder && !isReturnedToIssuer
   /*
     In order to shred we need to check 3 conditions
@@ -158,6 +190,10 @@ export const AssetManagementForm: FunctionComponent<
   */
   const canHandleRestore = isTitleEscrow && isRestorer && isReturnedToIssuer
   const canHandleShred = isTitleEscrow && isAcceptor && isReturnedToIssuer
+
+  // Classic ETR endorsement/transfer actions also apply to BoE (obligation registry
+  // maps the same UI methods to *ObligationRegistry SDK helpers).
+  const supportsRejectTransfer = isTokenRegistryV5 || isObligation
   const canTransferHolder = isActiveTitleEscrow && isHolder
   const canTransferBeneficiary = isActiveTitleEscrow && isHolderAndBeneficiary
   const canTransferOwners = isActiveTitleEscrow && isHolder && isBeneficiary
@@ -165,7 +201,7 @@ export const AssetManagementForm: FunctionComponent<
     isActiveTitleEscrow && isBeneficiary && !isHolder
   const canEndorseBeneficiary = isActiveTitleEscrow && isHolder && hasNominee
   const canRejectOwnerHolderTransfer =
-    isTokenRegistryV5 &&
+    supportsRejectTransfer &&
     isActiveTitleEscrow &&
     isHolder &&
     isBeneficiary &&
@@ -174,18 +210,38 @@ export const AssetManagementForm: FunctionComponent<
     canRejectAfterTransferOwners
   const canRejectHolderTransfer =
     !isHolderAndBeneficiary &&
-    isTokenRegistryV5 &&
+    supportsRejectTransfer &&
     isActiveTitleEscrow &&
     isHolder &&
     hasPreviousHolder &&
     !(isBeneficiary && hasPreviousBeneficiary)
   const canRejectOwnerTransfer =
     !isHolderAndBeneficiary &&
-    isTokenRegistryV5 &&
+    supportsRejectTransfer &&
     isActiveTitleEscrow &&
     isBeneficiary &&
     hasPreviousBeneficiary &&
     !(isHolder && hasPreviousHolder)
+
+  // BoE lifecycle — owner and holder must differ
+  const canAcceptObligation =
+    isObligation &&
+    isActiveTitleEscrow &&
+    isHolder &&
+    !isBeneficiary &&
+    obligationStatus === ObligationDocumentStatus.Issued
+  const canRejectObligation =
+    isObligation &&
+    isActiveTitleEscrow &&
+    isHolder &&
+    !isBeneficiary &&
+    obligationStatus === ObligationDocumentStatus.Issued
+  const canDischargeObligation =
+    isObligation &&
+    isActiveTitleEscrow &&
+    isBeneficiary &&
+    !isHolder &&
+    obligationStatus === ObligationDocumentStatus.Accepted
 
   const setFormActionNone = useCallback(() => {
     if (
@@ -198,7 +254,10 @@ export const AssetManagementForm: FunctionComponent<
       transferOwnerHoldersState === FormState.PENDING_CONFIRMATION ||
       destroyTokenState === FormState.PENDING_CONFIRMATION ||
       restoreTokenState === FormState.PENDING_CONFIRMATION ||
-      returnToIssuerState === FormState.PENDING_CONFIRMATION
+      returnToIssuerState === FormState.PENDING_CONFIRMATION ||
+      acceptObligationState === FormState.PENDING_CONFIRMATION ||
+      rejectObligationState === FormState.PENDING_CONFIRMATION ||
+      dischargeObligationState === FormState.PENDING_CONFIRMATION
     )
       return
     onSetFormAction(AssetManagementActions.None)
@@ -213,6 +272,9 @@ export const AssetManagementForm: FunctionComponent<
     destroyTokenState,
     restoreTokenState,
     returnToIssuerState,
+    acceptObligationState,
+    rejectObligationState,
+    dischargeObligationState,
     onSetFormAction,
   ])
 
@@ -237,6 +299,10 @@ export const AssetManagementForm: FunctionComponent<
           canNominateBeneficiary={canNominateBeneficiary}
           canEndorseBeneficiary={canEndorseBeneficiary}
           canTransferOwners={canTransferOwners}
+          canAcceptObligation={canAcceptObligation}
+          canRejectObligation={canRejectObligation}
+          canDischargeObligation={canDischargeObligation}
+          obligationStatus={obligationStatus}
           isReturnedToIssuer={isReturnedToIssuer}
           isTokenBurnt={isTokenBurnt}
           setShowEndorsementChain={setShowEndorsementChain}
@@ -253,7 +319,10 @@ export const AssetManagementForm: FunctionComponent<
         formAction === AssetManagementActions.RejectReturnToIssuer ||
         formAction === AssetManagementActions.RejectTransferOwnerHolder ||
         formAction === AssetManagementActions.RejectTransferOwner ||
-        formAction === AssetManagementActions.RejectTransferHolder) && (
+        formAction === AssetManagementActions.RejectTransferHolder ||
+        formAction === AssetManagementActions.AcceptObligation ||
+        formAction === AssetManagementActions.RejectObligation ||
+        formAction === AssetManagementActions.DischargeObligation) && (
         <ActionForm
           type={formAction}
           beneficiary={beneficiary!}
@@ -298,6 +367,13 @@ export const AssetManagementForm: FunctionComponent<
           // reject return to issuer
           handleRestoreToken={onRestoreToken}
           restoreTokenState={restoreTokenState}
+          // BoE obligation lifecycle
+          handleAcceptObligation={onAcceptObligation!}
+          acceptObligationState={acceptObligationState!}
+          handleRejectObligation={onRejectObligation!}
+          rejectObligationState={rejectObligationState!}
+          handleDischargeObligation={onDischargeObligation!}
+          dischargeObligationState={dischargeObligationState!}
           //error message
           errorMessage={errorMessage}
         />

@@ -12,8 +12,18 @@ import { CHAIN_ID, chainInfo, encrypt } from '@trustvc/trustvc'
  * Throws UnsupportedNetworkError if chain ID is not supported.
  * @param chainId Chain ID of network
  */
-export const getChainInfo = (chainId: CHAIN_ID): chainInfo => {
-  const res = ChainInfo[chainId]
+/** Normalize ethers/MetaMask chain ids (number | hex | string) to SDK CHAIN_ID strings. */
+export const toChainId = (chainId: CHAIN_ID | number | string): CHAIN_ID => {
+  if (typeof chainId === 'string' && chainId.startsWith('0x')) {
+    return String(parseInt(chainId, 16)) as CHAIN_ID
+  }
+  return String(chainId) as CHAIN_ID
+}
+
+export const getChainInfo = (
+  chainId: CHAIN_ID | number | string
+): chainInfo => {
+  const res = ChainInfo[toChainId(chainId)]
   // if (!res) throw new UnsupportedNetworkError(chainId)
   return res
 }
@@ -61,14 +71,17 @@ export const getSupportedChainInfo = (): chainInfo[] => {
  * Switches the network in user's wallet if installed.
  * @param chainId Chain ID of target network
  */
-export const walletSwitchChain = async (chainId: CHAIN_ID): Promise<void> => {
+export const walletSwitchChain = async (
+  chainId: CHAIN_ID | number | string
+): Promise<void> => {
+  const normalized = toChainId(chainId)
   const { ethereum } = window
   if (!ethereum || !ethereum.request) return
   try {
     await ethereum.request({ method: 'eth_requestAccounts' })
     await ethereum.request({
       method: 'wallet_switchEthereumChain',
-      params: [{ chainId: `0x${(+chainId).toString(16)}` }],
+      params: [{ chainId: `0x${(+normalized).toString(16)}` }],
     })
   } catch (e: any) {
     if (e.code === -32601) {
@@ -76,7 +89,7 @@ export const walletSwitchChain = async (chainId: CHAIN_ID): Promise<void> => {
       return console.error(e)
     }
     if (e.code === 4902) {
-      return await walletAddChain(chainId)
+      return await walletAddChain(normalized)
     }
     throw e
   }
@@ -87,11 +100,14 @@ export const walletSwitchChain = async (chainId: CHAIN_ID): Promise<void> => {
  * Networks with no RPC URL provided will not be added, particularly the default chains that already comes with Metamask.
  * @param chainId Chain ID of target network
  */
-export const walletAddChain = async (chainId: CHAIN_ID): Promise<void> => {
+export const walletAddChain = async (
+  chainId: CHAIN_ID | number | string
+): Promise<void> => {
+  const normalized = toChainId(chainId)
   const { ethereum } = window
   if (!ethereum || !ethereum.request) return
 
-  const chainInfo = ChainInfo[chainId]
+  const chainInfo = ChainInfo[normalized]
   if (!chainInfo) return
 
   const rpcUrl = chainInfo.rpcUrl
@@ -102,7 +118,7 @@ export const walletAddChain = async (chainId: CHAIN_ID): Promise<void> => {
       method: 'wallet_addEthereumChain',
       params: [
         {
-          chainId: `0x${(+chainId).toString(16)}`,
+          chainId: `0x${(+normalized).toString(16)}`,
           chainName: chainInfo.label,
           nativeCurrency: chainInfo.nativeCurrency,
           blockExplorerUrls: [chainInfo.explorerUrl],
@@ -111,7 +127,7 @@ export const walletAddChain = async (chainId: CHAIN_ID): Promise<void> => {
       ],
     })
   } catch (e) {
-    console.error(`Network ${chainId.toString()} could not be added.`, e)
+    console.error(`Network ${normalized} could not be added.`, e)
     throw e
   }
 }

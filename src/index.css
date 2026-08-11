@@ -3916,6 +3916,8 @@ p.small {
   min-width: 188px;
   max-width: 383px;
   height: 40px;
+  position: relative;
+  overflow: visible;
 
   /* Inside auto layout */
   order: 1;
@@ -3958,6 +3960,7 @@ p.small {
   isolation: isolate;
 
   min-width: 40px;
+  width: 100%;
   height: 40px;
   min-height: 40px;
   border-radius: 8px;
@@ -4020,38 +4023,43 @@ p.small {
 }
 
 .dropdown-menu-frame {
-  /* Drop Down Resource */
+  /* Drop Down Resource — overlays content; does not expand the button row */
 
   box-sizing: border-box;
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  left: auto;
+  z-index: 50;
 
   /* Auto layout */
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: stretch;
   padding: 8px;
+  /* Grow with the longest label; stay at least as wide as the button */
+  width: max-content;
+  min-width: 100%;
+  max-width: min(383px, calc(100vw - 32px));
+  overflow: hidden;
 
-  /* TrustVC/Surface/Base/Frost Glass/33 */
-  background: rgba(255, 255, 255, 0.33);
+  /* TrustVC/Surface/Base/Frost Glass */
+  background: rgba(255, 255, 255, 0.95);
   border: 1px solid rgba(169, 178, 187, 0.33);
   box-shadow: 0px 4px 16px rgba(104, 106, 210, 0.33);
   backdrop-filter: blur(8px);
   /* Note: backdrop-filter has minimal browser support */
   border-radius: 12px;
-
-  /* Inside auto layout */
-  flex: none;
-  order: 1;
-  align-self: stretch;
-  flex-grow: 0;
-  z-index: 2;
 }
 .dropdown-menu-frame .dropdown-item-btn {
-  width: 249px;
-  max-height: 62px;
-  min-width: 40px;
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   min-height: 40px;
   opacity: 1;
   gap: 10px;
+  box-sizing: border-box;
 }
 .dropdown-menu-frame .dropdown-item-frame:hover {
   background: var(--Neutral-33-100, #c2c9d054);
@@ -4066,10 +4074,11 @@ p.small {
   padding: 5px;
   isolation: isolate;
 
-  width: 249px;
-  min-width: 40px;
-  max-height: 62px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   min-height: 40px;
+  box-sizing: border-box;
 
   border-radius: 8px;
 
@@ -4082,41 +4091,55 @@ p.small {
 .dropdown-item-btn .dropdown-item-text-frame {
   /* Text Frame */
 
-  /* Auto layout */
-  display: flex;
-  flex-direction: row;
-  align-items: center;
+  display: block;
   padding: 4px;
-  gap: 10px;
 
-  width: 231px;
-  max-height: 52px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 
-  /* Inside auto layout */
-  flex: none;
+  flex: 1 1 auto;
   order: 2;
-  flex-grow: 1;
   z-index: 4;
 }
 
-.dropdown-item-text-frame h5,
-.dropdown-btn h5 {
-  max-height: 44px;
-
+.dropdown-item-text-frame h5 {
   /* TrustVC/Bold/Heading 5 */
   font-family: 'Urbanist';
   font-style: normal;
   font-weight: 700;
   font-size: 14px;
   line-height: 155%;
-  /* or 22px */
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin: 0;
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: normal;
+
+  /* TrustVC/Content/On-Transparent/Neutral */
+  color: #5b6571;
+}
+
+.dropdown-btn h5 {
+  /* TrustVC/Bold/Heading 5 */
+  font-family: 'Urbanist';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 155%;
   display: flex;
   align-items: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 
   /* TrustVC/Content/On-Transparent/Neutral */
   color: #5b6571;
 
-  /* Inside auto layout */
   flex: none;
   order: 0;
   flex-grow: 1;

@@ -46,4 +46,37 @@ describe('Home page', () => {
     renderHome(false)
     expect(screen.getByText(/Built for Developers,/i)).toBeInTheDocument()
   })
+
+  describe('Partners section', () => {
+    it('renders the Partners section heading', () => {
+      renderHome(false)
+      const heading = screen.getByRole('heading', {
+        level: 2,
+        name: /Our Partners/i,
+      })
+      expect(heading).toBeInTheDocument()
+    })
+
+    it('renders the Partners section tagline', () => {
+      renderHome(false)
+      expect(
+        screen.getByText(/Building a foundation of trust for every industry/i)
+      ).toBeInTheDocument()
+    })
+
+    it('renders the View All Partners button', () => {
+      renderHome(false)
+      expect(
+        screen.getByRole('button', { name: /View All Partners/i })
+      ).toBeInTheDocument()
+    })
+
+    it('renders at least one partner logo', () => {
+      renderHome(false)
+      const imgs = screen.getAllByRole('img', {
+        name: 'Institute of Technical Education',
+      })
+      expect(imgs[0]).toBeInTheDocument()
+    })
+  })
 })
