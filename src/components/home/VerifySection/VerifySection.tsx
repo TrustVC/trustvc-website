@@ -76,7 +76,6 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
     tokenId: isOnChainTitle ? tokenId : undefined,
     verifiedChainId: isOnChainTitle ? verifiedChainId : undefined,
     keyId: isOnChainTitle ? keyId : undefined,
-    isObligation,
   })
 
   const invalidAttachments = React.useMemo(() => {
