@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback } from 'react'
 import { providers, Signer, utils } from 'ethers'
 import {
   getTitleEscrowAddress,
-  getObligationEscrowAddress,
   v5Contracts,
   v4Contracts,
 } from '@trustvc/trustvc'
@@ -58,15 +57,16 @@ export const useTitleEscrowContract = (
       const result = await provider.call({ to: contractAddr, data })
       if (!result || result === '0x') throw new Error('Token not found')
       const [titleEscrowOwner] = iface.decodeFunctionResult('ownerOf', result)
-      const address = isObligation
-        ? await getObligationEscrowAddress(contractAddr, tokenId, provider, {
-            titleEscrowVersion: 'v5',
-          })
-        : await getTitleEscrowAddress(contractAddr, tokenId, provider, {
-            titleEscrowVersion: tokenRegistryVersion.toLowerCase() as
-              | 'v4'
-              | 'v5',
-          })
+      const address = await getTitleEscrowAddress(
+        contractAddr,
+        tokenId,
+        provider,
+        {
+          titleEscrowVersion: isObligation
+            ? 'v5'
+            : (tokenRegistryVersion.toLowerCase() as 'v4' | 'v5'),
+        }
+      )
       let instance
       if (isObligation) {
         instance = ObligationEscrow__factory.connect(
