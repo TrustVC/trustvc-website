@@ -2,7 +2,6 @@ import HeroSection from '../../components/home/HeroSection'
 import VerifySection from '../../components/home/VerifySection'
 import Carousel from '../../components/home/Carousel'
 import BuiltForDev from '../../components/home/BuiltForDev'
-import PartnersSection from '../../components/home/PartnersSection'
 
 interface HomeProps {
   isDarkMode: boolean
@@ -16,7 +15,6 @@ const Home = ({ isDarkMode }: HomeProps) => {
         <VerifySection isDarkMode={isDarkMode} />
         <Carousel isDarkMode={isDarkMode} />
         <BuiltForDev isDarkMode={isDarkMode} />
-        <PartnersSection isDarkMode={isDarkMode} />
       </div>
     </div>
   )

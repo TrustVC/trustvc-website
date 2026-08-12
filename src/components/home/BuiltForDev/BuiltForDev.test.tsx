@@ -35,7 +35,7 @@ describe('BuiltForDev', () => {
     const docsLink = screen
       .getByRole('link', { name: /TrustVC Documentation/i })
       .getAttribute('href')
-    expect(docsLink).toBe('https://docs.tradetrust.io')
+    expect(docsLink).toBe('https://docs.trustvc.io')
 
     const githubLink = screen
       .getByRole('link', { name: /View on GitHub/i })
