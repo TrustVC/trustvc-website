@@ -423,6 +423,49 @@ describe('EndorsementChain', () => {
       )
       expect(screen.getByText('Rejection of ownership')).toBeInTheDocument()
     })
+
+    it('renders obligation status events correctly', () => {
+      const obligationStatusChain = [
+        {
+          type: 'STATUS_INITIALIZED',
+          owner: '0x1234567890123456789012345678901234567890',
+          holder: '0x1234567890123456789012345678901234567890',
+          timestamp: 1640000000000,
+          transactionHash: '0xabc123',
+        },
+        {
+          type: 'STATUS_ACCEPTED',
+          owner: '0x1234567890123456789012345678901234567890',
+          holder: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+          timestamp: 1640100000000,
+          transactionHash: '0xdef456',
+        },
+        {
+          type: 'STATUS_REJECTED',
+          owner: '0x1234567890123456789012345678901234567890',
+          holder: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+          timestamp: 1640200000000,
+          transactionHash: '0xghi789',
+        },
+        {
+          type: 'STATUS_DISCHARGED',
+          owner: '0x9876543210987654321098765432109876543210',
+          holder: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+          timestamp: 1640300000000,
+          transactionHash: '0xjkl012',
+        },
+      ]
+      render(
+        <EndorsementChainLayout
+          {...defaultProps}
+          endorsementChain={obligationStatusChain}
+        />
+      )
+      expect(screen.getByText('Bill issued')).toBeInTheDocument()
+      expect(screen.getByText('Bill accepted')).toBeInTheDocument()
+      expect(screen.getByText('Bill rejected')).toBeInTheDocument()
+      expect(screen.getByText('Bill discharged')).toBeInTheDocument()
+    })
   })
 
   // ── Callbacks ──────────────────────────────────────────────────────────────
