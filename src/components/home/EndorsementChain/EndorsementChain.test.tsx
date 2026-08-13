@@ -442,6 +442,7 @@ describe('EndorsementChain', () => {
       expect(
         screen.queryByText('ETR taken out of circulation')
       ).not.toBeInTheDocument()
+      expect(screen.queryByText('Reason')).not.toBeInTheDocument()
     })
 
     it('keeps taken out of circulation for return-to-issuer shred on BoE', () => {
@@ -465,8 +466,8 @@ describe('EndorsementChain', () => {
       expect(
         screen.getByText('ETR taken out of circulation')
       ).toBeInTheDocument()
-      expect(screen.getByText('Reason')).toBeInTheDocument()
-      expect(screen.getByText('Return to issuer')).toBeInTheDocument()
+      expect(screen.queryByText('Reason')).not.toBeInTheDocument()
+      expect(screen.queryByText('Return to issuer')).not.toBeInTheDocument()
     })
 
     it('renders REJECT_TRANSFER_HOLDER event correctly', () => {

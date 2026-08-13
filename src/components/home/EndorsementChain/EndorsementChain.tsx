@@ -77,25 +77,12 @@ interface HistoryChain {
   timestamp?: number
   hash?: string
   remark?: string
-  /** eBoE shred only — human-readable TerminationReason */
-  terminationReason?: string
 }
 
-const formatTerminationReason = (reason?: string): string | undefined => {
-  if (!reason || reason === 'None') return undefined
-  if (reason === 'ReturnToIssuer') return 'Return to issuer'
-  return reason
-}
-
-/** Reject/discharge auto-shred as RETURN_TO_ISSUER_ACCEPTED — title from reason; "taken out of circulation" only for return-to-issuer. */
-const shredActionTitle = (
-  isObligation: boolean,
-  rawReason?: string
-): ActionType => {
-  if (isObligation && rawReason === 'Rejected')
-    return ActionType.STATUS_REJECTED
-  if (isObligation && rawReason === 'Discharged')
-    return ActionType.STATUS_DISCHARGED
+/** Reject/discharge auto-shred as RETURN_TO_ISSUER_ACCEPTED — title from on-chain reason; return-to-issuer keeps taken out of circulation. */
+const shredActionTitle = (rawReason?: string): ActionType => {
+  if (rawReason === 'Rejected') return ActionType.STATUS_REJECTED
+  if (rawReason === 'Discharged') return ActionType.STATUS_DISCHARGED
   return ActionType.RETURN_TO_ISSUER_ACCEPTED
 }
 
@@ -145,11 +132,6 @@ const getHistoryChain = (
     const hash = endorsementChainEvent.transactionHash
     const remark = endorsementChainEvent?.remark
     const rawTerminationReason = endorsementChainEvent.terminationReason
-    // Only surface "Reason" for return-to-issuer shred; reject/discharge titles already say Bill rejected/discharged.
-    const terminationReason =
-      isObligation && isShred && rawTerminationReason === 'ReturnToIssuer'
-        ? formatTerminationReason(rawTerminationReason)
-        : undefined
     const showOwner = Boolean(beneficiary)
     const showHolder = Boolean(holder)
     switch (endorsementChainEvent.type) {
@@ -205,7 +187,7 @@ const getHistoryChain = (
       case 'RETURN_TO_ISSUER_ACCEPTED':
       case 'SURRENDER_ACCEPTED':
         historyChain.push({
-          action: shredActionTitle(isObligation, rawTerminationReason),
+          action: shredActionTitle(rawTerminationReason),
           isNewBeneficiary: isObligation && showOwner,
           isNewHolder: isObligation && showHolder,
           beneficiary: isObligation ? beneficiary : undefined,
@@ -213,7 +195,6 @@ const getHistoryChain = (
           timestamp,
           hash,
           remark,
-          terminationReason,
         })
         break
       case 'RETURN_TO_ISSUER_REJECTED':
@@ -499,19 +480,6 @@ const EndorsementChainLayout: React.FC<EndorsementChainProps> = ({
                               : ''}
                           </div>
                           <div className="remarks">{data?.remark ?? '-'}</div>
-                          {data.terminationReason && (
-                            <>
-                              <div
-                                className="subheader"
-                                style={{ marginTop: '0.75rem' }}
-                              >
-                                Reason
-                              </div>
-                              <div className="remarks">
-                                {data.terminationReason}
-                              </div>
-                            </>
-                          )}
                         </div>
                       </div>
                     </div>
