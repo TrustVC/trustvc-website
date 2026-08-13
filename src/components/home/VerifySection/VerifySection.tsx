@@ -166,6 +166,7 @@ const VerifySection: React.FC<VerifySectionProps> = ({ isDarkMode }) => {
               isDarkMode={isDarkMode}
               endorsementChainStatus={endorsementChainStatus}
               tokenRegistryVersion={tokenRegistryVersion}
+              isObligation={isObligation}
             />
           )}
           <div className="overlay-border-shadow">

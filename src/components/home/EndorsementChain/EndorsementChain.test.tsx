@@ -461,7 +461,8 @@ describe('EndorsementChain', () => {
           endorsementChain={obligationStatusChain}
         />
       )
-      expect(screen.getByText('Bill issued')).toBeInTheDocument()
+      // STATUS_INITIALIZED is shown as classic ETR issuance ("Document has been issued")
+      expect(screen.getByText('Document has been issued')).toBeInTheDocument()
       expect(screen.getByText('Bill accepted')).toBeInTheDocument()
       expect(screen.getByText('Bill rejected')).toBeInTheDocument()
       expect(screen.getByText('Bill discharged')).toBeInTheDocument()
