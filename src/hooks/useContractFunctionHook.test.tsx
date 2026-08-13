@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { useContractFunctionHook } from './useContractFunctionHook'
 
 vi.mock('../components/common/contexts/DocumentContext', () => ({
-  useDocumentContext: () => ({ keyId: 'test-key' }),
+  useDocumentContext: () => ({ keyId: 'test-key', isObligation: false }),
 }))
 
 const { mockTransferHolder } = vi.hoisted(() => ({
@@ -21,6 +21,19 @@ vi.mock('@trustvc/trustvc', () => ({
   returnToIssuer: vi.fn(),
   rejectReturned: vi.fn(),
   acceptReturned: vi.fn(),
+  acceptObligationRegistry: vi.fn(),
+  rejectObligationRegistry: vi.fn(),
+  dischargeObligationRegistry: vi.fn(),
+  transferHolderObligationRegistry: vi.fn(),
+  transferBeneficiaryObligationRegistry: vi.fn(),
+  transferOwnersObligationRegistry: vi.fn(),
+  nominateObligationRegistry: vi.fn(),
+  returnToIssuerObligationRegistry: vi.fn(),
+  rejectTransferHolderObligationRegistry: vi.fn(),
+  rejectTransferBeneficiaryObligationRegistry: vi.fn(),
+  rejectTransferOwnersObligationRegistry: vi.fn(),
+  acceptReturnedObligationRegistry: vi.fn(),
+  rejectReturnedObligationRegistry: vi.fn(),
 }))
 
 const mockContract = { address: '0xabc' } as any
@@ -240,10 +253,12 @@ describe('useContractFunctionHook', () => {
         await result.current.send({})
       })
 
-      expect(result.current.errorMessage).toBe('')
+      expect(result.current.errorMessage).toBe(
+        'Transaction failed: unknown error'
+      )
     })
 
-    it('returns empty string for errors with unknown numeric code and no message', async () => {
+    it('returns fallback message for errors with unknown numeric code and no message', async () => {
       mockTransferHolder.mockRejectedValueOnce({ code: 9999 })
 
       const { result } = renderHook(() =>
@@ -254,10 +269,10 @@ describe('useContractFunctionHook', () => {
         await result.current.send({})
       })
 
-      expect(result.current.errorMessage).toBe('')
+      expect(result.current.errorMessage).toBe('Transaction failed')
     })
 
-    it('returns empty string for errors with unknown string code and no message', async () => {
+    it('returns fallback message for errors with unknown string code and no message', async () => {
       mockTransferHolder.mockRejectedValueOnce({ code: 'UNKNOWN_CODE' })
 
       const { result } = renderHook(() =>
@@ -268,7 +283,7 @@ describe('useContractFunctionHook', () => {
         await result.current.send({})
       })
 
-      expect(result.current.errorMessage).toBe('')
+      expect(result.current.errorMessage).toBe('Transaction failed')
     })
   })
 

@@ -123,3 +123,24 @@ export interface RejectTransferHolderFormProps extends BaseActionFormProps {
   handleRejectTransferHolder: ({ remarks }: { remarks: string }) => void
   rejectTransferHolderState: string
 }
+
+// Props for AcceptObligationForm (BoE)
+export interface AcceptObligationFormProps extends BaseActionFormProps {
+  type: AssetManagementActions.AcceptObligation
+  handleAcceptObligation: ({ remarks }: { remarks: string }) => void
+  acceptObligationState: string
+}
+
+// Props for RejectObligationForm (BoE)
+export interface RejectObligationFormProps extends BaseActionFormProps {
+  type: AssetManagementActions.RejectObligation
+  handleRejectObligation: ({ remarks }: { remarks: string }) => void
+  rejectObligationState: string
+}
+
+// Props for DischargeObligationForm (BoE)
+export interface DischargeObligationFormProps extends BaseActionFormProps {
+  type: AssetManagementActions.DischargeObligation
+  handleDischargeObligation: ({ remarks }: { remarks: string }) => void
+  dischargeObligationState: string
+}

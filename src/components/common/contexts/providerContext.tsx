@@ -17,6 +17,7 @@ import {
   getChainInfo,
   getChainInfoFromNetworkName,
   isSupportedNetwork,
+  toChainId,
   walletSwitchChain,
 } from '../../../utils/chain-utils'
 import { getRpcUrl } from '../../../utils/helper'
@@ -162,20 +163,21 @@ export const ProviderContextProvider: FunctionComponent<
     return magicRef.current
   }, [])
   const changeNetwork = async (chainId: CHAIN_ID) => {
+    const normalized = toChainId(chainId)
     try {
       if (providerType === SIGNER_TYPE.METAMASK) {
-        await walletSwitchChain(chainId)
+        await walletSwitchChain(normalized)
       }
       if (providerType === SIGNER_TYPE.MAGIC) {
         magicRef.current = null
         magicChainIdRef.current = null
         // Refresh Web3Provider immediately — effects still see stale `currentChainId` until setState flushes.
-        await updateProvider(SIGNER_TYPE.MAGIC, chainId)
+        await updateProvider(SIGNER_TYPE.MAGIC, normalized)
       }
-      setCurrentChainId(chainId)
+      setCurrentChainId(normalized)
 
       // Escape same network switch, loading error
-      if (currentChainId === chainId) {
+      if (String(currentChainId) === String(normalized)) {
         setNetworkChangeLoading(false)
       }
     } catch (error) {
@@ -216,13 +218,14 @@ export const ProviderContextProvider: FunctionComponent<
 
           newProvider = new ethers.providers.Web3Provider(injectedWeb3, 'any')
           const network = await newProvider.getNetwork()
-          if (!isSupportedNetwork(network.chainId, supportedChainInfoObjects)) {
+          const walletChainId = toChainId(network.chainId)
+          if (!isSupportedNetwork(walletChainId, supportedChainInfoObjects)) {
             console.warn('User wallet is connected to an unsupported network')
             setCurrentChainId(undefined)
             return
           } else {
             setProvider(newProvider)
-            setCurrentChainId(network.chainId as unknown as CHAIN_ID)
+            setCurrentChainId(walletChainId)
             return newProvider
           }
         }
@@ -367,8 +370,8 @@ export const ProviderContextProvider: FunctionComponent<
     // if (!provider) throw new UnsupportedNetworkError()
     if (!provider) return
 
-    const chainId = (await provider.getNetwork()).chainId
-    await changeNetwork(chainId as unknown as CHAIN_ID)
+    const chainId = toChainId((await provider.getNetwork()).chainId)
+    await changeNetwork(chainId)
   }
 
   const disconnectWallet = async (disconnectOnly: boolean = true) => {
@@ -423,8 +426,7 @@ export const ProviderContextProvider: FunctionComponent<
 
     const handleChainChanged = (chainIdHex: string) => {
       if (providerType !== SIGNER_TYPE.METAMASK) return
-      //  changeNetwork(parseInt(chainIdHex, 16));
-      setCurrentChainId(parseInt(chainIdHex, 16) as unknown as CHAIN_ID)
+      setCurrentChainId(toChainId(chainIdHex))
     }
 
     const handleDisconnect = () => {

@@ -1,5 +1,9 @@
 import { useEffect, useState } from 'react'
-import { fetchEndorsementChain, EndorsementChain } from '@trustvc/trustvc'
+import {
+  fetchEndorsementChain,
+  fetchObligationEndorsementChain,
+  EndorsementChain,
+} from '@trustvc/trustvc'
 import { ethers } from 'ethers'
 import { getRpcUrl } from '../../../utils/helper'
 
@@ -13,6 +17,7 @@ interface UseEndorsementChainParams {
   tokenId?: string
   verifiedChainId?: string
   keyId?: string
+  isObligation?: boolean
 }
 
 interface UseEndorsementChainReturn {
@@ -29,6 +34,7 @@ export const useEndorsementChain = ({
   tokenId,
   verifiedChainId,
   keyId,
+  isObligation = false,
 }: UseEndorsementChainParams): UseEndorsementChainReturn => {
   const [endorsementChain, setEndorsementChain] = useState<
     EndorsementChain | undefined
@@ -65,12 +71,19 @@ export const useEndorsementChain = ({
           }
 
           const provider = new ethers.providers.JsonRpcProvider(rpcUrl as any)
-          const _endorsementChain = await fetchEndorsementChain(
-            tokenRegistryAddress,
-            tokenId,
-            provider,
-            keyId
-          )
+          const _endorsementChain = isObligation
+            ? await fetchObligationEndorsementChain(
+                tokenRegistryAddress,
+                tokenId,
+                provider,
+                { encryptionId: keyId }
+              )
+            : await fetchEndorsementChain(
+                tokenRegistryAddress,
+                tokenId,
+                provider,
+                keyId
+              )
           if (cancelled) return
           setEndorsementChain(_endorsementChain)
           setEndorsementChainStatus({ status: 'success' })
@@ -85,7 +98,6 @@ export const useEndorsementChain = ({
           setEndorsementChainStatus({ status: 'error', errorMessage })
         }
       } else {
-        // Reset to idle if required params are missing
         if (cancelled) return
         setEndorsementChainStatus({ status: 'idle' })
         setEndorsementChain(undefined)
@@ -96,7 +108,14 @@ export const useEndorsementChain = ({
     return () => {
       cancelled = true
     }
-  }, [tokenRegistryAddress, tokenId, verifiedChainId, keyId, refreshTrigger])
+  }, [
+    tokenRegistryAddress,
+    tokenId,
+    verifiedChainId,
+    keyId,
+    isObligation,
+    refreshTrigger,
+  ])
 
   return {
     endorsementChain,

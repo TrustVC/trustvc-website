@@ -1,6 +1,7 @@
 import {
   rejectTransferHolder,
   rejectTransferHolderGasless,
+  rejectTransferHolderObligationRegistry,
 } from '@trustvc/trustvc'
 import { makeGaslessHook } from './makeGaslessHook'
 
@@ -12,6 +13,7 @@ export const useGaslessRejectTransferHolder =
   makeGaslessHook<RejectTransferParams>({
     gaslessFn: rejectTransferHolderGasless as any,
     directFn: rejectTransferHolder as any,
+    obligationFn: rejectTransferHolderObligationRegistry as any,
     buildGaslessArgs: ({ titleEscrowAddress }) => ({
       titleEscrowAddress: titleEscrowAddress!,
     }),

@@ -5,6 +5,7 @@ import { useEndorsementChain } from './useEndorsementChain'
 // Mock dependencies
 vi.mock('@trustvc/trustvc', () => ({
   fetchEndorsementChain: vi.fn(),
+  fetchObligationEndorsementChain: vi.fn(),
 }))
 
 vi.mock('ethers', () => ({
@@ -19,7 +20,8 @@ vi.mock('../../../utils/helper', () => ({
   getRpcUrl: vi.fn(() => 'https://rpc.example.com'),
 }))
 
-const { fetchEndorsementChain } = await import('@trustvc/trustvc')
+const { fetchEndorsementChain, fetchObligationEndorsementChain } =
+  await import('@trustvc/trustvc')
 const { getRpcUrl } = await import('../../../utils/helper')
 
 describe('useEndorsementChain', () => {
@@ -161,5 +163,58 @@ describe('useEndorsementChain', () => {
       expect(result.current.endorsementChainStatus.status).toBe('idle')
     })
     expect(result.current.endorsementChain).toBeUndefined()
+  })
+
+  it('fetches obligation endorsement chain for BoE documents', async () => {
+    const mockChain = [{ type: 'TRANSFER_HOLDER' }]
+    vi.mocked(fetchObligationEndorsementChain).mockResolvedValue(
+      mockChain as any
+    )
+
+    const { result } = renderHook(() =>
+      useEndorsementChain({
+        tokenRegistryAddress: '0xObligRegistry',
+        tokenId: '0xabcd',
+        verifiedChainId: '11155111',
+        keyId: 'boe-key',
+        isObligation: true,
+      })
+    )
+
+    await waitFor(() => {
+      expect(result.current.endorsementChainStatus.status).toBe('success')
+    })
+
+    expect(fetchObligationEndorsementChain).toHaveBeenCalledOnce()
+    expect(fetchEndorsementChain).not.toHaveBeenCalled()
+    expect(fetchObligationEndorsementChain).toHaveBeenCalledWith(
+      '0xObligRegistry',
+      '0xabcd',
+      expect.anything(),
+      { encryptionId: 'boe-key' }
+    )
+    expect(result.current.endorsementChain).toBe(mockChain)
+  })
+
+  it('handles obligation endorsement chain fetch errors', async () => {
+    vi.mocked(fetchObligationEndorsementChain).mockRejectedValue(
+      new Error('Obligation RPC failed')
+    )
+
+    const { result } = renderHook(() =>
+      useEndorsementChain({
+        tokenRegistryAddress: '0xObligRegistry',
+        tokenId: '0xabcd',
+        verifiedChainId: '11155111',
+        isObligation: true,
+      })
+    )
+
+    await waitFor(() => {
+      expect(result.current.endorsementChainStatus.status).toBe('error')
+    })
+    expect(result.current.endorsementChainStatus.errorMessage).toBe(
+      'Obligation RPC failed'
+    )
   })
 })

@@ -1,4 +1,8 @@
-import { nominate, nominateGasless } from '@trustvc/trustvc'
+import {
+  nominate,
+  nominateGasless,
+  nominateObligationRegistry,
+} from '@trustvc/trustvc'
 import { makeGaslessHook } from './makeGaslessHook'
 
 interface NominateParams {
@@ -9,6 +13,7 @@ interface NominateParams {
 export const useGaslessNominate = makeGaslessHook<NominateParams>({
   gaslessFn: nominateGasless as any,
   directFn: nominate as any,
+  obligationFn: nominateObligationRegistry as any,
   buildGaslessArgs: ({ titleEscrowAddress }) => ({
     titleEscrowAddress: titleEscrowAddress!,
   }),

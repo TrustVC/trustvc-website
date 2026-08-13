@@ -40,6 +40,17 @@ const mocks = vi.hoisted(() => ({
   returnToIssuer: vi.fn(),
   acceptReturned: vi.fn(),
   rejectReturned: vi.fn(),
+  // obligation (BoE) tx functions
+  transferHolderObligationRegistry: vi.fn(),
+  transferBeneficiaryObligationRegistry: vi.fn(),
+  transferOwnersObligationRegistry: vi.fn(),
+  nominateObligationRegistry: vi.fn(),
+  rejectTransferHolderObligationRegistry: vi.fn(),
+  rejectTransferBeneficiaryObligationRegistry: vi.fn(),
+  rejectTransferOwnersObligationRegistry: vi.fn(),
+  returnToIssuerObligationRegistry: vi.fn(),
+  acceptReturnedObligationRegistry: vi.fn(),
+  rejectReturnedObligationRegistry: vi.fn(),
   // gasless tx functions
   transferHolderGasless: vi.fn(),
   transferBeneficiaryGasless: vi.fn(),
@@ -72,7 +83,10 @@ vi.mock('../utils/helper', () => ({
 }))
 
 vi.mock('../components/common/contexts/DocumentContext', () => ({
-  useDocumentContext: vi.fn(() => ({ keyId: 'test-doc-key' })),
+  useDocumentContext: vi.fn(() => ({
+    keyId: 'test-doc-key',
+    isObligation: false,
+  })),
 }))
 
 vi.mock('../components/common/contexts/providerContext', () => ({
@@ -82,24 +96,41 @@ vi.mock('../components/common/contexts/providerContext', () => ({
 vi.mock('@trustvc/trustvc', () => ({
   transferHolder: mocks.transferHolder,
   transferHolderGasless: mocks.transferHolderGasless,
+  transferHolderObligationRegistry: mocks.transferHolderObligationRegistry,
   transferBeneficiary: mocks.transferBeneficiary,
   transferBeneficiaryGasless: mocks.transferBeneficiaryGasless,
+  transferBeneficiaryObligationRegistry:
+    mocks.transferBeneficiaryObligationRegistry,
   transferOwners: mocks.transferOwners,
   transferOwnersGasless: mocks.transferOwnersGasless,
+  transferOwnersObligationRegistry: mocks.transferOwnersObligationRegistry,
   nominate: mocks.nominate,
   nominateGasless: mocks.nominateGasless,
+  nominateObligationRegistry: mocks.nominateObligationRegistry,
   rejectTransferHolder: mocks.rejectTransferHolder,
   rejectTransferHolderGasless: mocks.rejectTransferHolderGasless,
+  rejectTransferHolderObligationRegistry:
+    mocks.rejectTransferHolderObligationRegistry,
   rejectTransferBeneficiary: mocks.rejectTransferBeneficiary,
   rejectTransferBeneficiaryGasless: mocks.rejectTransferBeneficiaryGasless,
+  rejectTransferBeneficiaryObligationRegistry:
+    mocks.rejectTransferBeneficiaryObligationRegistry,
   rejectTransferOwners: mocks.rejectTransferOwners,
   rejectTransferOwnersGasless: mocks.rejectTransferOwnersGasless,
+  rejectTransferOwnersObligationRegistry:
+    mocks.rejectTransferOwnersObligationRegistry,
   returnToIssuer: mocks.returnToIssuer,
   returnToIssuerGasless: mocks.returnToIssuerGasless,
+  returnToIssuerObligationRegistry: mocks.returnToIssuerObligationRegistry,
   acceptReturned: mocks.acceptReturned,
   acceptReturnedGasless: mocks.acceptReturnedGasless,
+  acceptReturnedObligationRegistry: mocks.acceptReturnedObligationRegistry,
   rejectReturned: mocks.rejectReturned,
   rejectReturnedGasless: mocks.rejectReturnedGasless,
+  rejectReturnedObligationRegistry: mocks.rejectReturnedObligationRegistry,
+  acceptObligationRegistry: vi.fn(),
+  rejectObligationRegistry: vi.fn(),
+  dischargeObligationRegistry: vi.fn(),
   eip7702Abis: { platformPaymasterAbi: [] },
 }))
 
@@ -115,6 +146,7 @@ import { useGaslessRejectTransferOwners } from './useGaslessRejectTransferOwners
 import { useGaslessReturnToIssuer } from './useGaslessReturnToIssuer'
 import { useGaslessAcceptReturned } from './useGaslessAcceptReturned'
 import { useGaslessRejectReturned } from './useGaslessRejectReturned'
+import { useDocumentContext } from '../components/common/contexts/DocumentContext'
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -146,6 +178,12 @@ const makeTx = (hash: string) => ({
 beforeEach(() => {
   vi.clearAllMocks()
 
+  // Default: classic ETR path (not BoE)
+  vi.mocked(useDocumentContext).mockReturnValue({
+    keyId: 'test-doc-key',
+    isObligation: false,
+  } as any)
+
   // Default: delegation passes, whitelist passes
   mocks.checkEIP7702Delegation.mockResolvedValue(true)
   mocks.checkPaymasterWhitelist.mockResolvedValue({
@@ -170,6 +208,17 @@ beforeEach(() => {
   mocks.returnToIssuer.mockResolvedValue(mockTx)
   mocks.acceptReturned.mockResolvedValue(mockTx)
   mocks.rejectReturned.mockResolvedValue(mockTx)
+
+  mocks.transferHolderObligationRegistry.mockResolvedValue(mockTx)
+  mocks.transferBeneficiaryObligationRegistry.mockResolvedValue(mockTx)
+  mocks.transferOwnersObligationRegistry.mockResolvedValue(mockTx)
+  mocks.nominateObligationRegistry.mockResolvedValue(mockTx)
+  mocks.rejectTransferHolderObligationRegistry.mockResolvedValue(mockTx)
+  mocks.rejectTransferBeneficiaryObligationRegistry.mockResolvedValue(mockTx)
+  mocks.rejectTransferOwnersObligationRegistry.mockResolvedValue(mockTx)
+  mocks.returnToIssuerObligationRegistry.mockResolvedValue(mockTx)
+  mocks.acceptReturnedObligationRegistry.mockResolvedValue(mockTx)
+  mocks.rejectReturnedObligationRegistry.mockResolvedValue(mockTx)
 
   // All gasless functions return a tx hash by default
   mocks.transferHolderGasless.mockResolvedValue(GASLESS_TX)
@@ -442,6 +491,202 @@ describe('fallback path (delegation check fails → regular tx)', () => {
 
     expect(mocks.checkEIP7702Delegation).not.toHaveBeenCalled()
     expect(mocks.transferHolder).toHaveBeenCalledOnce()
+  })
+})
+
+// ─────────────────────────────────────────────────────────────────────────────
+// BoE / obligation-registry path — never uses Token Registry V4/V5 or gasless
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe('BoE obligation registry path', () => {
+  const obligationArgs = {
+    obligationRegistryAddress: TOKEN_REGISTRY,
+    obligationEscrowAddress: TITLE_ESCROW,
+    tokenId: TOKEN_ID,
+  }
+
+  beforeEach(() => {
+    vi.mocked(useDocumentContext).mockReturnValue({
+      keyId: 'test-doc-key',
+      isObligation: true,
+    } as any)
+  })
+
+  it('transferHolder uses transferHolderObligationRegistry', async () => {
+    const { result } = renderHook(() =>
+      useGaslessTransferHolder(CONTRACT_OPTIONS, mockSigner, CHAIN_ID)
+    )
+
+    await act(async () => {
+      await result.current.send({ holderAddress: '0xNEWHOLDER' })
+    })
+
+    expect(mocks.transferHolderObligationRegistry).toHaveBeenCalledOnce()
+    expect(mocks.transferHolderObligationRegistry).toHaveBeenCalledWith(
+      obligationArgs,
+      mockSigner,
+      { holderAddress: '0xNEWHOLDER' },
+      { id: 'test-doc-key' }
+    )
+    expect(mocks.transferHolder).not.toHaveBeenCalled()
+    expect(mocks.transferHolderGasless).not.toHaveBeenCalled()
+    expect(result.current.state).toBe('CONFIRMED')
+  })
+
+  it('transferBeneficiary uses transferBeneficiaryObligationRegistry', async () => {
+    const { result } = renderHook(() =>
+      useGaslessTransferBeneficiary(CONTRACT_OPTIONS, mockSigner, CHAIN_ID)
+    )
+
+    await act(async () => {
+      await result.current.send({ newBeneficiaryAddress: '0xNEWBENEF' })
+    })
+
+    expect(mocks.transferBeneficiaryObligationRegistry).toHaveBeenCalledOnce()
+    expect(mocks.transferBeneficiary).not.toHaveBeenCalled()
+    expect(mocks.transferBeneficiaryGasless).not.toHaveBeenCalled()
+    expect(result.current.state).toBe('CONFIRMED')
+  })
+
+  it('transferOwners uses transferOwnersObligationRegistry', async () => {
+    const { result } = renderHook(() =>
+      useGaslessTransferOwners(CONTRACT_OPTIONS, mockSigner, CHAIN_ID)
+    )
+
+    await act(async () => {
+      await result.current.send({
+        newHolderAddress: '0xNEWHOLDER',
+        newBeneficiaryAddress: '0xNEWBENEF',
+      })
+    })
+
+    expect(mocks.transferOwnersObligationRegistry).toHaveBeenCalledOnce()
+    expect(mocks.transferOwners).not.toHaveBeenCalled()
+    expect(result.current.state).toBe('CONFIRMED')
+  })
+
+  it('nominate uses nominateObligationRegistry', async () => {
+    const { result } = renderHook(() =>
+      useGaslessNominate(CONTRACT_OPTIONS, mockSigner, CHAIN_ID)
+    )
+
+    await act(async () => {
+      await result.current.send({ newBeneficiaryAddress: '0xNEWBENEF' })
+    })
+
+    expect(mocks.nominateObligationRegistry).toHaveBeenCalledOnce()
+    expect(mocks.nominate).not.toHaveBeenCalled()
+    expect(result.current.state).toBe('CONFIRMED')
+  })
+
+  it('returnToIssuer uses returnToIssuerObligationRegistry', async () => {
+    const { result } = renderHook(() =>
+      useGaslessReturnToIssuer(CONTRACT_OPTIONS, mockSigner, CHAIN_ID)
+    )
+
+    await act(async () => {
+      await result.current.send({ remarks: 'return boe' })
+    })
+
+    expect(mocks.returnToIssuerObligationRegistry).toHaveBeenCalledOnce()
+    expect(mocks.returnToIssuer).not.toHaveBeenCalled()
+    expect(result.current.state).toBe('CONFIRMED')
+  })
+
+  it('rejectTransferHolder uses rejectTransferHolderObligationRegistry', async () => {
+    const { result } = renderHook(() =>
+      useGaslessRejectTransferHolder(CONTRACT_OPTIONS, mockSigner, CHAIN_ID)
+    )
+
+    await act(async () => {
+      await result.current.send({ remarks: 'reject holder' })
+    })
+
+    expect(mocks.rejectTransferHolderObligationRegistry).toHaveBeenCalledOnce()
+    expect(mocks.rejectTransferHolder).not.toHaveBeenCalled()
+    expect(result.current.state).toBe('CONFIRMED')
+  })
+
+  it('rejectTransferBeneficiary uses rejectTransferBeneficiaryObligationRegistry', async () => {
+    const { result } = renderHook(() =>
+      useGaslessRejectTransferBeneficiary(
+        CONTRACT_OPTIONS,
+        mockSigner,
+        CHAIN_ID
+      )
+    )
+
+    await act(async () => {
+      await result.current.send({})
+    })
+
+    expect(
+      mocks.rejectTransferBeneficiaryObligationRegistry
+    ).toHaveBeenCalledOnce()
+    expect(mocks.rejectTransferBeneficiary).not.toHaveBeenCalled()
+    expect(result.current.state).toBe('CONFIRMED')
+  })
+
+  it('rejectTransferOwners uses rejectTransferOwnersObligationRegistry', async () => {
+    const { result } = renderHook(() =>
+      useGaslessRejectTransferOwners(CONTRACT_OPTIONS, mockSigner, CHAIN_ID)
+    )
+
+    await act(async () => {
+      await result.current.send({})
+    })
+
+    expect(mocks.rejectTransferOwnersObligationRegistry).toHaveBeenCalledOnce()
+    expect(mocks.rejectTransferOwners).not.toHaveBeenCalled()
+    expect(result.current.state).toBe('CONFIRMED')
+  })
+
+  it('acceptReturned uses acceptReturnedObligationRegistry', async () => {
+    const { result } = renderHook(() =>
+      useGaslessAcceptReturned(CONTRACT_OPTIONS, mockSigner, CHAIN_ID)
+    )
+
+    await act(async () => {
+      await result.current.send({ remarks: 'accept return' })
+    })
+
+    expect(mocks.acceptReturnedObligationRegistry).toHaveBeenCalledOnce()
+    expect(mocks.acceptReturnedObligationRegistry).toHaveBeenCalledWith(
+      obligationArgs,
+      mockSigner,
+      { tokenId: TOKEN_ID, remarks: 'accept return' },
+      { id: 'test-doc-key' }
+    )
+    expect(mocks.acceptReturned).not.toHaveBeenCalled()
+    expect(result.current.state).toBe('CONFIRMED')
+  })
+
+  it('rejectReturned uses rejectReturnedObligationRegistry', async () => {
+    const { result } = renderHook(() =>
+      useGaslessRejectReturned(CONTRACT_OPTIONS, mockSigner, CHAIN_ID)
+    )
+
+    await act(async () => {
+      await result.current.send({})
+    })
+
+    expect(mocks.rejectReturnedObligationRegistry).toHaveBeenCalledOnce()
+    expect(mocks.rejectReturned).not.toHaveBeenCalled()
+    expect(result.current.state).toBe('CONFIRMED')
+  })
+
+  it('skips EIP-7702 / gasless eligibility checks for BoE', async () => {
+    const { result } = renderHook(() =>
+      useGaslessTransferHolder(CONTRACT_OPTIONS, mockSigner, CHAIN_ID)
+    )
+
+    await act(async () => {
+      await result.current.send({ holderAddress: '0xNEWHOLDER' })
+    })
+
+    expect(mocks.checkEIP7702Delegation).not.toHaveBeenCalled()
+    expect(mocks.checkPaymasterWhitelist).not.toHaveBeenCalled()
+    expect(mocks.transferHolderGasless).not.toHaveBeenCalled()
   })
 })
 

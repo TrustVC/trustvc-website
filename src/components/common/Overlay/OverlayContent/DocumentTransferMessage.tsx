@@ -16,6 +16,9 @@ export enum MessageTitle {
   RETURN_TO_ISSUER_DOCUMENT_SUCCESS = 'Return of ETR Successful',
   ACCEPT_RETURN_TO_ISSUER_DOCUMENT_SUCCESS = 'Return of ETR Accepted',
   REJECT_RETURN_TO_ISSUER_DOCUMENT_SUCCESS = 'Return of ETR Rejected',
+  ACCEPT_OBLIGATION_SUCCESS = 'Accept Bill Successful',
+  REJECT_OBLIGATION_SUCCESS = 'Reject Bill Successful',
+  DISCHARGE_OBLIGATION_SUCCESS = 'Discharge Bill Successful',
 
   ENDORSE_BENEFICIARY_SUCCESS = 'Endorse Beneficiary Success',
   NOMINATE_BENEFICIARY_SUCCESS = 'Nomination Success',
@@ -38,6 +41,9 @@ export enum MessageTitle {
   RETURN_TO_ISSUER_DOCUMENT_FAILED = 'Return of ETR Failed',
   ACCEPT_RETURN_TO_ISSUER_DOCUMENT_FAILED = 'Return of ETR Acceptance Failed',
   REJECT_RETURN_TO_ISSUER_DOCUMENT_FAILED = 'Return of ETR Rejection Failed',
+  ACCEPT_OBLIGATION_FAILED = 'Accept Bill Failed',
+  REJECT_OBLIGATION_FAILED = 'Reject Bill Failed',
+  DISCHARGE_OBLIGATION_FAILED = 'Discharge Bill Failed',
 }
 
 interface ButtonCloseProps {
@@ -229,6 +235,36 @@ export const MessageRejectReturnToIssuer: FunctionComponent<MessageProps> = ({
   )
 }
 
+export const MessageAcceptObligation: FunctionComponent<MessageProps> = ({
+  isSuccess,
+}) => {
+  return isSuccess ? (
+    <p className="mt-3">This bill of exchange has been accepted.</p>
+  ) : (
+    <p className="mt-3">Accept bill transaction failed. Please try again.</p>
+  )
+}
+
+export const MessageRejectObligation: FunctionComponent<MessageProps> = ({
+  isSuccess,
+}) => {
+  return isSuccess ? (
+    <p className="mt-3">This bill of exchange has been rejected.</p>
+  ) : (
+    <p className="mt-3">Reject bill transaction failed. Please try again.</p>
+  )
+}
+
+export const MessageDischargeObligation: FunctionComponent<MessageProps> = ({
+  isSuccess,
+}) => {
+  return isSuccess ? (
+    <p className="mt-3">This bill of exchange has been discharged.</p>
+  ) : (
+    <p className="mt-3">Discharge bill transaction failed. Please try again.</p>
+  )
+}
+
 export const MessageTransferBeneficiary: FunctionComponent<MessageProps> = ({
   address,
 }) => {
@@ -347,6 +383,18 @@ export const showDocumentTransferMessage = (
           beneficiaryAddress={option.beneficiaryAddress}
           holderAddress={option.holderAddress}
         />
+      )}
+      {(title === MessageTitle.ACCEPT_OBLIGATION_SUCCESS ||
+        title === MessageTitle.ACCEPT_OBLIGATION_FAILED) && (
+        <MessageAcceptObligation isSuccess={option.isSuccess} />
+      )}
+      {(title === MessageTitle.REJECT_OBLIGATION_SUCCESS ||
+        title === MessageTitle.REJECT_OBLIGATION_FAILED) && (
+        <MessageRejectObligation isSuccess={option.isSuccess} />
+      )}
+      {(title === MessageTitle.DISCHARGE_OBLIGATION_SUCCESS ||
+        title === MessageTitle.DISCHARGE_OBLIGATION_FAILED) && (
+        <MessageDischargeObligation isSuccess={option.isSuccess} />
       )}
       {(title === MessageTitle.ENDORSE_BENEFICIARY_SUCCESS ||
         title === MessageTitle.TRANSFER_OWNER_SUCCESS ||

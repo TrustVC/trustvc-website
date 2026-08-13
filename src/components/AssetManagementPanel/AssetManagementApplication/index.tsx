@@ -100,6 +100,14 @@ export const AssetManagementApplication: FunctionComponent<
     // reject transfer owner holder
     rejectTransferOwnerHolder,
     rejectTransferOwnerHolderState,
+    // BoE obligation lifecycle
+    obligationStatus,
+    acceptObligation,
+    acceptObligationState,
+    rejectObligation,
+    rejectObligationState,
+    dischargeObligation,
+    dischargeObligationState,
     // reset providers
     resetProviders,
     //errorMessage
@@ -187,6 +195,12 @@ export const AssetManagementApplication: FunctionComponent<
           return rejectTransferHolderState
         case AssetManagementActions.RejectTransferOwnerHolder:
           return rejectTransferOwnerHolderState
+        case AssetManagementActions.AcceptObligation:
+          return acceptObligationState
+        case AssetManagementActions.RejectObligation:
+          return rejectObligationState
+        case AssetManagementActions.DischargeObligation:
+          return dischargeObligationState
         default:
           return undefined
       }
@@ -223,6 +237,9 @@ export const AssetManagementApplication: FunctionComponent<
     rejectTransferOwnerState,
     rejectTransferHolderState,
     rejectTransferOwnerHolderState,
+    acceptObligationState,
+    rejectObligationState,
+    dischargeObligationState,
   ])
 
   // Initialize the token information context with tokenId, tokenRegistryAddress and chainId
@@ -276,6 +293,13 @@ export const AssetManagementApplication: FunctionComponent<
           destroyTokenState={destroyTokenState}
           onRestoreToken={onRestoreToken}
           restoreTokenState={restoreTokenState}
+          obligationStatus={obligationStatus}
+          onAcceptObligation={acceptObligation}
+          acceptObligationState={acceptObligationState}
+          onRejectObligation={rejectObligation}
+          rejectObligationState={rejectObligationState}
+          onDischargeObligation={dischargeObligation}
+          dischargeObligationState={dischargeObligationState}
           isExpired={isExpired}
           errorMessage={errorMessage}
         />

@@ -18,6 +18,10 @@ vi.mock('../../../hooks/useTokenRegistryVersion', () => ({
   useTokenRegistryVersion: () => mockUseTokenRegistryVersion(),
 }))
 
+vi.mock('../../../hooks/useIsObligation', () => ({
+  useIsObligation: () => false,
+}))
+
 vi.mock('./FormVariants/ActionSelectionForm', () => ({
   ActionSelectionForm: (props: any) => {
     mockActionSelectionForm(props)
