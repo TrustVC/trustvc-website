@@ -1019,7 +1019,9 @@ describe('useVerify', () => {
           type: 'DOCUMENT_INTEGRITY',
         },
       ])
+      vi.mocked(getChainId).mockReturnValue(null as any)
       vi.mocked(isTransferableRecord).mockReturnValue(false)
+      vi.mocked(isObligationRecord).mockReturnValue(false)
       vi.mocked(isDocumentRevokable).mockReturnValue(false)
 
       const { result } = renderHook(() => useVerify(), { wrapper })
@@ -1030,6 +1032,30 @@ describe('useVerify', () => {
 
       await waitFor(() => expect(result.current.verifyStatus).toBe('valid'))
       expect(verifyDocument).toHaveBeenCalledTimes(1)
+    })
+
+    it('prompts network-select for an obligation document loaded via ActionLoader without chainId', async () => {
+      // ActionLoader passes null when the URL payload omits chainId
+      vi.mocked(getChainId).mockReturnValue(null as any)
+      vi.mocked(isObligationRecord).mockReturnValue(true)
+      vi.mocked(isTransferableRecord).mockReturnValue(false)
+      vi.mocked(isDocumentRevokable).mockReturnValue(false)
+
+      const { result } = renderHook(() => useVerify(), { wrapper })
+
+      await act(async () => {
+        await result.current.loadDocument(
+          { credentialSubject: { type: ['Obligation'] } },
+          null,
+          'obligation.json'
+        )
+      })
+
+      await waitFor(() =>
+        expect(result.current.verifyStatus).toBe('network-select')
+      )
+      expect(result.current.fileName).toBe('obligation.json')
+      expect(verifyDocument).not.toHaveBeenCalled()
     })
   })
 

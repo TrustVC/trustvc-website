@@ -796,14 +796,27 @@ export const useVerify = (): UseVerifyReturn => {
     setPendingDoc(null)
     clearVerificationMetadata()
 
-    captureVerificationBreadcrumb('Verification started', {
-      fileName: name,
-      source: 'url',
-    })
     trackDocumentDropped(name, source)
 
     try {
-      await runVerification(doc, chainId, currentId, name)
+      // Prefer URL/action chainId; otherwise resolve from the document (same as
+      // processFile) so transferable/obligation URL loads don't fall through to
+      // runVerification's RPC default of chain 1.
+      const resolvedChainId =
+        chainId ?? getChainId(doc as any) ?? getEmbeddedChainId(doc)
+
+      if (!resolvedChainId && requiresNetworkSelection(doc)) {
+        setPendingDoc(doc)
+        setVerifyStatus('network-select')
+        trackNetworkSelectionShown(doc)
+        return
+      }
+
+      captureVerificationBreadcrumb('Verification started', {
+        fileName: name,
+        source: 'url',
+      })
+      await runVerification(doc, resolvedChainId, currentId, name)
     } catch (err) {
       if (currentId !== verificationIdRef.current) return
       const errType = getErrorTypeFromError(err)

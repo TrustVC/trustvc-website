@@ -66,7 +66,9 @@ export function makeGaslessHook<P>(config: MakeGaslessHookConfig<P>) {
   return function (
     contractOptions: GaslessContractOptions,
     providerOrSigner: any,
-    chainId?: string
+    chainId?: string,
+    /** Optional guard (e.g. assertSignerOnDocumentChain) before BoE writes. */
+    preflightCheck?: () => void
   ) {
     const [state, setState] = useState<ContractFunctionState>('UNINITIALIZED')
     const [errorMessage, setErrorMessage] = useState<string | undefined>()
@@ -102,6 +104,9 @@ export function makeGaslessHook<P>(config: MakeGaslessHookConfig<P>) {
                 'This action is not supported for Bill of Exchange (obligation registry) documents'
               )
             }
+            // Same document-chain guard as useContractFunctionHook's obligation
+            // writes — wallet must be on the document network before broadcast.
+            preflightCheck?.()
             setState('PENDING_CONFIRMATION')
             const tx = await config.obligationFn(
               toObligationArgs(contractOptions),
@@ -191,7 +196,15 @@ export function makeGaslessHook<P>(config: MakeGaslessHookConfig<P>) {
           setState('ERROR')
         }
       },
-      [contractOptions, providerOrSigner, chainId, account, keyId, isObligation]
+      [
+        contractOptions,
+        providerOrSigner,
+        chainId,
+        account,
+        keyId,
+        isObligation,
+        preflightCheck,
+      ]
     )
 
     return { send, state, transactionHash, errorMessage, reset }

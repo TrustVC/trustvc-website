@@ -688,6 +688,53 @@ describe('BoE obligation registry path', () => {
     expect(mocks.checkPaymasterWhitelist).not.toHaveBeenCalled()
     expect(mocks.transferHolderGasless).not.toHaveBeenCalled()
   })
+
+  it('runs document-chain preflight before obligationFn and blocks on mismatch', async () => {
+    const preflightCheck = vi.fn(() => {
+      throw new Error(
+        'Wrong network: switch your wallet to chain 11155111 before continuing.'
+      )
+    })
+
+    const { result } = renderHook(() =>
+      useGaslessTransferHolder(
+        CONTRACT_OPTIONS,
+        mockSigner,
+        CHAIN_ID,
+        preflightCheck
+      )
+    )
+
+    await act(async () => {
+      await result.current.send({ holderAddress: '0xNEWHOLDER' })
+    })
+
+    expect(preflightCheck).toHaveBeenCalledOnce()
+    expect(mocks.transferHolderObligationRegistry).not.toHaveBeenCalled()
+    expect(result.current.state).toBe('ERROR')
+    expect(result.current.errorMessage).toMatch(/Wrong network/)
+  })
+
+  it('invokes obligationFn when document-chain preflight passes', async () => {
+    const preflightCheck = vi.fn()
+
+    const { result } = renderHook(() =>
+      useGaslessTransferHolder(
+        CONTRACT_OPTIONS,
+        mockSigner,
+        CHAIN_ID,
+        preflightCheck
+      )
+    )
+
+    await act(async () => {
+      await result.current.send({ holderAddress: '0xNEWHOLDER' })
+    })
+
+    expect(preflightCheck).toHaveBeenCalledOnce()
+    expect(mocks.transferHolderObligationRegistry).toHaveBeenCalledOnce()
+    expect(result.current.state).toBe('CONFIRMED')
+  })
 })
 
 // ─────────────────────────────────────────────────────────────────────────────

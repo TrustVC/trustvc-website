@@ -241,7 +241,8 @@ export const TokenInformationContextProvider: FunctionComponent<
   } = useGaslessTransferHolder(
     { titleEscrowAddress, tokenRegistryAddress, tokenId },
     providerOrSigner,
-    documentChainId
+    documentChainId,
+    assertSignerOnDocumentChain
   )
 
   const {
@@ -252,7 +253,8 @@ export const TokenInformationContextProvider: FunctionComponent<
   } = useGaslessAcceptReturned(
     { titleEscrowAddress, tokenRegistryAddress, tokenId },
     providerOrSigner,
-    documentChainId
+    documentChainId,
+    assertSignerOnDocumentChain
   )
 
   const {
@@ -263,7 +265,8 @@ export const TokenInformationContextProvider: FunctionComponent<
   } = useGaslessTransferBeneficiary(
     { titleEscrowAddress, tokenRegistryAddress, tokenId },
     providerOrSigner,
-    documentChainId
+    documentChainId,
+    assertSignerOnDocumentChain
   )
 
   const {
@@ -274,7 +277,8 @@ export const TokenInformationContextProvider: FunctionComponent<
   } = useGaslessNominate(
     { titleEscrowAddress, tokenRegistryAddress, tokenId },
     providerOrSigner,
-    documentChainId
+    documentChainId,
+    assertSignerOnDocumentChain
   )
 
   const {
@@ -285,7 +289,8 @@ export const TokenInformationContextProvider: FunctionComponent<
   } = useGaslessRejectTransferHolder(
     { titleEscrowAddress, tokenRegistryAddress, tokenId },
     providerOrSigner,
-    documentChainId
+    documentChainId,
+    assertSignerOnDocumentChain
   )
 
   const {
@@ -296,7 +301,8 @@ export const TokenInformationContextProvider: FunctionComponent<
   } = useGaslessRejectTransferBeneficiary(
     { titleEscrowAddress, tokenRegistryAddress, tokenId },
     providerOrSigner,
-    documentChainId
+    documentChainId,
+    assertSignerOnDocumentChain
   )
 
   const {
@@ -307,7 +313,8 @@ export const TokenInformationContextProvider: FunctionComponent<
   } = useGaslessRejectTransferOwners(
     { titleEscrowAddress, tokenRegistryAddress, tokenId },
     providerOrSigner,
-    documentChainId
+    documentChainId,
+    assertSignerOnDocumentChain
   )
 
   const {
@@ -318,7 +325,8 @@ export const TokenInformationContextProvider: FunctionComponent<
   } = useGaslessRejectReturned(
     { titleEscrowAddress, tokenRegistryAddress, tokenId },
     providerOrSigner,
-    documentChainId
+    documentChainId,
+    assertSignerOnDocumentChain
   )
 
   const {
@@ -329,7 +337,8 @@ export const TokenInformationContextProvider: FunctionComponent<
   } = useGaslessReturnToIssuer(
     { titleEscrowAddress, tokenRegistryAddress, tokenId },
     providerOrSigner,
-    documentChainId
+    documentChainId,
+    assertSignerOnDocumentChain
   )
 
   const {
@@ -340,7 +349,8 @@ export const TokenInformationContextProvider: FunctionComponent<
   } = useGaslessTransferOwners(
     { titleEscrowAddress, tokenRegistryAddress, tokenId },
     providerOrSigner,
-    documentChainId
+    documentChainId,
+    assertSignerOnDocumentChain
   )
 
   const {
