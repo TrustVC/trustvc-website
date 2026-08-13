@@ -384,6 +384,91 @@ describe('EndorsementChain', () => {
       ).toBeInTheDocument()
     })
 
+    it('shows Bill discharged on eBoE discharge shred', () => {
+      const chainWithShred = [
+        {
+          type: 'RETURN_TO_ISSUER_ACCEPTED',
+          owner: '0x1234567890123456789012345678901234567890',
+          holder: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+          timestamp: 1640000000000,
+          transactionHash: '0xabc123',
+          remark: 'done',
+          terminationReason: 'Discharged',
+        },
+      ]
+      const { container } = render(
+        <EndorsementChainLayout
+          {...defaultProps}
+          isObligation
+          endorsementChain={chainWithShred}
+        />
+      )
+      expect(screen.getByText('Bill discharged')).toBeInTheDocument()
+      expect(
+        screen.queryByText('ETR taken out of circulation')
+      ).not.toBeInTheDocument()
+      expect(
+        screen.getByText('0x1234567890123456789012345678901234567890')
+      ).toBeInTheDocument()
+      expect(
+        screen.getByText('0xabcdefabcdefabcdefabcdefabcdefabcdefabcd')
+      ).toBeInTheDocument()
+      expect(screen.queryByText('Reason')).not.toBeInTheDocument()
+      const remarks = container.querySelectorAll('.remarks')
+      expect(Array.from(remarks).some(el => el.textContent === 'done')).toBe(
+        true
+      )
+    })
+
+    it('shows Bill rejected on eBoE reject shred', () => {
+      render(
+        <EndorsementChainLayout
+          {...defaultProps}
+          isObligation
+          endorsementChain={[
+            {
+              type: 'RETURN_TO_ISSUER_ACCEPTED',
+              owner: '0x1234567890123456789012345678901234567890',
+              holder: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+              timestamp: 1640000000000,
+              transactionHash: '0xabc123',
+              remark: 'nope',
+              terminationReason: 'Rejected',
+            },
+          ]}
+        />
+      )
+      expect(screen.getByText('Bill rejected')).toBeInTheDocument()
+      expect(
+        screen.queryByText('ETR taken out of circulation')
+      ).not.toBeInTheDocument()
+    })
+
+    it('keeps taken out of circulation for return-to-issuer shred on BoE', () => {
+      render(
+        <EndorsementChainLayout
+          {...defaultProps}
+          isObligation
+          endorsementChain={[
+            {
+              type: 'RETURN_TO_ISSUER_ACCEPTED',
+              owner: '0x1234567890123456789012345678901234567890',
+              holder: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+              timestamp: 1640000000000,
+              transactionHash: '0xabc123',
+              remark: 'returned',
+              terminationReason: 'ReturnToIssuer',
+            },
+          ]}
+        />
+      )
+      expect(
+        screen.getByText('ETR taken out of circulation')
+      ).toBeInTheDocument()
+      expect(screen.getByText('Reason')).toBeInTheDocument()
+      expect(screen.getByText('Return to issuer')).toBeInTheDocument()
+    })
+
     it('renders REJECT_TRANSFER_HOLDER event correctly', () => {
       const chainWithReject = [
         {

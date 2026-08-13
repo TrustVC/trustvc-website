@@ -87,6 +87,18 @@ const formatTerminationReason = (reason?: string): string | undefined => {
   return reason
 }
 
+/** Reject/discharge auto-shred as RETURN_TO_ISSUER_ACCEPTED — title from reason; "taken out of circulation" only for return-to-issuer. */
+const shredActionTitle = (
+  isObligation: boolean,
+  rawReason?: string
+): ActionType => {
+  if (isObligation && rawReason === 'Rejected')
+    return ActionType.STATUS_REJECTED
+  if (isObligation && rawReason === 'Discharged')
+    return ActionType.STATUS_DISCHARGED
+  return ActionType.RETURN_TO_ISSUER_ACCEPTED
+}
+
 const getHistoryChain = (
   endorsementChain?: EndorsementChain,
   isObligation = false
@@ -132,12 +144,11 @@ const getHistoryChain = (
     const timestamp = endorsementChainEvent.timestamp
     const hash = endorsementChainEvent.transactionHash
     const remark = endorsementChainEvent?.remark
+    const rawTerminationReason = endorsementChainEvent.terminationReason
+    // Only surface "Reason" for return-to-issuer shred; reject/discharge titles already say Bill rejected/discharged.
     const terminationReason =
-      isObligation && isShred
-        ? formatTerminationReason(
-            (endorsementChainEvent as { terminationReason?: string })
-              .terminationReason
-          )
+      isObligation && isShred && rawTerminationReason === 'ReturnToIssuer'
+        ? formatTerminationReason(rawTerminationReason)
         : undefined
     const showOwner = Boolean(beneficiary)
     const showHolder = Boolean(holder)
@@ -194,7 +205,7 @@ const getHistoryChain = (
       case 'RETURN_TO_ISSUER_ACCEPTED':
       case 'SURRENDER_ACCEPTED':
         historyChain.push({
-          action: ActionType.RETURN_TO_ISSUER_ACCEPTED,
+          action: shredActionTitle(isObligation, rawTerminationReason),
           isNewBeneficiary: isObligation && showOwner,
           isNewHolder: isObligation && showHolder,
           beneficiary: isObligation ? beneficiary : undefined,
