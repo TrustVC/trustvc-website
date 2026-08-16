@@ -490,6 +490,34 @@ describe('EndorsementChain', () => {
       expect(screen.getByText('Rejection of holdership')).toBeInTheDocument()
     })
 
+    it('renders RETURN_TO_ISSUER_REJECTED event correctly', () => {
+      const chainWithRejectedReturn = [
+        {
+          type: 'RETURN_TO_ISSUER_REJECTED',
+          owner: '0x1234567890123456789012345678901234567890',
+          timestamp: 1640000000000,
+          transactionHash: '0xabc123',
+          remark: 'Rejected',
+        },
+      ]
+      const { container } = render(
+        <EndorsementChainLayout
+          {...defaultProps}
+          endorsementChain={chainWithRejectedReturn}
+        />
+      )
+      expect(screen.getByText('Return of ETR rejected')).toBeInTheDocument()
+      // Owner falls back to the holder column since no holder was set,
+      // so both columns should show the owner address instead of '_'.
+      const walletAddresses = Array.from(
+        container.querySelectorAll('.wallet-address')
+      ).map(el => el.textContent)
+      expect(walletAddresses).toEqual([
+        '0x1234567890123456789012345678901234567890',
+        '0x1234567890123456789012345678901234567890',
+      ])
+    })
+
     it('renders REJECT_TRANSFER_BENEFICIARY event correctly', () => {
       const chainWithReject = [
         {

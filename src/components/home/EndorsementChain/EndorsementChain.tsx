@@ -202,7 +202,8 @@ const getHistoryChain = (
         historyChain.push({
           action: ActionType.RETURN_TO_ISSUER_REJECTED,
           isNewBeneficiary: showOwner,
-          isNewHolder: showHolder,
+          // in case of boe the chain returns the previous holder and owner
+          isNewHolder: Boolean(holder || beneficiary),
           timestamp,
           beneficiary,
           holder: holder || beneficiary,
