@@ -384,6 +384,92 @@ describe('EndorsementChain', () => {
       ).toBeInTheDocument()
     })
 
+    it('shows Bill discharged on eBoE discharge shred', () => {
+      const chainWithShred = [
+        {
+          type: 'RETURN_TO_ISSUER_ACCEPTED',
+          owner: '0x1234567890123456789012345678901234567890',
+          holder: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+          timestamp: 1640000000000,
+          transactionHash: '0xabc123',
+          remark: 'done',
+          terminationReason: 'Discharged',
+        },
+      ]
+      const { container } = render(
+        <EndorsementChainLayout
+          {...defaultProps}
+          isObligation
+          endorsementChain={chainWithShred}
+        />
+      )
+      expect(screen.getByText('Bill discharged')).toBeInTheDocument()
+      expect(
+        screen.queryByText('ETR taken out of circulation')
+      ).not.toBeInTheDocument()
+      expect(
+        screen.getByText('0x1234567890123456789012345678901234567890')
+      ).toBeInTheDocument()
+      expect(
+        screen.getByText('0xabcdefabcdefabcdefabcdefabcdefabcdefabcd')
+      ).toBeInTheDocument()
+      expect(screen.queryByText('Reason')).not.toBeInTheDocument()
+      const remarks = container.querySelectorAll('.remarks')
+      expect(Array.from(remarks).some(el => el.textContent === 'done')).toBe(
+        true
+      )
+    })
+
+    it('shows Bill rejected on eBoE reject shred', () => {
+      render(
+        <EndorsementChainLayout
+          {...defaultProps}
+          isObligation
+          endorsementChain={[
+            {
+              type: 'RETURN_TO_ISSUER_ACCEPTED',
+              owner: '0x1234567890123456789012345678901234567890',
+              holder: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+              timestamp: 1640000000000,
+              transactionHash: '0xabc123',
+              remark: 'nope',
+              terminationReason: 'Rejected',
+            },
+          ]}
+        />
+      )
+      expect(screen.getByText('Bill rejected')).toBeInTheDocument()
+      expect(
+        screen.queryByText('ETR taken out of circulation')
+      ).not.toBeInTheDocument()
+      expect(screen.queryByText('Reason')).not.toBeInTheDocument()
+    })
+
+    it('keeps taken out of circulation for return-to-issuer shred on BoE', () => {
+      render(
+        <EndorsementChainLayout
+          {...defaultProps}
+          isObligation
+          endorsementChain={[
+            {
+              type: 'RETURN_TO_ISSUER_ACCEPTED',
+              owner: '0x1234567890123456789012345678901234567890',
+              holder: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+              timestamp: 1640000000000,
+              transactionHash: '0xabc123',
+              remark: 'returned',
+              terminationReason: 'ReturnToIssuer',
+            },
+          ]}
+        />
+      )
+      expect(
+        screen.getByText('ETR taken out of circulation')
+      ).toBeInTheDocument()
+      expect(screen.queryByText('Reason')).not.toBeInTheDocument()
+      expect(screen.queryByText('Return to issuer')).not.toBeInTheDocument()
+    })
+
     it('renders REJECT_TRANSFER_HOLDER event correctly', () => {
       const chainWithReject = [
         {
@@ -404,6 +490,34 @@ describe('EndorsementChain', () => {
       expect(screen.getByText('Rejection of holdership')).toBeInTheDocument()
     })
 
+    it('renders RETURN_TO_ISSUER_REJECTED event correctly', () => {
+      const chainWithRejectedReturn = [
+        {
+          type: 'RETURN_TO_ISSUER_REJECTED',
+          owner: '0x1234567890123456789012345678901234567890',
+          timestamp: 1640000000000,
+          transactionHash: '0xabc123',
+          remark: 'Rejected',
+        },
+      ]
+      const { container } = render(
+        <EndorsementChainLayout
+          {...defaultProps}
+          endorsementChain={chainWithRejectedReturn}
+        />
+      )
+      expect(screen.getByText('Return of ETR rejected')).toBeInTheDocument()
+      // Owner falls back to the holder column since no holder was set,
+      // so both columns should show the owner address instead of '_'.
+      const walletAddresses = Array.from(
+        container.querySelectorAll('.wallet-address')
+      ).map(el => el.textContent)
+      expect(walletAddresses).toEqual([
+        '0x1234567890123456789012345678901234567890',
+        '0x1234567890123456789012345678901234567890',
+      ])
+    })
+
     it('renders REJECT_TRANSFER_BENEFICIARY event correctly', () => {
       const chainWithReject = [
         {
@@ -422,6 +536,50 @@ describe('EndorsementChain', () => {
         />
       )
       expect(screen.getByText('Rejection of ownership')).toBeInTheDocument()
+    })
+
+    it('renders obligation status events correctly', () => {
+      const obligationStatusChain = [
+        {
+          type: 'STATUS_INITIALIZED',
+          owner: '0x1234567890123456789012345678901234567890',
+          holder: '0x1234567890123456789012345678901234567890',
+          timestamp: 1640000000000,
+          transactionHash: '0xabc123',
+        },
+        {
+          type: 'STATUS_ACCEPTED',
+          owner: '0x1234567890123456789012345678901234567890',
+          holder: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+          timestamp: 1640100000000,
+          transactionHash: '0xdef456',
+        },
+        {
+          type: 'STATUS_REJECTED',
+          owner: '0x1234567890123456789012345678901234567890',
+          holder: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+          timestamp: 1640200000000,
+          transactionHash: '0xghi789',
+        },
+        {
+          type: 'STATUS_DISCHARGED',
+          owner: '0x9876543210987654321098765432109876543210',
+          holder: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+          timestamp: 1640300000000,
+          transactionHash: '0xjkl012',
+        },
+      ]
+      render(
+        <EndorsementChainLayout
+          {...defaultProps}
+          endorsementChain={obligationStatusChain}
+        />
+      )
+      // STATUS_INITIALIZED is shown as classic ETR issuance ("Document has been issued")
+      expect(screen.getByText('Document has been issued')).toBeInTheDocument()
+      expect(screen.getByText('Bill accepted')).toBeInTheDocument()
+      expect(screen.getByText('Bill rejected')).toBeInTheDocument()
+      expect(screen.getByText('Bill discharged')).toBeInTheDocument()
     })
   })
 

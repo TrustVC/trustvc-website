@@ -11,7 +11,10 @@ import { AssetManagementDropdown } from '../../AssetManagementDropdown'
 import ConnectToBlockchainModel from '../../../../ConnectToBlockchain'
 import { Button, ButtonSize } from '../../../../common/Button'
 import { Tag, TagBordered } from '../../../../common/Tag'
-import { OBLIGATION_STATUS_LABEL } from '../../../../../constants'
+import {
+  OBLIGATION_STATUS_LABEL,
+  ObligationDocumentStatus,
+} from '../../../../../constants'
 import { CheckCircle } from '../../../../../../src/components/common/Icons'
 import {
   getPaymasterAddress,
@@ -158,6 +161,15 @@ export const ActionSelectionForm: FunctionComponent<
       ? OBLIGATION_STATUS_LABEL[obligationStatus]
       : undefined
 
+  // Burnt BoE: reject/discharge get their own titles; "taken out of circulation" only for return-to-issuer shred.
+  const burntOrReturnedLabel = isReturnedToIssuer
+    ? `${documentLabel} Returned to Issuer`
+    : isObligation && obligationStatus === ObligationDocumentStatus.Rejected
+      ? 'Bill rejected'
+      : isObligation && obligationStatus === ObligationDocumentStatus.Discharged
+        ? 'Bill discharged'
+        : `${documentLabel} Taken Out of Circulation`
+
   const { showOverlay, closeOverlay } = useOverlayContext()
   const handleNoAccess = () => {
     showOverlay(
@@ -233,11 +245,7 @@ export const ActionSelectionForm: FunctionComponent<
               rounded="rounded-full"
               className="flex flex-row justify-center items-center p-2 gap-[10px] min-w-[188px] max-w-[383px] bg-[#FDDAE2] rounded-full flex-1 text-center"
             >
-              <h4 className="bg-alert-20">
-                {isReturnedToIssuer
-                  ? `${documentLabel} Returned to Issuer`
-                  : `${documentLabel} Taken Out of Circulation`}
-              </h4>
+              <h4 className="bg-alert-20">{burntOrReturnedLabel}</h4>
             </Tag>
           )}
           <div className="vr-footer-dropdown-placeholder" />

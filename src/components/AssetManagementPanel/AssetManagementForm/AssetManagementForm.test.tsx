@@ -3,23 +3,31 @@ import { describe, expect, it, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { AssetManagementForm } from './AssetManagementForm'
 import { AssetManagementActions } from '../AssetManagementActions'
-import { TokenRegistryVersions } from '../../../constants'
+import {
+  TokenRegistryVersions,
+  ObligationDocumentStatus,
+} from '../../../constants'
 import { FormState } from '../../../utils/common/FormState'
 import { InitialAddress } from '../../../utils/chain-info'
 
-const { mockUseTokenRegistryVersion, mockActionSelectionForm, mockActionForm } =
-  vi.hoisted(() => ({
-    mockUseTokenRegistryVersion: vi.fn(),
-    mockActionSelectionForm: vi.fn(),
-    mockActionForm: vi.fn(),
-  }))
+const {
+  mockUseTokenRegistryVersion,
+  mockUseIsObligation,
+  mockActionSelectionForm,
+  mockActionForm,
+} = vi.hoisted(() => ({
+  mockUseTokenRegistryVersion: vi.fn(),
+  mockUseIsObligation: vi.fn(() => false),
+  mockActionSelectionForm: vi.fn(),
+  mockActionForm: vi.fn(),
+}))
 
 vi.mock('../../../hooks/useTokenRegistryVersion', () => ({
   useTokenRegistryVersion: () => mockUseTokenRegistryVersion(),
 }))
 
 vi.mock('../../../hooks/useIsObligation', () => ({
-  useIsObligation: () => false,
+  useIsObligation: () => mockUseIsObligation(),
 }))
 
 vi.mock('./FormVariants/ActionSelectionForm', () => ({
@@ -89,6 +97,7 @@ describe('AssetManagementForm', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
+    mockUseIsObligation.mockReturnValue(false)
   })
 
   it('enables reject ownership and holdership only for token registry v5', () => {
@@ -300,5 +309,109 @@ describe('AssetManagementForm', () => {
     expect(mockOnSetFormAction).toHaveBeenCalledWith(
       AssetManagementActions.None
     )
+  })
+
+  // BoE Issued — same Manage Assets options as classic TitleEscrow
+  // (master Storybook: BeneficiaryAndHolder / Holder / Beneficiary).
+  describe('BoE Issued state (classic ETR parity)', () => {
+    const dualRole = '0x1234567890123456789012345678901234567890'
+    const other = '0xDEADBEEFdeadbeefdeadbeefdeadbeefdeadbeef'
+
+    beforeEach(() => {
+      mockUseTokenRegistryVersion.mockReturnValue(TokenRegistryVersions.V5)
+      mockUseIsObligation.mockReturnValue(true)
+    })
+
+    it('Issued dual-role matches BeneficiaryAndHolder: transfer + return, no accept/reject', () => {
+      render(
+        <AssetManagementForm
+          {...baseProps}
+          account={dualRole}
+          beneficiary={dualRole}
+          holder={dualRole}
+          obligationStatus={ObligationDocumentStatus.Issued}
+        />
+      )
+
+      expect(mockActionSelectionForm).toHaveBeenCalledWith(
+        expect.objectContaining({
+          canTransferHolder: true,
+          canTransferBeneficiary: true,
+          canTransferOwners: true,
+          canReturnToIssuer: true,
+          canNominateBeneficiary: false,
+          canAcceptObligation: false,
+          canRejectObligation: false,
+          canDischargeObligation: false,
+        })
+      )
+    })
+
+    it('Issued holder-only matches Holder: transfer holdership + accept/reject', () => {
+      render(
+        <AssetManagementForm
+          {...baseProps}
+          account={dualRole}
+          beneficiary={other}
+          holder={dualRole}
+          obligationStatus={ObligationDocumentStatus.Issued}
+        />
+      )
+
+      expect(mockActionSelectionForm).toHaveBeenCalledWith(
+        expect.objectContaining({
+          canTransferHolder: true,
+          canTransferBeneficiary: false,
+          canTransferOwners: false,
+          canReturnToIssuer: false,
+          canAcceptObligation: true,
+          canRejectObligation: true,
+          canDischargeObligation: false,
+        })
+      )
+    })
+
+    it('Issued beneficiary-only matches Beneficiary: nominate ownership', () => {
+      render(
+        <AssetManagementForm
+          {...baseProps}
+          account={dualRole}
+          beneficiary={dualRole}
+          holder={other}
+          obligationStatus={ObligationDocumentStatus.Issued}
+        />
+      )
+
+      expect(mockActionSelectionForm).toHaveBeenCalledWith(
+        expect.objectContaining({
+          canNominateBeneficiary: true,
+          canTransferHolder: false,
+          canReturnToIssuer: false,
+          canAcceptObligation: false,
+          canRejectObligation: false,
+          canDischargeObligation: false,
+        })
+      )
+    })
+
+    it('matches dual-role when account checksum casing differs from escrow addresses', () => {
+      render(
+        <AssetManagementForm
+          {...baseProps}
+          account={dualRole.toUpperCase()}
+          beneficiary={dualRole.toLowerCase()}
+          holder={dualRole.toLowerCase()}
+          obligationStatus={ObligationDocumentStatus.Issued}
+        />
+      )
+
+      expect(mockActionSelectionForm).toHaveBeenCalledWith(
+        expect.objectContaining({
+          canTransferHolder: true,
+          canTransferOwners: true,
+          canReturnToIssuer: true,
+        })
+      )
+    })
   })
 })

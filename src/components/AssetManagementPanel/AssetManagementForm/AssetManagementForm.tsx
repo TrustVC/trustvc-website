@@ -191,8 +191,9 @@ export const AssetManagementForm: FunctionComponent<
   const canHandleRestore = isTitleEscrow && isRestorer && isReturnedToIssuer
   const canHandleShred = isTitleEscrow && isAcceptor && isReturnedToIssuer
 
-  // Classic ETR endorsement/transfer actions also apply to BoE (obligation registry
-  // maps the same UI methods to *ObligationRegistry SDK helpers).
+  // Classic ETR Manage Assets (master BeneficiaryAndHolder / Holder / Beneficiary forms)
+  // also apply while BoE is Issued — obligation registry maps the same UI methods to
+  // *ObligationRegistry SDK helpers. Accept/reject/discharge are additive, not replacements.
   const supportsRejectTransfer = isTokenRegistryV5 || isObligation
   const canTransferHolder = isActiveTitleEscrow && isHolder
   const canTransferBeneficiary = isActiveTitleEscrow && isHolderAndBeneficiary
