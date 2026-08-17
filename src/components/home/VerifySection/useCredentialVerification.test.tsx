@@ -157,4 +157,55 @@ describe('useCredentialVerification', () => {
     expect(result.current).toEqual([])
     expect(verifyDocument).not.toHaveBeenCalled()
   })
+
+  it('does not re-verify when the same credentials are passed in a new array', async () => {
+    // The guard that stops an infinite render loop: callers build a fresh array each render.
+    const credentials = [credential('did:example:a')]
+    verifyDocument.mockResolvedValue(allValid)
+
+    const { rerender } = renderHook(
+      ({ creds }) => useCredentialVerification(creds),
+      { initialProps: { creds: credentials } }
+    )
+    await waitFor(() => expect(verifyDocument).toHaveBeenCalledTimes(1))
+
+    rerender({ creds: [{ ...credentials[0] }] })
+    await waitFor(() => expect(verifyDocument).toHaveBeenCalledTimes(1))
+  })
+
+  it('re-verifies when a credential is TAMPERED but keeps its id and proof', async () => {
+    // Regression: the key was `id ?? proofValue.slice(0, 32)`, which is untouched by
+    // tampering — it edits the claims and leaves both alone. So a tampered credential reused
+    // the untampered one's verdict and the panel kept showing VALID. The real fixtures
+    // valid/single_credential.json and invalid/tampered_credential.json collide that way.
+    const untampered = {
+      id: 'urn:uuid:same-id',
+      type: ['VerifiableCredential'],
+      credentialSubject: { blNumber: 'BL-0001' },
+      proof: { proofValue: 'u' + 'A'.repeat(64) },
+    }
+    const tampered = {
+      ...untampered,
+      credentialSubject: { blNumber: 'TAMPERED' },
+    }
+
+    verifyDocument.mockResolvedValue(allValid)
+    const { rerender, result } = renderHook(
+      ({ creds }) => useCredentialVerification(creds),
+      { initialProps: { creds: [untampered] } }
+    )
+    await waitFor(() => expect(result.current[0]?.isValid).toBe(true))
+    expect(verifyDocument).toHaveBeenCalledTimes(1)
+
+    // Same id, same proof, different claims — this MUST be verified again.
+    verifyDocument.mockResolvedValue([
+      frag('DOCUMENT_STATUS', 'VALID'),
+      frag('ISSUER_IDENTITY', 'VALID'),
+      frag('DOCUMENT_INTEGRITY', 'INVALID'),
+    ])
+    rerender({ creds: [tampered] })
+
+    await waitFor(() => expect(verifyDocument).toHaveBeenCalledTimes(2))
+    await waitFor(() => expect(result.current[0]?.isValid).toBe(false))
+  })
 })

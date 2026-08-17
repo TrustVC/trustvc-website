@@ -158,6 +158,22 @@ const CredentialTabs: React.FC<CredentialTabsProps> = ({
           invalidAttachments={invalidAttachments}
         />
       </div>
+
+      {/* Every tab's `aria-controls` must point at an element that exists, but only the
+          selected panel is rendered above — so the inactive tabs referenced nothing. These
+          stand in for them, empty and hidden. Rendering their content instead would mount a
+          DocumentRenderer, and therefore an iframe, per credential. */}
+      {credentials.map((_, index) =>
+        index === selected ? null : (
+          <div
+            key={index}
+            id={`credential-panel-${index}`}
+            role="tabpanel"
+            aria-labelledby={`credential-tab-${index}`}
+            hidden
+          />
+        )
+      )}
     </div>
   )
 }

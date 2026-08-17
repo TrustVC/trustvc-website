@@ -77,10 +77,17 @@ export const useCredentialVerification = (
    * Keying the effect on `credentials` itself means any caller passing a fresh array each
    * render — the ordinary thing to write — re-runs verification, sets state, re-renders and
    * loops until the heap gives out. This key only changes when the credentials do.
+   *
+   * It must cover the whole CONTENT, not an identifier. Keying on `id` (falling back to a
+   * slice of `proofValue`) let a tampered credential reuse the verdict of the untampered
+   * one: tampering edits the claims and leaves the id and the proof untouched, so the key
+   * was identical while the document was not, and the tab kept showing the stale VALID.
+   * `presentations/valid/single_credential.json` and
+   * `presentations/invalid/tampered_credential.json` collide in exactly that way.
+   *
+   * Stringifying a few KB per render costs nothing next to the verification it guards.
    */
-  const credentialsKey = credentials
-    .map((c, i) => c?.id ?? c?.proof?.proofValue?.slice(0, 32) ?? String(i))
-    .join('|')
+  const credentialsKey = JSON.stringify(credentials)
 
   useEffect(() => {
     if (credentials.length === 0) {

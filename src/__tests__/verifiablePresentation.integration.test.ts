@@ -349,13 +349,6 @@ describe('Verifiable Presentation', () => {
     }, 60000)
   })
   /**
-   * A revoked credential cannot be PUT into a presentation — trustvc refuses at signing
-   * ("credential at index 0 has been revocation"). It only arises when a credential is
-   * revoked AFTER the presentation was signed, which leaves the holder proof intact. These
-   * use synthetic fragments because the real artifact cannot be minted without control of
-   * the hosted status list.
-   */
-  /**
    * Every way a presentation can pass or fail, and the copy each produces.
    *
    * The distinction that matters: a failure belonging to an EMBEDDED CREDENTIAL must name that
