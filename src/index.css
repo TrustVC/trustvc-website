@@ -2458,6 +2458,23 @@ p.small {
   background: rgba(0, 108, 153, 0.25);
 }
 
+/* Presentation tags. The envelope is a different kind of thing from the credentials it
+   carries, so it takes the lavender treatment while credential tags stay blue — the same
+   two families already in use, rather than a third near-identical colour. */
+.vr-tag--presentation {
+  background: #dfe1ff;
+}
+.dark-mode .vr-tag--presentation {
+  background: rgba(93, 93, 179, 0.25);
+}
+
+.vr-tag--presentation .vr-tag-text {
+  color: #312d62;
+}
+.dark-mode .vr-tag--presentation .vr-tag-text {
+  color: #c0c2ff;
+}
+
 .vr-tag-text {
   font-size: 14px;
   font-family: Urbanist, sans-serif;
@@ -5123,4 +5140,183 @@ label.transparent:active {
 .select-field-option--selected-dark {
   color: #c8cdd3;
   background-color: rgba(125, 128, 215, 0.2);
+}
+
+/* ── Verifiable Presentation: credential tabs ─────────────────────────────── */
+/* A presentation bundles several credentials, so each gets a tab holding its own
+   identity, its own three checks and its own rendered document. Tokens, fonts and
+   dark-mode treatment follow the single-document card above. */
+
+.vr-vc-tabs {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  margin-top: 16px;
+}
+
+.vr-vc-tabs-caption {
+  padding: 0 32px 8px;
+  color: #5b6571;
+  font-size: 14px;
+  font-family: Avenir, sans-serif;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.dark-mode .vr-vc-tabs-caption {
+  color: #8b949e;
+}
+
+/* Geometry mirrors .vr-template-tabs so the credential row and the template/attachment
+   row below it read as one system: butted tabs, a 32px inset before the first, and a
+   scrollable strip that fades at both edges rather than wrapping. */
+.vr-vc-tabs-wrapper {
+  overflow-x: auto;
+  position: relative;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  mask-image: linear-gradient(
+    to right,
+    transparent 0px,
+    black 32px,
+    black calc(100% - 32px),
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0px,
+    black 32px,
+    black calc(100% - 32px),
+    transparent 100%
+  );
+}
+
+.vr-vc-tabs-wrapper::-webkit-scrollbar {
+  display: none;
+}
+
+.vr-vc-tablist {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 0;
+  padding: 0 32px;
+  min-width: 100%;
+}
+
+.vr-vc-tab {
+  appearance: none;
+  outline: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 18px;
+  max-width: 260px;
+  cursor: pointer;
+  background: #dee4e9;
+  border: 1px solid rgba(169, 178, 187, 0.33);
+  border-bottom: none;
+  border-radius: 12px 12px 0 0;
+  color: #5b6571;
+  font-size: 16px;
+  font-family: Urbanist, sans-serif;
+  font-weight: 700;
+  transition:
+    color 0.15s,
+    background 0.15s;
+}
+
+.vr-vc-tab:hover {
+  color: #1e2026;
+}
+
+.vr-vc-tab:focus-visible {
+  outline: 2px solid #5b5bb3;
+  outline-offset: -2px;
+}
+
+.vr-vc-tab--active {
+  background: #ffffff;
+  color: #1e2026;
+}
+
+.vr-vc-tab-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.vr-vc-tab-status {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.vr-vc-tab-status svg {
+  width: 16px;
+  height: 16px;
+}
+
+.dark-mode .vr-vc-tab {
+  background: #21262d;
+  border-color: rgba(48, 54, 61, 0.8);
+  color: #8b949e;
+}
+.dark-mode .vr-vc-tab:hover,
+.dark-mode .vr-vc-tab--active {
+  color: #e6edf3;
+}
+.dark-mode .vr-vc-tab--active {
+  background: #1c2128;
+}
+
+/* Rounded on all four corners, like every other card in the verify UI. A squared-off
+   top-left would only line up when the FIRST tab is active — select any other and the
+   notch sits under nothing. */
+.vr-vc-panel {
+  align-self: stretch;
+  padding: 16px;
+  background: #ffffff;
+  border-radius: 12px;
+  outline: 1px solid rgba(169, 178, 187, 0.33);
+  outline-offset: -1px;
+  display: flex;
+  flex-direction: column;
+}
+.dark-mode .vr-vc-panel {
+  background: #1c2128;
+  outline-color: rgba(48, 54, 61, 0.8);
+}
+
+/* The credential's own identity block, inset so it reads as belonging to the tab
+   rather than to the presentation. */
+.vr-vc-identity {
+  align-self: stretch;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding: 8px;
+  background: #f7f8fc;
+  border: 1px solid rgba(169, 178, 187, 0.33);
+  border-radius: 12px;
+}
+.dark-mode .vr-vc-identity {
+  background: #161b22;
+  border-color: rgba(48, 54, 61, 0.8);
+}
+
+.vr-vc-identity-info {
+  flex: 1 1 0;
+  min-width: 232px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.vr-vc-checks {
+  flex: 1 1 0;
+  min-width: 232px;
+  display: flex;
+  flex-direction: column;
 }

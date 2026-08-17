@@ -158,6 +158,10 @@ vi.mock('@trustvc/trustvc', async importOriginal => {
       isSignedDocument: vi.fn().mockReturnValue(false),
       isRawDocument: vi.fn().mockReturnValue(false),
       isSignedDocumentV2_0: vi.fn().mockReturnValue(false),
+      // isVerifiablePresentation() consults these; leaving them off the mock makes it
+      // throw, and every document under test lands in the error state.
+      isRawPresentation: vi.fn().mockReturnValue(false),
+      isSignedPresentation: vi.fn().mockReturnValue(false),
     },
   }
 })
