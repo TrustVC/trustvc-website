@@ -64,7 +64,7 @@ const BuiltForDev = ({ isDarkMode }: BuiltForDevProps) => (
       </ul>
 
       <nav className="my-4 flex flex-col sm:flex-row gap-2">
-        <LinkButton href="https://docs.tradetrust.io" isDarkMode={isDarkMode}>
+        <LinkButton href="https://docs.trustvc.io" isDarkMode={isDarkMode}>
           TrustVC Documentation
         </LinkButton>
         <LinkButton
