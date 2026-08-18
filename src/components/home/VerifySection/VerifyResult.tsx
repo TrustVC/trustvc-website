@@ -1,11 +1,15 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import NetworkTooltip from './NetworkTooltip'
 import DocumentRenderer from './DocumentRenderer'
+import CredentialTabs from './CredentialTabs'
 import InvalidAttachmentsBanner from './InvalidAttachmentsBanner'
 import ObfuscatedMessage from './ObfuscatedMessage'
 import { makeExplorerAddressURL } from './useVerify'
 import { CheckCircle, CrossCircle, InfoMsgIcon } from '../../common/Icons'
-import { DocumentAttachment } from '../../../utils/helper'
+import {
+  DocumentAttachment,
+  isVerifiablePresentation,
+} from '../../../utils/helper'
 import { getMagicLinkIconSrc } from '../../../utils/magicWallet'
 import Connected from '../../ConnectToBlockchain/Connected'
 import {
@@ -56,6 +60,22 @@ const VERIFICATION_CHECKS = [
   { type: 'DOCUMENT_INTEGRITY', label: 'Document has not been tampered with' },
 ]
 
+/**
+ * A presentation's envelope carries only two meaningful checks. "Document has been issued"
+ * is a per-credential question — issuance belongs to each embedded credential, which shows
+ * its own three checks on its tab — so it is deliberately absent here.
+ */
+const PRESENTATION_CHECKS = [
+  {
+    type: 'ISSUER_IDENTITY',
+    label: "Presenter's identity has been identified",
+  },
+  {
+    type: 'DOCUMENT_INTEGRITY',
+    label: 'Presentation has not been tampered with',
+  },
+]
+
 const VerifyResult: React.FC<VerifyResultProps> = ({
   fileName,
   networkName,
@@ -88,6 +108,8 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
   const isChainMatched =
     !!normalizedDocumentChainId &&
     normalizedCurrentChainId === normalizedDocumentChainId
+
+  const isPresentation = isVerifiablePresentation(rawDocument)
 
   // Switch provider to the document's chain when a transferable / BoE document is loaded
   useEffect(() => {
@@ -475,7 +497,9 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
           {/* Left: Issued by + tags */}
           <div className="vr-col-issue">
             <div className="vr-issue-info">
-              <span className="vr-issued-by-label">Issued by:</span>
+              <span className="vr-issued-by-label">
+                {isPresentation ? 'Presented by:' : 'Issued by:'}
+              </span>
               <span className="vr-issued-by-value">{issuer || fileName}</span>
             </div>
             {tags && tags.length > 0 && (
@@ -488,7 +512,12 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
                       tag === 'Negotiable' ||
                       tag === 'Obligation'
                         ? 'vr-tag--primary'
-                        : 'vr-tag--secondary'
+                        : // Lavender marks the envelope itself. The credential count stays
+                          // blue because it refers to what is INSIDE, tying it to the blue
+                          // version tag each credential carries on its tab below.
+                          tag.startsWith('W3C VP')
+                          ? 'vr-tag--presentation'
+                          : 'vr-tag--secondary'
                     }`}
                   >
                     <span className="vr-tag-text">{tag}</span>
@@ -501,20 +530,22 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
           {/* Middle: Verification checks */}
           <div className="vr-col-checks" data-testid="verification-checks">
             <div className="vr-checks-list">
-              {VERIFICATION_CHECKS.map(({ type, label }) => {
-                const status = getGroupStatus(type)
-                return (
-                  <div
-                    key={type}
-                    className="vr-check-row"
-                    data-testid={`check-${type.toLowerCase()}`}
-                    data-status={status}
-                  >
-                    {status === 'VALID' ? <CheckCircle /> : <CrossCircle />}
-                    <span className="vr-check-label">{label}</span>
-                  </div>
-                )
-              })}
+              {(isPresentation ? PRESENTATION_CHECKS : VERIFICATION_CHECKS).map(
+                ({ type, label }) => {
+                  const status = getGroupStatus(type)
+                  return (
+                    <div
+                      key={type}
+                      className="vr-check-row"
+                      data-testid={`check-${type.toLowerCase()}`}
+                      data-status={status}
+                    >
+                      {status === 'VALID' ? <CheckCircle /> : <CrossCircle />}
+                      <span className="vr-check-label">{label}</span>
+                    </div>
+                  )
+                }
+              )}
             </div>
           </div>
 
@@ -624,13 +655,22 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
         <InvalidAttachmentsBanner invalidAttachments={invalidAttachments} />
       )}
 
-      {/* Template Renderer */}
+      {/* Template Renderer. A presentation is a bundle with no single document to
+          render, so each embedded credential gets its own tab. */}
       {rawDocument ? (
-        <DocumentRenderer
-          rawDocument={rawDocument}
-          fileName={fileName}
-          invalidAttachments={invalidAttachments}
-        />
+        isPresentation ? (
+          <CredentialTabs
+            presentation={rawDocument}
+            fileName={fileName}
+            invalidAttachments={invalidAttachments}
+          />
+        ) : (
+          <DocumentRenderer
+            rawDocument={rawDocument}
+            fileName={fileName}
+            invalidAttachments={invalidAttachments}
+          />
+        )
       ) : null}
 
       {/* Tooltip */}

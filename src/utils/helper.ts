@@ -94,6 +94,12 @@ export const getOpenAttestationData = (rawDocument: any): any => {
   if (vc.isSignedDocument(rawDocument) || vc.isRawDocument(rawDocument)) {
     return rawDocument
   }
+  // A Verifiable Presentation is its own document data. Without this it falls through to
+  // OpenAttestation's getDocumentData, which throws on a presentation and takes every
+  // caller down with it (getIsExpired among them).
+  if (isVerifiablePresentation(rawDocument)) {
+    return rawDocument
+  }
   return getDocumentData(rawDocument)
 }
 
@@ -343,4 +349,112 @@ export const getFileSize = (jsonString: string): number => {
   if (!jsonString || !jsonString?.length) return 0
   const m = encodeURIComponent(jsonString).match(/%[89ABab]/g)
   return jsonString.length + (m ? m.length : 0)
+}
+
+/**
+ * Whether trustvc's verifier will treat this document as a Verifiable Presentation.
+ *
+ * `vc.isRawPresentation` and `vc.isSignedPresentation` are the library's own predicates and
+ * do the work for every well-formed document — they are mutually exclusive (raw = unsigned,
+ * signed = has a holder proof), so answering "is this a presentation at all?" needs both.
+ *
+ * The shape check after them is NOT redundant. trustvc routes documents into its VP
+ * verifier fragments with an internal, unexported predicate that looks only at
+ * `type` + `verifiableCredential`, so it accepts two shapes the strict predicates reject:
+ * a presentation with no `@context`, and one with an empty credential list — the latter
+ * being a case its own W3CVpIssuerIdentity fragment reports on explicitly ("Presentation
+ * contains no verifiable credentials"). If this predicate disagreed with that router, such
+ * a document would be sent down the credential path, where getDocumentData throws and the
+ * UI shows a generic failure instead of the verifier's actual finding.
+ *
+ * `proof` is deliberately not required, so an unsigned presentation is still recognised and
+ * can be reported invalid rather than silently treated as a credential.
+ */
+export const isVerifiablePresentation = (rawDocument: unknown): boolean => {
+  if (!rawDocument || typeof rawDocument !== 'object') return false
+  if (
+    vc.isRawPresentation(rawDocument) ||
+    vc.isSignedPresentation(rawDocument)
+  ) {
+    return true
+  }
+  const { type, verifiableCredential } = rawDocument as {
+    type?: string | string[]
+    verifiableCredential?: unknown
+  }
+  const types = Array.isArray(type) ? type : [type]
+  return (
+    types.includes('VerifiablePresentation') &&
+    verifiableCredential !== undefined
+  )
+}
+
+/**
+ * The credentials embedded in a presentation, always as an array — `verifiableCredential`
+ * may be a single object or a list. Returns [] for anything that is not a presentation.
+ */
+export const getPresentationCredentials = (rawDocument: unknown): any[] => {
+  if (!isVerifiablePresentation(rawDocument)) return []
+  const credentials = (rawDocument as { verifiableCredential?: unknown })
+    .verifiableCredential
+  if (!credentials) return []
+  return Array.isArray(credentials) ? credentials : [credentials]
+}
+
+/**
+ * A short label for a credential's tab. Prefers the renderer template name, which is what
+ * distinguishes one credential from another on screen; falls back to its `type` (minus the
+ * generic `VerifiableCredential`), then to a 1-based position.
+ */
+export const getCredentialLabel = (credential: any, index: number): string => {
+  const templateName = [credential?.renderMethod].flat()?.[0]?.templateName
+  if (typeof templateName === 'string' && templateName.trim()) {
+    return templateName.replace(/_/g, ' ')
+  }
+  const types = [credential?.type].flat().filter(Boolean) as string[]
+  const specific = types.find(t => t !== 'VerifiableCredential')
+  if (specific) return specific
+  return `Credential ${index + 1}`
+}
+
+/** The VC Data Model 2.0 context URL — the first `@context` entry of a v2 document. */
+const VC_V2_CONTEXT = 'https://www.w3.org/ns/credentials/v2'
+
+/**
+ * The data-model version label for a credential or presentation: 'V2.0' or 'V1.1'.
+ *
+ * `vc.isSignedDocumentV2_0` only answers this for signed CREDENTIALS, so it cannot classify
+ * a presentation envelope; both are decided the same way, by the first `@context` entry.
+ */
+export const getW3CVersionLabel = (document: any): 'V2.0' | 'V1.1' => {
+  const first = [document?.['@context']].flat()[0]
+  return first === VC_V2_CONTEXT ? 'V2.0' : 'V1.1'
+}
+
+/**
+ * The version tag shown against a credential embedded in a presentation, matching the tag
+ * the single-document card shows for a standalone credential.
+ */
+export const getCredentialVersionTag = (credential: any): string =>
+  `W3C VC ${getW3CVersionLabel(credential)}`
+
+/**
+ * A download filename for one credential inside a presentation.
+ *
+ * The renderer names its download after the file that was uploaded. Inside a presentation
+ * that would name every credential after the whole VP — two tabs both saving as
+ * `presentation.json`, each actually containing a different single credential. Qualify it
+ * with the credential's label instead: `presentation-chafta-coo.json`.
+ */
+export const getCredentialFileName = (
+  presentationFileName: string,
+  credential: any,
+  index: number
+): string => {
+  const base = (presentationFileName || 'presentation').replace(/\.json$/i, '')
+  const slug = getCredentialLabel(credential, index)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+  return `${base}-${slug || `credential-${index + 1}`}.json`
 }
