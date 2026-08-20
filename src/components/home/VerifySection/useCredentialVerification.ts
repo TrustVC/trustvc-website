@@ -54,6 +54,47 @@ const PENDING: CredentialVerification = {
 }
 
 /**
+ * How long one credential's verification may run before it is reported as failed.
+ *
+ * verifyDocument resolves DID documents and fetches revocation status lists over the
+ * network, and takes no abort signal — so a request that never settles would otherwise
+ * leave the tab spinning for the life of the page. The ceiling is deliberately generous:
+ * a did:web issuer plus a status list is several round trips on a cold cache, and a
+ * timeout here is indistinguishable to the user from a genuine failure.
+ */
+const VERIFY_TIMEOUT_MS = 60_000
+
+/**
+ * Rejects if `promise` has not settled within `ms`.
+ *
+ * The underlying work cannot be cancelled — verifyDocument exposes no signal — so this
+ * bounds only how long the UI waits on it, not the request itself.
+ */
+const withTimeout = <T>(promise: Promise<T>, ms: number): Promise<T> =>
+  new Promise<T>((resolve, reject) => {
+    const timer = setTimeout(
+      () => reject(new Error('verification timed out')),
+      ms
+    )
+    promise.then(
+      value => {
+        clearTimeout(timer)
+        resolve(value)
+      },
+      error => {
+        clearTimeout(timer)
+        reject(error)
+      }
+    )
+  })
+
+interface VerificationState {
+  /** The credential set `results` describes — see credentialsKey below. */
+  key: string
+  results: CredentialVerification[]
+}
+
+/**
  * Verifies each credential embedded in a presentation on its own.
  *
  * The presentation's own fragments are aggregates — one verdict covering every embedded
@@ -69,7 +110,10 @@ const PENDING: CredentialVerification = {
 export const useCredentialVerification = (
   credentials: any[]
 ): CredentialVerification[] => {
-  const [results, setResults] = useState<CredentialVerification[]>([])
+  const [state, setState] = useState<VerificationState>({
+    key: '',
+    results: [],
+  })
 
   /**
    * Identity of the credential SET, not of the array holding it.
@@ -91,18 +135,18 @@ export const useCredentialVerification = (
 
   useEffect(() => {
     if (credentials.length === 0) {
-      setResults([])
+      setState({ key: credentialsKey, results: [] })
       return
     }
 
     let cancelled = false
-    setResults(credentials.map(() => PENDING))
 
     Promise.all(
       credentials.map(async credential => {
         try {
-          const fragments = (await verifyDocument(
-            credential
+          const fragments = (await withTimeout(
+            Promise.resolve(verifyDocument(credential)),
+            VERIFY_TIMEOUT_MS
           )) as VerificationFragment[]
           const status = {
             DOCUMENT_STATUS: groupStatus(fragments, 'DOCUMENT_STATUS'),
@@ -116,8 +160,9 @@ export const useCredentialVerification = (
             isValid: Object.values(status).every(s => s === 'VALID'),
           }
         } catch {
-          // A credential that cannot be verified at all is reported as failing every
-          // check rather than silently showing nothing.
+          // A credential that cannot be verified at all — including one whose verification
+          // outran VERIFY_TIMEOUT_MS — is reported as failing every check rather than
+          // silently showing nothing or spinning forever.
           return {
             loading: false,
             status: {
@@ -131,7 +176,7 @@ export const useCredentialVerification = (
         }
       })
     ).then(settled => {
-      if (!cancelled) setResults(settled)
+      if (!cancelled) setState({ key: credentialsKey, results: settled })
     })
 
     return () => {
@@ -142,5 +187,19 @@ export const useCredentialVerification = (
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [credentialsKey])
 
-  return results
+  /**
+   * Pending is derived HERE, during render, not assigned in the effect above.
+   *
+   * Effects run after paint, so seeding the pending state there left one render with no
+   * results at all: every check read `undefined`, fell through to its INVALID branch, and a
+   * red cross flashed before the spinner on every presentation. On a change of presentation
+   * it was worse than a flash — the state still held the PREVIOUS set's verdicts, so a
+   * stale VALID sat against a new credential, and a shorter new set read past the end.
+   *
+   * Stamping the results with the set they describe fixes both: they are returned only when
+   * they belong to the credentials being rendered, and everything else is pending.
+   */
+  return state.key === credentialsKey
+    ? state.results
+    : credentials.map(() => PENDING)
 }

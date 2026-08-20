@@ -1,6 +1,9 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest'
-import { renderHook, waitFor } from '@testing-library/react'
-import { useCredentialVerification } from './useCredentialVerification'
+import { act, render, renderHook, waitFor } from '@testing-library/react'
+import {
+  CredentialVerification,
+  useCredentialVerification,
+} from './useCredentialVerification'
 
 /**
  * The hook's own job is to call verifyDocument once per credential and reshape the
@@ -149,6 +152,89 @@ describe('useCredentialVerification', () => {
       'INVALID',
       'INVALID',
     ])
+  })
+
+  /**
+   * These two watch EVERY render, not just the settled result.
+   *
+   * renderHook wraps its work in act(), which flushes effects before the assertions run —
+   * so a wrong value that exists for one render is invisible to `result.current`. The
+   * regressions below both lived in exactly that gap, and a probe component that records
+   * each render is the only way to see them.
+   */
+  describe('per-render output', () => {
+    const recordRenders = () => {
+      const renders: CredentialVerification[][] = []
+      const Probe = ({ creds }: { creds: unknown[] }) => {
+        renders.push(useCredentialVerification(creds as never[]))
+        return null
+      }
+      return { renders, Probe }
+    }
+
+    it('is pending from the very first render, never an empty result set', () => {
+      // Regression: the pending state was seeded in an effect, so the first render returned
+      // []. Every check then read undefined, fell through to its INVALID branch, and a red
+      // cross flashed before the spinner on every presentation opened.
+      verifyDocument.mockReturnValue(new Promise(() => {}))
+      const { renders, Probe } = recordRenders()
+
+      render(
+        <Probe creds={[credential('did:web:a'), credential('did:web:b')]} />
+      )
+
+      expect(renders[0]).toHaveLength(2)
+      expect(renders[0].every(r => r.loading)).toBe(true)
+    })
+
+    it("never shows the previous credentials' verdicts against a new set", async () => {
+      // Regression: results were not tied to the credentials they described, so the render
+      // between a new presentation arriving and its effect firing showed the old verdicts —
+      // a stale VALID against a different credential.
+      verifyDocument.mockResolvedValue(allValid)
+      const { renders, Probe } = recordRenders()
+      const { rerender } = render(<Probe creds={[credential('did:web:a')]} />)
+      await waitFor(() => expect(renders.at(-1)?.[0]?.isValid).toBe(true))
+
+      // This set never settles, so any non-pending result for it is left over from the last.
+      verifyDocument.mockReturnValue(new Promise(() => {}))
+      const before = renders.length
+      rerender(
+        <Probe creds={[credential('did:web:b'), credential('did:web:c')]} />
+      )
+
+      for (const results of renders.slice(before)) {
+        expect(results).toHaveLength(2)
+        expect(results.every(r => r.loading)).toBe(true)
+      }
+    })
+  })
+
+  it('fails a credential whose verification never settles', async () => {
+    // Otherwise the tab spins for the life of the page: verifyDocument reaches the network
+    // and takes no abort signal, so nothing else would ever resolve this.
+    vi.useFakeTimers()
+    try {
+      verifyDocument.mockReturnValue(new Promise(() => {}))
+      const { result } = renderHook(() =>
+        useCredentialVerification([credential('did:web:a')] as never[])
+      )
+      expect(result.current[0].loading).toBe(true)
+
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(60_000)
+      })
+
+      expect(result.current[0].loading).toBe(false)
+      expect(result.current[0].isValid).toBe(false)
+      expect(Object.values(result.current[0].status)).toEqual([
+        'INVALID',
+        'INVALID',
+        'INVALID',
+      ])
+    } finally {
+      vi.useRealTimers()
+    }
   })
 
   it('returns nothing for an empty credential list', () => {

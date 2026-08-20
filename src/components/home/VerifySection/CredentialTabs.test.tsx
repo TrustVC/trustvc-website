@@ -20,12 +20,22 @@ vi.mock('./useCredentialVerification', () => ({
     })),
 }))
 
+// Every document the renderer is handed, in render order. The out-of-bounds regression is
+// only visible for a single render, which act() flushes past before assertions run — so it
+// has to be recorded as it happens rather than read off the DOM afterwards.
+const { renderedDocuments } = vi.hoisted(() => ({
+  renderedDocuments: [] as unknown[],
+}))
+
 vi.mock('./DocumentRenderer', () => ({
-  default: ({ rawDocument }: { rawDocument: any }) => (
-    <div data-testid="document-renderer">
-      {rawDocument?.renderMethod?.[0]?.templateName ?? 'no-template'}
-    </div>
-  ),
+  default: ({ rawDocument }: { rawDocument: any }) => {
+    renderedDocuments.push(rawDocument)
+    return (
+      <div data-testid="document-renderer">
+        {rawDocument?.renderMethod?.[0]?.templateName ?? 'no-template'}
+      </div>
+    )
+  },
 }))
 
 const credential = (templateName: string, id: string) => ({
@@ -192,6 +202,117 @@ describe('CredentialTabs', () => {
       'aria-selected',
       'true'
     )
+  })
+
+  it('never renders a credential past the end of a shorter presentation', async () => {
+    // Regression: the reset lived in an effect, which runs after paint. A presentation with
+    // fewer credentials than the last was therefore rendered once with the stale index still
+    // in place, handing the panel an undefined credential — a tab labelled from nothing, a
+    // version tag defaulted to V1.1, and the renderer given no document at all.
+    const user = userEvent.setup()
+    const { rerender } = render(
+      <CredentialTabs
+        presentation={presentation(
+          credential('CHAFTA_COO', 'urn:1'),
+          credential('BILL_OF_LADING', 'urn:2')
+        )}
+        fileName="vp.json"
+      />
+    )
+    await user.click(screen.getByRole('tab', { name: 'BILL OF LADING' }))
+
+    // A single credential, so the retained index of 1 is now past the end.
+    renderedDocuments.length = 0
+    rerender(
+      <CredentialTabs
+        presentation={presentation(credential('INVOICE', 'urn:3'))}
+        fileName="vp2.json"
+      />
+    )
+
+    expect(renderedDocuments.length).toBeGreaterThan(0)
+    expect(renderedDocuments).not.toContain(undefined)
+    expect(screen.getAllByRole('tab')).toHaveLength(1)
+    expect(screen.getByTestId('document-renderer')).toHaveTextContent('INVOICE')
+  })
+
+  describe('keyboard navigation', () => {
+    const threeCredentials = () =>
+      presentation(
+        credential('CHAFTA_COO', 'urn:1'),
+        credential('BILL_OF_LADING', 'urn:2'),
+        credential('INVOICE', 'urn:3')
+      )
+
+    const renderTabs = () => {
+      render(
+        <CredentialTabs presentation={threeCredentials()} fileName="vp.json" />
+      )
+      const tabs = screen.getAllByRole('tab')
+      tabs[0].focus()
+      return tabs
+    }
+
+    const expectSelected = (tabs: HTMLElement[], index: number) => {
+      expect(tabs[index]).toHaveAttribute('aria-selected', 'true')
+      expect(tabs[index]).toHaveFocus()
+    }
+
+    it('moves with the arrow keys, following focus', async () => {
+      const user = userEvent.setup()
+      const tabs = renderTabs()
+
+      await user.keyboard('{ArrowRight}')
+      expectSelected(tabs, 1)
+
+      await user.keyboard('{ArrowLeft}')
+      expectSelected(tabs, 0)
+    })
+
+    it('wraps around at both ends', async () => {
+      const user = userEvent.setup()
+      const tabs = renderTabs()
+
+      // Left from the first lands on the last, and right from there comes back.
+      await user.keyboard('{ArrowLeft}')
+      expectSelected(tabs, 2)
+
+      await user.keyboard('{ArrowRight}')
+      expectSelected(tabs, 0)
+    })
+
+    it('jumps to the first and last tab with Home and End', async () => {
+      const user = userEvent.setup()
+      const tabs = renderTabs()
+
+      await user.keyboard('{End}')
+      expectSelected(tabs, 2)
+
+      await user.keyboard('{Home}')
+      expectSelected(tabs, 0)
+    })
+
+    it('keeps the whole strip to one tab stop', async () => {
+      const user = userEvent.setup()
+      const tabs = renderTabs()
+
+      expect(tabs[0]).toHaveAttribute('tabindex', '0')
+      expect(tabs[1]).toHaveAttribute('tabindex', '-1')
+      expect(tabs[2]).toHaveAttribute('tabindex', '-1')
+
+      // The roving index follows the selection, so Tab leaves the strip.
+      await user.keyboard('{ArrowRight}')
+      expect(tabs[0]).toHaveAttribute('tabindex', '-1')
+      expect(tabs[1]).toHaveAttribute('tabindex', '0')
+    })
+
+    it('leaves other keys to the browser', async () => {
+      const user = userEvent.setup()
+      const tabs = renderTabs()
+
+      await user.keyboard('{ArrowDown}')
+      expectSelected(tabs, 0)
+    })
   })
   describe('per-credential panel', () => {
     const twoCredentials = () =>

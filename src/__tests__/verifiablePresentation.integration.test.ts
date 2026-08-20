@@ -40,6 +40,24 @@ import tamperedCredentialVp from './__fixtures__/w3c/presentations/invalid/tampe
 import unresolvableIssuerVp from './__fixtures__/w3c/presentations/invalid/unresolvable_issuer.json'
 import unsignedVp from './__fixtures__/w3c/presentations/invalid/unsigned.json'
 
+/**
+ * Cases that reach the internet — resolving a hosted DID document, fetching a revocation
+ * status list — get this timeout rather than the offline one. Two round trips on a cold
+ * cache do not fit in the 30s the local-only cases use.
+ */
+const NETWORK_TIMEOUT_MS = 120000
+
+/**
+ * Network cases run by DEFAULT: skipping them quietly would drop exactly the coverage that
+ * matters most here, and they were the reason this suite exists. Set SKIP_NETWORK_TESTS=1
+ * to leave them out where there is no egress (a sandboxed CI runner, an offline laptop).
+ *
+ * Marking a case `network: true` previously only appended "(needs network)" to its name —
+ * nothing was gated on it and nothing was skipped.
+ */
+const skipNetwork = import.meta.env.SKIP_NETWORK_TESTS === '1'
+const itNetwork = skipNetwork ? it.skip : it
+
 const groupStatus = (frags: VerificationFragment[], type: string) => {
   const group = frags.filter(f => f.type === type && f.status !== 'SKIPPED')
   if (group.length === 0) return 'MISSING'
@@ -634,24 +652,31 @@ describe('Verifiable Presentation', () => {
       ]
 
       for (const { fixture, doc, type, expect: pattern, network } of cases) {
-        it(`${fixture}${network ? ' (needs network)' : ''}`, async () => {
-          const fragments = (await verifyDocument(
-            doc as never
-          )) as unknown as VerificationFragment[]
-          const message = getErrorMessageFromFragments(fragments, doc) ?? ''
+        const runCase = network ? itNetwork : it
+        runCase(
+          `${fixture}${network ? ' (needs network)' : ''}`,
+          async () => {
+            const fragments = (await verifyDocument(
+              doc as never
+            )) as unknown as VerificationFragment[]
+            const message = getErrorMessageFromFragments(fragments, doc) ?? ''
 
-          if (pattern.source === '^$') {
-            // Either a valid presentation, or one whose type copy already fits.
-            expect(message).toBe('')
-          } else {
-            expect(message).toMatch(pattern)
-          }
-          if (type) expect(getErrorTypeFromFragments(fragments)).toBe(type)
+            if (pattern.source === '^$') {
+              // Either a valid presentation, or one whose type copy already fits.
+              expect(message).toBe('')
+            } else {
+              expect(message).toMatch(pattern)
+            }
+            if (type) expect(getErrorTypeFromFragments(fragments)).toBe(type)
 
-          // Whatever the outcome, the raw verifier wording never reaches the user.
-          expect(message).not.toMatch(/validUntil|validFrom|did:key:|did:web:/)
-          expect(message).not.toMatch(/cannot read properties|proofValue/i)
-        }, 30000)
+            // Whatever the outcome, the raw verifier wording never reaches the user.
+            expect(message).not.toMatch(
+              /validUntil|validFrom|did:key:|did:web:/
+            )
+            expect(message).not.toMatch(/cannot read properties|proofValue/i)
+          },
+          network ? NETWORK_TIMEOUT_MS : 30000
+        )
       }
     })
   })
@@ -672,15 +697,19 @@ describe('Verifiable Presentation', () => {
     })
 
     // Needs network: the did:web document is fetched to resolve the issuer's key.
-    it('verifies end to end, resolving the hosted DID document', async () => {
-      const fragments = (await verifyDocument(
-        didWebVp as never
-      )) as VerificationFragment[]
+    itNetwork(
+      'verifies end to end, resolving the hosted DID document',
+      async () => {
+        const fragments = (await verifyDocument(
+          didWebVp as never
+        )) as VerificationFragment[]
 
-      expect(groupStatus(fragments, 'DOCUMENT_INTEGRITY')).toBe('VALID')
-      expect(groupStatus(fragments, 'DOCUMENT_STATUS')).toBe('VALID')
-      expect(groupStatus(fragments, 'ISSUER_IDENTITY')).toBe('VALID')
-    }, 120000)
+        expect(groupStatus(fragments, 'DOCUMENT_INTEGRITY')).toBe('VALID')
+        expect(groupStatus(fragments, 'DOCUMENT_STATUS')).toBe('VALID')
+        expect(groupStatus(fragments, 'ISSUER_IDENTITY')).toBe('VALID')
+      },
+      NETWORK_TIMEOUT_MS
+    )
   })
 
   describe('the attachments fixture', () => {

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useMemo, useRef, useState } from 'react'
 import DocumentRenderer from './DocumentRenderer'
 import { useCredentialVerification } from './useCredentialVerification'
 import { CheckCircle, CrossCircle } from '../../common/Icons'
@@ -42,13 +42,58 @@ const CredentialTabs: React.FC<CredentialTabsProps> = ({
     [presentation]
   )
   const verifications = useCredentialVerification(credentials)
-  const [selected, setSelected] = useState(0)
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([])
 
-  // A new presentation may hold fewer credentials than the one before it; without this
-  // the index could point past the end and nothing would render.
-  useEffect(() => {
-    setSelected(0)
-  }, [presentation])
+  /**
+   * The selected tab, stamped with the presentation it was chosen in.
+   *
+   * Resetting this in an effect instead left one render in between: effects run after paint,
+   * so a newly loaded presentation was rendered with the previous one's index still in
+   * place. When it held fewer credentials that index pointed past the end and the panel was
+   * handed an undefined credential — a mislabelled tab, a "V1.1" tag defaulted from nothing,
+   * an empty renderer. Deriving the index below means it is never out of range at all.
+   */
+  const [selection, setSelection] = useState<{
+    presentation: unknown
+    index: number
+  }>({ presentation, index: 0 })
+
+  const selected =
+    selection.presentation === presentation &&
+    selection.index < credentials.length
+      ? selection.index
+      : 0
+
+  const select = (index: number) => setSelection({ presentation, index })
+
+  /**
+   * Arrow/Home/End movement between tabs, per the ARIA tabs pattern. Without it the strip
+   * was reachable by Tab and activated by Enter, but could not be moved through — and with
+   * the roving tabIndex below, Tab now leaves the strip rather than walking every credential.
+   */
+  const onTabKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    const last = credentials.length - 1
+    let next: number
+    switch (event.key) {
+      case 'ArrowRight':
+        next = selected === last ? 0 : selected + 1
+        break
+      case 'ArrowLeft':
+        next = selected === 0 ? last : selected - 1
+        break
+      case 'Home':
+        next = 0
+        break
+      case 'End':
+        next = last
+        break
+      default:
+        return
+    }
+    event.preventDefault()
+    select(next)
+    tabRefs.current[next]?.focus()
+  }
 
   if (credentials.length === 0) return null
 
@@ -65,6 +110,7 @@ const CredentialTabs: React.FC<CredentialTabsProps> = ({
           className="vr-vc-tablist"
           role="tablist"
           aria-label="Credentials in this presentation"
+          onKeyDown={onTabKeyDown}
         >
           {credentials.map((credential, index) => {
             const isActive = index === selected
@@ -73,11 +119,17 @@ const CredentialTabs: React.FC<CredentialTabsProps> = ({
               <button
                 key={credential?.id ?? index}
                 id={`credential-tab-${index}`}
+                ref={el => {
+                  tabRefs.current[index] = el
+                }}
                 role="tab"
                 aria-selected={isActive}
                 aria-controls={`credential-panel-${index}`}
+                // Roving tabIndex: the strip is one Tab stop and the arrow keys move
+                // within it, rather than every credential being its own Tab stop.
+                tabIndex={isActive ? 0 : -1}
                 className={`vr-vc-tab ${isActive ? 'vr-vc-tab--active' : ''}`}
-                onClick={() => setSelected(index)}
+                onClick={() => select(index)}
               >
                 <span className="vr-vc-tab-status" aria-hidden="true">
                   {result?.loading ? (
