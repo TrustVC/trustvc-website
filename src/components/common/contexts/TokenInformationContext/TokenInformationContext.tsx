@@ -450,10 +450,13 @@ export const TokenInformationContextProvider: FunctionComponent<
     isObligation,
   ])
 
-  // Update holder whenever holder transfer is successful
+  // Holder transfer also writes prevHolder (and may clear prevBeneficiary).
+  // Refresh the whole escrow so the new holder sees "Reject holdership".
+  // getHolder() alone left prevHolder stale — TrustVC reads via a static
+  // document RPC, so switching wallet does not refetch the way TradeTrust does.
   useEffect(() => {
-    if (changeHolderState === 'CONFIRMED') getHolder()
-  }, [changeHolderState, getHolder])
+    if (changeHolderState === 'CONFIRMED') updateTitleEscrow()
+  }, [changeHolderState, updateTitleEscrow])
 
   useEffect(() => {
     if (nominateState === 'CONFIRMED') getApprovedBeneficiary()
