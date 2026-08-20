@@ -76,16 +76,46 @@ describe('ActionSelectionForm — BoE / obligation registry', () => {
     expect(screen.getByText('BoE Returned to Issuer')).toBeInTheDocument()
   })
 
-  it('labels burnt banner as BoE', () => {
+  it('labels burnt banner as BoE for return-to-issuer shred', () => {
     renderWithOverlay(
       <ActionSelectionForm
         {...defaultProps}
         isTokenBurnt={true}
         canTransferHolder={false}
+        obligationStatus={ObligationDocumentStatus.Accepted}
       />
     )
 
     expect(screen.getByText('BoE Taken Out of Circulation')).toBeInTheDocument()
+  })
+
+  it('labels burnt banner as Bill rejected after reject', () => {
+    renderWithOverlay(
+      <ActionSelectionForm
+        {...defaultProps}
+        isTokenBurnt={true}
+        canTransferHolder={false}
+        obligationStatus={ObligationDocumentStatus.Rejected}
+      />
+    )
+
+    expect(screen.getByText('Bill rejected')).toBeInTheDocument()
+    expect(
+      screen.queryByText('BoE Taken Out of Circulation')
+    ).not.toBeInTheDocument()
+  })
+
+  it('labels burnt banner as Bill discharged after discharge', () => {
+    renderWithOverlay(
+      <ActionSelectionForm
+        {...defaultProps}
+        isTokenBurnt={true}
+        canTransferHolder={false}
+        obligationStatus={ObligationDocumentStatus.Discharged}
+      />
+    )
+
+    expect(screen.getByText('Bill discharged')).toBeInTheDocument()
   })
 
   it('does not show obligation status for classic ETR', () => {
