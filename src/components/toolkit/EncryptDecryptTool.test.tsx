@@ -2,7 +2,10 @@ import { describe, expect, it, vi } from 'vitest'
 import { render, screen } from '../../__tests__/test-utils'
 import userEvent from '@testing-library/user-event'
 import EncryptDecryptTool from './EncryptDecryptTool'
-import { decryptDocument, ENCRYPTED_PAYLOAD_OBJECT_MESSAGE } from '@/utils/toolkit/encrypt'
+import {
+  decryptDocument,
+  ENCRYPTED_PAYLOAD_OBJECT_MESSAGE,
+} from '@/utils/toolkit/encrypt'
 
 const encryptFns = vi.hoisted(() => ({
   decryptDocument: undefined as
@@ -11,9 +14,9 @@ const encryptFns = vi.hoisted(() => ({
 }))
 
 vi.mock('@/utils/toolkit/encrypt', async () => {
-  const actual = await vi.importActual<typeof import('@/utils/toolkit/encrypt')>(
-    '@/utils/toolkit/encrypt'
-  )
+  const actual = await vi.importActual<
+    typeof import('@/utils/toolkit/encrypt')
+  >('@/utils/toolkit/encrypt')
   encryptFns.decryptDocument = actual.decryptDocument
   return {
     ...actual,

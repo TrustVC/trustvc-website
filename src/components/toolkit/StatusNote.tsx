@@ -21,7 +21,7 @@ const StatusNote = ({ kind, message }: StatusNoteProps) => (
       aria-live={kind === 'error' ? 'assertive' : 'polite'}
       aria-atomic="true"
       className={clsx(
-        'font-avenir text-sm leading-[21px] break-words text-left',
+        'font-avenir text-sm leading-[21px] break-words text-left whitespace-pre-line',
         kind === 'success' ? 'text-[#3AAF86]' : 'text-alert-50'
       )}
     >

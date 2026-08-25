@@ -35,9 +35,7 @@ vi.mock('@/components/common/contexts/providerContext', async () => {
   }
 })
 
-const fillRevokeFields = async (
-  user: ReturnType<typeof userEvent.setup>
-) => {
+const fillRevokeFields = async (user: ReturnType<typeof userEvent.setup>) => {
   const storeAddress = '0xA594f6e10564e87888425c7CC3910FE1c800aB0B'
   const documentHash =
     '0x9a1c8f2e7b3d4a5e6c1f0b2d9e8a7c6b5d4e3f2a9a1c8f2e7b3d4a5e6c1f0b2d'
@@ -75,9 +73,7 @@ describe('RevokeDocumentTool', () => {
     await fillRevokeFields(user)
 
     expect(
-      screen.getByDisplayValue(
-        '0xA594f6e10564e87888425c7CC3910FE1c800aB0B'
-      )
+      screen.getByDisplayValue('0xA594f6e10564e87888425c7CC3910FE1c800aB0B')
     ).toBeInTheDocument()
     expect(
       screen.getByRole('button', { name: /^revoke document$/i })

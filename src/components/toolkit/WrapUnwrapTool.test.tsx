@@ -10,7 +10,6 @@ import {
 } from '@/utils/toolkit/types'
 import {
   OA_UNSUPPORTED_VERSION_MESSAGE,
-  OA_V3_WRAP_MESSAGE,
   wrapRawDocument,
 } from '@/utils/toolkit/wrap'
 import credentialExpiredVp from '../../__tests__/__fixtures__/w3c/presentations/invalid/credential_expired.json'
@@ -97,7 +96,7 @@ describe('WrapUnwrapTool', () => {
     }
   })
 
-  it('shows a fixed message when wrapping a schema-invalid raw document', async () => {
+  it('lists diagnose keyword - message when wrapping a schema-invalid raw document', async () => {
     const user = userEvent.setup()
     render(<WrapUnwrapTool isDarkMode={false} />)
     await pasteJson(user, {
@@ -115,11 +114,11 @@ describe('WrapUnwrapTool', () => {
     await user.click(screen.getByLabelText('Wrap document'))
 
     const status = await screen.findByRole('status')
-    expect(status).toHaveTextContent('Document is not valid.')
-    expect(status.textContent).not.toMatch(/NOT-A-PROOF|identityProof|must be/)
+    expect(status).toHaveTextContent(/Document is not valid:/)
+    expect(status).toHaveTextContent(/ - /)
   })
 
-  it('shows a fixed message when unwrapping a raw document', async () => {
+  it('lists diagnose keyword - message when unwrapping a raw document', async () => {
     const user = userEvent.setup()
     render(<WrapUnwrapTool isDarkMode={false} />)
     await user.click(screen.getByRole('tab', { name: /^unwrap$/i }))
@@ -128,8 +127,8 @@ describe('WrapUnwrapTool', () => {
     await user.click(screen.getByLabelText('Unwrap document'))
 
     const status = await screen.findByRole('status')
-    expect(status).toHaveTextContent('Document is not valid.')
-    expect(status.textContent).not.toMatch(/must be|schema|instancePath/)
+    expect(status).toHaveTextContent(/Document is not valid:/)
+    expect(status).toHaveTextContent(/ - /)
   })
 
   it('shows a fixed message when wrap throws', async () => {
@@ -146,15 +145,29 @@ describe('WrapUnwrapTool', () => {
     expect(status).not.toHaveTextContent(/Cannot read properties/)
   })
 
-  it('shows the TrustVC v3 deprecation when wrapping a v3 document', async () => {
+  it('wraps a v3 document', async () => {
     const { proof: _proof, ...rawV3 } = oaDnsTxtDocstoreV3
+    vi.mocked(wrapRawDocument).mockResolvedValueOnce({
+      ...rawV3,
+      proof: {
+        type: 'OpenAttestationMerkleProofSignature2018',
+        merkleRoot: 'abc',
+      },
+    })
     const user = userEvent.setup()
     render(<WrapUnwrapTool isDarkMode={false} />)
     await pasteJson(user, rawV3)
     await user.click(screen.getByLabelText('Wrap document'))
 
     const status = await screen.findByRole('status')
-    expect(status).toHaveTextContent(OA_V3_WRAP_MESSAGE)
+    expect(status).toHaveTextContent('Document wrapped successfully.')
+    expect(
+      (
+        screen.getByRole('textbox', {
+          name: 'WRAPPED DOCUMENT',
+        }) as HTMLTextAreaElement
+      ).value
+    ).toContain('OpenAttestationMerkleProofSignature2018')
   })
 
   it('shows the TrustVC unsupported-version message when wrapping a v4 document', async () => {

@@ -187,7 +187,7 @@ the real-document half is what actually guards the bug.
 - **`useVerify.test.ts` mocks `@trustvc/trustvc` wholesale**, so a library helper that throws on a
   presentation goes unnoticed there. `useVerify.presentation.test.tsx` drives the hook against a
   real presentation with the library unmocked, and exists for that reason.
-- **Toolkit wrap goes through TrustVC only (`wrapOADocument` / `getDataV2`).** That helper wraps OA v2; OA v3 throws the SDK deprecation (`Please switch over to W3C VC.`); OA v4 and other shapes throw `Unsupported document version`. Do not add `@tradetrust-tt/tradetrust` or `@govtechsg/open-attestation` as direct deps for wrap. Encryption, DNS, and revoke already use `@trustvc/trustvc`.
+- **Toolkit wrap:** v2 through TrustVC `wrapOADocument` / `getDataV2`. v3 through tradetrust `__unsafe__use__it__at__your__own__risks__wrapDocument` already present via `@trustvc/trustvc` — do not add `@tradetrust-tt/tradetrust` or `@govtechsg/open-attestation` as website deps. OA v4 and other shapes throw `Unsupported document version`. Encryption, DNS, and revoke already use `@trustvc/trustvc`.
 
 ## Conventions
 

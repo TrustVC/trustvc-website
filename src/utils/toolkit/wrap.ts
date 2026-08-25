@@ -1,3 +1,4 @@
+import { __unsafe__use__it__at__your__own__risks__wrapDocument } from '@tradetrust-tt/tradetrust'
 import {
   diagnose,
   getDataV2,
@@ -6,16 +7,13 @@ import {
   isWrappedV2Document,
   isWrappedV3Document,
   wrapOADocument,
+  type DiagnoseError,
 } from '@trustvc/trustvc'
 import { INVALID_JSON_MESSAGE, type DocVersion } from './types'
 
 export type ParseResult =
   | { ok: true; value: unknown }
   | { ok: false; error: string }
-
-/** Same copy as `@trustvc/trustvc` `wrapOADocument` for OA v3. */
-export const OA_V3_WRAP_MESSAGE =
-  'OA v3 is deprecated in TrustVC as of 1 October 2025. Please switch over to W3C VC.'
 
 /** Same copy as `@trustvc/trustvc` `wrapOADocument` for non-v2/v3 documents. */
 export const OA_UNSUPPORTED_VERSION_MESSAGE = 'Unsupported document version'
@@ -74,7 +72,7 @@ export const diagnoseDocument = (
   document: unknown,
   version: DocVersion,
   kind: 'raw' | 'wrapped'
-): { message: string }[] => {
+): DiagnoseError[] => {
   if (version === '4.0') {
     return []
   }
@@ -87,7 +85,18 @@ export const diagnoseDocument = (
   })
 }
 
+export const formatDiagnoseError = (error: DiagnoseError): string =>
+  error.message
+
+export const formatDiagnoseMessage = (errors: DiagnoseError[]): string =>
+  ['Document is not valid:', ...errors.map(formatDiagnoseError)].join('\n')
+
 export const wrapRawDocument = async (document: unknown): Promise<unknown> => {
+  // TrustVC wrapOADocument rejects v3. Use tradetrust already installed
+  // through @trustvc/trustvc — do not add it as a website dependency.
+  if (isRawV3Document(document)) {
+    return __unsafe__use__it__at__your__own__risks__wrapDocument(document)
+  }
   return wrapOADocument(document as Parameters<typeof wrapOADocument>[0])
 }
 
