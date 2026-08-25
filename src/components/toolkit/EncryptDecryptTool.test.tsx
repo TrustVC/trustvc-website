@@ -2,18 +2,31 @@ import { describe, expect, it, vi } from 'vitest'
 import { render, screen } from '../../__tests__/test-utils'
 import userEvent from '@testing-library/user-event'
 import EncryptDecryptTool from './EncryptDecryptTool'
-import { decryptDocument } from '@/utils/toolkit/encrypt'
+import { decryptDocument, ENCRYPTED_PAYLOAD_OBJECT_MESSAGE } from '@/utils/toolkit/encrypt'
 
-vi.mock('@/utils/toolkit/encrypt', () => ({
-  generateEncryptionKey: () => 'test-key',
-  encryptDocument: vi.fn(() => ({
-    cipherText: 'aaa',
-    iv: 'bbb',
-    tag: 'ccc',
-    type: 'OPEN-ATTESTATION-TYPE-1',
-  })),
-  decryptDocument: vi.fn(() => JSON.stringify({ hello: 'world' }, null, 2)),
+const encryptFns = vi.hoisted(() => ({
+  decryptDocument: undefined as
+    | ((raw: string, fallbackKey?: string) => string)
+    | undefined,
 }))
+
+vi.mock('@/utils/toolkit/encrypt', async () => {
+  const actual = await vi.importActual<typeof import('@/utils/toolkit/encrypt')>(
+    '@/utils/toolkit/encrypt'
+  )
+  encryptFns.decryptDocument = actual.decryptDocument
+  return {
+    ...actual,
+    generateEncryptionKey: () => 'test-key',
+    encryptDocument: vi.fn(() => ({
+      cipherText: 'aaa',
+      iv: 'bbb',
+      tag: 'ccc',
+      type: 'OPEN-ATTESTATION-TYPE-1',
+    })),
+    decryptDocument: vi.fn(() => JSON.stringify({ hello: 'world' }, null, 2)),
+  }
+})
 
 describe('EncryptDecryptTool', () => {
   it('encrypts pasted JSON into a ciphertext payload', async () => {
@@ -79,5 +92,20 @@ describe('EncryptDecryptTool', () => {
         /output will appear here after you press run/i
       )
     ).toBeInTheDocument()
+  })
+
+  it('shows a fixed status when the decrypt payload is not a JSON object', async () => {
+    vi.mocked(decryptDocument).mockImplementationOnce((...args) =>
+      encryptFns.decryptDocument!(...args)
+    )
+    const user = userEvent.setup()
+    render(<EncryptDecryptTool isDarkMode={false} />)
+    await user.click(screen.getByRole('tab', { name: /^decrypt$/i }))
+    await user.click(screen.getByLabelText('Encrypted Payload'))
+    await user.paste('null')
+    await user.click(screen.getByLabelText('Decrypt document'))
+    expect(await screen.findByRole('status')).toHaveTextContent(
+      ENCRYPTED_PAYLOAD_OBJECT_MESSAGE
+    )
   })
 })

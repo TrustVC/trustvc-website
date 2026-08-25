@@ -37,6 +37,8 @@ const RevokeDocumentTool = ({ isDarkMode }: RevokeDocumentToolProps) => {
     changeNetwork,
     currentChainId,
     supportedChainInfoObjects,
+    networkChangeLoading,
+    setNetworkChangeLoading,
   } = useProviderContext()
   const [storeAddress, setStoreAddress] = useState('')
   const [documentHash, setDocumentHash] = useState('')
@@ -53,6 +55,21 @@ const RevokeDocumentTool = ({ isDarkMode }: RevokeDocumentToolProps) => {
   const signer = ethers.Signer.isSigner(providerOrSigner)
     ? providerOrSigner
     : undefined
+  const signerReadyOnChain = Boolean(signer) && Boolean(currentChainId)
+  const canConfirmRevoke =
+    connected &&
+    Boolean(storeAddress) &&
+    Boolean(documentHash) &&
+    !isSubmitting &&
+    !networkChangeLoading &&
+    signerReadyOnChain
+
+  const handleNetworkChange = async (chainId: CHAIN_ID) => {
+    if (String(chainId) === String(currentChainId)) return
+    setShowConfirm(false)
+    setNetworkChangeLoading(true)
+    await Promise.resolve(changeNetwork(chainId))
+  }
 
   const selectedNetwork = useMemo(
     () =>
@@ -179,7 +196,8 @@ const RevokeDocumentTool = ({ isDarkMode }: RevokeDocumentToolProps) => {
         account={account}
         selectedNetworkId={selectedNetwork?.id}
         networks={supportedChainInfoObjects}
-        onNetworkChange={changeNetwork}
+        networkBusy={networkChangeLoading}
+        onNetworkChange={handleNetworkChange}
         onConnect={() => void upgradeToMetaMaskSigner()}
       />
       <div className="flex w-full flex-col gap-5 md:w-3/5">
@@ -198,9 +216,7 @@ const RevokeDocumentTool = ({ isDarkMode }: RevokeDocumentToolProps) => {
         />
         <button
           type="button"
-          disabled={
-            !connected || !storeAddress || !documentHash || isSubmitting
-          }
+          disabled={!canConfirmRevoke}
           onClick={() => setShowConfirm(true)}
           className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-lg bg-alert-50 px-6 font-urbanist font-bold text-white disabled:opacity-40"
         >
@@ -218,7 +234,7 @@ const RevokeDocumentTool = ({ isDarkMode }: RevokeDocumentToolProps) => {
         <RevokeConfirmModal
           storeAddress={storeAddress}
           documentHash={documentHash}
-          isSubmitting={isSubmitting}
+          isSubmitting={isSubmitting || networkChangeLoading}
           onCancel={() => setShowConfirm(false)}
           onConfirm={() => void confirmRevoke()}
         />
@@ -231,18 +247,22 @@ const NetworkSelect = ({
   isDarkMode,
   selectedNetworkId,
   networks,
+  busy = false,
   onNetworkChange,
 }: {
   isDarkMode: boolean
   selectedNetworkId?: CHAIN_ID
   networks: chainInfo[]
-  onNetworkChange: (chainId: CHAIN_ID) => void
+  busy?: boolean
+  onNetworkChange: (chainId: CHAIN_ID) => void | Promise<void>
 }) => {
   const [open, setOpen] = useState(false)
+  const [pending, setPending] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
   const selected =
     networks.find(chain => chain.id === selectedNetworkId) || networks[0]
+  const switching = busy || pending
 
   useEffect(() => {
     if (!open) return
@@ -274,7 +294,11 @@ const NetworkSelect = ({
         aria-label="Network"
         aria-haspopup="listbox"
         aria-expanded={open}
-        onClick={() => setOpen(current => !current)}
+        disabled={switching}
+        onClick={() => {
+          if (switching) return
+          setOpen(current => !current)
+        }}
         onKeyDown={handleKeyDown}
         className={clsx(
           'flex h-10 w-full cursor-pointer items-center justify-between rounded-lg border py-0 pl-3 pr-2 font-avenir text-sm',
@@ -318,10 +342,19 @@ const NetworkSelect = ({
                 type="button"
                 role="option"
                 aria-selected={isSelected}
+                disabled={switching}
                 onClick={() => {
-                  onNetworkChange(chain.id)
-                  setOpen(false)
-                  triggerRef.current?.focus()
+                  if (switching) return
+                  void (async () => {
+                    setPending(true)
+                    try {
+                      await onNetworkChange(chain.id)
+                      setOpen(false)
+                      triggerRef.current?.focus()
+                    } finally {
+                      setPending(false)
+                    }
+                  })()
                 }}
                 className={clsx(
                   'w-full px-3 py-2 font-avenir text-sm text-left',
@@ -345,6 +378,7 @@ const WalletNetworkRow = ({
   account,
   selectedNetworkId,
   networks,
+  networkBusy,
   onNetworkChange,
   onConnect,
 }: {
@@ -353,7 +387,8 @@ const WalletNetworkRow = ({
   account: string | undefined
   selectedNetworkId?: CHAIN_ID
   networks: chainInfo[]
-  onNetworkChange: (chainId: CHAIN_ID) => void
+  networkBusy: boolean
+  onNetworkChange: (chainId: CHAIN_ID) => void | Promise<void>
   onConnect: () => void
 }) => {
   return (
@@ -366,6 +401,7 @@ const WalletNetworkRow = ({
           isDarkMode={isDarkMode}
           selectedNetworkId={selectedNetworkId}
           networks={networks}
+          busy={networkBusy}
           onNetworkChange={onNetworkChange}
         />
         <span

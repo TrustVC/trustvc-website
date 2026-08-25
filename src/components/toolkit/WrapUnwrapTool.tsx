@@ -6,6 +6,9 @@ import {
   diagnoseDocument,
   detectVersion,
   isRawDocument,
+  OA_UNSUPPORTED_VERSION_MESSAGE,
+  OA_UNWRAP_V2_ONLY_MESSAGE,
+  OA_V3_WRAP_MESSAGE,
   parseJsonDocument,
   prettyJson,
   unwrapDocument,
@@ -52,13 +55,15 @@ const WrapUnwrapTool = ({ isDarkMode }: WrapUnwrapToolProps) => {
           })
           return
         }
-        const errors = diagnoseDocument(parsed.value, version, 'raw')
-        if (errors.length > 0) {
-          setStatus({
-            kind: 'error',
-            message: `Document is not valid: ${errors.map(error => error.message).join('; ')}`,
-          })
-          return
+        if (version === '2.0') {
+          const errors = diagnoseDocument(parsed.value, version, 'raw')
+          if (errors.length > 0) {
+            setStatus({
+              kind: 'error',
+              message: 'Document is not valid.',
+            })
+            return
+          }
         }
         const wrapped = await wrapRawDocument(parsed.value)
         setOutput(prettyJson(wrapped))
@@ -73,7 +78,7 @@ const WrapUnwrapTool = ({ isDarkMode }: WrapUnwrapToolProps) => {
       if (errors.length > 0) {
         setStatus({
           kind: 'error',
-          message: `Document is not valid: ${errors.map(error => error.message).join('; ')}`,
+          message: 'Document is not valid.',
         })
         return
       }
@@ -84,12 +89,16 @@ const WrapUnwrapTool = ({ isDarkMode }: WrapUnwrapToolProps) => {
         message: 'Document unwrapped successfully.',
       })
     } catch (error) {
+      const sdkMessage =
+        error instanceof Error &&
+        (error.message === OA_V3_WRAP_MESSAGE ||
+          error.message === OA_UNSUPPORTED_VERSION_MESSAGE ||
+          error.message === OA_UNWRAP_V2_ONLY_MESSAGE)
+          ? error.message
+          : 'Unable to process this document.'
       setStatus({
         kind: 'error',
-        message:
-          error instanceof Error
-            ? error.message
-            : 'Unable to process this document.',
+        message: sdkMessage,
       })
     }
   }

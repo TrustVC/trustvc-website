@@ -31,7 +31,8 @@ describe('DnsResolverTool', () => {
     render(<DnsResolverTool isDarkMode={false} />)
     await user.type(screen.getByLabelText('Domain:'), 'example.com')
     await user.click(screen.getByRole('button', { name: /resolve txt/i }))
-    expect(await screen.findByText('dns down')).toBeInTheDocument()
+    expect(await screen.findByText('Get records failed')).toBeInTheDocument()
+    expect(screen.queryByText('dns down')).not.toBeInTheDocument()
   })
 
   it('renders a table of DID and TXT records when found', async () => {

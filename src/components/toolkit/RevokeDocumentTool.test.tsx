@@ -1,9 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { render, screen } from '../../__tests__/test-utils'
+import { render, screen, waitFor } from '../../__tests__/test-utils'
 import userEvent from '@testing-library/user-event'
 import RevokeDocumentTool from './RevokeDocumentTool'
 
-const walletState = vi.hoisted(() => ({ connected: false }))
+const walletState = vi.hoisted(() => ({
+  connected: false,
+  networkChangeLoading: false,
+  changeNetwork: vi.fn(),
+  setNetworkChangeLoading: vi.fn(),
+}))
 
 vi.mock('@/components/common/contexts/providerContext', async () => {
   const actual = await vi.importActual<
@@ -16,20 +21,39 @@ vi.mock('@/components/common/contexts/providerContext', async () => {
       providerType: walletState.connected
         ? actual.SIGNER_TYPE.METAMASK
         : actual.SIGNER_TYPE.NONE,
-      providerOrSigner: undefined,
+      providerOrSigner: walletState.connected ? { _isSigner: true } : undefined,
       upgradeToMetaMaskSigner: vi.fn(),
-      changeNetwork: vi.fn(),
+      changeNetwork: walletState.changeNetwork,
       currentChainId: '1',
       supportedChainInfoObjects: [
         { id: '1', label: 'Ethereum', name: 'homestead' },
+        { id: '137', label: 'Polygon', name: 'matic' },
       ],
+      networkChangeLoading: walletState.networkChangeLoading,
+      setNetworkChangeLoading: walletState.setNetworkChangeLoading,
     }),
   }
 })
 
+const fillRevokeFields = async (
+  user: ReturnType<typeof userEvent.setup>
+) => {
+  const storeAddress = '0xA594f6e10564e87888425c7CC3910FE1c800aB0B'
+  const documentHash =
+    '0x9a1c8f2e7b3d4a5e6c1f0b2d9e8a7c6b5d4e3f2a9a1c8f2e7b3d4a5e6c1f0b2d'
+  await user.type(screen.getByLabelText('Store Address'), storeAddress)
+  await user.type(
+    screen.getByLabelText('Certificate Hash To Revoke'),
+    documentHash
+  )
+}
+
 describe('RevokeDocumentTool', () => {
   beforeEach(() => {
     walletState.connected = false
+    walletState.networkChangeLoading = false
+    walletState.changeNetwork.mockReset()
+    walletState.setNetworkChangeLoading.mockReset()
   })
 
   it('shows the connect-wallet state until a wallet is connected', () => {
@@ -48,21 +72,30 @@ describe('RevokeDocumentTool', () => {
     const user = userEvent.setup()
     render(<RevokeDocumentTool isDarkMode={false} />)
 
-    const storeAddress = '0xA594f6e10564e87888425c7CC3910FE1c800aB0B'
-    const documentHash =
-      '0x9a1c8f2e7b3d4a5e6c1f0b2d9e8a7c6b5d4e3f2a9a1c8f2e7b3d4a5e6c1f0b2d'
+    await fillRevokeFields(user)
 
-    await user.type(screen.getByLabelText('Store Address'), storeAddress)
-    await user.type(
-      screen.getByLabelText('Certificate Hash To Revoke'),
-      documentHash
-    )
-
-    expect(screen.getByDisplayValue(storeAddress)).toBeInTheDocument()
-    expect(screen.getByDisplayValue(documentHash)).toBeInTheDocument()
+    expect(
+      screen.getByDisplayValue(
+        '0xA594f6e10564e87888425c7CC3910FE1c800aB0B'
+      )
+    ).toBeInTheDocument()
     expect(
       screen.getByRole('button', { name: /^revoke document$/i })
     ).toBeEnabled()
+  })
+
+  it('keeps revoke confirmation disabled while the network switch is in progress', async () => {
+    walletState.connected = true
+    walletState.networkChangeLoading = true
+    const user = userEvent.setup()
+    render(<RevokeDocumentTool isDarkMode={false} />)
+
+    await fillRevokeFields(user)
+
+    expect(
+      screen.getByRole('button', { name: /^revoke document$/i })
+    ).toBeDisabled()
+    expect(screen.getByRole('button', { name: /network/i })).toBeDisabled()
   })
 
   it('opens a custom network listbox from a button trigger', async () => {
@@ -80,5 +113,35 @@ describe('RevokeDocumentTool', () => {
     expect(
       screen.getByRole('option', { name: /ethereum network/i })
     ).toBeInTheDocument()
+  })
+
+  it('keeps the network listbox open until the provider switch settles', async () => {
+    walletState.connected = true
+    let resolveSwitch: () => void = () => {}
+    const switchPending = new Promise<void>(resolve => {
+      resolveSwitch = resolve
+    })
+    walletState.changeNetwork.mockReturnValue(switchPending)
+
+    const user = userEvent.setup()
+    render(<RevokeDocumentTool isDarkMode={false} />)
+
+    const trigger = screen.getByRole('button', { name: /network/i })
+    await user.click(trigger)
+    await user.click(screen.getByRole('option', { name: /polygon network/i }))
+
+    expect(walletState.setNetworkChangeLoading).toHaveBeenCalledWith(true)
+    expect(walletState.changeNetwork).toHaveBeenCalledWith('137')
+    expect(trigger).toHaveAttribute('aria-expanded', 'true')
+    expect(
+      screen.getByRole('option', { name: /polygon network/i })
+    ).toBeInTheDocument()
+
+    resolveSwitch()
+
+    await waitFor(() => {
+      expect(trigger).toHaveAttribute('aria-expanded', 'false')
+    })
+    expect(screen.queryByRole('listbox')).not.toBeInTheDocument()
   })
 })

@@ -6,6 +6,7 @@ import {
   generateEncryptionKey,
   loadEncryptedFromActionUrl,
   parseEncryptedPayload,
+  ENCRYPTED_PAYLOAD_OBJECT_MESSAGE,
 } from './encrypt'
 import { INVALID_JSON_MESSAGE } from './types'
 
@@ -42,6 +43,26 @@ describe('toolkit encrypt', () => {
     expect(() =>
       parseEncryptedPayload(JSON.stringify({ cipherText: 'x' }))
     ).toThrow(/Missing/)
+  })
+
+  it('rejects null, arrays, and other non-objects instead of using in on them', () => {
+    const nonObjects = ['null', '[]', '42', '"x"', 'true']
+    for (const raw of nonObjects) {
+      expect(() => parseEncryptedPayload(raw)).toThrow(
+        ENCRYPTED_PAYLOAD_OBJECT_MESSAGE
+      )
+      expect(() => decryptDocument(raw)).toThrow(
+        ENCRYPTED_PAYLOAD_OBJECT_MESSAGE
+      )
+      expect(() => decryptDocument(raw)).not.toThrow(INVALID_JSON_MESSAGE)
+    }
+  })
+
+  it('keeps INVALID_JSON_MESSAGE for malformed JSON', () => {
+    expect(() => parseEncryptedPayload('not-json')).toThrow(
+      INVALID_JSON_MESSAGE
+    )
+    expect(() => decryptDocument('not-json')).toThrow(INVALID_JSON_MESSAGE)
   })
 
   it('loads an encrypted document from an action URL', async () => {

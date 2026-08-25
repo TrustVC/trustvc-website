@@ -35,7 +35,8 @@ const DnsResolverTool = ({ isDarkMode }: DnsResolverToolProps) => {
       if (requestId !== requestIdRef.current) return
       setResult(null)
       setStatus('failed')
-      setError(err instanceof Error ? err.message : 'Get records failed')
+      const message = err instanceof Error ? err.message : ''
+      setError(/enter a domain/i.test(message) ? message : 'Get records failed')
     }
   }
 
@@ -61,6 +62,7 @@ const DnsResolverTool = ({ isDarkMode }: DnsResolverToolProps) => {
             id="toolkit-dns-domain"
             value={domain}
             onChange={event => {
+              requestIdRef.current += 1
               setDomain(event.target.value)
               setStatus('idle')
             }}

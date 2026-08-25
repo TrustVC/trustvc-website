@@ -13,6 +13,12 @@ export type EncryptedPayload = Omit<IEncryptionResults, 'key'> & {
 
 const REQUIRED_KEYS = ['cipherText', 'iv', 'tag', 'key', 'type'] as const
 
+export const ENCRYPTED_PAYLOAD_OBJECT_MESSAGE =
+  'Encrypted payload must be a JSON object.'
+
+const isJsonObject = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null && !Array.isArray(value)
+
 export { generateEncryptionKey }
 
 export const encryptDocument = (
@@ -28,11 +34,14 @@ export const encryptDocument = (
 }
 
 export const parseEncryptedPayload = (raw: string): IEncryptionResults => {
-  let parsed: EncryptedPayload
+  let parsed: unknown
   try {
-    parsed = JSON.parse(raw) as EncryptedPayload
+    parsed = JSON.parse(raw)
   } catch {
     throw new Error(INVALID_JSON_MESSAGE)
+  }
+  if (!isJsonObject(parsed)) {
+    throw new Error(ENCRYPTED_PAYLOAD_OBJECT_MESSAGE)
   }
   const missing = REQUIRED_KEYS.filter(field => !(field in parsed))
   if (missing.length > 0) {
@@ -41,22 +50,26 @@ export const parseEncryptedPayload = (raw: string): IEncryptionResults => {
   if (typeof parsed.key !== 'string' || parsed.key.length === 0) {
     throw new Error('Missing key')
   }
-  return { ...parsed, key: parsed.key }
+  return { ...(parsed as EncryptedPayload), key: parsed.key }
 }
 
 export const decryptDocument = (
   rawEncrypted: string,
   fallbackKey?: string
 ): string => {
-  let parsed: EncryptedPayload
+  let parsed: unknown
   try {
-    parsed = JSON.parse(rawEncrypted) as EncryptedPayload
+    parsed = JSON.parse(rawEncrypted)
   } catch {
     throw new Error(INVALID_JSON_MESSAGE)
   }
+  if (!isJsonObject(parsed)) {
+    throw new Error(ENCRYPTED_PAYLOAD_OBJECT_MESSAGE)
+  }
+  const payload = parsed as EncryptedPayload
   const encrypted = parseEncryptedPayload(
     JSON.stringify(
-      parsed.key || !fallbackKey ? parsed : { ...parsed, key: fallbackKey }
+      payload.key || !fallbackKey ? payload : { ...payload, key: fallbackKey }
     )
   )
   const decrypted = decryptString(encrypted)

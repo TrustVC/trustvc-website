@@ -13,6 +13,16 @@ export type ParseResult =
   | { ok: true; value: unknown }
   | { ok: false; error: string }
 
+/** Same copy as `@trustvc/trustvc` `wrapOADocument` for OA v3. */
+export const OA_V3_WRAP_MESSAGE =
+  'OA v3 is deprecated in TrustVC as of 1 October 2025. Please switch over to W3C VC.'
+
+/** Same copy as `@trustvc/trustvc` `wrapOADocument` for non-v2/v3 documents. */
+export const OA_UNSUPPORTED_VERSION_MESSAGE = 'Unsupported document version'
+
+export const OA_UNWRAP_V2_ONLY_MESSAGE =
+  'Unwrap is only supported for OpenAttestation v2 documents.'
+
 export const parseJsonDocument = (raw: string): ParseResult => {
   const trimmed = raw.trim()
   if (!trimmed) {
@@ -46,7 +56,10 @@ const looksLikeV4 = (document: unknown): boolean => {
   const context = record['@context']
   if (Array.isArray(context)) {
     return context.some(
-      item => typeof item === 'string' && item.includes('open-attestation/4')
+      item =>
+        typeof item === 'string' &&
+        (item.includes('open-attestation/4') ||
+          item.includes('openattestation/4'))
     )
   }
   return false
@@ -63,12 +76,7 @@ export const diagnoseDocument = (
   kind: 'raw' | 'wrapped'
 ): { message: string }[] => {
   if (version === '4.0') {
-    return [
-      {
-        message:
-          'OA v4 wrap is not available on the TrustVC stack. Use v2, or migrate to W3C VC.',
-      },
-    ]
+    return []
   }
   return diagnose({
     version,
@@ -80,28 +88,12 @@ export const diagnoseDocument = (
 }
 
 export const wrapRawDocument = async (document: unknown): Promise<unknown> => {
-  const version = detectVersion(document)
-  if (version === '2.0' && isRawV2Document(document)) {
-    return wrapOADocument(document)
-  }
-  if (version === '3.0') {
-    throw new Error(
-      'OA v3 wrap is not available on the TrustVC stack. Use a v2 document.'
-    )
-  }
-  if (version === '4.0') {
-    throw new Error(
-      'OA v4 wrap is not available on the TrustVC stack. Use v2, or migrate to W3C VC.'
-    )
-  }
-  throw new Error('Unsupported document version')
+  return wrapOADocument(document as Parameters<typeof wrapOADocument>[0])
 }
 
 export const unwrapDocument = (document: unknown): unknown => {
   if (!isWrappedV2Document(document)) {
-    throw new Error(
-      'Unwrap is only supported for OpenAttestation v2 documents.'
-    )
+    throw new Error(OA_UNWRAP_V2_ONLY_MESSAGE)
   }
   return getDataV2(document)
 }
