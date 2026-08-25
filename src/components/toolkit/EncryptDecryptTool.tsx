@@ -90,7 +90,7 @@ const EncryptDecryptTool = ({
 
   return (
     <div className="flex flex-col gap-4 p-4 sm:p-6 lg:p-8 min-w-0">
-      <div className="flex flex-col sm:flex-row sm:items-center gap-3 min-w-0">
+      <div className="flex w-full min-w-0 flex-col items-stretch gap-4 md:flex-row md:items-center md:gap-3">
         <ModeToggle
           value={mode}
           options={[
@@ -110,10 +110,10 @@ const EncryptDecryptTool = ({
           aria-label="Key"
           placeholder="tvc-preview-key"
           className={clsx(
-            'flex-1 min-w-0 h-10 px-3 rounded-lg border font-mono text-xs',
+            'h-11 w-full min-w-0 rounded-lg border px-3 font-mono text-sm md:h-10 md:flex-1 md:text-xs',
             isDarkMode
-              ? 'bg-transparent border-white/20 text-neutral-60'
-              : 'bg-white border-neutral-50 text-neutral-10'
+              ? 'bg-transparent border-white/20 text-neutral-60 placeholder:text-neutral-30'
+              : 'bg-white border-neutral-50 text-neutral-10 placeholder:text-neutral-30'
           )}
         />
         {mode === 'encrypt' && (
@@ -124,7 +124,7 @@ const EncryptDecryptTool = ({
               setEncryptOutput('')
               setStatus(null)
             }}
-            className="h-10 shrink-0 rounded-lg bg-gradient-to-r from-primary-60 to-secondary-60 px-5 font-urbanist text-sm font-bold text-white"
+            className="h-11 w-full shrink-0 rounded-lg bg-gradient-to-r from-primary-60 to-secondary-60 px-5 font-urbanist text-sm font-bold text-white md:h-10 md:w-auto"
           >
             Generate
           </button>

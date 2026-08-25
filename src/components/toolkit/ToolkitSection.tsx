@@ -97,37 +97,49 @@ const ToolkitSection = ({
         >
           <div
             className={clsx(
-              'flex items-center gap-3 px-4 sm:px-6 py-4 border-b',
-              isDarkMode ? 'border-white/10' : 'border-neutral-60'
+              'flex flex-col gap-3 px-4 py-4 md:flex-row md:items-center md:gap-3 md:px-6',
+              isDarkMode
+                ? 'border-b border-white/10'
+                : 'border-b border-neutral-60'
             )}
           >
-            <div className="w-10 h-10 sm:w-[53px] sm:h-[53px] rounded-[10px] bg-[#dfe1ff] flex items-center justify-center shrink-0">
-              <ToolkitIcon src={copy.icon} alt="" size={24} />
+            <div className="flex min-w-0 items-center gap-3 md:flex-1">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-[#dfe1ff] md:h-[53px] md:w-[53px]">
+                <ToolkitIcon src={copy.icon} alt="" size={24} />
+              </div>
+              <div className="min-w-0 flex-1 text-left">
+                <h3
+                  className={clsx(
+                    'font-urbanist font-bold not-italic text-[1.125rem] leading-[1.21875rem] text-left',
+                    isDarkMode ? 'text-neutral-60' : 'text-neutral-10'
+                  )}
+                >
+                  {copy.title}
+                </h3>
+                <p
+                  className={clsx(
+                    'mt-1 hidden font-avenir text-[0.875rem] font-normal not-italic leading-[1.125rem] text-left md:block',
+                    isDarkMode ? 'text-neutral-50' : 'text-neutral-30'
+                  )}
+                >
+                  {copy.description}
+                </p>
+              </div>
             </div>
-            <div className="min-w-0 flex-1 text-left">
-              <h3
-                className={clsx(
-                  'font-urbanist font-bold not-italic text-[1.125rem] leading-[1.21875rem] text-left',
-                  isDarkMode ? 'text-neutral-60' : 'text-neutral-10'
-                )}
-              >
-                {copy.title}
-              </h3>
-              <p
-                className={clsx(
-                  'font-avenir font-normal not-italic text-[0.875rem] leading-[1.125rem] mt-1 text-left',
-                  isDarkMode ? 'text-neutral-50' : 'text-neutral-30'
-                )}
-              >
-                {copy.description}
-              </p>
-            </div>
+            <p
+              className={clsx(
+                'font-avenir text-[0.875rem] font-normal not-italic leading-[1.125rem] text-left md:hidden',
+                isDarkMode ? 'text-neutral-50' : 'text-neutral-30'
+              )}
+            >
+              {copy.description}
+            </p>
             {active === 'encrypt' && (
               <button
                 type="button"
                 onClick={() => setEncryptSampleTick(tick => tick + 1)}
                 className={clsx(
-                  'shrink-0 inline-flex items-center gap-1.5 font-urbanist font-bold text-sm self-start sm:self-center',
+                  'inline-flex shrink-0 items-center gap-1.5 self-start font-urbanist text-sm font-bold md:self-center',
                   isDarkMode ? 'text-primary-90' : 'text-primary-50'
                 )}
               >

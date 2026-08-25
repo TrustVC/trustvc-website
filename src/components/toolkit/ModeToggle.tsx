@@ -15,7 +15,7 @@ const ModeToggle = <T extends string>({
 }: ModeToggleProps<T>) => (
   <div
     className={clsx(
-      'inline-flex items-center gap-0.5 p-[5px] rounded-full border',
+      'inline-flex w-fit shrink-0 items-center gap-0.5 p-[5px] rounded-full border',
       isDarkMode
         ? 'bg-white/5 border-white/10'
         : 'bg-neutral-60 border-neutral-50'
