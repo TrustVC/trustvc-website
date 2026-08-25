@@ -73,4 +73,25 @@ describe('toolkit encrypt', () => {
     expect(loaded.payload.key).toBe('abc123')
     vi.unstubAllGlobals()
   })
+
+  it('rejects a 2xx action-URL response that is not an encrypted payload', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        status: 200,
+        json: async () => ({ document: { hello: 'world' } }),
+      })
+    )
+    const action = encodeURIComponent(
+      JSON.stringify({
+        type: 'DOCUMENT',
+        payload: { uri: 'https://example.com/doc.json' },
+      })
+    )
+    const anchor = encodeURIComponent(JSON.stringify({ key: 'abc123' }))
+    await expect(
+      loadEncryptedFromActionUrl(`https://trustvc.io/?q=${action}#${anchor}`)
+    ).rejects.toThrow(/Missing/)
+    vi.unstubAllGlobals()
+  })
 })

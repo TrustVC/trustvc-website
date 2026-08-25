@@ -27,6 +27,7 @@ const WrapUnwrapTool = ({ isDarkMode }: WrapUnwrapToolProps) => {
 
   const run = async () => {
     setStatus(null)
+    setOutput('')
     const parsed = parseJsonDocument(input)
     if (!parsed.ok) {
       setStatus({ kind: 'error', message: parsed.error })

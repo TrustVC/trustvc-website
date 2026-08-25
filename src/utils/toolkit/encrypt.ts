@@ -100,8 +100,9 @@ export const loadEncryptedFromActionUrl = async (
   let document = await response.json()
   document = document.document || document
 
+  const payload = parseEncryptedPayload(JSON.stringify({ ...document, key }))
   return {
-    payload: { ...document, key },
+    payload,
     key: key as string,
   }
 }

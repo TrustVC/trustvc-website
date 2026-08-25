@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { render, screen } from '../../__tests__/test-utils'
 import userEvent from '@testing-library/user-event'
 import RevokeDocumentTool from './RevokeDocumentTool'
+import oaDnsTxtDocstoreV2 from '../../__tests__/__fixtures__/oa/2.0/signed_wrapped_oa_dns_txt_docstore_v2.json'
 
 vi.mock('@/components/common/contexts/providerContext', async () => {
   const actual = await vi.importActual<
@@ -38,13 +39,7 @@ describe('RevokeDocumentTool', () => {
     const user = userEvent.setup()
     render(<RevokeDocumentTool isDarkMode={false} />)
     await user.click(screen.getByLabelText('Document JSON'))
-    await user.paste(
-      JSON.stringify({
-        storeAddress: '0x8bA63EAB43342AAc3AdBB4B5516A32c0aBc1d394',
-        documentHash:
-          '0x1111111111111111111111111111111111111111111111111111111111111111',
-      })
-    )
+    await user.paste(JSON.stringify(oaDnsTxtDocstoreV2))
     await user.click(
       screen.getByRole('button', { name: /extract store and hash/i })
     )
@@ -54,7 +49,7 @@ describe('RevokeDocumentTool', () => {
       )
     ).toBeInTheDocument()
     expect(
-      screen.getByDisplayValue('0x8bA63EAB43342AAc3AdBB4B5516A32c0aBc1d394')
+      screen.getByDisplayValue('0xA594f6e10564e87888425c7CC3910FE1c800aB0B')
     ).toBeInTheDocument()
     expect(
       screen.getByRole('button', { name: /connect wallet to revoke/i })

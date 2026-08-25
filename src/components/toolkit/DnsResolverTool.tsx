@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import clsx from 'clsx'
 import { DNS_SAMPLE_DOMAINS } from '@/utils/toolkit/types'
 import {
@@ -20,15 +20,19 @@ const DnsResolverTool = ({ isDarkMode }: DnsResolverToolProps) => {
   const [status, setStatus] = useState<DnsLookupStatus>('idle')
   const [result, setResult] = useState<DnsLookupResult | null>(null)
   const [error, setError] = useState('')
+  const requestIdRef = useRef(0)
 
   const resolve = async (value = domain) => {
+    const requestId = ++requestIdRef.current
     setError('')
     setStatus('loading')
     try {
       const records = await lookupDnsRecords(value)
+      if (requestId !== requestIdRef.current) return
       setResult(records)
       setStatus(totalDnsRecords(records) === 0 ? 'empty' : 'found')
     } catch (err) {
+      if (requestId !== requestIdRef.current) return
       setResult(null)
       setStatus('failed')
       setError(err instanceof Error ? err.message : 'Get records failed')
@@ -247,7 +251,8 @@ const DnsResultsTable = ({
             isDarkMode ? 'text-neutral-60' : 'text-neutral-10'
           )}
         >
-          TXT records for <span className="font-extrabold">{domain}</span>
+          OpenAttestation records for{' '}
+          <span className="font-extrabold">{domain}</span>
         </p>
         <div className="flex items-center gap-2 shrink-0">
           <span

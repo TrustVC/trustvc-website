@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import clsx from 'clsx'
 import ToolkitIcon from './ToolkitIcon'
 import { TOOLKIT_ASSETS } from './assets'
@@ -27,9 +28,16 @@ const JsonPanel = ({
   showDownload = false,
   downloadName = 'document.json',
 }: JsonPanelProps) => {
+  const [copyError, setCopyError] = useState(false)
+
   const copyValue = async () => {
     if (!value) return
-    await navigator.clipboard.writeText(value)
+    try {
+      await navigator.clipboard.writeText(value)
+      setCopyError(false)
+    } catch {
+      setCopyError(true)
+    }
   }
 
   const downloadValue = () => {
@@ -56,6 +64,15 @@ const JsonPanel = ({
           {label}
         </label>
         <div className="flex items-center gap-1.5">
+          {copyError && (
+            <span
+              role="status"
+              aria-live="polite"
+              className="font-avenir text-xs text-[#E62617]"
+            >
+              Copy failed
+            </span>
+          )}
           <button
             type="button"
             onClick={copyValue}

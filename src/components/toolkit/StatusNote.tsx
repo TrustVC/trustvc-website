@@ -22,6 +22,9 @@ const StatusNote = ({ kind, message }: StatusNoteProps) => {
         size={20}
       />
       <span
+        role="status"
+        aria-live={kind === 'error' ? 'assertive' : 'polite'}
+        aria-atomic="true"
         className="font-avenir text-sm leading-[21px] break-words text-left"
         style={{
           color,
