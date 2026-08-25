@@ -17,6 +17,9 @@ is **which failure the user is told about, and in what words** — that is where
 
 ```text
 src/main.tsx                       entry; src/routes.tsx defines routes
+src/pages/Toolkit/                 developer utilities at /toolkit (wrap, DNS, encrypt, revoke)
+src/components/toolkit/            Toolkit page UI
+src/utils/toolkit/                 wrap/unwrap, DNS, encrypt, OA doc-store revoke helpers
 src/components/home/VerifySection/ the verifier — drop zone, hook, results, error copy
 src/components/AssetManagementPanel/ title-escrow / transferable-record actions
 src/gasless/                       gasless transaction hooks
@@ -184,6 +187,9 @@ the real-document half is what actually guards the bug.
 - **`useVerify.test.ts` mocks `@trustvc/trustvc` wholesale**, so a library helper that throws on a
   presentation goes unnoticed there. `useVerify.presentation.test.tsx` drives the hook against a
   real presentation with the library unmocked, and exists for that reason.
+- **Toolkit wrap uses `@tradetrust-tt/tradetrust`, not TrustVC `wrapOADocument`.** TrustVC's wrap
+  helper rejects OA v3. `/toolkit` wrap/unwrap must stay on tradetrust so v2 wrap + v3 wrap + v2
+  unwrap keep working. Encryption and DNS go through `@trustvc/trustvc`.
 
 ## Conventions
 
