@@ -42,41 +42,41 @@ type ToolkitTabsProps = {
 }
 
 const ToolkitTabs = ({ active, onChange, isDarkMode }: ToolkitTabsProps) => (
-  <div
-    className="grid w-full min-w-0 grid-cols-2 sm:grid-cols-4"
-    role="tablist"
-  >
-    {TABS.map((tab, index) => {
-      const selected = tab.id === active
-      return (
-        <button
-          key={tab.id}
-          type="button"
-          role="tab"
-          aria-label={tab.label}
-          aria-selected={selected}
-          onClick={() => onChange(tab.id)}
-          className={clsx(
-            'flex w-full min-w-0 items-center justify-center gap-2 px-3 sm:px-4 py-3 border font-urbanist font-bold text-sm sm:text-base',
-            index === 0 && 'rounded-tl-2xl',
-            index === 1 && 'rounded-tr-2xl sm:rounded-tr-none',
-            index === TABS.length - 1 && 'sm:rounded-tr-2xl',
-            selected
-              ? isDarkMode
-                ? 'bg-neutral-10/80 border-white/10 border-b-transparent'
-                : 'bg-white border-neutral-50/33 border-b-white'
-              : isDarkMode
-                ? 'bg-white/5 border-white/10'
-                : 'bg-white/40 border-neutral-50/33',
-            isDarkMode ? 'text-neutral-60' : 'text-neutral-10'
-          )}
-        >
-          <ToolkitIcon src={tab.icon} alt="" size={24} />
-          <span className="truncate sm:hidden">{tab.shortLabel}</span>
-          <span className="hidden sm:inline truncate">{tab.label}</span>
-        </button>
-      )
-    })}
+  <div className="flex w-full justify-center">
+    <div
+      className="flex w-fit max-w-full flex-wrap sm:flex-nowrap items-end justify-center gap-1"
+      role="tablist"
+    >
+      {TABS.map(tab => {
+        const selected = tab.id === active
+        let tabText = 'text-neutral-30'
+        if (selected) {
+          tabText = isDarkMode ? 'text-neutral-60' : 'text-neutral-10'
+        }
+        return (
+          <button
+            key={tab.id}
+            type="button"
+            role="tab"
+            aria-label={tab.label}
+            aria-selected={selected}
+            onClick={() => onChange(tab.id)}
+            className={clsx(
+              'flex min-w-[9.5rem] sm:min-w-[13.5rem] shrink-0 cursor-pointer items-center justify-center gap-2 px-4 sm:px-6 py-3 font-urbanist font-bold not-italic text-[1.125rem] leading-[136%] rounded-t-xl border border-neutral-50/33',
+              selected && 'relative z-10 border-b-transparent bg-base-66-l1',
+              !selected && 'bg-white/33',
+              tabText
+            )}
+          >
+            <ToolkitIcon src={tab.icon} alt="" size={24} />
+            <span className="sm:hidden">{tab.shortLabel}</span>
+            <span className="hidden sm:inline whitespace-nowrap">
+              {tab.label}
+            </span>
+          </button>
+        )
+      })}
+    </div>
   </div>
 )
 

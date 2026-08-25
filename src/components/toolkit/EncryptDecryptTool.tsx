@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import clsx from 'clsx'
 import ModeToggle from './ModeToggle'
 import DualJsonPanes from './DualJsonPanes'
@@ -8,7 +8,6 @@ import {
   decryptDocument,
   encryptDocument,
   generateEncryptionKey,
-  loadEncryptedFromActionUrl,
 } from '@/utils/toolkit/encrypt'
 
 type EncryptDecryptToolProps = {
@@ -16,43 +15,63 @@ type EncryptDecryptToolProps = {
   sampleTick?: number
 }
 
+const SAMPLE_JSON = JSON.stringify(SAMPLE_RAW_V2_DOCUMENT, null, 2)
+
 const EncryptDecryptTool = ({
   isDarkMode,
   sampleTick = 0,
 }: EncryptDecryptToolProps) => {
   const [mode, setMode] = useState<'encrypt' | 'decrypt'>('encrypt')
-  const [key, setKey] = useState(() => generateEncryptionKey())
-  const [rawDocument, setRawDocument] = useState('')
-  const [encryptedDocument, setEncryptedDocument] = useState('')
-  const [url, setUrl] = useState('')
+  const [key, setKey] = useState('')
+  const [encryptInput, setEncryptInput] = useState('')
+  const [encryptOutput, setEncryptOutput] = useState('')
+  const [decryptInput, setDecryptInput] = useState('')
+  const [decryptOutput, setDecryptOutput] = useState('')
   const [status, setStatus] = useState<{
     kind: 'success' | 'error'
     message: string
   } | null>(null)
 
+  const modeRef = useRef(mode)
+  const keyRef = useRef(key)
+  modeRef.current = mode
+  keyRef.current = key
+
   useEffect(() => {
     if (sampleTick === 0) return
-    setRawDocument(JSON.stringify(SAMPLE_RAW_V2_DOCUMENT, null, 2))
-    setEncryptedDocument('')
-    setMode('encrypt')
     setStatus(null)
+    if (modeRef.current === 'decrypt') {
+      try {
+        const sampleKey = keyRef.current || generateEncryptionKey()
+        setKey(sampleKey)
+        const encrypted = encryptDocument(SAMPLE_JSON, sampleKey)
+        setDecryptInput(JSON.stringify(encrypted, undefined, 2))
+        setDecryptOutput('')
+      } catch {
+        setDecryptInput('')
+        setDecryptOutput('')
+      }
+      return
+    }
+    setEncryptInput(SAMPLE_JSON)
+    setEncryptOutput('')
   }, [sampleTick])
 
   const run = () => {
     setStatus(null)
     try {
       if (mode === 'encrypt') {
-        const encrypted = encryptDocument(rawDocument, key)
-        setEncryptedDocument(JSON.stringify(encrypted, undefined, 2))
+        const encrypted = encryptDocument(encryptInput, key)
+        setEncryptOutput(JSON.stringify(encrypted, undefined, 2))
         setStatus({
           kind: 'success',
           message: 'Document encrypted successfully.',
         })
         return
       }
-      const decrypted = decryptDocument(encryptedDocument, key)
-      setRawDocument(decrypted)
-      const parsed = JSON.parse(encryptedDocument) as { key?: string }
+      const decrypted = decryptDocument(decryptInput, key)
+      setDecryptOutput(decrypted)
+      const parsed = JSON.parse(decryptInput) as { key?: string }
       if (parsed.key) setKey(parsed.key)
       setStatus({
         kind: 'success',
@@ -65,29 +84,6 @@ const EncryptDecryptTool = ({
           error instanceof Error
             ? error.message
             : 'Unable to process document.',
-      })
-    }
-  }
-
-  const loadFromUrl = async () => {
-    setStatus(null)
-    try {
-      const loaded = await loadEncryptedFromActionUrl(url)
-      setKey(loaded.key)
-      setEncryptedDocument(JSON.stringify(loaded.payload, undefined, 2))
-      setRawDocument('')
-      setMode('decrypt')
-      setStatus({
-        kind: 'success',
-        message: 'Encrypted document loaded from action URL.',
-      })
-    } catch (error) {
-      setStatus({
-        kind: 'error',
-        message:
-          error instanceof Error
-            ? error.message
-            : 'Unable to load document from URL.',
       })
     }
   }
@@ -120,75 +116,64 @@ const EncryptDecryptTool = ({
               : 'bg-white border-neutral-50 text-neutral-10'
           )}
         />
-      </div>
-
-      {mode === 'decrypt' && (
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-          <label
-            htmlFor="toolkit-encrypt-url"
-            className={clsx(
-              'shrink-0 font-urbanist font-bold text-sm',
-              isDarkMode ? 'text-neutral-60' : 'text-neutral-10'
-            )}
-          >
-            URL
-          </label>
-          <input
-            id="toolkit-encrypt-url"
-            value={url}
-            onChange={event => setUrl(event.target.value)}
-            placeholder="Paste an action URL with ?q= and #key"
-            className={clsx(
-              'flex-1 h-10 px-3 rounded-lg border font-mono text-xs',
-              isDarkMode
-                ? 'bg-transparent border-white/20 text-neutral-60'
-                : 'bg-white border-neutral-50 text-neutral-10'
-            )}
-          />
+        {mode === 'encrypt' && (
           <button
             type="button"
-            onClick={() => void loadFromUrl()}
-            className="h-10 px-4 rounded-lg font-urbanist font-bold text-sm text-white bg-gradient-to-r from-primary-60 to-secondary-60"
+            onClick={() => {
+              setKey(generateEncryptionKey())
+              setEncryptOutput('')
+              setStatus(null)
+            }}
+            className="h-10 shrink-0 rounded-lg bg-gradient-to-r from-primary-60 to-secondary-60 px-5 font-urbanist text-sm font-bold text-white"
           >
-            Load
+            Generate
           </button>
-        </div>
-      )}
+        )}
+      </div>
 
       <DualJsonPanes
         isDarkMode={isDarkMode}
         onRun={run}
         runLabel={mode === 'encrypt' ? 'Encrypt document' : 'Decrypt document'}
-        left={{
-          id: 'toolkit-encrypt-raw',
-          label: 'Document JSON',
-          value: rawDocument,
-          onChange: setRawDocument,
-          placeholder:
-            mode === 'encrypt'
-              ? 'Paste document JSON here, e.g. {"bolNumber" : "BOL - 88213" , "Cargo" : "Refined Copper"}'
-              : 'Output will appear here after you press run.',
-        }}
-        right={{
-          id: 'toolkit-encrypt-payload',
-          label: 'Encrypted Payload',
-          value: encryptedDocument,
-          onChange: setEncryptedDocument,
-          readOnly: mode === 'encrypt',
-          placeholder:
-            mode === 'encrypt'
-              ? 'Output will appear here after you press run.'
-              : 'Paste encrypted payload JSON here.',
-          downloadName: 'encrypted-document.json',
-        }}
+        left={
+          mode === 'encrypt'
+            ? {
+                id: 'toolkit-encrypt-raw',
+                label: 'Document JSON',
+                value: encryptInput,
+                onChange: setEncryptInput,
+                placeholder:
+                  'Paste document JSON here, e.g. {"bolNumber" : "BOL - 88213" , "Cargo" : "Refined Copper"}',
+              }
+            : {
+                id: 'toolkit-encrypt-payload',
+                label: 'Encrypted Payload',
+                value: decryptInput,
+                onChange: setDecryptInput,
+                placeholder: 'Paste encrypted payload JSON here.',
+              }
+        }
+        right={
+          mode === 'encrypt'
+            ? {
+                id: 'toolkit-encrypt-payload',
+                label: 'Encrypted Payload',
+                value: encryptOutput,
+                readOnly: true,
+                placeholder: 'Output will appear here after you press run.',
+                downloadName: 'encrypted-document.json',
+              }
+            : {
+                id: 'toolkit-encrypt-raw',
+                label: 'Document JSON',
+                value: decryptOutput,
+                readOnly: true,
+                placeholder: 'Output will appear here after you press run.',
+                downloadName: 'decrypted-document.json',
+              }
+        }
       />
-      {status && (
-        <StatusNote
-          kind={status.kind}
-          message={status.message}
-          isDarkMode={isDarkMode}
-        />
-      )}
+      {status && <StatusNote kind={status.kind} message={status.message} />}
     </div>
   )
 }

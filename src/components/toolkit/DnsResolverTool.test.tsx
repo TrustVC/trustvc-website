@@ -38,6 +38,7 @@ describe('DnsResolverTool', () => {
     vi.mocked(lookupDnsRecords).mockResolvedValue({
       did: [
         {
+          type: 'openatts',
           algorithm: 'dns-did',
           publicKey: 'did:ethr:0xabc#controller',
           version: '1.0',

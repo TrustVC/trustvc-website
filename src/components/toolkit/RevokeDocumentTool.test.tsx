@@ -1,8 +1,9 @@
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { render, screen } from '../../__tests__/test-utils'
 import userEvent from '@testing-library/user-event'
 import RevokeDocumentTool from './RevokeDocumentTool'
-import oaDnsTxtDocstoreV2 from '../../__tests__/__fixtures__/oa/2.0/signed_wrapped_oa_dns_txt_docstore_v2.json'
+
+const walletState = vi.hoisted(() => ({ connected: false }))
 
 vi.mock('@/components/common/contexts/providerContext', async () => {
   const actual = await vi.importActual<
@@ -11,8 +12,10 @@ vi.mock('@/components/common/contexts/providerContext', async () => {
   return {
     ...actual,
     useProviderContext: () => ({
-      account: undefined,
-      providerType: actual.SIGNER_TYPE.NONE,
+      account: walletState.connected ? '0x1234567890abcdef' : undefined,
+      providerType: walletState.connected
+        ? actual.SIGNER_TYPE.METAMASK
+        : actual.SIGNER_TYPE.NONE,
       providerOrSigner: undefined,
       upgradeToMetaMaskSigner: vi.fn(),
       changeNetwork: vi.fn(),
@@ -25,34 +28,57 @@ vi.mock('@/components/common/contexts/providerContext', async () => {
 })
 
 describe('RevokeDocumentTool', () => {
-  it('disables revoke until a wallet is connected', () => {
-    render(<RevokeDocumentTool isDarkMode={false} />)
-    expect(
-      screen.getByRole('button', { name: /connect wallet to revoke/i })
-    ).toBeDisabled()
-    expect(
-      screen.getByRole('button', { name: /connect wallet$/i })
-    ).toBeInTheDocument()
+  beforeEach(() => {
+    walletState.connected = false
   })
 
-  it('extracts store address and hash from pasted JSON', async () => {
+  it('shows the connect-wallet state until a wallet is connected', () => {
+    render(<RevokeDocumentTool isDarkMode={false} />)
+    expect(
+      screen.getByText(/revoking writes a transaction/i)
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: /connect wallet$/i })
+    ).toBeEnabled()
+    expect(screen.queryByLabelText('Document JSON')).not.toBeInTheDocument()
+  })
+
+  it('accepts the store address and document hash directly', async () => {
+    walletState.connected = true
     const user = userEvent.setup()
     render(<RevokeDocumentTool isDarkMode={false} />)
-    await user.click(screen.getByLabelText('Document JSON'))
-    await user.paste(JSON.stringify(oaDnsTxtDocstoreV2))
-    await user.click(
-      screen.getByRole('button', { name: /extract store and hash/i })
+
+    const storeAddress = '0xA594f6e10564e87888425c7CC3910FE1c800aB0B'
+    const documentHash =
+      '0x9a1c8f2e7b3d4a5e6c1f0b2d9e8a7c6b5d4e3f2a9a1c8f2e7b3d4a5e6c1f0b2d'
+
+    await user.type(screen.getByLabelText('Store Address'), storeAddress)
+    await user.type(
+      screen.getByLabelText('Certificate Hash To Revoke'),
+      documentHash
     )
+
+    expect(screen.getByDisplayValue(storeAddress)).toBeInTheDocument()
+    expect(screen.getByDisplayValue(documentHash)).toBeInTheDocument()
     expect(
-      await screen.findByText(
-        'Store address and hash extracted from the document.'
-      )
+      screen.getByRole('button', { name: /^revoke document$/i })
+    ).toBeEnabled()
+  })
+
+  it('opens a custom network listbox from a button trigger', async () => {
+    walletState.connected = true
+    const user = userEvent.setup()
+    render(<RevokeDocumentTool isDarkMode={false} />)
+
+    const trigger = screen.getByRole('button', { name: /network/i })
+    expect(trigger).toHaveAttribute('aria-haspopup', 'listbox')
+    expect(trigger).toHaveAttribute('aria-expanded', 'false')
+    expect(screen.queryByRole('combobox')).not.toBeInTheDocument()
+
+    await user.click(trigger)
+    expect(trigger).toHaveAttribute('aria-expanded', 'true')
+    expect(
+      screen.getByRole('option', { name: /ethereum network/i })
     ).toBeInTheDocument()
-    expect(
-      screen.getByDisplayValue('0xA594f6e10564e87888425c7CC3910FE1c800aB0B')
-    ).toBeInTheDocument()
-    expect(
-      screen.getByRole('button', { name: /connect wallet to revoke/i })
-    ).toBeDisabled()
   })
 })

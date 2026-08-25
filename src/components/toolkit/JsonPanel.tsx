@@ -77,7 +77,7 @@ const JsonPanel = ({
             <span
               role="status"
               aria-live="polite"
-              className="font-avenir text-xs text-[#E62617]"
+              className="font-avenir text-xs text-alert-50"
             >
               Copy failed
             </span>

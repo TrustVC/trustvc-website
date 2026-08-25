@@ -140,13 +140,7 @@ const WrapUnwrapTool = ({ isDarkMode }: WrapUnwrapToolProps) => {
               : 'unwrapped-document.json',
         }}
       />
-      {status && (
-        <StatusNote
-          kind={status.kind}
-          message={status.message}
-          isDarkMode={isDarkMode}
-        />
-      )}
+      {status && <StatusNote kind={status.kind} message={status.message} />}
     </div>
   )
 }

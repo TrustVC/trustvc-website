@@ -19,4 +19,5 @@ export const TOOLKIT_ASSETS = {
   warningTriangle: '/images/toolkit/warning-triangle.svg',
   errorX: '/images/toolkit/error-x.svg',
   metamask: '/images/toolkit/metamask.png',
+  information: '/images/toolkit/information.svg',
 } as const

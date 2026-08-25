@@ -19,10 +19,10 @@ const RevokeConfirmModal = ({
   isSubmitting,
 }: RevokeConfirmModalProps) => (
   <Overlay ariaLabel="Revoke this document?" onClose={onCancel}>
-    <div className="w-full max-w-[640px] mx-4 rounded-2xl border border-neutral-50/33 bg-white/90 shadow-[0px_8px_32px_0px_rgba(104,106,210,0.33)]">
+    <div className="toolkit-surface w-full max-w-[640px] mx-4 rounded-2xl border border-neutral-50/33 bg-white/90 shadow-[0px_8px_32px_0px_rgba(104,106,210,0.33)]">
       <div className="flex items-start gap-3 sm:gap-4 px-4 sm:px-6 pt-5 sm:pt-6 pb-4">
         <ToolkitIcon src={TOOLKIT_ASSETS.revokeError} alt="" size={28} />
-        <h2 className="font-urbanist font-bold text-xl sm:text-2xl text-neutral-10">
+        <h2 className="font-avenir font-medium text-[1.125rem] leading-[136%] text-neutral-20">
           Revoke this document?
         </h2>
       </div>

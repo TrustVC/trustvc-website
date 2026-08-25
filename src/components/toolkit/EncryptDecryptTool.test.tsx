@@ -2,10 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { render, screen } from '../../__tests__/test-utils'
 import userEvent from '@testing-library/user-event'
 import EncryptDecryptTool from './EncryptDecryptTool'
-import {
-  decryptDocument,
-  loadEncryptedFromActionUrl,
-} from '@/utils/toolkit/encrypt'
+import { decryptDocument } from '@/utils/toolkit/encrypt'
 
 vi.mock('@/utils/toolkit/encrypt', () => ({
   generateEncryptionKey: () => 'test-key',
@@ -16,7 +13,6 @@ vi.mock('@/utils/toolkit/encrypt', () => ({
     type: 'OPEN-ATTESTATION-TYPE-1',
   })),
   decryptDocument: vi.fn(() => JSON.stringify({ hello: 'world' }, null, 2)),
-  loadEncryptedFromActionUrl: vi.fn(),
 }))
 
 describe('EncryptDecryptTool', () => {
@@ -34,6 +30,7 @@ describe('EncryptDecryptTool', () => {
     const user = userEvent.setup()
     render(<EncryptDecryptTool isDarkMode={false} />)
     await user.click(screen.getByRole('tab', { name: /^decrypt$/i }))
+    await user.type(screen.getByLabelText('Key'), 'test-key')
     await user.click(screen.getByLabelText('Encrypted Payload'))
     await user.paste(
       '{"cipherText":"aaa","iv":"bbb","tag":"ccc","type":"OPEN-ATTESTATION-TYPE-1"}'
@@ -48,28 +45,39 @@ describe('EncryptDecryptTool', () => {
     ).toBeInTheDocument()
   })
 
-  it('loads an encrypted document from an action URL', async () => {
-    vi.mocked(loadEncryptedFromActionUrl).mockResolvedValue({
-      key: 'abc123',
-      payload: {
-        cipherText: 'aaa',
-        iv: 'bbb',
-        tag: 'ccc',
-        type: 'OPEN-ATTESTATION-TYPE-1',
-        key: 'abc123',
-      },
-    })
+  it('does not carry encrypt input into decrypt', async () => {
     const user = userEvent.setup()
     render(<EncryptDecryptTool isDarkMode={false} />)
+    await user.click(screen.getByLabelText('Document JSON'))
+    await user.paste('{"hello":"encrypt-only"}')
     await user.click(screen.getByRole('tab', { name: /^decrypt$/i }))
-    await user.type(
-      screen.getByPlaceholderText(/paste an action url/i),
-      'https://trustvc.io/?q=%7B%7D#key'
-    )
-    await user.click(screen.getByRole('button', { name: /^load$/i }))
+    expect(screen.queryByDisplayValue(/encrypt-only/)).not.toBeInTheDocument()
     expect(
-      await screen.findByText('Encrypted document loaded from action URL.')
+      screen.getByPlaceholderText(/paste encrypted payload json here/i)
     ).toBeInTheDocument()
-    expect(loadEncryptedFromActionUrl).toHaveBeenCalled()
+  })
+
+  it('keeps the same chrome as encrypt and puts the payload on the left', async () => {
+    const user = userEvent.setup()
+    render(<EncryptDecryptTool isDarkMode={false} />)
+    expect(
+      screen.getByRole('button', { name: /^generate$/i })
+    ).toBeInTheDocument()
+    await user.click(screen.getByRole('tab', { name: /^decrypt$/i }))
+    expect(screen.getByLabelText('Key')).toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: /^generate$/i })
+    ).not.toBeInTheDocument()
+    expect(
+      screen.queryByPlaceholderText(/paste an action url/i)
+    ).not.toBeInTheDocument()
+    expect(
+      screen.getByPlaceholderText(/paste encrypted payload json here/i)
+    ).toBeInTheDocument()
+    expect(
+      screen.getByPlaceholderText(
+        /output will appear here after you press run/i
+      )
+    ).toBeInTheDocument()
   })
 })

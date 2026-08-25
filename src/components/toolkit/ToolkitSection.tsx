@@ -17,25 +17,25 @@ const TOOL_COPY: Record<
   wrap: {
     title: 'Wrap / Unwrap',
     description:
-      'Wrap raw JSON into an OpenAttestation / TradeTrust wrapped document, or unwrap one back to plain JSON for inspection. Wrapping produces the legacy OA format.',
+      'Wrap raw JSON into an OpenAttestation / TradeTrust wrapped document, or unwrap one back to plain JSON for inspection. Wrapping produces the legacy OA format. For new credentials, issue W3C Verifiable Credentials instead.',
     icon: TOOLKIT_ASSETS.wrapIcon,
   },
   dns: {
     title: 'DNS Resolver',
     description:
-      "Enter a domain to fetch its TXT records — the same lookup verifiers use to confirm a document store address or DID is legitimately linked to the issuer's domain via a DNS-TXT identity proof.",
+      "Enter a domain to fetch its TXT records. This is the same lookup verifiers use to confirm that an OpenAttestation / TradeTrust document store or DID is legitimately linked to the issuer's domain through a DNS-TXT/DNS-DID identity proof.",
     icon: TOOLKIT_ASSETS.dnsTab,
   },
   encrypt: {
     title: 'Encrypt / Decrypt',
     description:
-      "Paste a document's JSON payload and a key to encrypt it before sharing with a restricted party — or paste an encrypted payload with the matching key to decrypt it back to plain JSON.",
+      "Encrypt a document's JSON payload for private sharing, or decrypt one back to plain JSON. Encrypt generates a one-time key for you to share separately; decrypt takes that key back. This is the OpenAttestation / TradeTrust encryption scheme only.",
     icon: TOOLKIT_ASSETS.lockIcon,
   },
   revoke: {
     title: 'Revoke Document',
     description:
-      "Submit a document's hash to its document store smart contract to permanently revoke it on-chain.",
+      'Use the target hash to revoke a single document, or the merkle root to revoke an entire issued batch. This is irreversible, so only revoke documents that are void, superseded, or issued in error.',
     icon: TOOLKIT_ASSETS.warningTriangle,
   },
 }
@@ -55,7 +55,7 @@ const ToolkitSection = ({
   const [encryptSampleTick, setEncryptSampleTick] = useState(0)
 
   return (
-    <div className="w-full min-w-0">
+    <div className="toolkit-surface w-full min-w-0">
       <ToolkitHero isDarkMode={isDarkMode} />
       <div className="flex flex-col items-center gap-4 mt-8 mb-6 text-center">
         <span className="inline-flex items-center gap-1 rounded-full bg-[#dfe1ff] px-2 py-0.5">
@@ -75,7 +75,7 @@ const ToolkitSection = ({
         <p
           className={clsx(
             'max-w-[520px] font-avenir text-lg leading-[25.6px]',
-            isDarkMode ? 'text-neutral-50' : 'text-neutral-20'
+            isDarkMode ? 'text-neutral-50' : 'text-neutral-30'
           )}
         >
           Four essential tools for working with OpenAttestation documents.
@@ -89,7 +89,7 @@ const ToolkitSection = ({
         />
         <div
           className={clsx(
-            'rounded-b-2xl border border-t-0 shadow-[0px_4px_48px_0px_rgba(104,106,210,0.08),0px_1px_4px_0px_rgba(0,0,0,0.04)] overflow-hidden -mt-px',
+            'rounded-2xl border shadow-[0px_4px_48px_0px_rgba(104,106,210,0.08),0px_1px_4px_0px_rgba(0,0,0,0.04)] overflow-hidden -mt-px',
             isDarkMode
               ? 'bg-neutral-10/70 border-white/10'
               : 'bg-white border-neutral-50/33'
@@ -98,7 +98,7 @@ const ToolkitSection = ({
           <div
             className={clsx(
               'flex items-center gap-3 px-4 sm:px-6 py-4 border-b',
-              isDarkMode ? 'border-white/10' : 'border-[#f3f4f6]'
+              isDarkMode ? 'border-white/10' : 'border-neutral-60'
             )}
           >
             <div className="w-10 h-10 sm:w-[53px] sm:h-[53px] rounded-[10px] bg-[#dfe1ff] flex items-center justify-center shrink-0">
@@ -108,21 +108,16 @@ const ToolkitSection = ({
               <h3
                 className={clsx(
                   'font-urbanist font-bold not-italic text-[1.125rem] leading-[1.21875rem] text-left',
-                  isDarkMode ? 'text-neutral-60' : 'text-[#1E2026]'
+                  isDarkMode ? 'text-neutral-60' : 'text-neutral-10'
                 )}
               >
                 {copy.title}
               </h3>
               <p
-                className="font-avenir font-normal not-italic text-[0.875rem] leading-[1.125rem] mt-1 text-left"
-                style={{
-                  color: isDarkMode ? '#A9B2BB' : '#5B6571',
-                  WebkitTextFillColor: isDarkMode ? '#A9B2BB' : '#5B6571',
-                  background: 'none',
-                  backgroundClip: 'initial',
-                  WebkitBackgroundClip: 'initial',
-                  textAlign: 'left',
-                }}
+                className={clsx(
+                  'font-avenir font-normal not-italic text-[0.875rem] leading-[1.125rem] mt-1 text-left',
+                  isDarkMode ? 'text-neutral-50' : 'text-neutral-30'
+                )}
               >
                 {copy.description}
               </p>

@@ -2,15 +2,12 @@ import {
   decryptString,
   encryptString,
   generateEncryptionKey,
+  type IEncryptionResults,
 } from '@trustvc/trustvc'
 import { INVALID_JSON_MESSAGE } from './types'
 import { parseJsonDocument } from './wrap'
 
-export type EncryptedPayload = {
-  cipherText: string
-  iv: string
-  tag: string
-  type: string
+export type EncryptedPayload = Omit<IEncryptionResults, 'key'> & {
   key?: string
 }
 
@@ -30,7 +27,7 @@ export const encryptDocument = (
   return encrypted
 }
 
-export const parseEncryptedPayload = (raw: string): EncryptedPayload => {
+export const parseEncryptedPayload = (raw: string): IEncryptionResults => {
   let parsed: EncryptedPayload
   try {
     parsed = JSON.parse(raw) as EncryptedPayload
@@ -41,7 +38,10 @@ export const parseEncryptedPayload = (raw: string): EncryptedPayload => {
   if (missing.length > 0) {
     throw new Error(`Missing ${missing.join(', ')}`)
   }
-  return parsed
+  if (typeof parsed.key !== 'string' || parsed.key.length === 0) {
+    throw new Error('Missing key')
+  }
+  return { ...parsed, key: parsed.key }
 }
 
 export const decryptDocument = (

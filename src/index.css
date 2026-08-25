@@ -489,6 +489,26 @@ body.dark-mode {
   -webkit-text-fill-color: currentColor;
 }
 
+/* Toolkit copy must use currentColor (global p clips text fill). */
+.toolkit-surface p,
+.toolkit-surface h1,
+.toolkit-surface h2,
+.toolkit-surface h3 {
+  background: none;
+  -webkit-background-clip: initial;
+  background-clip: initial;
+  -webkit-text-fill-color: currentColor;
+  text-align: inherit;
+}
+
+.toolkit-surface .toolkit-gradient-text,
+.toolkit-gradient-text {
+  background: linear-gradient(97.83deg, #686ad2 10%, #167eb0 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
 .news-article-body p,
 .news-article-body li {
   text-align: left;

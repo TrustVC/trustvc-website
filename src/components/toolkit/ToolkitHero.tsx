@@ -6,17 +6,20 @@ type ToolkitHeroProps = {
 
 const ToolkitHero = ({ isDarkMode }: ToolkitHeroProps) => (
   <section className="text-center pt-6 pb-4">
-    <h1 className="font-urbanist font-bold text-[28px] sm:text-[40px] lg:text-[48px] leading-[130%] sm:leading-[150%] px-2">
+    <h1 className="font-urbanist font-bold not-italic text-[4rem] max-sm:text-[2.5rem] leading-[112%] text-center px-2">
       <span
-        className={clsx(isDarkMode ? 'text-neutral-60' : 'text-neutral-10')}
+        className={clsx(
+          'font-urbanist',
+          isDarkMode ? 'text-neutral-60' : 'text-neutral-10'
+        )}
       >
         The TrustVC
       </span>{' '}
-      <span className="text-primary-60">Toolkit</span>
+      <span className="toolkit-gradient-text">Toolkit</span>
     </h1>
     <p
       className={clsx(
-        'mt-2 mx-auto max-w-[704px] px-2 font-avenir text-sm sm:text-base leading-[155%]',
+        'mt-2 mx-auto max-w-[704px] px-2 font-avenir font-medium not-italic text-[1.125rem] leading-[136%] text-center',
         isDarkMode ? 'text-neutral-50' : 'text-neutral-20'
       )}
     >
