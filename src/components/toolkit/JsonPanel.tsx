@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import clsx from 'clsx'
 import ToolkitIcon from './ToolkitIcon'
 import { TOOLKIT_ASSETS } from './assets'
@@ -29,13 +29,22 @@ const JsonPanel = ({
   downloadName = 'document.json',
 }: JsonPanelProps) => {
   const [copyError, setCopyError] = useState(false)
+  const copyAttemptRef = useRef(0)
+
+  useEffect(() => {
+    copyAttemptRef.current += 1
+    setCopyError(false)
+  }, [value])
 
   const copyValue = async () => {
     if (!value) return
+    const attemptId = ++copyAttemptRef.current
     try {
       await navigator.clipboard.writeText(value)
+      if (attemptId !== copyAttemptRef.current) return
       setCopyError(false)
     } catch {
+      if (attemptId !== copyAttemptRef.current) return
       setCopyError(true)
     }
   }
