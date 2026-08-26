@@ -5,12 +5,14 @@ import EncryptDecryptTool from './EncryptDecryptTool'
 import {
   decryptDocument,
   ENCRYPTED_PAYLOAD_OBJECT_MESSAGE,
+  loadEncryptedFromActionUrl,
 } from '@/utils/toolkit/encrypt'
 
 const encryptFns = vi.hoisted(() => ({
   decryptDocument: undefined as
     | ((raw: string, fallbackKey?: string) => string)
     | undefined,
+  loadEncryptedFromActionUrl: vi.fn(),
 }))
 
 vi.mock('@/utils/toolkit/encrypt', async () => {
@@ -28,6 +30,7 @@ vi.mock('@/utils/toolkit/encrypt', async () => {
       type: 'OPEN-ATTESTATION-TYPE-1',
     })),
     decryptDocument: vi.fn(() => JSON.stringify({ hello: 'world' }, null, 2)),
+    loadEncryptedFromActionUrl: encryptFns.loadEncryptedFromActionUrl,
   }
 })
 
@@ -79,14 +82,19 @@ describe('EncryptDecryptTool', () => {
     expect(
       screen.getByRole('button', { name: /^generate$/i })
     ).toBeInTheDocument()
+    expect(
+      screen.getByPlaceholderText(/paste an action url/i)
+    ).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /^load$/i })).toBeInTheDocument()
     await user.click(screen.getByRole('tab', { name: /^decrypt$/i }))
     expect(screen.getByLabelText('Key')).toBeInTheDocument()
     expect(
       screen.queryByRole('button', { name: /^generate$/i })
     ).not.toBeInTheDocument()
     expect(
-      screen.queryByPlaceholderText(/paste an action url/i)
-    ).not.toBeInTheDocument()
+      screen.getByPlaceholderText(/paste an action url/i)
+    ).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /^load$/i })).toBeInTheDocument()
     expect(
       screen.getByPlaceholderText(/paste encrypted payload json here/i)
     ).toBeInTheDocument()
@@ -109,6 +117,56 @@ describe('EncryptDecryptTool', () => {
     await user.click(screen.getByLabelText('Decrypt document'))
     expect(await screen.findByRole('status')).toHaveTextContent(
       ENCRYPTED_PAYLOAD_OBJECT_MESSAGE
+    )
+  })
+
+  it('loads an encrypted document from an action URL', async () => {
+    encryptFns.loadEncryptedFromActionUrl.mockResolvedValueOnce({
+      key: 'loaded-key',
+      payload: {
+        cipherText: 'aaa',
+        iv: 'bbb',
+        tag: 'ccc',
+        type: 'OPEN-ATTESTATION-TYPE-1',
+        key: 'loaded-key',
+      },
+    })
+    const user = userEvent.setup()
+    render(<EncryptDecryptTool isDarkMode={false} />)
+    await user.type(
+      screen.getByLabelText('Document URL'),
+      'https://trustvc.io/?q=%7B%22payload%22%3A%7B%22uri%22%3A%22https%3A%2F%2Fexample.com%2Fdoc.json%22%7D%7D#%7B%22key%22%3A%22loaded-key%22%7D'
+    )
+    await user.click(screen.getByRole('button', { name: /^load$/i }))
+    expect(loadEncryptedFromActionUrl).toHaveBeenCalled()
+    expect(
+      await screen.findByText('Encrypted document loaded from URL.')
+    ).toBeInTheDocument()
+    expect(screen.getByLabelText('Key')).toHaveValue('loaded-key')
+    expect(screen.getByLabelText('Encrypted Payload')).toHaveDisplayValue(
+      /cipherText/
+    )
+    expect(screen.getByRole('tab', { name: /^decrypt$/i })).toHaveAttribute(
+      'aria-selected',
+      'true'
+    )
+  })
+
+  it('shows an error when the action URL cannot be loaded', async () => {
+    encryptFns.loadEncryptedFromActionUrl.mockRejectedValueOnce(
+      new Error(
+        'Please ensure the following params exist in the URL: payload.uri, key'
+      )
+    )
+    const user = userEvent.setup()
+    render(<EncryptDecryptTool isDarkMode={false} />)
+    await user.type(
+      screen.getByLabelText('Document URL'),
+      'https://example.com'
+    )
+    await user.click(screen.getByRole('button', { name: /^load$/i }))
+    expect(await screen.findByRole('status')).toHaveTextContent(
+      'Please ensure the following params exist in the URL: payload.uri, key'
     )
   })
 })

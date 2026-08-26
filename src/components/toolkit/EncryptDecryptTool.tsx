@@ -8,6 +8,7 @@ import {
   decryptDocument,
   encryptDocument,
   generateEncryptionKey,
+  loadEncryptedFromActionUrl,
 } from '@/utils/toolkit/encrypt'
 
 type EncryptDecryptToolProps = {
@@ -17,12 +18,22 @@ type EncryptDecryptToolProps = {
 
 const SAMPLE_JSON = JSON.stringify(SAMPLE_RAW_V2_DOCUMENT, null, 2)
 
+const fieldClass = (isDarkMode: boolean) =>
+  clsx(
+    'h-11 w-full min-w-0 rounded-lg border px-3 font-mono text-sm md:h-10 md:flex-1 md:text-xs',
+    isDarkMode
+      ? 'bg-transparent border-white/20 text-neutral-60 placeholder:text-neutral-30'
+      : 'bg-white border-neutral-50 text-neutral-10 placeholder:text-neutral-30'
+  )
+
 const EncryptDecryptTool = ({
   isDarkMode,
   sampleTick = 0,
 }: EncryptDecryptToolProps) => {
   const [mode, setMode] = useState<'encrypt' | 'decrypt'>('encrypt')
   const [key, setKey] = useState('')
+  const [url, setUrl] = useState('')
+  const [isLoadingUrl, setIsLoadingUrl] = useState(false)
   const [encryptInput, setEncryptInput] = useState('')
   const [encryptOutput, setEncryptOutput] = useState('')
   const [decryptInput, setDecryptInput] = useState('')
@@ -34,6 +45,7 @@ const EncryptDecryptTool = ({
 
   const modeRef = useRef(mode)
   const keyRef = useRef(key)
+  const loadRequestIdRef = useRef(0)
   modeRef.current = mode
   keyRef.current = key
 
@@ -88,6 +100,42 @@ const EncryptDecryptTool = ({
     }
   }
 
+  const loadFromUrl = async () => {
+    const trimmedUrl = url.trim()
+    if (!trimmedUrl || isLoadingUrl) return
+    const requestId = ++loadRequestIdRef.current
+    setStatus(null)
+    setIsLoadingUrl(true)
+    try {
+      const loaded = await loadEncryptedFromActionUrl(trimmedUrl)
+      if (requestId !== loadRequestIdRef.current) return
+      const payloadJson = JSON.stringify(loaded.payload, undefined, 2)
+      setKey(loaded.key)
+      setDecryptInput(payloadJson)
+      setDecryptOutput('')
+      setEncryptInput('')
+      setEncryptOutput('')
+      setMode('decrypt')
+      setStatus({
+        kind: 'success',
+        message: 'Encrypted document loaded from URL.',
+      })
+    } catch (error) {
+      if (requestId !== loadRequestIdRef.current) return
+      setStatus({
+        kind: 'error',
+        message:
+          error instanceof Error
+            ? error.message
+            : 'Unable to load the document from URL.',
+      })
+    } finally {
+      if (requestId === loadRequestIdRef.current) {
+        setIsLoadingUrl(false)
+      }
+    }
+  }
+
   return (
     <div className="flex flex-col gap-4 p-4 sm:p-6 lg:p-8 min-w-0">
       <div className="flex w-full min-w-0 flex-col items-stretch gap-4 md:flex-row md:items-center md:gap-3">
@@ -109,12 +157,7 @@ const EncryptDecryptTool = ({
           onChange={event => setKey(event.target.value)}
           aria-label="Key"
           placeholder="tvc-preview-key"
-          className={clsx(
-            'h-11 w-full min-w-0 rounded-lg border px-3 font-mono text-sm md:h-10 md:flex-1 md:text-xs',
-            isDarkMode
-              ? 'bg-transparent border-white/20 text-neutral-60 placeholder:text-neutral-30'
-              : 'bg-white border-neutral-50 text-neutral-10 placeholder:text-neutral-30'
-          )}
+          className={fieldClass(isDarkMode)}
         />
         {mode === 'encrypt' && (
           <button
@@ -129,6 +172,28 @@ const EncryptDecryptTool = ({
             Generate
           </button>
         )}
+      </div>
+
+      <div className="flex w-full min-w-0 flex-col items-stretch gap-3 md:flex-row md:items-center md:gap-3">
+        <input
+          id="toolkit-encrypt-url"
+          value={url}
+          onChange={event => setUrl(event.target.value)}
+          onKeyDown={event => {
+            if (event.key === 'Enter') void loadFromUrl()
+          }}
+          aria-label="Document URL"
+          placeholder="Paste an action URL"
+          className={fieldClass(isDarkMode)}
+        />
+        <button
+          type="button"
+          onClick={() => void loadFromUrl()}
+          disabled={!url.trim() || isLoadingUrl}
+          className="h-11 w-full shrink-0 rounded-lg bg-gradient-to-r from-primary-60 to-secondary-60 px-5 font-urbanist text-sm font-bold text-white disabled:opacity-50 md:h-10 md:w-auto"
+        >
+          {isLoadingUrl ? 'Loading…' : 'Load'}
+        </button>
       </div>
 
       <DualJsonPanes
