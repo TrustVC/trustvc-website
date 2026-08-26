@@ -76,21 +76,24 @@ describe('EncryptDecryptTool', () => {
     ).toBeInTheDocument()
   })
 
-  it('keeps the same chrome as encrypt and puts the payload on the left', async () => {
+  it('hides the document URL field on encrypt and shows it on decrypt', async () => {
     const user = userEvent.setup()
     render(<EncryptDecryptTool isDarkMode={false} />)
     expect(
       screen.getByRole('button', { name: /^generate$/i })
     ).toBeInTheDocument()
     expect(
-      screen.getByPlaceholderText(/paste an action url/i)
-    ).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /^load$/i })).toBeInTheDocument()
+      screen.queryByPlaceholderText(/paste an action url/i)
+    ).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: /^load$/i })
+    ).not.toBeInTheDocument()
     await user.click(screen.getByRole('tab', { name: /^decrypt$/i }))
     expect(screen.getByLabelText('Key')).toBeInTheDocument()
     expect(
       screen.queryByRole('button', { name: /^generate$/i })
     ).not.toBeInTheDocument()
+    expect(screen.getByLabelText('Document URL')).toBeInTheDocument()
     expect(
       screen.getByPlaceholderText(/paste an action url/i)
     ).toBeInTheDocument()
@@ -133,6 +136,7 @@ describe('EncryptDecryptTool', () => {
     })
     const user = userEvent.setup()
     render(<EncryptDecryptTool isDarkMode={false} />)
+    await user.click(screen.getByRole('tab', { name: /^decrypt$/i }))
     await user.type(
       screen.getByLabelText('Document URL'),
       'https://trustvc.io/?q=%7B%22payload%22%3A%7B%22uri%22%3A%22https%3A%2F%2Fexample.com%2Fdoc.json%22%7D%7D#%7B%22key%22%3A%22loaded-key%22%7D'
@@ -160,6 +164,7 @@ describe('EncryptDecryptTool', () => {
     )
     const user = userEvent.setup()
     render(<EncryptDecryptTool isDarkMode={false} />)
+    await user.click(screen.getByRole('tab', { name: /^decrypt$/i }))
     await user.type(
       screen.getByLabelText('Document URL'),
       'https://example.com'

@@ -111,11 +111,10 @@ const EncryptDecryptTool = ({
       if (requestId !== loadRequestIdRef.current) return
       const payloadJson = JSON.stringify(loaded.payload, undefined, 2)
       setKey(loaded.key)
+      setEncryptInput('')
+      setEncryptOutput(payloadJson)
       setDecryptInput(payloadJson)
       setDecryptOutput('')
-      setEncryptInput('')
-      setEncryptOutput('')
-      setMode('decrypt')
       setStatus({
         kind: 'success',
         message: 'Encrypted document loaded from URL.',
@@ -174,27 +173,39 @@ const EncryptDecryptTool = ({
         )}
       </div>
 
-      <div className="flex w-full min-w-0 flex-col items-stretch gap-3 md:flex-row md:items-center md:gap-3">
-        <input
-          id="toolkit-encrypt-url"
-          value={url}
-          onChange={event => setUrl(event.target.value)}
-          onKeyDown={event => {
-            if (event.key === 'Enter') void loadFromUrl()
-          }}
-          aria-label="Document URL"
-          placeholder="Paste an action URL"
-          className={fieldClass(isDarkMode)}
-        />
-        <button
-          type="button"
-          onClick={() => void loadFromUrl()}
-          disabled={!url.trim() || isLoadingUrl}
-          className="h-11 w-full shrink-0 rounded-lg bg-gradient-to-r from-primary-60 to-secondary-60 px-5 font-urbanist text-sm font-bold text-white disabled:opacity-50 md:h-10 md:w-auto"
-        >
-          {isLoadingUrl ? 'Loading…' : 'Load'}
-        </button>
-      </div>
+      {mode === 'decrypt' && (
+        <div className="flex w-full min-w-0 flex-col gap-2">
+          <label
+            htmlFor="toolkit-encrypt-url"
+            className={clsx(
+              'font-urbanist font-bold text-sm',
+              isDarkMode ? 'text-neutral-60' : 'text-neutral-10'
+            )}
+          >
+            Document URL
+          </label>
+          <div className="flex w-full min-w-0 flex-col items-stretch gap-3 md:flex-row md:items-center md:gap-3">
+            <input
+              id="toolkit-encrypt-url"
+              value={url}
+              onChange={event => setUrl(event.target.value)}
+              onKeyDown={event => {
+                if (event.key === 'Enter') void loadFromUrl()
+              }}
+              placeholder="Paste an action URL"
+              className={fieldClass(isDarkMode)}
+            />
+            <button
+              type="button"
+              onClick={() => void loadFromUrl()}
+              disabled={!url.trim() || isLoadingUrl}
+              className="h-11 w-full shrink-0 rounded-lg bg-gradient-to-r from-primary-60 to-secondary-60 px-5 font-urbanist text-sm font-bold text-white disabled:opacity-50 md:h-10 md:w-auto"
+            >
+              {isLoadingUrl ? 'Loading…' : 'Load'}
+            </button>
+          </div>
+        </div>
+      )}
 
       <DualJsonPanes
         isDarkMode={isDarkMode}
