@@ -68,7 +68,14 @@ const RevokeDocumentTool = ({ isDarkMode }: RevokeDocumentToolProps) => {
     if (String(chainId) === String(currentChainId)) return
     setShowConfirm(false)
     setNetworkChangeLoading(true)
-    await Promise.resolve(changeNetwork(chainId))
+    try {
+      await Promise.resolve(changeNetwork(chainId))
+      if (signerReadyOnChain) {
+        setNetworkChangeLoading(false)
+      }
+    } catch {
+      setNetworkChangeLoading(false)
+    }
   }
 
   const selectedNetwork = useMemo(

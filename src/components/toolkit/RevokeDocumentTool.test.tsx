@@ -6,6 +6,7 @@ import RevokeDocumentTool from './RevokeDocumentTool'
 const walletState = vi.hoisted(() => ({
   connected: false,
   networkChangeLoading: false,
+  currentChainId: '1',
   changeNetwork: vi.fn(),
   setNetworkChangeLoading: vi.fn(),
 }))
@@ -24,13 +25,16 @@ vi.mock('@/components/common/contexts/providerContext', async () => {
       providerOrSigner: walletState.connected ? { _isSigner: true } : undefined,
       upgradeToMetaMaskSigner: vi.fn(),
       changeNetwork: walletState.changeNetwork,
-      currentChainId: '1',
+      currentChainId: walletState.currentChainId,
       supportedChainInfoObjects: [
         { id: '1', label: 'Ethereum', name: 'homestead' },
         { id: '137', label: 'Polygon', name: 'matic' },
       ],
       networkChangeLoading: walletState.networkChangeLoading,
-      setNetworkChangeLoading: walletState.setNetworkChangeLoading,
+      setNetworkChangeLoading: (loading: boolean) => {
+        walletState.networkChangeLoading = loading
+        walletState.setNetworkChangeLoading(loading)
+      },
     }),
   }
 })
@@ -50,6 +54,7 @@ describe('RevokeDocumentTool', () => {
   beforeEach(() => {
     walletState.connected = false
     walletState.networkChangeLoading = false
+    walletState.currentChainId = '1'
     walletState.changeNetwork.mockReset()
     walletState.setNetworkChangeLoading.mockReset()
   })
@@ -139,5 +144,41 @@ describe('RevokeDocumentTool', () => {
       expect(trigger).toHaveAttribute('aria-expanded', 'false')
     })
     expect(screen.queryByRole('listbox')).not.toBeInTheDocument()
+  })
+
+  it('re-enables revoke and network selection after a successful chain switch', async () => {
+    walletState.connected = true
+    let resolveSwitch: () => void = () => {}
+    const switchPending = new Promise<void>(resolve => {
+      resolveSwitch = resolve
+    })
+    walletState.changeNetwork.mockImplementation(async (chainId: string) => {
+      await switchPending
+      walletState.currentChainId = String(chainId)
+    })
+
+    const user = userEvent.setup()
+    render(<RevokeDocumentTool isDarkMode={false} />)
+    await fillRevokeFields(user)
+
+    const trigger = screen.getByRole('button', { name: /network/i })
+    await user.click(trigger)
+    await user.click(screen.getByRole('option', { name: /polygon network/i }))
+
+    expect(walletState.setNetworkChangeLoading).toHaveBeenCalledWith(true)
+    expect(walletState.changeNetwork).toHaveBeenCalledWith('137')
+    expect(screen.getByRole('button', { name: /network/i })).toBeDisabled()
+
+    resolveSwitch()
+
+    await waitFor(() => {
+      expect(walletState.setNetworkChangeLoading).toHaveBeenCalledWith(false)
+    })
+    await waitFor(() => {
+      expect(
+        screen.getByRole('button', { name: /^revoke document$/i })
+      ).toBeEnabled()
+    })
+    expect(screen.getByRole('button', { name: /network/i })).toBeEnabled()
   })
 })

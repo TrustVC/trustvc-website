@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { render, screen } from '../../__tests__/test-utils'
+import { act, render, screen } from '../../__tests__/test-utils'
 import userEvent from '@testing-library/user-event'
 import EncryptDecryptTool from './EncryptDecryptTool'
 import {
@@ -153,6 +153,68 @@ describe('EncryptDecryptTool', () => {
     expect(screen.getByRole('tab', { name: /^decrypt$/i })).toHaveAttribute(
       'aria-selected',
       'true'
+    )
+  })
+
+  it('ignores a pending URL load after the user edits mode or input', async () => {
+    let resolveLoad: (value: {
+      key: string
+      payload: {
+        cipherText: string
+        iv: string
+        tag: string
+        type: string
+        key: string
+      }
+    }) => void = () => {}
+    encryptFns.loadEncryptedFromActionUrl.mockImplementationOnce(
+      () =>
+        new Promise(resolve => {
+          resolveLoad = resolve
+        })
+    )
+    const user = userEvent.setup()
+    render(<EncryptDecryptTool isDarkMode={false} />)
+    await user.click(screen.getByRole('tab', { name: /^decrypt$/i }))
+    await user.type(
+      screen.getByLabelText('Document URL'),
+      'https://example.com/action'
+    )
+    await user.click(screen.getByRole('button', { name: /^load$/i }))
+    expect(screen.getByRole('button', { name: /loading/i })).toBeDisabled()
+
+    await user.click(screen.getByLabelText('Encrypted Payload'))
+    await user.paste('{"user":"edit"}')
+    expect(await screen.findByRole('button', { name: /^load$/i })).toBeEnabled()
+
+    await user.click(screen.getByRole('tab', { name: /^encrypt$/i }))
+
+    await act(async () => {
+      resolveLoad({
+        key: 'stale-key',
+        payload: {
+          cipherText: 'stale-cipher',
+          iv: 'bbb',
+          tag: 'ccc',
+          type: 'OPEN-ATTESTATION-TYPE-1',
+          key: 'stale-key',
+        },
+      })
+    })
+
+    expect(
+      screen.queryByText('Encrypted document loaded from URL.')
+    ).not.toBeInTheDocument()
+    expect(screen.queryByDisplayValue('stale-key')).not.toBeInTheDocument()
+    expect(screen.queryByDisplayValue(/stale-cipher/)).not.toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: /^encrypt$/i })).toHaveAttribute(
+      'aria-selected',
+      'true'
+    )
+
+    await user.click(screen.getByRole('tab', { name: /^decrypt$/i }))
+    expect(screen.getByLabelText('Encrypted Payload')).toHaveDisplayValue(
+      /user/
     )
   })
 

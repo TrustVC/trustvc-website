@@ -49,6 +49,11 @@ const EncryptDecryptTool = ({
   modeRef.current = mode
   keyRef.current = key
 
+  const invalidatePendingLoad = () => {
+    loadRequestIdRef.current += 1
+    setIsLoadingUrl(false)
+  }
+
   useEffect(() => {
     if (sampleTick === 0) return
     setStatus(null)
@@ -145,6 +150,7 @@ const EncryptDecryptTool = ({
             { id: 'decrypt', label: 'Decrypt' },
           ]}
           onChange={next => {
+            invalidatePendingLoad()
             setMode(next)
             setStatus(null)
           }}
@@ -153,7 +159,10 @@ const EncryptDecryptTool = ({
         <input
           id="toolkit-encrypt-key"
           value={key}
-          onChange={event => setKey(event.target.value)}
+          onChange={event => {
+            invalidatePendingLoad()
+            setKey(event.target.value)
+          }}
           aria-label="Key"
           placeholder="tvc-preview-key"
           className={fieldClass(isDarkMode)}
@@ -162,6 +171,7 @@ const EncryptDecryptTool = ({
           <button
             type="button"
             onClick={() => {
+              invalidatePendingLoad()
               setKey(generateEncryptionKey())
               setEncryptOutput('')
               setStatus(null)
@@ -188,7 +198,10 @@ const EncryptDecryptTool = ({
             <input
               id="toolkit-encrypt-url"
               value={url}
-              onChange={event => setUrl(event.target.value)}
+              onChange={event => {
+                invalidatePendingLoad()
+                setUrl(event.target.value)
+              }}
               onKeyDown={event => {
                 if (event.key === 'Enter') void loadFromUrl()
               }}
@@ -217,7 +230,10 @@ const EncryptDecryptTool = ({
                 id: 'toolkit-encrypt-raw',
                 label: 'Document JSON',
                 value: encryptInput,
-                onChange: setEncryptInput,
+                onChange: value => {
+                  invalidatePendingLoad()
+                  setEncryptInput(value)
+                },
                 placeholder:
                   'Paste document JSON here, e.g. {"bolNumber" : "BOL - 88213" , "Cargo" : "Refined Copper"}',
               }
@@ -225,7 +241,10 @@ const EncryptDecryptTool = ({
                 id: 'toolkit-encrypt-payload',
                 label: 'Encrypted Payload',
                 value: decryptInput,
-                onChange: setDecryptInput,
+                onChange: value => {
+                  invalidatePendingLoad()
+                  setDecryptInput(value)
+                },
                 placeholder: 'Paste encrypted payload JSON here.',
               }
         }
