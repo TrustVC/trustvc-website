@@ -384,23 +384,22 @@ describe('EndorsementChain', () => {
       ).toBeInTheDocument()
     })
 
-    it('shows Bill discharged on eBoE discharge shred', () => {
-      const chainWithShred = [
+    it('shows Bill discharged on eBoE STATUS_DISCHARGED', () => {
+      const chainWithDischarge = [
         {
-          type: 'RETURN_TO_ISSUER_ACCEPTED',
+          type: 'STATUS_DISCHARGED',
           owner: '0x1234567890123456789012345678901234567890',
           holder: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
           timestamp: 1640000000000,
           transactionHash: '0xabc123',
           remark: 'done',
-          terminationReason: 'Discharged',
         },
       ]
       const { container } = render(
         <EndorsementChainLayout
           {...defaultProps}
           isObligation
-          endorsementChain={chainWithShred}
+          endorsementChain={chainWithDischarge}
         />
       )
       expect(screen.getByText('Bill discharged')).toBeInTheDocument()
@@ -420,20 +419,19 @@ describe('EndorsementChain', () => {
       )
     })
 
-    it('shows Bill rejected on eBoE reject shred', () => {
+    it('shows Bill rejected on eBoE STATUS_REJECTED', () => {
       render(
         <EndorsementChainLayout
           {...defaultProps}
           isObligation
           endorsementChain={[
             {
-              type: 'RETURN_TO_ISSUER_ACCEPTED',
+              type: 'STATUS_REJECTED',
               owner: '0x1234567890123456789012345678901234567890',
               holder: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
               timestamp: 1640000000000,
               transactionHash: '0xabc123',
               remark: 'nope',
-              terminationReason: 'Rejected',
             },
           ]}
         />
