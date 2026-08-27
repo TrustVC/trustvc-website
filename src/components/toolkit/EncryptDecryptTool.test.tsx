@@ -218,6 +218,65 @@ describe('EncryptDecryptTool', () => {
     )
   })
 
+  it('ignores a pending URL load after sampleTick writes sample decrypt state', async () => {
+    let resolveLoad: (value: {
+      key: string
+      payload: {
+        cipherText: string
+        iv: string
+        tag: string
+        type: string
+        key: string
+      }
+    }) => void = () => {}
+    encryptFns.loadEncryptedFromActionUrl.mockImplementationOnce(
+      () =>
+        new Promise(resolve => {
+          resolveLoad = resolve
+        })
+    )
+    const user = userEvent.setup()
+    const { rerender } = render(<EncryptDecryptTool isDarkMode={false} />)
+    await user.click(screen.getByRole('tab', { name: /^decrypt$/i }))
+    await user.type(
+      screen.getByLabelText('Document URL'),
+      'https://example.com/action'
+    )
+    await user.click(screen.getByRole('button', { name: /^load$/i }))
+    expect(screen.getByRole('button', { name: /loading/i })).toBeDisabled()
+
+    rerender(<EncryptDecryptTool isDarkMode={false} sampleTick={1} />)
+
+    expect(screen.getByLabelText('Key')).toHaveValue('test-key')
+    expect(screen.getByLabelText('Encrypted Payload')).toHaveDisplayValue(
+      /"cipherText": "aaa"/
+    )
+    expect(await screen.findByRole('button', { name: /^load$/i })).toBeEnabled()
+
+    await act(async () => {
+      resolveLoad({
+        key: 'stale-key',
+        payload: {
+          cipherText: 'stale-cipher',
+          iv: 'bbb',
+          tag: 'ccc',
+          type: 'OPEN-ATTESTATION-TYPE-1',
+          key: 'stale-key',
+        },
+      })
+    })
+
+    expect(
+      screen.queryByText('Encrypted document loaded from URL.')
+    ).not.toBeInTheDocument()
+    expect(screen.queryByDisplayValue('stale-key')).not.toBeInTheDocument()
+    expect(screen.queryByDisplayValue(/stale-cipher/)).not.toBeInTheDocument()
+    expect(screen.getByLabelText('Key')).toHaveValue('test-key')
+    expect(screen.getByLabelText('Encrypted Payload')).toHaveDisplayValue(
+      /"cipherText": "aaa"/
+    )
+  })
+
   it('shows an error when the action URL cannot be loaded', async () => {
     encryptFns.loadEncryptedFromActionUrl.mockRejectedValueOnce(
       new Error(

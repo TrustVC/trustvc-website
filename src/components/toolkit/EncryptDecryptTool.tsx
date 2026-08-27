@@ -56,6 +56,7 @@ const EncryptDecryptTool = ({
 
   useEffect(() => {
     if (sampleTick === 0) return
+    invalidatePendingLoad()
     setStatus(null)
     if (modeRef.current === 'decrypt') {
       try {

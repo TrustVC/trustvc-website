@@ -3,39 +3,59 @@ import { render, screen, waitFor } from '../../__tests__/test-utils'
 import userEvent from '@testing-library/user-event'
 import RevokeDocumentTool from './RevokeDocumentTool'
 
-const walletState = vi.hoisted(() => ({
-  connected: false,
-  networkChangeLoading: false,
-  currentChainId: '1',
-  changeNetwork: vi.fn(),
-  setNetworkChangeLoading: vi.fn(),
-}))
+const walletState = vi.hoisted(() => {
+  const listeners = new Set<() => void>()
+  let epoch = 0
+  return {
+    connected: false,
+    networkChangeLoading: false,
+    currentChainId: '1',
+    changeNetwork: vi.fn(),
+    setNetworkChangeLoading: vi.fn(),
+    subscribe: (listener: () => void) => {
+      listeners.add(listener)
+      return () => listeners.delete(listener)
+    },
+    getEpoch: () => epoch,
+    notify: () => {
+      epoch += 1
+      listeners.forEach(listener => listener())
+    },
+  }
+})
 
 vi.mock('@/components/common/contexts/providerContext', async () => {
+  const { useSyncExternalStore } = await import('react')
   const actual = await vi.importActual<
     typeof import('@/components/common/contexts/providerContext')
   >('@/components/common/contexts/providerContext')
   return {
     ...actual,
-    useProviderContext: () => ({
-      account: walletState.connected ? '0x1234567890abcdef' : undefined,
-      providerType: walletState.connected
-        ? actual.SIGNER_TYPE.METAMASK
-        : actual.SIGNER_TYPE.NONE,
-      providerOrSigner: walletState.connected ? { _isSigner: true } : undefined,
-      upgradeToMetaMaskSigner: vi.fn(),
-      changeNetwork: walletState.changeNetwork,
-      currentChainId: walletState.currentChainId,
-      supportedChainInfoObjects: [
-        { id: '1', label: 'Ethereum', name: 'homestead' },
-        { id: '137', label: 'Polygon', name: 'matic' },
-      ],
-      networkChangeLoading: walletState.networkChangeLoading,
-      setNetworkChangeLoading: (loading: boolean) => {
-        walletState.networkChangeLoading = loading
-        walletState.setNetworkChangeLoading(loading)
-      },
-    }),
+    useProviderContext: () => {
+      useSyncExternalStore(walletState.subscribe, walletState.getEpoch)
+      return {
+        account: walletState.connected ? '0x1234567890abcdef' : undefined,
+        providerType: walletState.connected
+          ? actual.SIGNER_TYPE.METAMASK
+          : actual.SIGNER_TYPE.NONE,
+        providerOrSigner: walletState.connected
+          ? { _isSigner: true }
+          : undefined,
+        upgradeToMetaMaskSigner: vi.fn(),
+        changeNetwork: walletState.changeNetwork,
+        currentChainId: walletState.currentChainId,
+        supportedChainInfoObjects: [
+          { id: '1', label: 'Ethereum', name: 'homestead' },
+          { id: '137', label: 'Polygon', name: 'matic' },
+        ],
+        networkChangeLoading: walletState.networkChangeLoading,
+        setNetworkChangeLoading: (loading: boolean) => {
+          walletState.networkChangeLoading = loading
+          walletState.setNetworkChangeLoading(loading)
+          walletState.notify()
+        },
+      }
+    },
   }
 })
 
@@ -168,6 +188,9 @@ describe('RevokeDocumentTool', () => {
     expect(walletState.setNetworkChangeLoading).toHaveBeenCalledWith(true)
     expect(walletState.changeNetwork).toHaveBeenCalledWith('137')
     expect(screen.getByRole('button', { name: /network/i })).toBeDisabled()
+    expect(
+      screen.getByRole('button', { name: /^revoke document$/i })
+    ).toBeDisabled()
 
     resolveSwitch()
 
