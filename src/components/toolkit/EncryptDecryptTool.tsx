@@ -76,6 +76,7 @@ const EncryptDecryptTool = ({
   }, [sampleTick])
 
   const run = () => {
+    invalidatePendingLoad()
     setStatus(null)
     try {
       if (mode === 'encrypt') {

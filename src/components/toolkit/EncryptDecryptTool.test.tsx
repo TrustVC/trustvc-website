@@ -277,6 +277,71 @@ describe('EncryptDecryptTool', () => {
     )
   })
 
+  it('ignores a pending URL load after running decrypt on the existing payload', async () => {
+    let resolveLoad: (value: {
+      key: string
+      payload: {
+        cipherText: string
+        iv: string
+        tag: string
+        type: string
+        key: string
+      }
+    }) => void = () => {}
+    encryptFns.loadEncryptedFromActionUrl.mockImplementationOnce(
+      () =>
+        new Promise(resolve => {
+          resolveLoad = resolve
+        })
+    )
+    const user = userEvent.setup()
+    render(<EncryptDecryptTool isDarkMode={false} />)
+    await user.click(screen.getByRole('tab', { name: /^decrypt$/i }))
+    await user.type(screen.getByLabelText('Key'), 'test-key')
+    await user.click(screen.getByLabelText('Encrypted Payload'))
+    await user.paste(
+      '{"cipherText":"aaa","iv":"bbb","tag":"ccc","type":"OPEN-ATTESTATION-TYPE-1"}'
+    )
+    await user.type(
+      screen.getByLabelText('Document URL'),
+      'https://example.com/action'
+    )
+    await user.click(screen.getByRole('button', { name: /^load$/i }))
+    expect(screen.getByRole('button', { name: /loading/i })).toBeDisabled()
+
+    await user.click(screen.getByLabelText('Decrypt document'))
+    expect(
+      await screen.findByText('Document decrypted successfully.')
+    ).toBeInTheDocument()
+    expect(screen.getByDisplayValue(/hello/)).toBeInTheDocument()
+
+    await act(async () => {
+      resolveLoad({
+        key: 'stale-key',
+        payload: {
+          cipherText: 'stale-cipher',
+          iv: 'bbb',
+          tag: 'ccc',
+          type: 'OPEN-ATTESTATION-TYPE-1',
+          key: 'stale-key',
+        },
+      })
+    })
+
+    expect(
+      screen.queryByText('Encrypted document loaded from URL.')
+    ).not.toBeInTheDocument()
+    expect(screen.queryByDisplayValue('stale-key')).not.toBeInTheDocument()
+    expect(screen.queryByDisplayValue(/stale-cipher/)).not.toBeInTheDocument()
+    expect(
+      screen.getByText('Document decrypted successfully.')
+    ).toBeInTheDocument()
+    expect(screen.getByDisplayValue(/hello/)).toBeInTheDocument()
+    expect(screen.getByLabelText('Encrypted Payload')).toHaveDisplayValue(
+      /cipherText/
+    )
+  })
+
   it('shows an error when the action URL cannot be loaded', async () => {
     encryptFns.loadEncryptedFromActionUrl.mockRejectedValueOnce(
       new Error(
