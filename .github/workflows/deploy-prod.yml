@@ -43,6 +43,7 @@ jobs:
 
       - name: Create .env for build
         run: |
+          [ -n "$INFURA_API_KEY" ] || { echo "INFURA_API_KEY_PROD secret is missing or empty" >&2; exit 1; }
           printf '%s\n' "$ENV_FILE" \
             | grep -v '^VITE_SENTRY_DSN=' \
             | grep -v '^VITE_SENTRY_ENVIRONMENT=' \
