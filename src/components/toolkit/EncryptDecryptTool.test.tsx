@@ -360,4 +360,26 @@ describe('EncryptDecryptTool', () => {
       'Please ensure the following params exist in the URL: payload.uri, key'
     )
   })
+
+  it('copies the key to the clipboard', async () => {
+    const user = userEvent.setup()
+    // user-event installs its own clipboard stub during setup(), so the spy
+    // must be attached after — assigning navigator.clipboard beforehand gets
+    // clobbered by that stub.
+    const writeText = vi.spyOn(navigator.clipboard, 'writeText')
+    render(<EncryptDecryptTool isDarkMode={false} />)
+
+    await user.type(screen.getByLabelText('Key'), 'my-secret-key')
+    await user.click(screen.getByRole('button', { name: /copy key/i }))
+
+    expect(writeText).toHaveBeenCalledWith('my-secret-key')
+    expect(
+      await screen.findByRole('button', { name: /key copied/i })
+    ).toBeInTheDocument()
+  })
+
+  it('disables the copy button when there is no key to copy', () => {
+    render(<EncryptDecryptTool isDarkMode={false} />)
+    expect(screen.getByRole('button', { name: /copy key/i })).toBeDisabled()
+  })
 })

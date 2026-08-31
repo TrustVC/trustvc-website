@@ -59,6 +59,20 @@ vi.mock('@/components/common/contexts/providerContext', async () => {
   }
 })
 
+const revokeMocks = vi.hoisted(() => ({
+  revokeOnDocumentStore: vi.fn(),
+}))
+
+vi.mock('@/utils/toolkit/revoke', async () => {
+  const actual = await vi.importActual<typeof import('@/utils/toolkit/revoke')>(
+    '@/utils/toolkit/revoke'
+  )
+  return {
+    ...actual,
+    revokeOnDocumentStore: revokeMocks.revokeOnDocumentStore,
+  }
+})
+
 const fillRevokeFields = async (user: ReturnType<typeof userEvent.setup>) => {
   const storeAddress = '0xA594f6e10564e87888425c7CC3910FE1c800aB0B'
   const documentHash =
@@ -77,6 +91,7 @@ describe('RevokeDocumentTool', () => {
     walletState.currentChainId = '1'
     walletState.changeNetwork.mockReset()
     walletState.setNetworkChangeLoading.mockReset()
+    revokeMocks.revokeOnDocumentStore.mockReset()
   })
 
   it('shows the connect-wallet state until a wallet is connected', () => {
@@ -203,5 +218,48 @@ describe('RevokeDocumentTool', () => {
       ).toBeEnabled()
     })
     expect(screen.getByRole('button', { name: /network/i })).toBeEnabled()
+  })
+
+  it('closes the confirm popup and shows a readable error when revoke fails', async () => {
+    walletState.connected = true
+    revokeMocks.revokeOnDocumentStore.mockRejectedValue(
+      new Error('Pre-check (callStatic) for revoke failed')
+    )
+    const user = userEvent.setup()
+    render(<RevokeDocumentTool isDarkMode={false} />)
+    await fillRevokeFields(user)
+
+    await user.click(screen.getByRole('button', { name: /^revoke document$/i }))
+    expect(screen.getByText('Revoke this document?')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: /yes, revoke it/i }))
+
+    await waitFor(() => {
+      expect(
+        screen.queryByText('Revoke this document?')
+      ).not.toBeInTheDocument()
+    })
+    expect(screen.getByRole('status')).toHaveTextContent(
+      /this revoke cannot go through/i
+    )
+  })
+
+  it('shows an inline error for a malformed store address instead of allowing revoke', async () => {
+    walletState.connected = true
+    const user = userEvent.setup()
+    render(<RevokeDocumentTool isDarkMode={false} />)
+
+    await user.type(screen.getByLabelText('Store Address'), '0xnotanaddress')
+    await user.type(
+      screen.getByLabelText('Certificate Hash To Revoke'),
+      '0x9a1c8f2e7b3d4a5e6c1f0b2d9e8a7c6b5d4e3f2a9a1c8f2e7b3d4a5e6c1f0b2d'
+    )
+
+    expect(
+      screen.getByText(/doesn.t look like a valid ethereum address/i)
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: /^revoke document$/i })
+    ).toBeDisabled()
   })
 })

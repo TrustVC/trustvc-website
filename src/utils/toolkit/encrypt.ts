@@ -80,6 +80,68 @@ export const decryptDocument = (
   }
 }
 
+/** Translates raw errors from encrypt/decrypt/URL-load into copy a user can act on. */
+export const toEncryptErrorMessage = (
+  err: unknown,
+  mode: 'encrypt' | 'decrypt'
+): string => {
+  let message = ''
+  if (err instanceof Error) message = err.message.trim()
+  else if (typeof err === 'string') message = err.trim()
+
+  if (!message) {
+    return mode === 'encrypt'
+      ? 'Unable to encrypt this document. Please try again.'
+      : 'Unable to decrypt this document. Please try again.'
+  }
+
+  if (
+    message === INVALID_JSON_MESSAGE ||
+    message === ENCRYPTED_PAYLOAD_OBJECT_MESSAGE
+  ) {
+    return message
+  }
+
+  if (/^Missing key$/i.test(message)) {
+    return 'No secret key found. Enter the key that was used to encrypt this document in the Key field above, or paste a payload that includes a "key" field.'
+  }
+
+  const missingFieldsMatch = message.match(/^Missing (.+)$/)
+  if (missingFieldsMatch) {
+    return `This doesn't look like a complete encrypted payload — it's missing: ${missingFieldsMatch[1]}. Paste the full JSON produced by the Encrypt tool.`
+  }
+
+  if (/^Expecting version .+ but got /i.test(message)) {
+    return `This payload uses an encryption format this tool doesn't support (${message}). It may have come from a different tool or a different version of TrustVC.`
+  }
+
+  if (/^Error decrypting message$/i.test(message)) {
+    return 'Could not decrypt this document. The secret key is likely wrong, or the encrypted payload has been altered. Double-check the key and try again.'
+  }
+
+  if (/^Please ensure the following params exist in the URL/i.test(message)) {
+    return `${message}. Paste the full link you were given, including anything after the "#".`
+  }
+
+  if (/^Unable to load the document from /i.test(message)) {
+    return `${message}. Check the link and try again.`
+  }
+
+  if (/invalid url/i.test(message)) {
+    return "That doesn't look like a valid URL. Paste the full link, starting with https://."
+  }
+
+  if (/failed to fetch|networkerror|load failed/i.test(message)) {
+    return 'Could not reach that URL. Check your internet connection and the link, then try again.'
+  }
+
+  if (/unexpected token|is not valid json/i.test(message)) {
+    return "The response from that URL wasn't valid JSON. Check the link points directly to the encrypted document."
+  }
+
+  return message
+}
+
 export const loadEncryptedFromActionUrl = async (
   url: string
 ): Promise<{ payload: EncryptedPayload; key: string }> => {

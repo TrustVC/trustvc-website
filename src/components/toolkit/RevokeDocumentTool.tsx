@@ -6,12 +6,20 @@ import {
   SIGNER_TYPE,
   useProviderContext,
 } from '@/components/common/contexts/providerContext'
-import { revokeOnDocumentStore } from '@/utils/toolkit/revoke'
+import {
+  revokeOnDocumentStore,
+  toRevokeErrorMessage,
+} from '@/utils/toolkit/revoke'
 import { toErrorMessage } from '@/utils/helper'
 import ToolkitIcon from './ToolkitIcon'
 import { TOOLKIT_ASSETS } from './assets'
 import RevokeConfirmModal from './RevokeConfirmModal'
 import StatusNote from './StatusNote'
+
+const HASH_PATTERN = /^0x[0-9a-fA-F]{64}$/
+
+const isValidDocumentHash = (value: string): boolean =>
+  HASH_PATTERN.test(value.trim())
 
 type RevokeDocumentToolProps = {
   isDarkMode: boolean
@@ -27,6 +35,51 @@ const labelClass = (isDarkMode: boolean) =>
     'font-urbanist font-bold text-sm',
     isDarkMode ? 'text-neutral-60' : 'text-neutral-10'
   )
+
+type RevokeStatus = {
+  kind: 'success' | 'error'
+  message: string
+}
+
+const submitRevoke = async ({
+  signer,
+  storeAddress,
+  documentHash,
+  chainId,
+}: {
+  signer: ethers.Signer | undefined
+  storeAddress: string
+  documentHash: string
+  chainId?: CHAIN_ID
+}): Promise<RevokeStatus> => {
+  if (!signer) {
+    return {
+      kind: 'error',
+      message: 'Connect a wallet that can sign the revoke transaction.',
+    }
+  }
+  try {
+    const tx = await revokeOnDocumentStore({
+      storeAddress,
+      documentHash,
+      signer,
+      chainId,
+    })
+    const hash =
+      'hash' in tx && typeof tx.hash === 'string' ? tx.hash : undefined
+    return {
+      kind: 'success',
+      message: hash
+        ? `Document revoked. Transaction ${hash}`
+        : 'Document revoked.',
+    }
+  } catch (error) {
+    return {
+      kind: 'error',
+      message: toRevokeErrorMessage(error),
+    }
+  }
+}
 
 const RevokeDocumentTool = ({ isDarkMode }: RevokeDocumentToolProps) => {
   const {
@@ -56,10 +109,17 @@ const RevokeDocumentTool = ({ isDarkMode }: RevokeDocumentToolProps) => {
     ? providerOrSigner
     : undefined
   const signerReadyOnChain = Boolean(signer) && Boolean(currentChainId)
+  const storeAddressValid =
+    storeAddress.trim().length === 0 ||
+    ethers.utils.isAddress(storeAddress.trim())
+  const documentHashValid =
+    documentHash.trim().length === 0 || isValidDocumentHash(documentHash)
   const canConfirmRevoke =
     connected &&
     Boolean(storeAddress) &&
     Boolean(documentHash) &&
+    ethers.utils.isAddress(storeAddress.trim()) &&
+    isValidDocumentHash(documentHash) &&
     !isSubmitting &&
     !networkChangeLoading &&
     signerReadyOnChain
@@ -161,36 +221,17 @@ const RevokeDocumentTool = ({ isDarkMode }: RevokeDocumentToolProps) => {
   }
 
   const confirmRevoke = async () => {
-    if (!signer) {
-      setStatus({
-        kind: 'error',
-        message: 'Connect a wallet that can sign the revoke transaction.',
-      })
-      return
-    }
     setIsSubmitting(true)
     try {
-      const tx = await revokeOnDocumentStore({
+      const result = await submitRevoke({
+        signer,
         storeAddress,
         documentHash,
-        signer,
         chainId: currentChainId,
       })
-      const hash =
-        'hash' in tx && typeof tx.hash === 'string' ? tx.hash : undefined
-      setShowConfirm(false)
-      setStatus({
-        kind: 'success',
-        message: hash
-          ? `Document revoked. Transaction ${hash}`
-          : 'Document revoked.',
-      })
-    } catch (error) {
-      setStatus({
-        kind: 'error',
-        message: toErrorMessage(error, 'Revoke failed.'),
-      })
+      setStatus(result)
     } finally {
+      setShowConfirm(false)
       setIsSubmitting(false)
     }
   }
@@ -214,12 +255,22 @@ const RevokeDocumentTool = ({ isDarkMode }: RevokeDocumentToolProps) => {
           label="Store Address"
           value={storeAddress}
           onChange={setStoreAddress}
+          error={
+            storeAddressValid
+              ? undefined
+              : "That doesn't look like a valid Ethereum address — it should be 0x followed by 40 hex characters."
+          }
         />
         <HexField
           isDarkMode={isDarkMode}
           label="Certificate Hash To Revoke"
           value={documentHash}
           onChange={setDocumentHash}
+          error={
+            documentHashValid
+              ? undefined
+              : "That doesn't look like a valid document hash — it should be 0x followed by 64 hex characters."
+          }
         />
         <button
           type="button"
@@ -487,24 +538,35 @@ const HexField = ({
   label,
   value,
   onChange,
+  error,
 }: {
   isDarkMode: boolean
   label: string
   value: string
   onChange: (value: string) => void
+  error?: string
 }) => (
-  <label className="flex flex-col gap-2">
-    <span className={labelClass(isDarkMode)}>{label}</span>
-    <input
-      value={value}
-      onChange={event => onChange(event.target.value)}
-      placeholder="0x…"
-      className={clsx(
-        'h-10 px-3 rounded-lg border font-mono text-sm',
-        fieldClass(isDarkMode)
-      )}
-    />
-  </label>
+  <div className="flex flex-col gap-2">
+    <label className="flex flex-col gap-2">
+      <span className={labelClass(isDarkMode)}>{label}</span>
+      <input
+        value={value}
+        onChange={event => onChange(event.target.value)}
+        placeholder="0x…"
+        aria-invalid={Boolean(error)}
+        className={clsx(
+          'h-10 px-3 rounded-lg border font-mono text-sm',
+          fieldClass(isDarkMode),
+          error && 'border-alert-50'
+        )}
+      />
+    </label>
+    {error && (
+      <span role="alert" className="font-avenir text-xs text-alert-50">
+        {error}
+      </span>
+    )}
+  </div>
 )
 
 export default RevokeDocumentTool

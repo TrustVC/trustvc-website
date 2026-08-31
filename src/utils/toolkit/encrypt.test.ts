@@ -6,6 +6,7 @@ import {
   generateEncryptionKey,
   loadEncryptedFromActionUrl,
   parseEncryptedPayload,
+  toEncryptErrorMessage,
   ENCRYPTED_PAYLOAD_OBJECT_MESSAGE,
 } from './encrypt'
 import { INVALID_JSON_MESSAGE } from './types'
@@ -114,5 +115,46 @@ describe('toolkit encrypt', () => {
       loadEncryptedFromActionUrl(`https://trustvc.io/?q=${action}#${anchor}`)
     ).rejects.toThrow(/Missing/)
     vi.unstubAllGlobals()
+  })
+
+  describe('toEncryptErrorMessage', () => {
+    it('explains an AES-GCM auth failure as a wrong key or altered payload', () => {
+      expect(
+        toEncryptErrorMessage(new Error('Error decrypting message'), 'decrypt')
+      ).toMatch(/secret key is likely wrong|corrupted|altered/i)
+    })
+
+    it('explains a missing key in plain language', () => {
+      expect(
+        toEncryptErrorMessage(new Error('Missing key'), 'decrypt')
+      ).toMatch(/no secret key found/i)
+    })
+
+    it('explains missing payload fields with guidance', () => {
+      expect(
+        toEncryptErrorMessage(new Error('Missing cipherText, iv'), 'decrypt')
+      ).toMatch(/missing: cipherText, iv/i)
+    })
+
+    it('passes already-friendly messages through unchanged', () => {
+      expect(
+        toEncryptErrorMessage(new Error(INVALID_JSON_MESSAGE), 'encrypt')
+      ).toBe(INVALID_JSON_MESSAGE)
+      expect(
+        toEncryptErrorMessage(
+          new Error(ENCRYPTED_PAYLOAD_OBJECT_MESSAGE),
+          'decrypt'
+        )
+      ).toBe(ENCRYPTED_PAYLOAD_OBJECT_MESSAGE)
+    })
+
+    it('falls back to a mode-specific message when there is nothing to go on', () => {
+      expect(toEncryptErrorMessage({}, 'encrypt')).toBe(
+        'Unable to encrypt this document. Please try again.'
+      )
+      expect(toEncryptErrorMessage({}, 'decrypt')).toBe(
+        'Unable to decrypt this document. Please try again.'
+      )
+    })
   })
 })

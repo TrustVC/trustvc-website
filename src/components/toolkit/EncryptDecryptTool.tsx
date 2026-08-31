@@ -3,12 +3,15 @@ import clsx from 'clsx'
 import ModeToggle from './ModeToggle'
 import DualJsonPanes from './DualJsonPanes'
 import StatusNote from './StatusNote'
+import ToolkitIcon from './ToolkitIcon'
+import { TOOLKIT_ASSETS } from './assets'
 import { SAMPLE_RAW_V2_DOCUMENT } from '@/utils/toolkit/types'
 import {
   decryptDocument,
   encryptDocument,
   generateEncryptionKey,
   loadEncryptedFromActionUrl,
+  toEncryptErrorMessage,
 } from '@/utils/toolkit/encrypt'
 
 type EncryptDecryptToolProps = {
@@ -38,6 +41,7 @@ const EncryptDecryptTool = ({
   const [encryptOutput, setEncryptOutput] = useState('')
   const [decryptInput, setDecryptInput] = useState('')
   const [decryptOutput, setDecryptOutput] = useState('')
+  const [keyCopied, setKeyCopied] = useState(false)
   const [status, setStatus] = useState<{
     kind: 'success' | 'error'
     message: string
@@ -46,12 +50,33 @@ const EncryptDecryptTool = ({
   const modeRef = useRef(mode)
   const keyRef = useRef(key)
   const loadRequestIdRef = useRef(0)
+  const keyCopyTimeoutRef = useRef<ReturnType<typeof setTimeout>>()
   modeRef.current = mode
   keyRef.current = key
 
   const invalidatePendingLoad = () => {
     loadRequestIdRef.current += 1
     setIsLoadingUrl(false)
+  }
+
+  useEffect(() => {
+    return () => clearTimeout(keyCopyTimeoutRef.current)
+  }, [])
+
+  const copyKey = async () => {
+    if (!key) return
+    try {
+      await navigator.clipboard.writeText(key)
+      setKeyCopied(true)
+      clearTimeout(keyCopyTimeoutRef.current)
+      keyCopyTimeoutRef.current = setTimeout(() => setKeyCopied(false), 1500)
+    } catch {
+      setStatus({
+        kind: 'error',
+        message:
+          'Could not copy the key. Your browser may be blocking clipboard access.',
+      })
+    }
   }
 
   useEffect(() => {
@@ -99,10 +124,7 @@ const EncryptDecryptTool = ({
     } catch (error) {
       setStatus({
         kind: 'error',
-        message:
-          error instanceof Error
-            ? error.message
-            : 'Unable to process document.',
+        message: toEncryptErrorMessage(error, mode),
       })
     }
   }
@@ -130,10 +152,7 @@ const EncryptDecryptTool = ({
       if (requestId !== loadRequestIdRef.current) return
       setStatus({
         kind: 'error',
-        message:
-          error instanceof Error
-            ? error.message
-            : 'Unable to load the document from URL.',
+        message: toEncryptErrorMessage(error, 'decrypt'),
       })
     } finally {
       if (requestId === loadRequestIdRef.current) {
@@ -169,6 +188,24 @@ const EncryptDecryptTool = ({
           placeholder="tvc-preview-key"
           className={fieldClass(isDarkMode)}
         />
+        <button
+          type="button"
+          onClick={() => void copyKey()}
+          disabled={!key}
+          aria-label={keyCopied ? 'Key copied' : 'Copy key to clipboard'}
+          title={keyCopied ? 'Copied!' : 'Copy key'}
+          className={clsx(
+            'flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border md:h-10 md:w-10',
+            'disabled:cursor-not-allowed disabled:opacity-40',
+            isDarkMode ? 'border-white/20' : 'border-neutral-50'
+          )}
+        >
+          <ToolkitIcon
+            src={keyCopied ? TOOLKIT_ASSETS.checkCircle : TOOLKIT_ASSETS.copy}
+            alt=""
+            size={18}
+          />
+        </button>
         {mode === 'encrypt' && (
           <button
             type="button"

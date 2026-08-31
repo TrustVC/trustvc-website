@@ -94,6 +94,53 @@ export const truncateHash = (value: string, visible = 6): string => {
   return `${value.slice(0, visible + 2)}…${value.slice(-visible)}`
 }
 
+const errorText = (err: unknown): string => {
+  // Prefer the short, specific fields ethers/wallet errors carry (`code`, `reason`)
+  // over `message`, which is often a long blob of debug text and URLs.
+  if (err && typeof err === 'object') {
+    const record = err as { code?: unknown; reason?: unknown }
+    if (record.code === 4001 || record.code === 'ACTION_REJECTED') {
+      return 'user rejected'
+    }
+    if (typeof record.reason === 'string' && record.reason.trim()) {
+      return record.reason.trim()
+    }
+  }
+  if (err instanceof Error && err.message.trim()) return err.message.trim()
+  if (typeof err === 'string' && err.trim()) return err.trim()
+  return ''
+}
+
+export const toRevokeErrorMessage = (err: unknown): string => {
+  const message = errorText(err)
+
+  if (/Pre-check \(callStatic\) for revoke/i.test(message)) {
+    return 'This revoke cannot go through. Confirm you are on the same network as the document store, this wallet has revoker rights, and the store address and hash are correct. The document may already be revoked.'
+  }
+
+  if (
+    /user rejected|user denied|ACTION_REJECTED|rejected the request/i.test(
+      message
+    )
+  ) {
+    return 'Revoke cancelled in your wallet.'
+  }
+
+  if (/insufficient funds|insufficient balance/i.test(message)) {
+    return 'This wallet does not have enough cryptocurrency to pay for the transaction.'
+  }
+
+  if (/could not detect network|underlying network changed/i.test(message)) {
+    return "Your wallet's network changed unexpectedly. Reconnect your wallet, make sure it's on the same network as the document store, and try again."
+  }
+
+  if (!message) {
+    return 'Revoke failed. Please try again.'
+  }
+
+  return `Revoke failed. The wallet or network reported: "${message}" — double-check the store address, hash and network, then try again.`
+}
+
 export const revokeOnDocumentStore = async ({
   storeAddress,
   documentHash,
