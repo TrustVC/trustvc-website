@@ -1,0 +1,168 @@
+import { useState } from 'react'
+import clsx from 'clsx'
+import type { ToolkitTool } from '@/utils/toolkit/types'
+import ToolkitIcon from './ToolkitIcon'
+import { TOOLKIT_ASSETS } from './assets'
+import ToolkitHero from './ToolkitHero'
+import ToolkitTabs from './ToolkitTabs'
+import WrapUnwrapTool from './WrapUnwrapTool'
+import DnsResolverTool from './DnsResolverTool'
+import EncryptDecryptTool from './EncryptDecryptTool'
+import RevokeDocumentTool from './RevokeDocumentTool'
+
+const TOOL_COPY: Record<
+  ToolkitTool,
+  { title: string; description: string; icon: string }
+> = {
+  wrap: {
+    title: 'Wrap / Unwrap',
+    description:
+      'Wrap raw JSON into an OpenAttestation / TradeTrust wrapped document, or unwrap one back to plain JSON for inspection. Wrapping produces the legacy OA format. For new credentials, issue W3C Verifiable Credentials instead.',
+    icon: TOOLKIT_ASSETS.wrapIcon,
+  },
+  dns: {
+    title: 'DNS Resolver',
+    description:
+      "Enter a domain to fetch its TXT records. This is the same lookup verifiers use to confirm that an OpenAttestation / TradeTrust document store or DID is legitimately linked to the issuer's domain through a DNS-TXT/DNS-DID identity proof.",
+    icon: TOOLKIT_ASSETS.dnsTab,
+  },
+  encrypt: {
+    title: 'Encrypt / Decrypt',
+    description:
+      "Encrypt a document's JSON payload for private sharing, or decrypt one back to plain JSON. Encrypt generates a one-time key for you to share separately; decrypt takes that key back. This is the OpenAttestation / TradeTrust encryption scheme only.",
+    icon: TOOLKIT_ASSETS.lockIcon,
+  },
+  revoke: {
+    title: 'Revoke Document',
+    description:
+      'Use the target hash to revoke a single document, or the merkle root to revoke an entire issued batch. This is irreversible, so only revoke documents that are void, superseded, or issued in error.',
+    icon: TOOLKIT_ASSETS.warningTriangle,
+  },
+}
+
+type ToolkitSectionProps = {
+  active: ToolkitTool
+  onChange: (tool: ToolkitTool) => void
+  isDarkMode: boolean
+}
+
+const ToolkitSection = ({
+  active,
+  onChange,
+  isDarkMode,
+}: ToolkitSectionProps) => {
+  const copy = TOOL_COPY[active]
+  const [encryptSampleTick, setEncryptSampleTick] = useState(0)
+
+  return (
+    <div className="toolkit-surface w-full min-w-0">
+      <ToolkitHero isDarkMode={isDarkMode} />
+      <div className="flex flex-col items-center gap-4 mt-8 mb-6 text-center">
+        <span className="inline-flex items-center gap-1 rounded-full bg-[#dfe1ff] px-2 py-0.5">
+          <ToolkitIcon src={TOOLKIT_ASSETS.shield} alt="" size={16} />
+          <span className="font-urbanist font-bold text-xs text-primary-30">
+            Built For Developers
+          </span>
+        </span>
+        <h2 className="font-urbanist font-extrabold text-[28px] sm:text-[32px] lg:text-[38px] leading-tight lg:leading-[60px] px-2">
+          <span
+            className={clsx(isDarkMode ? 'text-neutral-60' : 'text-neutral-10')}
+          >
+            Interactive Developer{' '}
+          </span>
+          <span className="text-primary-60">Toolkit</span>
+        </h2>
+        <p
+          className={clsx(
+            'max-w-[520px] font-avenir text-lg leading-[25.6px]',
+            isDarkMode ? 'text-neutral-50' : 'text-neutral-30'
+          )}
+        >
+          Four essential tools for working with OpenAttestation documents.
+        </p>
+      </div>
+      <div className="w-full min-w-0">
+        <ToolkitTabs
+          active={active}
+          onChange={onChange}
+          isDarkMode={isDarkMode}
+        />
+        <div
+          className={clsx(
+            'rounded-2xl border shadow-[0px_4px_48px_0px_rgba(104,106,210,0.08),0px_1px_4px_0px_rgba(0,0,0,0.04)] overflow-hidden -mt-px',
+            isDarkMode
+              ? 'bg-neutral-10/70 border-white/10'
+              : 'bg-white border-neutral-50/33'
+          )}
+        >
+          <div
+            className={clsx(
+              'flex flex-col gap-3 px-4 py-4 md:flex-row md:items-center md:gap-3 md:px-6',
+              isDarkMode
+                ? 'border-b border-white/10'
+                : 'border-b border-neutral-60'
+            )}
+          >
+            <div className="flex min-w-0 items-center gap-3 md:flex-1">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-[#dfe1ff] md:h-[53px] md:w-[53px]">
+                <ToolkitIcon src={copy.icon} alt="" size={24} />
+              </div>
+              <div className="min-w-0 flex-1 text-left">
+                <h3
+                  className={clsx(
+                    'font-urbanist font-bold not-italic text-[1.125rem] leading-[1.21875rem] text-left',
+                    isDarkMode ? 'text-neutral-60' : 'text-neutral-10'
+                  )}
+                >
+                  {copy.title}
+                </h3>
+                <p
+                  className={clsx(
+                    'mt-1 hidden font-avenir text-[0.875rem] font-normal not-italic leading-[1.125rem] text-left md:block',
+                    isDarkMode ? 'text-neutral-50' : 'text-neutral-30'
+                  )}
+                >
+                  {copy.description}
+                </p>
+              </div>
+            </div>
+            <p
+              className={clsx(
+                'font-avenir text-[0.875rem] font-normal not-italic leading-[1.125rem] text-left md:hidden',
+                isDarkMode ? 'text-neutral-50' : 'text-neutral-30'
+              )}
+            >
+              {copy.description}
+            </p>
+            {active === 'encrypt' && (
+              <button
+                type="button"
+                onClick={() => setEncryptSampleTick(tick => tick + 1)}
+                className={clsx(
+                  'inline-flex shrink-0 items-center gap-1.5 self-start font-urbanist text-sm font-bold md:self-center',
+                  isDarkMode ? 'text-primary-90' : 'text-primary-50'
+                )}
+              >
+                <ToolkitIcon src={TOOLKIT_ASSETS.download} alt="" size={18} />
+                Load sample document
+              </button>
+            )}
+          </div>
+          {active === 'wrap' && <WrapUnwrapTool isDarkMode={isDarkMode} />}
+          {active === 'dns' && <DnsResolverTool isDarkMode={isDarkMode} />}
+          {active === 'encrypt' && (
+            <EncryptDecryptTool
+              isDarkMode={isDarkMode}
+              sampleTick={encryptSampleTick}
+            />
+          )}
+          {active === 'revoke' && (
+            <RevokeDocumentTool isDarkMode={isDarkMode} />
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default ToolkitSection
