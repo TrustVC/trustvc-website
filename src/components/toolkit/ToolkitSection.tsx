@@ -17,7 +17,7 @@ const TOOL_COPY: Record<
   wrap: {
     title: 'Wrap / Unwrap',
     description:
-      'Wrap raw JSON into an OpenAttestation / TradeTrust wrapped document, or unwrap one back to plain JSON for inspection. Wrapping produces the legacy OA format. For new credentials, issue W3C Verifiable Credentials instead.',
+      'Wrap raw JSON into an OpenAttestation / TradeTrust wrapped document, or unwrap one back to plain JSON for inspection. Wrapping produces the legacy OA format.',
     icon: TOOLKIT_ASSETS.wrapIcon,
   },
   dns: {
