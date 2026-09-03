@@ -1,11 +1,18 @@
 import {
-  documentStoreRevoke,
   getDataV2,
   isWrappedV2Document,
   isWrappedV3Document,
   type CHAIN_ID,
 } from '@trustvc/trustvc'
-import type { Signer } from 'ethers'
+import { Contract, type Signer } from 'ethers'
+
+/**
+ * DocumentStore overloads `revoke` (single hash vs merkle-proof batch). Ethers v5
+ * then leaves `contract.callStatic.revoke` undefined, which is what the bundled
+ * `@trustvc/trustvc` `documentStoreRevoke` still calls. A one-function ABI makes
+ * the name unambiguous.
+ */
+const DOCUMENT_STORE_REVOKE_ABI = ['function revoke(bytes32 document)']
 
 const withHexPrefix = (value: string): string =>
   value.startsWith('0x') ? value : `0x${value}`
@@ -111,33 +118,34 @@ const errorText = (err: unknown): string => {
   return ''
 }
 
+const REVOKE_ERROR_COPY: Array<[RegExp, string]> = [
+  [
+    /Pre-check \(callStatic\) for revoke|callStatic\.revoke is not a function|revoke is not a function/i,
+    'This revoke cannot go through. Confirm you are on the same network as the document store, this wallet has revoker rights, and the store address and hash are correct. The document may already be revoked.',
+  ],
+  [
+    /AccessControl|missing role|REVOKER_ROLE/i,
+    'This wallet does not have revoker rights on that document store. Connect the store owner or a wallet that has been granted the revoker role.',
+  ],
+  [
+    /user rejected|user denied|ACTION_REJECTED|rejected the request/i,
+    'Revoke cancelled in your wallet.',
+  ],
+  [
+    /insufficient funds|insufficient balance/i,
+    'This wallet does not have enough cryptocurrency to pay for the transaction.',
+  ],
+  [
+    /could not detect network|underlying network changed/i,
+    "Your wallet's network changed unexpectedly. Reconnect your wallet, make sure it's on the same network as the document store, and try again.",
+  ],
+]
+
 export const toRevokeErrorMessage = (err: unknown): string => {
   const message = errorText(err)
-
-  if (/Pre-check \(callStatic\) for revoke/i.test(message)) {
-    return 'This revoke cannot go through. Confirm you are on the same network as the document store, this wallet has revoker rights, and the store address and hash are correct. The document may already be revoked.'
-  }
-
-  if (
-    /user rejected|user denied|ACTION_REJECTED|rejected the request/i.test(
-      message
-    )
-  ) {
-    return 'Revoke cancelled in your wallet.'
-  }
-
-  if (/insufficient funds|insufficient balance/i.test(message)) {
-    return 'This wallet does not have enough cryptocurrency to pay for the transaction.'
-  }
-
-  if (/could not detect network|underlying network changed/i.test(message)) {
-    return "Your wallet's network changed unexpectedly. Reconnect your wallet, make sure it's on the same network as the document store, and try again."
-  }
-
-  if (!message) {
-    return 'Revoke failed. Please try again.'
-  }
-
+  const mapped = REVOKE_ERROR_COPY.find(([pattern]) => pattern.test(message))
+  if (mapped) return mapped[1]
+  if (!message) return 'Revoke failed. Please try again.'
   return `Revoke failed. The wallet or network reported: "${message}" — double-check the store address, hash and network, then try again.`
 }
 
@@ -145,7 +153,6 @@ export const revokeOnDocumentStore = async ({
   storeAddress,
   documentHash,
   signer,
-  chainId,
 }: RevokeTarget & {
   signer: Signer
   chainId?: CHAIN_ID
@@ -156,10 +163,14 @@ export const revokeOnDocumentStore = async ({
   if (!documentHash.trim()) {
     throw new Error('Certificate hash is required.')
   }
-  return documentStoreRevoke(
+
+  const hash = withHexPrefix(documentHash.trim())
+  const contract = new Contract(
     storeAddress.trim(),
-    withHexPrefix(documentHash.trim()),
-    signer,
-    chainId ? { chainId } : {}
+    DOCUMENT_STORE_REVOKE_ABI,
+    signer
   )
+
+  await contract.callStatic.revoke(hash)
+  return contract.revoke(hash)
 }

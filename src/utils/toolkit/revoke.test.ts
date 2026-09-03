@@ -1,5 +1,6 @@
 // @vitest-environment node
 import { describe, expect, it } from 'vitest'
+import { Contract, providers } from 'ethers'
 import {
   extractRevokeTarget,
   toRevokeErrorMessage,
@@ -81,6 +82,31 @@ describe('toolkit revoke', () => {
         new Error('Pre-check (callStatic) for revoke failed')
       )
     ).toMatch(/same network as the document store/i)
+    expect(
+      toRevokeErrorMessage(
+        new TypeError(
+          'documentStoreContract.callStatic.revoke is not a function'
+        )
+      )
+    ).toMatch(/same network as the document store/i)
+  })
+
+  it('rewrites a missing revoker role', () => {
+    expect(
+      toRevokeErrorMessage({
+        reason: 'AccessControl: account is missing role',
+      })
+    ).toMatch(/does not have revoker rights/i)
+  })
+
+  it('exposes callStatic.revoke when the ABI has only the single-hash revoke', () => {
+    const contract = new Contract(
+      '0x0000000000000000000000000000000000dEaD',
+      ['function revoke(bytes32 document)'],
+      new providers.JsonRpcProvider()
+    )
+    expect(typeof contract.callStatic.revoke).toBe('function')
+    expect(typeof contract.revoke).toBe('function')
   })
 
   it('rewrites wallet rejection and insufficient funds', () => {
@@ -110,10 +136,10 @@ describe('toolkit revoke', () => {
       toRevokeErrorMessage({
         message:
           'call revert exception [ See: https://links.ethers.org/v5-errors-CALL_EXCEPTION ]',
-        reason: 'AccessControl: account is missing role',
+        reason: 'document already revoked',
       })
     ).toBe(
-      'Revoke failed. The wallet or network reported: "AccessControl: account is missing role" — double-check the store address, hash and network, then try again.'
+      'Revoke failed. The wallet or network reported: "document already revoked" — double-check the store address, hash and network, then try again.'
     )
   })
 })
