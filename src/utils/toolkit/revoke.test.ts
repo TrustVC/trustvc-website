@@ -81,14 +81,14 @@ describe('toolkit revoke', () => {
       toRevokeErrorMessage(
         new Error('Pre-check (callStatic) for revoke failed')
       )
-    ).toMatch(/same network as the document store/i)
+    ).toMatch(/document store rejected this revoke/i)
     expect(
       toRevokeErrorMessage(
         new TypeError(
           'documentStoreContract.callStatic.revoke is not a function'
         )
       )
-    ).toMatch(/same network as the document store/i)
+    ).toMatch(/document store rejected this revoke/i)
   })
 
   it('rewrites a missing revoker role', () => {
@@ -131,6 +131,28 @@ describe('toolkit revoke', () => {
     )
   })
 
+  it('rewrites an InactiveDocument revert instead of the ethers dump', () => {
+    expect(
+      toRevokeErrorMessage(
+        new Error(
+          'call revert exception [ See: https://links.ethers.org/v5-errors-CALL_EXCEPTION ] (method="revoke(bytes32)", data="0xd19a0b2f596234fcc71050f9701df16735f19dc57dea741ad733a4aceeeaa9fe22f3cc5f596234fcc71050f9701df16735f19dc57dea741ad733a4aceeeaa9fe22f3cc5f", errorArgs=null, errorName=null, errorSignature=null, reason=null, code=CALL_EXCEPTION, version=abi/5.8.0)'
+        )
+      )
+    ).toBe(
+      'This document is already revoked on that document store. Revoking it again is not possible.'
+    )
+  })
+
+  it('rewrites a generic CALL_EXCEPTION when the revert cannot be decoded', () => {
+    expect(
+      toRevokeErrorMessage({
+        message:
+          'call revert exception [ See: https://links.ethers.org/v5-errors-CALL_EXCEPTION ]',
+        reason: null,
+      })
+    ).toMatch(/document store rejected this revoke/i)
+  })
+
   it('prefers a short revert reason over a noisy raw message', () => {
     expect(
       toRevokeErrorMessage({
@@ -139,7 +161,7 @@ describe('toolkit revoke', () => {
         reason: 'document already revoked',
       })
     ).toBe(
-      'Revoke failed. The wallet or network reported: "document already revoked" — double-check the store address, hash and network, then try again.'
+      'This document is already revoked on that document store. Revoking it again is not possible.'
     )
   })
 })

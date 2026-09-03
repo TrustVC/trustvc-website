@@ -101,32 +101,93 @@ export const truncateHash = (value: string, visible = 6): string => {
   return `${value.slice(0, visible + 2)}…${value.slice(-visible)}`
 }
 
-const errorText = (err: unknown): string => {
-  // Prefer the short, specific fields ethers/wallet errors carry (`code`, `reason`)
-  // over `message`, which is often a long blob of debug text and URLs.
-  if (err && typeof err === 'object') {
-    const record = err as { code?: unknown; reason?: unknown }
-    if (record.code === 4001 || record.code === 'ACTION_REJECTED') {
-      return 'user rejected'
-    }
-    if (typeof record.reason === 'string' && record.reason.trim()) {
-      return record.reason.trim()
-    }
+const firstStringField = (...values: unknown[]): string => {
+  for (const value of values) {
+    if (typeof value === 'string' && value.trim()) return value.trim()
   }
-  if (err instanceof Error && err.message.trim()) return err.message.trim()
-  if (typeof err === 'string' && err.trim()) return err.trim()
   return ''
 }
 
+const nestedError = (
+  err: unknown
+): {
+  code?: unknown
+  reason?: unknown
+  data?: unknown
+  error?: unknown
+  message?: unknown
+} =>
+  err && typeof err === 'object'
+    ? (err as {
+        code?: unknown
+        reason?: unknown
+        data?: unknown
+        error?: unknown
+        message?: unknown
+      })
+    : {}
+
+const revertData = (err: unknown): string => {
+  const record = nestedError(err)
+  const nested = nestedError(record.error)
+  const raw = firstStringField(
+    record.data,
+    nested.data,
+    nestedError(nested.error).data
+  )
+  if (raw.startsWith('0x') && raw.length >= 10) return raw.toLowerCase()
+
+  const message = firstStringField(
+    record.reason,
+    record.message,
+    err instanceof Error ? err.message : err
+  )
+  const fromMessage = message.match(/data="(0x[0-9a-fA-F]+)"/i)
+  return fromMessage?.[1]?.toLowerCase() ?? ''
+}
+
+const ALREADY_REVOKED =
+  'This document is already revoked on that document store. Revoking it again is not possible.'
+const NOT_ISSUED =
+  'This hash has not been issued on that document store yet. Issue the document first, then revoke.'
+const NO_REVOKER_ROLE =
+  'This wallet does not have revoker rights on that document store. Connect the store owner or a wallet that has been granted the revoker role.'
+const GENERIC_REVERT =
+  'The document store rejected this revoke. The hash may not be issued, it may already be revoked, or this wallet may not have revoker rights.'
+
+/** TrustVC / OpenAttestation DocumentStore custom-error selectors. */
+const REVERT_SELECTOR_COPY: Record<string, string> = {
+  '0xd19a0b2f': ALREADY_REVOKED, // InactiveDocument(bytes32,bytes32)
+  '0x96cfb27c': ALREADY_REVOKED, // DocumentIsRevoked(bytes32,bytes32)
+  '0x517eeb7d': NOT_ISSUED, // DocumentNotIssued(bytes32,bytes32)
+  '0xe2517d3f': NO_REVOKER_ROLE, // AccessControlUnauthorizedAccount
+  '0x4b20c093':
+    'The certificate hash is empty or invalid. Check the hash and try again.',
+  '0xc45a8d98':
+    'The document store rejected this hash. Confirm the store address and certificate hash are correct.',
+}
+
+const errorText = (err: unknown): string => {
+  const record = nestedError(err)
+  if (record.code === 4001 || record.code === 'ACTION_REJECTED') {
+    return 'user rejected'
+  }
+  return firstStringField(
+    record.reason,
+    record.message,
+    err instanceof Error ? err.message : undefined,
+    typeof err === 'string' ? err : undefined
+  )
+}
+
 const REVOKE_ERROR_COPY: Array<[RegExp, string]> = [
+  [/InactiveDocument|DocumentIsRevoked|already revoked/i, ALREADY_REVOKED],
+  [/DocumentNotIssued|not issued/i, NOT_ISSUED],
   [
     /Pre-check \(callStatic\) for revoke|callStatic\.revoke is not a function|revoke is not a function/i,
-    'This revoke cannot go through. Confirm you are on the same network as the document store, this wallet has revoker rights, and the store address and hash are correct. The document may already be revoked.',
+    GENERIC_REVERT,
   ],
-  [
-    /AccessControl|missing role|REVOKER_ROLE/i,
-    'This wallet does not have revoker rights on that document store. Connect the store owner or a wallet that has been granted the revoker role.',
-  ],
+  [/AccessControl|missing role|REVOKER_ROLE/i, NO_REVOKER_ROLE],
   [
     /user rejected|user denied|ACTION_REJECTED|rejected the request/i,
     'Revoke cancelled in your wallet.',
@@ -139,9 +200,15 @@ const REVOKE_ERROR_COPY: Array<[RegExp, string]> = [
     /could not detect network|underlying network changed/i,
     "Your wallet's network changed unexpectedly. Reconnect your wallet, make sure it's on the same network as the document store, and try again.",
   ],
+  [/call revert exception|CALL_EXCEPTION|links\.ethers\.org/i, GENERIC_REVERT],
 ]
 
 export const toRevokeErrorMessage = (err: unknown): string => {
+  const selector = revertData(err).slice(0, 10)
+  if (selector && REVERT_SELECTOR_COPY[selector]) {
+    return REVERT_SELECTOR_COPY[selector]
+  }
+
   const message = errorText(err)
   const mapped = REVOKE_ERROR_COPY.find(([pattern]) => pattern.test(message))
   if (mapped) return mapped[1]
