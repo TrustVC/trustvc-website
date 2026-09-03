@@ -166,12 +166,12 @@ export const AssetManagementForm: FunctionComponent<
     isTitleEscrow &&
     !!account &&
     !!holder &&
-    account.toLowerCase() === holder.toLowerCase()
+    account?.toLowerCase() === holder?.toLowerCase()
   const isBeneficiary =
     isTitleEscrow &&
     !!account &&
     !!beneficiary &&
-    account.toLowerCase() === beneficiary.toLowerCase()
+    account?.toLowerCase() === beneficiary?.toLowerCase()
   const isHolderAndBeneficiary = isHolder && isBeneficiary
   const hasNominee = !!nominee && nominee !== InitialAddress
   const hasPreviousBeneficiary =
