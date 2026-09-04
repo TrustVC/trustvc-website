@@ -1,13 +1,31 @@
 // @vitest-environment node
-import { describe, expect, it } from 'vitest'
-import { Contract, providers } from 'ethers'
+import { describe, expect, it, vi } from 'vitest'
+import { Contract, providers, type Signer } from 'ethers'
+import type { CHAIN_ID } from '@trustvc/trustvc'
 import {
   extractRevokeTarget,
+  revokeOnDocumentStore,
   toRevokeErrorMessage,
   truncateHash,
 } from './revoke'
 import { wrapRawDocument } from './wrap'
 import { SAMPLE_RAW_V2_DOCUMENT } from './types'
+
+const { ContractMock } = vi.hoisted(() => ({
+  ContractMock: vi.fn(),
+}))
+
+vi.mock('ethers', async () => {
+  const actual = await vi.importActual<typeof import('ethers')>('ethers')
+  ContractMock.mockImplementation(
+    (...args: ConstructorParameters<typeof actual.Contract>) =>
+      new actual.Contract(...args)
+  )
+  return {
+    ...actual,
+    Contract: ContractMock,
+  }
+})
 
 describe('toolkit revoke', () => {
   it('extracts store address and merkle root from a wrapped v2 document', async () => {
@@ -163,5 +181,48 @@ describe('toolkit revoke', () => {
     ).toBe(
       'This document is already revoked on that document store. Revoking it again is not possible.'
     )
+  })
+
+  it('does not call the document store when the signer is on a different network', async () => {
+    ContractMock.mockClear()
+    const signer = {
+      getChainId: vi.fn().mockResolvedValue(1),
+    } as unknown as Signer
+
+    await expect(
+      revokeOnDocumentStore({
+        storeAddress: '0xA594f6e10564e87888425c7CC3910FE1c800aB0B',
+        documentHash: `0x${'ab'.repeat(32)}`,
+        signer,
+        chainId: '137' as CHAIN_ID,
+      })
+    ).rejects.toThrow(/underlying network changed/i)
+
+    expect(ContractMock).not.toHaveBeenCalled()
+  })
+
+  it('rejects after mining when the revoke transaction status is not success', async () => {
+    const wait = vi.fn().mockResolvedValue({ status: 0 })
+    const revoke = vi.fn().mockResolvedValue({ hash: '0xabc', wait })
+    const callStaticRevoke = vi.fn().mockResolvedValue(undefined)
+    ContractMock.mockImplementationOnce(() => ({
+      callStatic: { revoke: callStaticRevoke },
+      revoke,
+    }))
+
+    await expect(
+      revokeOnDocumentStore({
+        storeAddress: '0xA594f6e10564e87888425c7CC3910FE1c800aB0B',
+        documentHash: `0x${'ab'.repeat(32)}`,
+        signer: {
+          getChainId: vi.fn().mockResolvedValue(1),
+        } as unknown as Signer,
+        chainId: '1' as CHAIN_ID,
+      })
+    ).rejects.toThrow(/call revert exception/i)
+
+    expect(callStaticRevoke).toHaveBeenCalled()
+    expect(revoke).toHaveBeenCalled()
+    expect(wait).toHaveBeenCalled()
   })
 })

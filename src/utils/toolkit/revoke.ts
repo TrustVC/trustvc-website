@@ -5,6 +5,7 @@ import {
   type CHAIN_ID,
 } from '@trustvc/trustvc'
 import { Contract, type Signer } from 'ethers'
+import { toChainId } from '../chain-utils'
 
 /**
  * DocumentStore overloads `revoke` (single hash vs merkle-proof batch). Ethers v5
@@ -220,6 +221,7 @@ export const revokeOnDocumentStore = async ({
   storeAddress,
   documentHash,
   signer,
+  chainId,
 }: RevokeTarget & {
   signer: Signer
   chainId?: CHAIN_ID
@@ -231,6 +233,13 @@ export const revokeOnDocumentStore = async ({
     throw new Error('Certificate hash is required.')
   }
 
+  if (chainId != null) {
+    const signerChainId = String(await signer.getChainId())
+    if (signerChainId !== toChainId(chainId)) {
+      throw new Error('underlying network changed')
+    }
+  }
+
   const hash = withHexPrefix(documentHash.trim())
   const contract = new Contract(
     storeAddress.trim(),
@@ -239,5 +248,10 @@ export const revokeOnDocumentStore = async ({
   )
 
   await contract.callStatic.revoke(hash)
-  return contract.revoke(hash)
+  const tx = await contract.revoke(hash)
+  const receipt = await tx.wait()
+  if (receipt?.status !== 1) {
+    throw new Error('call revert exception')
+  }
+  return tx
 }
