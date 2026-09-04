@@ -1,12 +1,31 @@
 // @vitest-environment node
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
+import { Contract, providers, type Signer } from 'ethers'
+import type { CHAIN_ID } from '@trustvc/trustvc'
 import {
   extractRevokeTarget,
+  revokeOnDocumentStore,
   toRevokeErrorMessage,
   truncateHash,
 } from './revoke'
 import { wrapRawDocument } from './wrap'
 import { SAMPLE_RAW_V2_DOCUMENT } from './types'
+
+const { ContractMock } = vi.hoisted(() => ({
+  ContractMock: vi.fn(),
+}))
+
+vi.mock('ethers', async () => {
+  const actual = await vi.importActual<typeof import('ethers')>('ethers')
+  ContractMock.mockImplementation(
+    (...args: ConstructorParameters<typeof actual.Contract>) =>
+      new actual.Contract(...args)
+  )
+  return {
+    ...actual,
+    Contract: ContractMock,
+  }
+})
 
 describe('toolkit revoke', () => {
   it('extracts store address and merkle root from a wrapped v2 document', async () => {
@@ -80,7 +99,32 @@ describe('toolkit revoke', () => {
       toRevokeErrorMessage(
         new Error('Pre-check (callStatic) for revoke failed')
       )
-    ).toMatch(/same network as the document store/i)
+    ).toMatch(/document store rejected this revoke/i)
+    expect(
+      toRevokeErrorMessage(
+        new TypeError(
+          'documentStoreContract.callStatic.revoke is not a function'
+        )
+      )
+    ).toMatch(/document store rejected this revoke/i)
+  })
+
+  it('rewrites a missing revoker role', () => {
+    expect(
+      toRevokeErrorMessage({
+        reason: 'AccessControl: account is missing role',
+      })
+    ).toMatch(/does not have revoker rights/i)
+  })
+
+  it('exposes callStatic.revoke when the ABI has only the single-hash revoke', () => {
+    const contract = new Contract(
+      '0x0000000000000000000000000000000000dEaD',
+      ['function revoke(bytes32 document)'],
+      new providers.JsonRpcProvider()
+    )
+    expect(typeof contract.callStatic.revoke).toBe('function')
+    expect(typeof contract.revoke).toBe('function')
   })
 
   it('rewrites wallet rejection and insufficient funds', () => {
@@ -105,15 +149,80 @@ describe('toolkit revoke', () => {
     )
   })
 
+  it('rewrites an InactiveDocument revert instead of the ethers dump', () => {
+    expect(
+      toRevokeErrorMessage(
+        new Error(
+          'call revert exception [ See: https://links.ethers.org/v5-errors-CALL_EXCEPTION ] (method="revoke(bytes32)", data="0xd19a0b2f596234fcc71050f9701df16735f19dc57dea741ad733a4aceeeaa9fe22f3cc5f596234fcc71050f9701df16735f19dc57dea741ad733a4aceeeaa9fe22f3cc5f", errorArgs=null, errorName=null, errorSignature=null, reason=null, code=CALL_EXCEPTION, version=abi/5.8.0)'
+        )
+      )
+    ).toBe(
+      'This document is already revoked on that document store. Revoking it again is not possible.'
+    )
+  })
+
+  it('rewrites a generic CALL_EXCEPTION when the revert cannot be decoded', () => {
+    expect(
+      toRevokeErrorMessage({
+        message:
+          'call revert exception [ See: https://links.ethers.org/v5-errors-CALL_EXCEPTION ]',
+        reason: null,
+      })
+    ).toMatch(/document store rejected this revoke/i)
+  })
+
   it('prefers a short revert reason over a noisy raw message', () => {
     expect(
       toRevokeErrorMessage({
         message:
           'call revert exception [ See: https://links.ethers.org/v5-errors-CALL_EXCEPTION ]',
-        reason: 'AccessControl: account is missing role',
+        reason: 'document already revoked',
       })
     ).toBe(
-      'Revoke failed. The wallet or network reported: "AccessControl: account is missing role" — double-check the store address, hash and network, then try again.'
+      'This document is already revoked on that document store. Revoking it again is not possible.'
     )
+  })
+
+  it('does not call the document store when the signer is on a different network', async () => {
+    ContractMock.mockClear()
+    const signer = {
+      getChainId: vi.fn().mockResolvedValue(1),
+    } as unknown as Signer
+
+    await expect(
+      revokeOnDocumentStore({
+        storeAddress: '0xA594f6e10564e87888425c7CC3910FE1c800aB0B',
+        documentHash: `0x${'ab'.repeat(32)}`,
+        signer,
+        chainId: '137' as CHAIN_ID,
+      })
+    ).rejects.toThrow(/underlying network changed/i)
+
+    expect(ContractMock).not.toHaveBeenCalled()
+  })
+
+  it('rejects after mining when the revoke transaction status is not success', async () => {
+    const wait = vi.fn().mockResolvedValue({ status: 0 })
+    const revoke = vi.fn().mockResolvedValue({ hash: '0xabc', wait })
+    const callStaticRevoke = vi.fn().mockResolvedValue(undefined)
+    ContractMock.mockImplementationOnce(() => ({
+      callStatic: { revoke: callStaticRevoke },
+      revoke,
+    }))
+
+    await expect(
+      revokeOnDocumentStore({
+        storeAddress: '0xA594f6e10564e87888425c7CC3910FE1c800aB0B',
+        documentHash: `0x${'ab'.repeat(32)}`,
+        signer: {
+          getChainId: vi.fn().mockResolvedValue(1),
+        } as unknown as Signer,
+        chainId: '1' as CHAIN_ID,
+      })
+    ).rejects.toThrow(/call revert exception/i)
+
+    expect(callStaticRevoke).toHaveBeenCalled()
+    expect(revoke).toHaveBeenCalled()
+    expect(wait).toHaveBeenCalled()
   })
 })

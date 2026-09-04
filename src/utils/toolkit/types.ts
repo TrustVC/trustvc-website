@@ -61,7 +61,4 @@ export const SAMPLE_RAW_V4_DOCUMENT = {
   },
 }
 
-export const DNS_SAMPLE_DOMAINS = [
-  'example.opencerts.io',
-  'example.tradetrust.io',
-] as const
+export const DNS_SAMPLE_DOMAINS = ['example.tradetrust.io'] as const

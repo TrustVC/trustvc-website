@@ -240,7 +240,7 @@ describe('RevokeDocumentTool', () => {
       ).not.toBeInTheDocument()
     })
     expect(screen.getByRole('status')).toHaveTextContent(
-      /this revoke cannot go through/i
+      /document store rejected this revoke/i
     )
   })
 
