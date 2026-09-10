@@ -164,7 +164,8 @@ test.describe('Error — Transfer Holder (transaction fails)', () => {
 })
 
 // ── Section 2: Reject Transfer Holder fails ──────────────────────────────────
-test.describe('Error — Reject Transfer Holder (transaction fails)', () => {
+test.describe
+  .serial('Error — Reject Transfer Holder (transaction fails)', () => {
   let sectionSnapshot: string
 
   test.beforeAll(async () => {

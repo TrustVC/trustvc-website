@@ -37,6 +37,7 @@ describe('Navbar Component', () => {
     )
     // home remove from navbar
     expect(screen.getAllByText('About').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('Toolkit').length).toBeGreaterThan(0)
     expect(screen.getAllByText('Verticals').length).toBeGreaterThan(0)
     expect(screen.getAllByText('News & Updates').length).toBeGreaterThan(0)
   })

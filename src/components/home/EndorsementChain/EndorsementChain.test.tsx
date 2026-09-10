@@ -384,23 +384,22 @@ describe('EndorsementChain', () => {
       ).toBeInTheDocument()
     })
 
-    it('shows Bill discharged on eBoE discharge shred', () => {
-      const chainWithShred = [
+    it('shows Bill discharged on eBoE STATUS_DISCHARGED', () => {
+      const chainWithDischarge = [
         {
-          type: 'RETURN_TO_ISSUER_ACCEPTED',
+          type: 'STATUS_DISCHARGED',
           owner: '0x1234567890123456789012345678901234567890',
           holder: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
           timestamp: 1640000000000,
           transactionHash: '0xabc123',
           remark: 'done',
-          terminationReason: 'Discharged',
         },
       ]
       const { container } = render(
         <EndorsementChainLayout
           {...defaultProps}
           isObligation
-          endorsementChain={chainWithShred}
+          endorsementChain={chainWithDischarge}
         />
       )
       expect(screen.getByText('Bill discharged')).toBeInTheDocument()
@@ -420,20 +419,19 @@ describe('EndorsementChain', () => {
       )
     })
 
-    it('shows Bill rejected on eBoE reject shred', () => {
+    it('shows Bill rejected on eBoE STATUS_REJECTED', () => {
       render(
         <EndorsementChainLayout
           {...defaultProps}
           isObligation
           endorsementChain={[
             {
-              type: 'RETURN_TO_ISSUER_ACCEPTED',
+              type: 'STATUS_REJECTED',
               owner: '0x1234567890123456789012345678901234567890',
               holder: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
               timestamp: 1640000000000,
               transactionHash: '0xabc123',
               remark: 'nope',
-              terminationReason: 'Rejected',
             },
           ]}
         />
@@ -507,15 +505,45 @@ describe('EndorsementChain', () => {
         />
       )
       expect(screen.getByText('Return of ETR rejected')).toBeInTheDocument()
-      // Owner falls back to the holder column since no holder was set,
-      // so both columns should show the owner address instead of '_'.
+      // An unknown holder stays blank ('_') rather than copying the owner.
       const walletAddresses = Array.from(
         container.querySelectorAll('.wallet-address')
       ).map(el => el.textContent)
       expect(walletAddresses).toEqual([
         '0x1234567890123456789012345678901234567890',
-        '0x1234567890123456789012345678901234567890',
+        '_',
       ])
+    })
+
+    it('carries the last known holder onto RETURN_TO_ISSUER_REJECTED', () => {
+      const owner = '0x1234567890123456789012345678901234567890'
+      const holder = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd'
+      const chainWithRejectedReturn = [
+        {
+          type: 'INITIAL',
+          owner,
+          holder,
+          timestamp: 1640000000000,
+          transactionHash: '0xabc123',
+        },
+        {
+          type: 'RETURN_TO_ISSUER_REJECTED',
+          owner,
+          timestamp: 1640100000000,
+          transactionHash: '0xdef456',
+          remark: 'Rejected',
+        },
+      ]
+      const { container } = render(
+        <EndorsementChainLayout
+          {...defaultProps}
+          endorsementChain={chainWithRejectedReturn}
+        />
+      )
+      const walletAddresses = Array.from(
+        container.querySelectorAll('.wallet-address')
+      ).map(el => el.textContent)
+      expect(walletAddresses).toEqual([owner, holder, owner, holder])
     })
 
     it('renders REJECT_TRANSFER_BENEFICIARY event correctly', () => {

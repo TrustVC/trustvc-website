@@ -24,6 +24,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode: _setIsDarkMode }: NavbarProps) => {
   const isSettingsActive = location.pathname.startsWith('/settings')
   const isNewsActive = location.pathname.startsWith('/news-updates')
   const isAboutActive = location.pathname.startsWith('/about')
+  const isToolkitActive = location.pathname.startsWith('/toolkit')
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -112,7 +113,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode: _setIsDarkMode }: NavbarProps) => {
 
           {/* Navigation Tabs */}
           <div className="flex items-center">
-            <div className="p-2">
+            <div className="px-1 py-2">
               <Link
                 to="/about"
                 className="min-w-[40px] min-h-[40px] flex items-center justify-center px-1 py-[5px] rounded-lg transition-colors duration-200"
@@ -143,7 +144,38 @@ const Navbar = ({ isDarkMode, setIsDarkMode: _setIsDarkMode }: NavbarProps) => {
               </Link>
             </div>
 
-            <div className="p-2 relative" ref={verticalsRef}>
+            <div className="px-1 py-2">
+              <Link
+                to="/toolkit"
+                className="min-w-[40px] min-h-[40px] flex items-center justify-center px-1 py-[5px] rounded-lg transition-colors duration-200"
+                style={{ backgroundColor: 'transparent' }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.backgroundColor = isDarkMode
+                    ? 'rgba(255, 255, 255, 0.1)'
+                    : 'rgba(0, 0, 0, 0.05)'
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.backgroundColor = 'transparent'
+                }}
+              >
+                <div
+                  className="px-1 py-1 text-center text-sm font-bold font-urbanist leading-snug"
+                  style={{
+                    color: isToolkitActive
+                      ? isDarkMode
+                        ? '#7D80D7'
+                        : '#5B5BB3'
+                      : isDarkMode
+                        ? '#808894'
+                        : '#5B6571',
+                  }}
+                >
+                  Toolkit
+                </div>
+              </Link>
+            </div>
+
+            <div className="px-1 py-2 relative" ref={verticalsRef}>
               <button
                 type="button"
                 onClick={() => setIsVerticalsOpen(!isVerticalsOpen)}
@@ -237,7 +269,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode: _setIsDarkMode }: NavbarProps) => {
             </div>
 
             {/* Ecosystem and Gallery temporarily removed - restore from git */}
-            <div className="p-2">
+            <div className="px-1 py-2">
               <Link
                 to="/news-updates"
                 className="min-w-[40px] min-h-[40px] flex items-center justify-center px-1 py-[5px] rounded-lg transition-colors duration-200"
@@ -376,6 +408,31 @@ const Navbar = ({ isDarkMode, setIsDarkMode: _setIsDarkMode }: NavbarProps) => {
               }}
             >
               About
+            </Link>
+            <Link
+              to="/toolkit"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="px-4 py-3 text-left text-sm font-bold font-urbanist rounded-lg transition-colors duration-200"
+              style={{
+                color: isToolkitActive
+                  ? isDarkMode
+                    ? '#7D80D7'
+                    : '#5B5BB3'
+                  : isDarkMode
+                    ? '#808894'
+                    : '#5B6571',
+                backgroundColor: 'transparent',
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.backgroundColor = isDarkMode
+                  ? 'rgba(255, 255, 255, 0.1)'
+                  : 'rgba(0, 0, 0, 0.05)'
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.backgroundColor = 'transparent'
+              }}
+            >
+              Toolkit
             </Link>
             <button
               type="button"
