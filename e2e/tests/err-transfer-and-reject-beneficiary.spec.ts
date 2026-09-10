@@ -181,7 +181,7 @@ test.describe('Error — Transfer Beneficiary (transaction fails)', () => {
   })
 })
 
-test.describe('Error — Reject Transfer Beneficiary', () => {
+test.describe.serial('Error — Reject Transfer Beneficiary', () => {
   let sectionSnapshot: string
 
   test.beforeAll(async () => {

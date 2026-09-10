@@ -189,7 +189,8 @@ test.describe('Error — Transfer Owners (transaction fails)', () => {
 })
 
 // ── Section 2: Reject Transfer Owners fails ──────────────────────────────────
-test.describe('Error — Reject Transfer Owners (transaction fails)', () => {
+test.describe
+  .serial('Error — Reject Transfer Owners (transaction fails)', () => {
   // Snapshot before transferOwnersSuccess — reverted after the last test
   let sectionSnapshot: string
 

@@ -2,14 +2,29 @@ import type { Page } from '@playwright/test'
 import { MetaMask } from '@synthetixio/synpress/playwright'
 
 /**
- * Dismisses the MetaMask "What's new" popover and any other blocking popups.
- * Must be called after navigating to the MetaMask home page.
+ * Dismisses MetaMask "What's new" / Blockaid / onboarding popups that sit on
+ * top of the home screen and intercept account-menu clicks.
  */
 async function dismissMetaMaskPopups(metamaskPage: Page) {
-  const popoverClose = metamaskPage.locator('[data-testid="popover-close"]')
-  if (await popoverClose.isVisible({ timeout: 3000 }).catch(() => false)) {
-    await popoverClose.click()
-    await metamaskPage.waitForTimeout(500)
+  const closers = [
+    metamaskPage.locator('[data-testid="popover-close"]'),
+    metamaskPage.getByRole('button', { name: /^got it$/i }),
+    metamaskPage.getByRole('button', { name: /^close$/i }),
+    metamaskPage.locator('[aria-label="Close"]'),
+  ]
+
+  for (let attempt = 0; attempt < 5; attempt++) {
+    let dismissed = false
+    for (const closer of closers) {
+      const target = closer.first()
+      if (await target.isVisible({ timeout: 1000 }).catch(() => false)) {
+        await target.click({ force: true }).catch(() => undefined)
+        dismissed = true
+        await metamaskPage.waitForTimeout(400)
+        break
+      }
+    }
+    if (!dismissed) break
   }
 }
 
@@ -105,7 +120,14 @@ export async function switchMetaMaskAccount(
   }
   await dismissMetaMaskPopups(metamaskPage)
 
-  await metamaskPage.locator('[data-testid="account-menu-icon"]').click()
+  const accountMenu = metamaskPage.locator('[data-testid="account-menu-icon"]')
+  await accountMenu.waitFor({ state: 'visible', timeout: 10_000 })
+  try {
+    await accountMenu.click({ timeout: 5_000 })
+  } catch {
+    await dismissMetaMaskPopups(metamaskPage)
+    await accountMenu.click()
+  }
 
   // Find the account by name and click it
   const accountBtn = metamaskPage.locator(
@@ -129,6 +151,7 @@ export async function addMetaMaskAccount(
 ) {
   await metamaskPage.goto(`chrome-extension://${extensionId}/home.html`)
   await metamaskPage.waitForLoadState('domcontentloaded')
+  await dismissMetaMaskPopups(metamaskPage)
 
   await metamaskPage.locator('[data-testid="account-menu-icon"]').click()
   await metamaskPage
