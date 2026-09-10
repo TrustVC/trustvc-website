@@ -105,6 +105,28 @@ describe('Overlay', () => {
     expect(getByRole('button', { name: 'Last' })).toHaveFocus()
   })
 
+  it('skips a button inside an aria-hidden container in the tab cycle', async () => {
+    const user = userEvent.setup()
+    const { getByRole, getByText } = render(
+      <Overlay ariaLabel="Confirm">
+        <div aria-hidden="true">
+          <button type="button">Hidden</button>
+        </div>
+        <button type="button">First</button>
+        <button type="button">Last</button>
+      </Overlay>
+    )
+
+    expect(getByRole('button', { name: 'First' })).toHaveFocus()
+    await user.tab()
+    expect(getByRole('button', { name: 'Last' })).toHaveFocus()
+    await user.tab()
+    expect(getByRole('button', { name: 'First' })).toHaveFocus()
+    await user.tab({ shift: true })
+    expect(getByRole('button', { name: 'Last' })).toHaveFocus()
+    expect(getByText('Hidden')).not.toHaveFocus()
+  })
+
   it('skips a leading button with tabIndex={-1} in the tab cycle', async () => {
     const user = userEvent.setup()
     const { getByRole } = render(
