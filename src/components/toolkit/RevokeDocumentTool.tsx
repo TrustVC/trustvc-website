@@ -130,10 +130,9 @@ const RevokeDocumentTool = ({ isDarkMode }: RevokeDocumentToolProps) => {
     setNetworkChangeLoading(true)
     try {
       await Promise.resolve(changeNetwork(chainId))
-      if (signerReadyOnChain) {
-        setNetworkChangeLoading(false)
-      }
     } catch {
+      // changeNetwork already reports failures; always clear the busy flag below.
+    } finally {
       setNetworkChangeLoading(false)
     }
   }
