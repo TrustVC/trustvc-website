@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import clsx from 'clsx'
 import type { ToolkitTool } from '@/utils/toolkit/types'
 import ToolkitIcon from './ToolkitIcon'
@@ -53,6 +53,12 @@ const ToolkitSection = ({
 }: ToolkitSectionProps) => {
   const copy = TOOL_COPY[active]
   const [encryptSampleTick, setEncryptSampleTick] = useState(0)
+
+  useEffect(() => {
+    if (active !== 'encrypt') {
+      setEncryptSampleTick(0)
+    }
+  }, [active])
 
   return (
     <div className="toolkit-surface w-full min-w-0">

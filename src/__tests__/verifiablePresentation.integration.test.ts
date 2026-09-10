@@ -55,7 +55,7 @@ const NETWORK_TIMEOUT_MS = 120000
  * Marking a case `network: true` previously only appended "(needs network)" to its name —
  * nothing was gated on it and nothing was skipped.
  */
-const skipNetwork = import.meta.env.SKIP_NETWORK_TESTS === '1'
+const skipNetwork = process.env.SKIP_NETWORK_TESTS === '1'
 const itNetwork = skipNetwork ? it.skip : it
 
 const groupStatus = (frags: VerificationFragment[], type: string) => {

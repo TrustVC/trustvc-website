@@ -220,6 +220,39 @@ describe('RevokeDocumentTool', () => {
     expect(screen.getByRole('button', { name: /network/i })).toBeEnabled()
   })
 
+  it('clears networkChangeLoading after changeNetwork even if the signer is not ready on chain', async () => {
+    walletState.connected = true
+    walletState.currentChainId = undefined as unknown as string
+    walletState.changeNetwork.mockResolvedValue(undefined)
+
+    const user = userEvent.setup()
+    render(<RevokeDocumentTool isDarkMode={false} />)
+    await fillRevokeFields(user)
+
+    await user.click(screen.getByRole('button', { name: /network/i }))
+    await user.click(screen.getByRole('option', { name: /polygon network/i }))
+
+    await waitFor(() => {
+      expect(walletState.setNetworkChangeLoading).toHaveBeenCalledWith(false)
+    })
+  })
+
+  it('clears networkChangeLoading when changeNetwork fails', async () => {
+    walletState.connected = true
+    walletState.changeNetwork.mockRejectedValue(new Error('switch failed'))
+
+    const user = userEvent.setup()
+    render(<RevokeDocumentTool isDarkMode={false} />)
+    await fillRevokeFields(user)
+
+    await user.click(screen.getByRole('button', { name: /network/i }))
+    await user.click(screen.getByRole('option', { name: /polygon network/i }))
+
+    await waitFor(() => {
+      expect(walletState.setNetworkChangeLoading).toHaveBeenCalledWith(false)
+    })
+  })
+
   it('closes the confirm popup and shows a readable error when revoke fails', async () => {
     walletState.connected = true
     revokeMocks.revokeOnDocumentStore.mockRejectedValue(
