@@ -105,6 +105,27 @@ describe('Overlay', () => {
     expect(getByRole('button', { name: 'Last' })).toHaveFocus()
   })
 
+  it('skips a leading button with tabIndex={-1} in the tab cycle', async () => {
+    const user = userEvent.setup()
+    const { getByRole } = render(
+      <Overlay ariaLabel="Confirm">
+        <button type="button" tabIndex={-1}>
+          Skip me
+        </button>
+        <button type="button">First</button>
+        <button type="button">Last</button>
+      </Overlay>
+    )
+
+    expect(getByRole('button', { name: 'First' })).toHaveFocus()
+    await user.tab()
+    expect(getByRole('button', { name: 'Last' })).toHaveFocus()
+    await user.tab()
+    expect(getByRole('button', { name: 'First' })).toHaveFocus()
+    await user.tab({ shift: true })
+    expect(getByRole('button', { name: 'Last' })).toHaveFocus()
+  })
+
   it('calls onClose when Escape is pressed', () => {
     const onClose = vi.fn()
     render(

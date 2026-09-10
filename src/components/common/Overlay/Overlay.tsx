@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 
-const FOCUSABLE_SELECTOR = [
+const TABBABLE_SELECTOR = [
   'a[href]',
   'button:not([disabled])',
   'textarea:not([disabled])',
@@ -9,8 +9,26 @@ const FOCUSABLE_SELECTOR = [
   '[tabindex]:not([tabindex="-1"])',
 ].join(', ')
 
-const getFocusableElements = (container: HTMLElement): HTMLElement[] =>
-  Array.from(container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR))
+const isTabbable = (element: HTMLElement): boolean => {
+  if (element.tabIndex < 0) return false
+  if (element.hasAttribute('disabled')) return false
+  if (element.closest('fieldset[disabled]')) return false
+  if (element.hidden || element.closest('[hidden]')) return false
+  if (element.getAttribute('aria-hidden') === 'true') return false
+  if (element.closest('[inert]')) return false
+
+  const style = window.getComputedStyle(element)
+  if (style.display === 'none' || style.visibility === 'hidden') {
+    return false
+  }
+
+  return true
+}
+
+const getTabbableElements = (container: HTMLElement): HTMLElement[] =>
+  Array.from(container.querySelectorAll<HTMLElement>(TABBABLE_SELECTOR)).filter(
+    isTabbable
+  )
 
 interface OverlayProps {
   children: React.ReactNode
@@ -27,7 +45,10 @@ const Overlay: React.FC<OverlayProps> = ({
 }) => {
   const overlayRef = useRef<HTMLDivElement>(null)
   const onCloseRef = useRef(onClose)
-  onCloseRef.current = onClose
+
+  useEffect(() => {
+    onCloseRef.current = onClose
+  }, [onClose])
 
   const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
     // Only trigger onClose if clicking the overlay itself, not its children
@@ -43,7 +64,7 @@ const Overlay: React.FC<OverlayProps> = ({
 
     const overlay = overlayRef.current
     const initialFocus = overlay
-      ? (getFocusableElements(overlay)[0] ?? overlay)
+      ? (getTabbableElements(overlay)[0] ?? overlay)
       : null
     initialFocus?.focus()
 
@@ -60,15 +81,15 @@ const Overlay: React.FC<OverlayProps> = ({
         return
       }
 
-      const focusable = getFocusableElements(overlay)
-      if (focusable.length === 0) {
+      const tabbable = getTabbableElements(overlay)
+      if (tabbable.length === 0) {
         event.preventDefault()
         overlay.focus()
         return
       }
 
-      const first = focusable[0]
-      const last = focusable[focusable.length - 1]
+      const first = tabbable[0]
+      const last = tabbable[tabbable.length - 1]
       const active = document.activeElement
 
       if (event.shiftKey) {
