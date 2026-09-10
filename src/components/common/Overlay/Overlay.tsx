@@ -14,7 +14,7 @@ const isTabbable = (element: HTMLElement): boolean => {
   if (element.hasAttribute('disabled')) return false
   if (element.closest('fieldset[disabled]')) return false
   if (element.hidden || element.closest('[hidden]')) return false
-  if (element.getAttribute('aria-hidden') === 'true') return false
+  if (element.closest('[aria-hidden="true"]')) return false
   if (element.closest('[inert]')) return false
 
   const style = window.getComputedStyle(element)
