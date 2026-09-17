@@ -46,6 +46,7 @@ jobs:
       VITE_GA4_TAG_ID: ${{ secrets.VITE_GA4_TAG_ID_DEVELOPMENT }}
       VITE_PLATFORM: dev
       VITE_PIMLICO_API_KEY: ${{ secrets.VITE_PIMLICO_API_KEY }}
+      INFURA_API_KEY: ${{ secrets.INFURA_API_KEY_DEV }}
 
     steps:
       - name: Checkout code
@@ -62,6 +63,7 @@ jobs:
 
       - name: Create .env for build
         run: |
+          [ -n "$INFURA_API_KEY" ] || { echo "INFURA_API_KEY_DEV secret is missing or empty" >&2; exit 1; }
           printf '%s\n' "$ENV_FILE" \
             | grep -v '^VITE_SENTRY_DSN=' \
             | grep -v '^VITE_SENTRY_ENVIRONMENT=' \
@@ -69,7 +71,8 @@ jobs:
             | grep -v '^VITE_GTM_CONTAINER_ID=' \
             | grep -v '^VITE_GA4_TAG_ID=' \
             | grep -v '^VITE_PLATFORM=' \
-            | grep -v '^VITE_PIMLICO_API_KEY=' > .env
+            | grep -v '^VITE_PIMLICO_API_KEY=' \
+            | grep -v '^INFURA_API_KEY=' > .env
           echo "VITE_GTM_CONTAINER_ID=${VITE_GTM_CONTAINER_ID}" >> .env
           echo "VITE_GA4_TAG_ID=${VITE_GA4_TAG_ID}" >> .env
           echo "VITE_PLATFORM=${VITE_PLATFORM}" >> .env
@@ -77,6 +80,7 @@ jobs:
           echo "VITE_SENTRY_ENVIRONMENT=${VITE_SENTRY_ENVIRONMENT}" >> .env
           echo "VITE_SENTRY_RELEASE=${VITE_SENTRY_RELEASE}" >> .env
           echo "VITE_PIMLICO_API_KEY=${VITE_PIMLICO_API_KEY}" >> .env
+          echo "INFURA_API_KEY=${INFURA_API_KEY}" >> .env
 
       - name: Install dependencies
         run: npm ci
