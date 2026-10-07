@@ -354,17 +354,40 @@ describe('CredentialTabs', () => {
       ).toBeInTheDocument()
     })
 
-    it('shows all three checks for the selected credential', () => {
+    it('shows all three checks for the selected credential, naming a credential', () => {
       render(
         <CredentialTabs presentation={twoCredentials()} fileName="vp.json" />
       )
 
-      expect(screen.getByText('Document has been issued')).toBeInTheDocument()
+      // Each tab is labelled with the credential's own name, so these rows must not call
+      // that same thing a "document".
+      expect(screen.getByText('Credential has been issued')).toBeInTheDocument()
       expect(
-        screen.getByText("Document's issuer has been identified")
+        screen.getByText('Credential issuer has been identified')
       ).toBeInTheDocument()
       expect(
-        screen.getByText('Document has not been tampered with')
+        screen.getByText('Credential has not been tampered with')
+      ).toBeInTheDocument()
+      expect(screen.queryByText(/^Document/)).not.toBeInTheDocument()
+    })
+
+    // A criterion-phrased label under a red cross asserts the opposite of what the icon says.
+    it('states the failing verdict, not the criterion it failed', async () => {
+      const user = userEvent.setup()
+      render(
+        <CredentialTabs presentation={twoCredentials()} fileName="vp.json" />
+      )
+
+      await user.click(screen.getByRole('tab', { name: /BILL OF LADING/ }))
+      expect(
+        screen.getByText('Credential has not been issued')
+      ).toBeInTheDocument()
+      expect(
+        screen.queryByText('Credential has been issued')
+      ).not.toBeInTheDocument()
+      // The checks it passed still read as passing.
+      expect(
+        screen.getByText('Credential has not been tampered with')
       ).toBeInTheDocument()
     })
 

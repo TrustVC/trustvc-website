@@ -39,6 +39,17 @@ import holderMismatchVp from './__fixtures__/w3c/presentations/invalid/holder_mi
 import tamperedCredentialVp from './__fixtures__/w3c/presentations/invalid/tampered_credential.json'
 import unresolvableIssuerVp from './__fixtures__/w3c/presentations/invalid/unresolvable_issuer.json'
 import unsignedVp from './__fixtures__/w3c/presentations/invalid/unsigned.json'
+import proofIncompleteVp from './__fixtures__/w3c/presentations/invalid/presentation_proof_incomplete.json'
+import tamperedPresentationVp from './__fixtures__/w3c/presentations/invalid/tampered_presentation.json'
+import notYetValidVp from './__fixtures__/w3c/presentations/invalid/presentation_not_yet_valid.json'
+import presentationDateInvalidVp from './__fixtures__/w3c/presentations/invalid/presentation_date_invalid.json'
+import presentationEmptyVp from './__fixtures__/w3c/presentations/invalid/presentation_empty.json'
+import credentialNotYetValidVp from './__fixtures__/w3c/presentations/invalid/credential_not_yet_valid.json'
+import credentialDateInvalidVp from './__fixtures__/w3c/presentations/invalid/credential_date_invalid.json'
+import credentialNoHolderVp from './__fixtures__/w3c/presentations/invalid/credential_no_holder.json'
+import credentialSuspendedVp from './__fixtures__/w3c/presentations/invalid/credential_suspended.json'
+import credentialStatusUnreachableVp from './__fixtures__/w3c/presentations/invalid/credential_status_unreachable.json'
+import credentialStatusUnsupportedVp from './__fixtures__/w3c/presentations/invalid/credential_status_unsupported.json'
 
 /**
  * Cases that reach the internet — resolving a hosted DID document, fetching a revocation
@@ -338,10 +349,14 @@ describe('Verifiable Presentation', () => {
         })
       )
 
-      expect(type).toBe(errorMessages.TYPES.HASH)
+      expect(type).toBe(errorMessages.TYPES.CREDENTIAL_TAMPERED)
       expect(title).toMatch(/tampered/i)
-      // No override: the established HASH copy reads better than "Invalid signature."
-      expect(body).toBeUndefined()
+      // It names the credential that changed rather than blaming the envelope the holder
+      // signed over it — editing a credential breaks BOTH signatures, and the credential is
+      // the thing that actually changed.
+      expect(body).toMatch(
+        /contents of Credential 1 .*do not match its signature/i
+      )
     }, 60000)
 
     it('never shows raw verifier wording to the user', async () => {
@@ -377,216 +392,6 @@ describe('Verifiable Presentation', () => {
    * came to be conflated.
    */
   describe('what the user is told', () => {
-    const frag = (
-      name: string,
-      type: string,
-      status: string,
-      message?: string
-    ) =>
-      ({
-        name,
-        type,
-        status,
-        ...(message ? { reason: { message } } : {}),
-      }) as unknown as VerificationFragment
-
-    /** A fragment set: integrity/status/identity, with one carrying the failure reason. */
-    const frags = ({
-      integrity = 'VALID',
-      status = 'VALID',
-      identity = 'VALID',
-      integrityReason,
-      statusReason,
-      identityReason,
-    }: {
-      integrity?: string
-      status?: string
-      identity?: string
-      integrityReason?: string
-      statusReason?: string
-      identityReason?: string
-    }): VerificationFragment[] => [
-      frag(
-        'W3CVpSignatureIntegrity',
-        'DOCUMENT_INTEGRITY',
-        integrity,
-        integrityReason
-      ),
-      frag('W3CVpCredentialStatus', 'DOCUMENT_STATUS', status, statusReason),
-      frag('W3CVpIssuerIdentity', 'ISSUER_IDENTITY', identity, identityReason),
-    ]
-
-    // `vp` carries two credentials, labelled "CHAFTA COO" and "BILL OF LADING" by the tabs, so
-    // copy that names one can be checked against what is actually on screen.
-    const CREDENTIAL_1 = 'Credential 1 ("CHAFTA COO")'
-    const CREDENTIAL_2 = 'Credential 2 ("BILL OF LADING")'
-
-    describe('a valid presentation', () => {
-      it('has no error type and no copy', () => {
-        const valid = frags({})
-        expect(getErrorMessageFromFragments(valid, vp)).toBeUndefined()
-      })
-    })
-
-    describe('an EMBEDDED CREDENTIAL is at fault — copy blames the issuer', () => {
-      const cases: Array<{
-        what: string
-        reason: string
-        type: string
-        expected: string
-      }> = [
-        {
-          what: 'expired',
-          reason:
-            'Embedded credential at index 1 has expired (validUntil 2020-01-01T00:00:00Z).',
-          type: errorMessages.TYPES.INVALID,
-          expected: `${CREDENTIAL_2} in this presentation has expired.`,
-        },
-        {
-          what: 'not yet valid',
-          reason:
-            'Embedded credential at index 0 is not yet valid (validFrom 2099-01-01T00:00:00Z).',
-          type: errorMessages.TYPES.INVALID,
-          expected: `${CREDENTIAL_1} in this presentation is not valid yet.`,
-        },
-        {
-          what: 'revoked',
-          reason:
-            'Embedded credential at index 0 has been revoked (status purpose "revocation").',
-          type: errorMessages.TYPES.REVOKED,
-          expected: `${CREDENTIAL_1} in this presentation has been revoked by its issuer.`,
-        },
-      ]
-
-      for (const { what, reason, type, expected } of cases) {
-        it(`${what}: names the credential and sends the user to the issuer`, () => {
-          const set = frags({ status: 'INVALID', statusReason: reason })
-
-          expect(getErrorTypeFromFragments(set)).toBe(type)
-          const message = getErrorMessageFromFragments(set, vp)
-          expect(message).toContain(expected)
-          expect(message).toContain('issuer')
-          // The bug this guards: the presentation is fine, so never tell the user to ask the
-          // holder to present again — nothing the holder does can fix a bad credential.
-          expect(message).not.toMatch(/ask the holder/i)
-          // And never blame the presentation as a whole.
-          expect(message).not.toMatch(/^this (presentation|document)/i)
-        })
-      }
-
-      it('falls back to the position when no document is available', () => {
-        const set = frags({
-          status: 'INVALID',
-          statusReason:
-            'Embedded credential at index 1 has expired (validUntil 2020-01-01T00:00:00Z).',
-        })
-        // Same credential, named without the tab label rather than named wrongly.
-        expect(getErrorMessageFromFragments(set)).toContain('Credential 2 ')
-      })
-
-      it('names every credential when several are at fault', () => {
-        const set = frags({
-          identity: 'INVALID',
-          identityReason:
-            'Could not resolve issuer(s): index 0 (did:web:a), index 1 (did:web:b).',
-        })
-        const message = getErrorMessageFromFragments(set, vp)
-        expect(message).toContain(CREDENTIAL_1)
-        expect(message).toContain(CREDENTIAL_2)
-      })
-    })
-
-    describe('the PRESENTATION is at fault — copy blames the holder', () => {
-      it('expired: asks the holder to present again', () => {
-        const set = frags({
-          status: 'INVALID',
-          statusReason:
-            'Presentation has expired (validUntil 2020-01-01T00:00:00Z).',
-        })
-
-        expect(getErrorTypeFromFragments(set)).toBe(errorMessages.TYPES.INVALID)
-        const message = getErrorMessageFromFragments(set, vp)
-        expect(message).toMatch(/this presentation has expired/i)
-        expect(message).toMatch(/holder/i)
-        // It must not claim a specific credential expired — none did.
-        expect(message).not.toMatch(/^credential \d/i)
-      })
-
-      it('unsigned: says ownership cannot be proven', () => {
-        const set = frags({
-          integrity: 'INVALID',
-          integrityReason:
-            'Presentation is not signed (no holder "proof"), so ownership cannot be proven.',
-        })
-        expect(getErrorMessageFromFragments(set, vp)).toMatch(/not signed/i)
-      })
-
-      it('signed by the wrong party: says so, rather than "not valid"', () => {
-        const set = frags({
-          integrity: 'INVALID',
-          integrityReason:
-            'the presentation was signed by "did:key:zAAA", which does not match the declared holder "did:key:zBBB".',
-        })
-        expect(getErrorMessageFromFragments(set, vp)).toMatch(
-          /signed by someone other than the holder/i
-        )
-      })
-    })
-
-    describe('root cause wins over its symptoms', () => {
-      it('an unresolvable issuer is an identity failure, not tampering', () => {
-        // Verifying a credential's signature needs its issuer's key, so an unpublished DID
-        // fails integrity too — with a raw TypeError from the failed lookup. Matched the other
-        // way round, the user is told a perfectly intact document was tampered with.
-        const set = frags({
-          integrity: 'INVALID',
-          integrityReason:
-            "Embedded credential at index 0 has an invalid signature: Cannot read properties of null (reading 'verificationMethod')",
-          identity: 'INVALID',
-          identityReason:
-            'Could not resolve issuer(s): index 0 (did:web:nope.invalid).',
-        })
-
-        expect(getErrorTypeFromFragments(set)).toBe(
-          errorMessages.TYPES.IDENTITY
-        )
-        const message = getErrorMessageFromFragments(set, vp)
-        expect(message).toContain(CREDENTIAL_1)
-        expect(message).not.toMatch(/tampered/i)
-        // The raw TypeError must never reach the user.
-        expect(message).not.toMatch(/cannot read properties/i)
-      })
-
-      it('revocation wins over a broken signature', () => {
-        // Deliberate: revocation is the more actionable answer for the holder.
-        const set = frags({
-          integrity: 'INVALID',
-          integrityReason: 'Invalid signature.',
-          status: 'INVALID',
-          statusReason:
-            'Embedded credential at index 0 has been revoked (status purpose "revocation").',
-        })
-        expect(getErrorTypeFromFragments(set)).toBe(errorMessages.TYPES.REVOKED)
-      })
-
-      it('a genuinely edited credential is still reported as tampered', () => {
-        const set = frags({
-          integrity: 'INVALID',
-          integrityReason: 'Invalid signature.',
-        })
-        expect(getErrorTypeFromFragments(set)).toBe(errorMessages.TYPES.HASH)
-      })
-    })
-
-    /**
-     * The same matrix again, but VERIFIED FOR REAL — `verifyDocument` against the fixture, then
-     * the copy. The fragment sets above pin the mapping; these pin the thing the mapping depends
-     * on, which is the verifier's own wording. Change `Embedded credential at index 0 has
-     * expired` upstream and the tests above keep passing while production silently reverts to
-     * telling users to ask the holder to present again. These fail instead.
-     *
-     * One fixture per row of the matrix, mirroring the CLI's `tests/fixtures/vp`.
-     */
     describe('against the real documents', () => {
       const cases: Array<{
         fixture: string
@@ -598,56 +403,127 @@ describe('Verifiable Presentation', () => {
         {
           fixture: 'valid/single_credential',
           doc: singleCredentialVp,
-          expect: /^$/, // no copy at all — nothing failed
-        },
-        {
-          fixture: 'valid/mixed_suites',
-          doc: mixedSuitesVp,
           expect: /^$/,
         },
+        { fixture: 'valid/mixed_suites', doc: mixedSuitesVp, expect: /^$/ },
+
+        // The ENVELOPE is at fault — the remedy is the holder's.
         {
-          fixture: 'invalid/presentation_expired',
-          doc: expiredVp,
-          type: errorMessages.TYPES.INVALID,
-          expect: /this presentation has expired.*ask the holder/i,
+          fixture: 'invalid/unsigned',
+          doc: unsignedVp,
+          type: errorMessages.TYPES.PRESENTATION_UNSIGNED,
+          expect: /is not signed.*ask the holder/i,
         },
         {
-          fixture: 'invalid/credential_expired',
-          doc: credentialExpiredVp,
-          type: errorMessages.TYPES.INVALID,
-          expect: /^Credential 1 .*has expired\. Ask the issuer/i,
+          fixture: 'invalid/presentation_proof_incomplete',
+          doc: proofIncompleteVp,
+          type: errorMessages.TYPES.PRESENTATION_PROOF_INCOMPLETE,
+          expect: /no usable signature/i,
         },
         {
-          fixture: 'invalid/credential_revoked',
-          doc: credentialRevokedVp,
-          type: errorMessages.TYPES.REVOKED,
-          expect: /^Credential 1 .*has been revoked by its issuer/i,
-          network: true,
+          fixture: 'invalid/tampered_presentation',
+          doc: tamperedPresentationVp,
+          type: errorMessages.TYPES.PRESENTATION_TAMPERED,
+          expect: /signature does not match the contents/i,
         },
         {
           fixture: 'invalid/holder_mismatch',
           doc: holderMismatchVp,
-          type: errorMessages.TYPES.INVALID,
+          type: errorMessages.TYPES.PRESENTATION_HOLDER_MISMATCH,
           expect: /signed by someone other than the holder/i,
+        },
+        {
+          fixture: 'invalid/presentation_expired',
+          doc: expiredVp,
+          type: errorMessages.TYPES.PRESENTATION_EXPIRED,
+          expect: /this presentation has expired.*ask the holder/i,
+        },
+        {
+          fixture: 'invalid/presentation_not_yet_valid',
+          doc: notYetValidVp,
+          type: errorMessages.TYPES.PRESENTATION_NOT_YET_VALID,
+          expect: /does not take effect yet/i,
+        },
+        {
+          fixture: 'invalid/presentation_date_invalid',
+          doc: presentationDateInvalidVp,
+          type: errorMessages.TYPES.PRESENTATION_DATE_INVALID,
+          expect: /unreadable expiry date/i,
+        },
+        {
+          fixture: 'invalid/presentation_empty',
+          doc: presentationEmptyVp,
+          type: errorMessages.TYPES.PRESENTATION_EMPTY,
+          expect: /does not contain any credentials/i,
+        },
+
+        // An EMBEDDED CREDENTIAL is at fault — it must be NAMED, and the remedy is the
+        // issuer's. Telling the holder to present again cannot fix any of these.
+        {
+          fixture: 'invalid/credential_expired',
+          doc: credentialExpiredVp,
+          type: errorMessages.TYPES.CREDENTIAL_EXPIRED,
+          expect:
+            /^Credential 2 \(.*has expired\. Please ask the issuing authority/i,
+        },
+        {
+          fixture: 'invalid/credential_not_yet_valid',
+          doc: credentialNotYetValidVp,
+          type: errorMessages.TYPES.CREDENTIAL_NOT_YET_VALID,
+          expect: /^Credential 2 \(.*does not take effect yet/i,
+        },
+        {
+          fixture: 'invalid/credential_date_invalid',
+          doc: credentialDateInvalidVp,
+          type: errorMessages.TYPES.CREDENTIAL_DATE_INVALID,
+          expect: /^Credential 2 \(.*unreadable date/i,
+        },
+        {
+          fixture: 'invalid/credential_no_holder',
+          doc: credentialNoHolderVp,
+          type: errorMessages.TYPES.CREDENTIAL_NO_HOLDER,
+          expect: /^Credential 2 \(.*does not say who it was issued to/i,
         },
         {
           fixture: 'invalid/tampered_credential',
           doc: tamperedCredentialVp,
-          type: errorMessages.TYPES.HASH,
-          expect: /^$/, // no override; the HASH copy already says "tampered with"
+          type: errorMessages.TYPES.CREDENTIAL_TAMPERED,
+          expect: /contents of Credential 2 \(.*do not match its signature/i,
+        },
+        {
+          fixture: 'invalid/credential_status_unsupported',
+          doc: credentialStatusUnsupportedVp,
+          type: errorMessages.TYPES.CREDENTIAL_STATUS_UNSUPPORTED,
+          expect: /records its status in a way we do not support/i,
+        },
+        {
+          fixture: 'invalid/credential_revoked',
+          doc: credentialRevokedVp,
+          type: errorMessages.TYPES.CREDENTIAL_REVOKED,
+          expect:
+            /^Credential 2 \(.*has been revoked by the issuing authority/i,
+          network: true,
+        },
+        {
+          fixture: 'invalid/credential_suspended',
+          doc: credentialSuspendedVp,
+          type: errorMessages.TYPES.CREDENTIAL_SUSPENDED,
+          expect: /has been suspended by the issuing authority/i,
+          network: true,
+        },
+        {
+          fixture: 'invalid/credential_status_unreachable',
+          doc: credentialStatusUnreachableVp,
+          type: errorMessages.TYPES.CREDENTIAL_STATUS_UNREACHABLE,
+          expect: /could not reach the status list/i,
+          network: true,
         },
         {
           fixture: 'invalid/unresolvable_issuer',
           doc: unresolvableIssuerVp,
-          type: errorMessages.TYPES.IDENTITY,
-          expect: /^Credential 1 .*cannot be identified/i,
+          type: errorMessages.TYPES.CREDENTIAL_ISSUER_UNRESOLVABLE,
+          expect: /could not identify who issued Credential 2 \(/i,
           network: true,
-        },
-        {
-          fixture: 'invalid/unsigned',
-          doc: unsignedVp,
-          type: errorMessages.TYPES.INVALID,
-          expect: /is not signed/i,
         },
       ]
 

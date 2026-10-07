@@ -17,11 +17,32 @@ interface CredentialTabsProps {
   invalidAttachments?: DocumentAttachment[]
 }
 
-/** The same three checks the single-document card reports, in the same order. */
+/**
+ * The same three checks the single-document card reports, in the same order — but naming a
+ * CREDENTIAL, not a document. Each tab is labelled with the credential's own name ("BILL OF
+ * LADING"), so rows underneath it calling that same thing a "document" read as though they
+ * were reporting on something else.
+ *
+ * Both verdicts are spelled out, as on the presentation card: a criterion-phrased label under
+ * a red cross asserts the opposite of what the icon says. The fail wording mirrors the error
+ * headline for that failure so the tab and the message agree.
+ */
 const CREDENTIAL_CHECKS = [
-  { type: 'DOCUMENT_STATUS', label: 'Document has been issued' },
-  { type: 'ISSUER_IDENTITY', label: "Document's issuer has been identified" },
-  { type: 'DOCUMENT_INTEGRITY', label: 'Document has not been tampered with' },
+  {
+    type: 'DOCUMENT_STATUS',
+    passLabel: 'Credential has been issued',
+    failLabel: 'Credential has not been issued',
+  },
+  {
+    type: 'ISSUER_IDENTITY',
+    passLabel: 'Credential issuer has been identified',
+    failLabel: 'Credential issuer cannot be identified',
+  },
+  {
+    type: 'DOCUMENT_INTEGRITY',
+    passLabel: 'Credential has not been tampered with',
+    failLabel: 'Credential has been tampered with',
+  },
 ]
 
 /**
@@ -175,16 +196,21 @@ const CredentialTabs: React.FC<CredentialTabsProps> = ({
             className="vr-vc-checks"
             data-testid={`credential-checks-${selected}`}
           >
-            {CREDENTIAL_CHECKS.map(({ type, label }) => {
+            {CREDENTIAL_CHECKS.map(({ type, passLabel, failLabel }) => {
               const status = activeResult?.status?.[type]
+              const loading = activeResult?.loading
+              // While the check is still running there is no verdict to state, so the row
+              // shows the criterion it is about to answer rather than guessing at one.
+              const label =
+                !loading && status !== 'VALID' ? failLabel : passLabel
               return (
                 <div
                   key={type}
                   className="vr-check-row"
                   data-testid={`credential-check-${type.toLowerCase()}`}
-                  data-status={activeResult?.loading ? 'PENDING' : status}
+                  data-status={loading ? 'PENDING' : status}
                 >
-                  {activeResult?.loading ? (
+                  {loading ? (
                     <Spinner />
                   ) : status === 'VALID' ? (
                     <CheckCircle />

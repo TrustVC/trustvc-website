@@ -88,6 +88,51 @@ describe('VerifyResult', () => {
     })
   })
 
+  // ── Presentation envelope checks ───────────────────────────────────────────
+
+  describe('presentation checks', () => {
+    // Minimal shape: isVerifiablePresentation() routes on type + verifiableCredential.
+    const presentation = {
+      '@context': ['https://www.w3.org/ns/credentials/v2'],
+      type: ['VerifiablePresentation'],
+      verifiableCredential: [],
+    }
+
+    it('reports the envelope, not a document, and omits the issuance row', () => {
+      render(<VerifyResult {...defaultProps} rawDocument={presentation} />)
+      expect(
+        screen.getByText('Presenter has been identified')
+      ).toBeInTheDocument()
+      expect(
+        screen.getByText('Presentation has not been tampered with')
+      ).toBeInTheDocument()
+      // Issuance belongs to each embedded credential's own tab.
+      expect(
+        screen.queryByText('Document has been issued')
+      ).not.toBeInTheDocument()
+    })
+
+    // A criterion-phrased label under a red cross asserts the opposite of the icon.
+    it('states the failing verdict rather than the criterion it failed', () => {
+      render(
+        <VerifyResult
+          {...defaultProps}
+          rawDocument={presentation}
+          getGroupStatus={vi.fn().mockReturnValue('INVALID' as const)}
+        />
+      )
+      expect(
+        screen.getByText('Presenter could not be identified')
+      ).toBeInTheDocument()
+      expect(
+        screen.getByText('Presentation has been tampered with')
+      ).toBeInTheDocument()
+      expect(
+        screen.queryByText('Presenter has been identified')
+      ).not.toBeInTheDocument()
+    })
+  })
+
   // ── onReset ────────────────────────────────────────────────────────────────
 
   describe('onReset', () => {

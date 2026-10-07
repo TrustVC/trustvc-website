@@ -64,15 +64,23 @@ const VERIFICATION_CHECKS = [
  * A presentation's envelope carries only two meaningful checks. "Document has been issued"
  * is a per-credential question — issuance belongs to each embedded credential, which shows
  * its own three checks on its tab — so it is deliberately absent here.
+ *
+ * Unlike VERIFICATION_CHECKS above, these rows carry BOTH verdicts. A single criterion-phrased
+ * label ("Presenter's identity has been identified") shown against a red cross asserts the
+ * opposite of what the icon says, leaving the reader to work out that the row is a claim being
+ * denied rather than a statement of fact. The fail labels mirror the error headline for the
+ * same failure, so the card and the message agree.
  */
 const PRESENTATION_CHECKS = [
   {
     type: 'ISSUER_IDENTITY',
-    label: "Presenter's identity has been identified",
+    passLabel: 'Presenter has been identified',
+    failLabel: 'Presenter could not be identified',
   },
   {
     type: 'DOCUMENT_INTEGRITY',
-    label: 'Presentation has not been tampered with',
+    passLabel: 'Presentation has not been tampered with',
+    failLabel: 'Presentation has been tampered with',
   },
 ]
 
@@ -531,16 +539,25 @@ const VerifyResult: React.FC<VerifyResultProps> = ({
           <div className="vr-col-checks" data-testid="verification-checks">
             <div className="vr-checks-list">
               {(isPresentation ? PRESENTATION_CHECKS : VERIFICATION_CHECKS).map(
-                ({ type, label }) => {
-                  const status = getGroupStatus(type)
+                check => {
+                  const status = getGroupStatus(check.type)
+                  const passed = status === 'VALID'
+                  // Single-document rows still carry one criterion-phrased `label`; only the
+                  // presentation rows state a verdict per outcome.
+                  const label =
+                    'label' in check
+                      ? check.label
+                      : passed
+                        ? check.passLabel
+                        : check.failLabel
                   return (
                     <div
-                      key={type}
+                      key={check.type}
                       className="vr-check-row"
-                      data-testid={`check-${type.toLowerCase()}`}
+                      data-testid={`check-${check.type.toLowerCase()}`}
                       data-status={status}
                     >
-                      {status === 'VALID' ? <CheckCircle /> : <CrossCircle />}
+                      {passed ? <CheckCircle /> : <CrossCircle />}
                       <span className="vr-check-label">{label}</span>
                     </div>
                   )
