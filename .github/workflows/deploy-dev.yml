@@ -41,7 +41,7 @@ jobs:
       ENV_FILE: ${{ secrets.TRUSTVC_WEB_ENV_DEVELOPMENT }}
       VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
       VITE_SENTRY_ENVIRONMENT: dev
-      VITE_SENTRY_RELEASE: ${{ github.sha }}
+      VITE_SENTRY_RELEASE: trustvc-web-dev-${{ github.run_number }}.${{ github.run_attempt }}
       VITE_GTM_CONTAINER_ID: ${{ secrets.VITE_GTM_CONTAINER_ID_DEVELOPMENT }}
       VITE_GA4_TAG_ID: ${{ secrets.VITE_GA4_TAG_ID_DEVELOPMENT }}
       VITE_PLATFORM: dev
