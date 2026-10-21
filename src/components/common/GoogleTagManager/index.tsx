@@ -37,6 +37,7 @@ export const GoogleTagManager = ({
       const script = document.createElement('script')
       script.id = 'gtm-script'
       script.async = true
+      script.referrerPolicy = 'strict-origin-when-cross-origin'
       script.src = `https://www.googletagmanager.com/gtm.js?id=${gtmContainerId}`
       document.head.appendChild(script)
     }
