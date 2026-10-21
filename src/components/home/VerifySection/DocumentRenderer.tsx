@@ -8,7 +8,11 @@ import {
 } from '@trustvc/decentralized-renderer-react-components'
 import { QRCodeSVG } from 'qrcode.react'
 import Spinner from '../../icons/Spinner'
+import InlineTemplateRenderer, {
+  InlineTemplateRendererHandle,
+} from './InlineTemplateRenderer'
 import {
+  hasInlineTemplate,
   getTemplateSourceUrl,
   getOpenAttestationData,
   getQRCodeLink,
@@ -39,6 +43,8 @@ interface DocumentRendererProps {
 
 const DEFAULT_TEMPLATE_SOURCE = 'https://generic-templates.tradetrust.io/'
 
+const INLINE_TEMPLATE_TAB_ID = 'inline-template'
+
 const DocumentRenderer: React.FC<DocumentRendererProps> = ({
   rawDocument,
   fileName,
@@ -51,13 +57,43 @@ const DocumentRenderer: React.FC<DocumentRendererProps> = ({
   const [isRendererReady, setIsRendererReady] = useState(false)
   const [qrCodePopover, setQrCodePopover] = useState(false)
   const qrWrapperRef = useRef<HTMLDivElement>(null)
+  const inlineRef = useRef<InlineTemplateRendererHandle>(null)
+  // Set when the INLINE_HTML_TEMPLATE entry fails to render, dropping back to the document's
+  // URL-based renderMethod entry via the FrameConnector below.
+  const [inlineTemplateFailed, setInlineTemplateFailed] = useState(false)
+  const documentHasInlineTemplate = useMemo(
+    () => hasInlineTemplate(rawDocument),
+    [rawDocument]
+  )
+  const isInlineTemplate = documentHasInlineTemplate && !inlineTemplateFailed
 
   // Reset renderer state when document changes
   useEffect(() => {
     setIsRendererReady(false)
     setTemplates([])
     setSelectedTemplate('')
+    setInlineTemplateFailed(false)
   }, [rawDocument])
+
+  const onInlineTemplateRendered = useCallback(
+    (templateName: string | undefined) => {
+      // No FrameConnector is mounted while the inline template is shown.
+      toFrame.current = undefined
+      setTemplates([
+        {
+          id: INLINE_TEMPLATE_TAB_ID,
+          label: templateName?.replace(/_/g, ' ') || 'Document',
+        },
+      ])
+      setSelectedTemplate(INLINE_TEMPLATE_TAB_ID)
+      setIsRendererReady(true)
+    },
+    []
+  )
+  const onInlineTemplateFailure = useCallback(
+    () => setInlineTemplateFailed(true),
+    []
+  )
 
   const document = useMemo(
     () => (rawDocument ? getOpenAttestationData(rawDocument) : undefined),
@@ -159,7 +195,9 @@ const DocumentRenderer: React.FC<DocumentRendererProps> = ({
   }, [qrCodePopover])
 
   const handlePrint = () => {
-    if (toFrame.current) {
+    if (isInlineTemplate) {
+      inlineRef.current?.print()
+    } else if (toFrame.current) {
       toFrame.current(framePrint())
     }
   }
@@ -254,14 +292,18 @@ const DocumentRenderer: React.FC<DocumentRendererProps> = ({
                       .trim()
                       .toUpperCase()}{' '}
                     rendered from{' '}
-                    <a
-                      href={templateSource}
-                      className="vr-doc-utility-link"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {templateSource}
-                    </a>
+                    {isInlineTemplate ? (
+                      'Inline Template'
+                    ) : (
+                      <a
+                        href={templateSource}
+                        className="vr-doc-utility-link"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {templateSource}
+                      </a>
+                    )}
                   </div>
                 </div>
               )}
@@ -358,17 +400,26 @@ const DocumentRenderer: React.FC<DocumentRendererProps> = ({
             overflow: isRendererReady ? undefined : 'hidden',
           }}
         >
-          <FrameConnector
-            style={{
-              height: `${rendererHeight}px`,
-              width: '100%',
-              border: '0px',
-            }}
-            source={templateSource}
-            dispatch={handleFrameDispatch}
-            onConnected={onConnected}
-            useFallbackRenderer={true}
-          />
+          {isInlineTemplate ? (
+            <InlineTemplateRenderer
+              ref={inlineRef}
+              rawDocument={rawDocument}
+              onRendered={onInlineTemplateRendered}
+              onFailure={onInlineTemplateFailure}
+            />
+          ) : (
+            <FrameConnector
+              style={{
+                height: `${rendererHeight}px`,
+                width: '100%',
+                border: '0px',
+              }}
+              source={templateSource}
+              dispatch={handleFrameDispatch}
+              onConnected={onConnected}
+              useFallbackRenderer={true}
+            />
+          )}
         </div>
       </div>
     </div>

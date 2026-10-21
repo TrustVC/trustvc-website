@@ -261,6 +261,45 @@ describe('getTemplateSourceUrl', () => {
   it('returns undefined for unrecognised document', () => {
     expect(getTemplateSourceUrl({ foo: 'bar' })).toBeUndefined()
   })
+
+  describe('with an INLINE_HTML_TEMPLATE entry', () => {
+    const inlineEntry = { type: 'INLINE_HTML_TEMPLATE', template: 'H4sIAAAA' }
+    const urlEntry = {
+      id: 'https://generic-templates.tradetrust.io',
+      type: 'EMBEDDED_RENDERER',
+      templateName: 'BILL_OF_LADING',
+    }
+
+    beforeEach(() => {
+      vi.mocked(trustvc.vc.isSignedDocument).mockReturnValue(true)
+    })
+
+    it('returns the URL-based fallback when the inline entry comes first', () => {
+      const doc = { renderMethod: [inlineEntry, urlEntry] }
+      expect(getTemplateSourceUrl(doc)).toBe(
+        'https://generic-templates.tradetrust.io'
+      )
+    })
+
+    it('returns the URL-based fallback when the inline entry comes second', () => {
+      const doc = { renderMethod: [urlEntry, inlineEntry] }
+      expect(getTemplateSourceUrl(doc)).toBe(
+        'https://generic-templates.tradetrust.io'
+      )
+    })
+
+    it('returns undefined when the inline entry is the only one', () => {
+      expect(
+        getTemplateSourceUrl({ renderMethod: [inlineEntry] })
+      ).toBeUndefined()
+    })
+
+    it('keeps the original first-entry lookup for documents without one', () => {
+      // No `type`, so the inline-aware lookup would skip it; legacy behaviour returns it.
+      const doc = { renderMethod: { id: 'https://legacy.example.com' } }
+      expect(getTemplateSourceUrl(doc)).toBe('https://legacy.example.com')
+    })
+  })
 })
 
 describe('getOpenAttestationData', () => {
