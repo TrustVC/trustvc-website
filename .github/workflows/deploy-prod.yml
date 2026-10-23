@@ -20,7 +20,7 @@ jobs:
       ENV_FILE: ${{ secrets.TRUSTVC_WEB_ENV_PRODUCTION }}
       VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
       VITE_SENTRY_ENVIRONMENT: production
-      VITE_SENTRY_RELEASE: ${{ github.sha }}
+      VITE_SENTRY_RELEASE: trustvc-web-${{ github.run_number }}.${{ github.run_attempt }}
       VITE_GTM_CONTAINER_ID: ${{ secrets.VITE_GTM_CONTAINER_ID_PRODUCTION }}
       VITE_GA4_TAG_ID: ${{ secrets.VITE_GA4_TAG_ID_PRODUCTION }}
       VITE_PIMLICO_API_KEY: ${{ secrets.VITE_PIMLICO_API_KEY }}
