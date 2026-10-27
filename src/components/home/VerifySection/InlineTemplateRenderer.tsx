@@ -5,10 +5,10 @@ import React, {
   useRef,
 } from 'react'
 import {
-  decompressInlineTemplate,
+  decompressInlineHtmlTemplate,
   getRenderMethods,
-  printInlineTemplate,
-  renderInlineTemplate,
+  printInlineHtmlTemplate,
+  renderInlineHtmlTemplate,
 } from '@trustvc/trustvc'
 
 export interface InlineTemplateRendererHandle {
@@ -42,20 +42,21 @@ const InlineTemplateRenderer = forwardRef<
 
   useImperativeHandle(ref, () => ({
     print: () => {
-      if (hostRef.current) printInlineTemplate(hostRef.current)
+      if (hostRef.current) printInlineHtmlTemplate(hostRef.current)
     },
   }))
 
   useEffect(() => {
     let cancelled = false
     // A string `template` is gzipped (it is signed in that form), so inflate it first.
-    decompressInlineTemplate(rawDocument)
+    decompressInlineHtmlTemplate(rawDocument)
       .then(decompressed => {
         if (cancelled || !hostRef.current) return
-        if (!renderInlineTemplate(decompressed, hostRef.current)) {
+        if (!renderInlineHtmlTemplate(decompressed, hostRef.current)) {
           throw new Error('No renderable INLINE_HTML_TEMPLATE entry')
         }
-        const template = getRenderMethods(decompressed).inlineTemplate?.template
+        const template =
+          getRenderMethods(decompressed).inlineHtmlTemplate?.template
         onRenderedRef.current?.(
           typeof template === 'object' ? template.templateName : undefined
         )

@@ -79,14 +79,14 @@ export interface DocumentAttachment {
 
 /** Whether the document carries its own INLINE_HTML_TEMPLATE renderMethod entry. */
 export const hasInlineTemplate = (rawDocument: unknown): boolean =>
-  !!getRenderMethods(rawDocument).inlineTemplate
+  !!getRenderMethods(rawDocument).inlineHtmlTemplate
 
 export const getTemplateSourceUrl = (rawDocument: any): string | undefined => {
   if (vc.isSignedDocument(rawDocument) || vc.isRawDocument(rawDocument)) {
     // An INLINE_HTML_TEMPLATE entry has no `id` and may come first, so take the URL-based
     // entry (the fallback renderer) instead. Documents without one keep the original lookup.
-    const { inlineTemplate, renderer } = getRenderMethods(rawDocument)
-    if (inlineTemplate) return renderer?.id
+    const { inlineHtmlTemplate, renderer } = getRenderMethods(rawDocument)
+    if (inlineHtmlTemplate) return renderer?.id
     return [rawDocument.renderMethod]?.flat()?.[0]?.id
   } else if (isWrappedV2Document(rawDocument)) {
     const documentData = getDocumentData(rawDocument)
