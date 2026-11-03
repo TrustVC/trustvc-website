@@ -197,7 +197,9 @@ let ga4Initialized = false
 export const initGA4 = (tagId: string): void => {
   if (!tagId || ga4Initialized || GTM_CONFIGURED) return
   try {
-    ReactGA.initialize(tagId)
+    ReactGA.initialize(tagId, {
+      gtagOptions: { cookie_flags: 'Secure;SameSite=Lax' },
+    })
     ga4Initialized = true
   } catch {
     // Analytics failures must never affect the application

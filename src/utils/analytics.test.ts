@@ -279,7 +279,9 @@ describe('pushGTMEvent', () => {
 describe('initGA4', () => {
   it('calls ReactGA.initialize with the tag id', () => {
     initGA4('G-TEST123')
-    expect(vi.mocked(ReactGA.initialize)).toHaveBeenCalledWith('G-TEST123')
+    expect(vi.mocked(ReactGA.initialize)).toHaveBeenCalledWith('G-TEST123', {
+      gtagOptions: { cookie_flags: 'Secure;SameSite=Lax' },
+    })
   })
 
   it('is safe to call multiple times (idempotent)', () => {
