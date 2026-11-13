@@ -21,6 +21,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # full history, needed for Sonar's new-code analysis
 
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
@@ -46,3 +48,9 @@ jobs:
           VITE_GTM_CONTAINER_ID: ''
           VITE_GA4_TAG_ID: ''
           VITE_PLATFORM: local
+
+      - name: SonarCloud Scan
+        if: matrix.node-version == '22.x' # run once, not per matrix leg
+        uses: SonarSource/sonarqube-scan-action@v4
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
