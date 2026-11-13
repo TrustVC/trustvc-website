@@ -114,6 +114,9 @@ export default defineConfig(({ mode }) => {
       setupFiles: './src/setupTests.ts',
       css: true,
       exclude: ['**/node_modules/**', '**/e2e/**'],
+      coverage: {
+        reporter: ['text', 'lcov'],
+      },
     }
   }
 })
