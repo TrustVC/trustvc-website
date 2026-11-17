@@ -30,19 +30,13 @@ export const useTitleEscrowContract = (
   const [documentOwner, setDocumentOwner] = useState<string>()
   const tokenRegistryVersion = useTokenRegistryVersion()
   const isObligation = useIsObligation()
-  const tokenIdRef = useRef(tokenId)
-  tokenIdRef.current = tokenId
+  const requestGenerationRef = useRef(0)
 
   const updateTitleEscrow = useCallback(async () => {
-    const requestedTokenId = tokenId
-    if (
-      !tokenRegistry ||
-      !requestedTokenId ||
-      !providerOrSigner ||
-      !tokenRegistryVersion
-    )
+    if (!tokenRegistry || !tokenId || !providerOrSigner || !tokenRegistryVersion)
       return
-    const isCurrentToken = () => tokenIdRef.current === requestedTokenId
+    const generation = ++requestGenerationRef.current
+    const ownsRequest = () => requestGenerationRef.current === generation
     try {
       const provider = (
         'provider' in providerOrSigner
@@ -54,17 +48,17 @@ export const useTitleEscrowContract = (
       const iface = new utils.Interface([
         'function ownerOf(uint256) view returns (address)',
       ])
-      const data = iface.encodeFunctionData('ownerOf', [requestedTokenId])
+      const data = iface.encodeFunctionData('ownerOf', [tokenId])
       const contractAddr =
         (tokenRegistry as any).target ?? (tokenRegistry as any).address
       if (!contractAddr) throw new Error('Token registry address unavailable')
       const result = await provider.call({ to: contractAddr, data })
-      if (!isCurrentToken()) return
+      if (!ownsRequest()) return
       if (!result || result === '0x') throw new Error('Token not found')
       const [titleEscrowOwner] = iface.decodeFunctionResult('ownerOf', result)
       const address = await getTitleEscrowAddress(
         contractAddr,
-        requestedTokenId,
+        tokenId,
         provider,
         {
           titleEscrowVersion: isObligation
@@ -86,12 +80,12 @@ export const useTitleEscrowContract = (
           providerOrSigner as any
         )
       }
-      if (!isCurrentToken()) return
+      if (!ownsRequest()) return
       setDocumentOwner(titleEscrowOwner)
       setTitleEscrow(instance as TitleEscrow)
       setTitleEscrowAddress(address)
     } catch (error) {
-      if (!isCurrentToken()) return
+      if (!ownsRequest()) return
       console.error(error)
       setTitleEscrow(undefined)
       setTitleEscrowAddress(undefined)
@@ -108,6 +102,7 @@ export const useTitleEscrowContract = (
   useEffect(() => {
     updateTitleEscrow()
     return () => {
+      requestGenerationRef.current += 1
       setTitleEscrow(undefined)
       setDocumentOwner(undefined)
       setTitleEscrowAddress(undefined)
