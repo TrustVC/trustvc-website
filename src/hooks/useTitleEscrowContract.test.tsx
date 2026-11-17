@@ -146,8 +146,10 @@ describe('useTitleEscrowContract', () => {
     latestGate('1')?.resolve(encodeOwner(OWNER_B))
     await waitFor(() => expect(result.current.documentOwner).toBe(OWNER_B))
 
-    originalA?.resolve(encodeOwner(OWNER_A))
-    await waitFor(() => expect(result.current.documentOwner).toBe(OWNER_B))
+    await act(async () => {
+      originalA?.resolve(encodeOwner(OWNER_A))
+    })
+    expect(result.current.documentOwner).toBe(OWNER_B)
   })
 
   it('ignores the original failure when the token leaves A and returns to A', async () => {
@@ -172,8 +174,10 @@ describe('useTitleEscrowContract', () => {
     latestGate('1')?.resolve(encodeOwner(OWNER_B))
     await waitFor(() => expect(result.current.documentOwner).toBe(OWNER_B))
 
-    originalA?.reject(new Error('stale return to A'))
-    await waitFor(() => expect(result.current.documentOwner).toBe(OWNER_B))
+    await act(async () => {
+      originalA?.reject(new Error('stale return to A'))
+    })
+    expect(result.current.documentOwner).toBe(OWNER_B)
     expect(
       vi.mocked(console.error).mock.calls.map(call => call[0])
     ).not.toContainEqual(expect.any(Error))
