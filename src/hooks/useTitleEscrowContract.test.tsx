@@ -61,7 +61,9 @@ describe('useTitleEscrowContract', () => {
       })
     }),
   }
-  const tokenRegistry = { address: '0x1234567890123456789012345678901234567890' }
+  const tokenRegistry = {
+    address: '0x1234567890123456789012345678901234567890',
+  }
 
   beforeEach(() => {
     gates.length = 0
@@ -78,7 +80,11 @@ describe('useTitleEscrowContract', () => {
   it('ignores a late success for a previous token', async () => {
     const { result, rerender } = renderHook(
       ({ tokenId }) =>
-        useTitleEscrowContract(provider as never, tokenRegistry as never, tokenId),
+        useTitleEscrowContract(
+          provider as never,
+          tokenRegistry as never,
+          tokenId
+        ),
       { initialProps: { tokenId: '1' } }
     )
 
@@ -97,7 +103,11 @@ describe('useTitleEscrowContract', () => {
   it('ignores a late failure for a previous token', async () => {
     const { result, rerender } = renderHook(
       ({ tokenId }) =>
-        useTitleEscrowContract(provider as never, tokenRegistry as never, tokenId),
+        useTitleEscrowContract(
+          provider as never,
+          tokenRegistry as never,
+          tokenId
+        ),
       { initialProps: { tokenId: '1' } }
     )
 
