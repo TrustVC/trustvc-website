@@ -33,7 +33,12 @@ export const useTitleEscrowContract = (
   const requestGenerationRef = useRef(0)
 
   const updateTitleEscrow = useCallback(async () => {
-    if (!tokenRegistry || !tokenId || !providerOrSigner || !tokenRegistryVersion)
+    if (
+      !tokenRegistry ||
+      !tokenId ||
+      !providerOrSigner ||
+      !tokenRegistryVersion
+    )
       return
     const generation = ++requestGenerationRef.current
     const ownsRequest = () => requestGenerationRef.current === generation

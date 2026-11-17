@@ -222,9 +222,9 @@ describe('useTitleEscrowContract', () => {
       first?.reject(new Error('older refresh failed'))
     })
     await waitFor(() => expect(result.current.documentOwner).toBe(OWNER_B))
-    expect(vi.mocked(console.error).mock.calls.map(call => call[0])).not.toContainEqual(
-      expect.any(Error)
-    )
+    expect(
+      vi.mocked(console.error).mock.calls.map(call => call[0])
+    ).not.toContainEqual(expect.any(Error))
   })
 })
 
