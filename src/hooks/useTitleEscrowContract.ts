@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { providers, Signer, utils } from 'ethers'
 import {
   getTitleEscrowAddress,
@@ -30,15 +30,19 @@ export const useTitleEscrowContract = (
   const [documentOwner, setDocumentOwner] = useState<string>()
   const tokenRegistryVersion = useTokenRegistryVersion()
   const isObligation = useIsObligation()
+  const tokenIdRef = useRef(tokenId)
+  tokenIdRef.current = tokenId
 
   const updateTitleEscrow = useCallback(async () => {
+    const requestedTokenId = tokenId
     if (
       !tokenRegistry ||
-      !tokenId ||
+      !requestedTokenId ||
       !providerOrSigner ||
       !tokenRegistryVersion
     )
       return
+    const isCurrentToken = () => tokenIdRef.current === requestedTokenId
     try {
       const provider = (
         'provider' in providerOrSigner
@@ -50,16 +54,17 @@ export const useTitleEscrowContract = (
       const iface = new utils.Interface([
         'function ownerOf(uint256) view returns (address)',
       ])
-      const data = iface.encodeFunctionData('ownerOf', [tokenId])
+      const data = iface.encodeFunctionData('ownerOf', [requestedTokenId])
       const contractAddr =
         (tokenRegistry as any).target ?? (tokenRegistry as any).address
       if (!contractAddr) throw new Error('Token registry address unavailable')
       const result = await provider.call({ to: contractAddr, data })
+      if (!isCurrentToken()) return
       if (!result || result === '0x') throw new Error('Token not found')
       const [titleEscrowOwner] = iface.decodeFunctionResult('ownerOf', result)
       const address = await getTitleEscrowAddress(
         contractAddr,
-        tokenId,
+        requestedTokenId,
         provider,
         {
           titleEscrowVersion: isObligation
@@ -81,10 +86,12 @@ export const useTitleEscrowContract = (
           providerOrSigner as any
         )
       }
+      if (!isCurrentToken()) return
       setDocumentOwner(titleEscrowOwner)
       setTitleEscrow(instance as TitleEscrow)
       setTitleEscrowAddress(address)
     } catch (error) {
+      if (!isCurrentToken()) return
       console.error(error)
       setTitleEscrow(undefined)
       setTitleEscrowAddress(undefined)
