@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { providers, Signer, utils } from 'ethers'
 import {
   getTitleEscrowAddress,
@@ -30,6 +30,7 @@ export const useTitleEscrowContract = (
   const [documentOwner, setDocumentOwner] = useState<string>()
   const tokenRegistryVersion = useTokenRegistryVersion()
   const isObligation = useIsObligation()
+  const requestGenerationRef = useRef(0)
 
   const updateTitleEscrow = useCallback(async () => {
     if (
@@ -39,6 +40,8 @@ export const useTitleEscrowContract = (
       !tokenRegistryVersion
     )
       return
+    const generation = ++requestGenerationRef.current
+    const ownsRequest = () => requestGenerationRef.current === generation
     try {
       const provider = (
         'provider' in providerOrSigner
@@ -55,6 +58,7 @@ export const useTitleEscrowContract = (
         (tokenRegistry as any).target ?? (tokenRegistry as any).address
       if (!contractAddr) throw new Error('Token registry address unavailable')
       const result = await provider.call({ to: contractAddr, data })
+      if (!ownsRequest()) return
       if (!result || result === '0x') throw new Error('Token not found')
       const [titleEscrowOwner] = iface.decodeFunctionResult('ownerOf', result)
       const address = await getTitleEscrowAddress(
@@ -81,10 +85,12 @@ export const useTitleEscrowContract = (
           providerOrSigner as any
         )
       }
+      if (!ownsRequest()) return
       setDocumentOwner(titleEscrowOwner)
       setTitleEscrow(instance as TitleEscrow)
       setTitleEscrowAddress(address)
     } catch (error) {
+      if (!ownsRequest()) return
       console.error(error)
       setTitleEscrow(undefined)
       setTitleEscrowAddress(undefined)
@@ -101,6 +107,7 @@ export const useTitleEscrowContract = (
   useEffect(() => {
     updateTitleEscrow()
     return () => {
+      requestGenerationRef.current += 1
       setTitleEscrow(undefined)
       setDocumentOwner(undefined)
       setTitleEscrowAddress(undefined)
