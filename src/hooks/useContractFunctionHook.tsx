@@ -253,8 +253,20 @@ export function useContractFunctionHook<
     setState('INITIALIZED')
     try {
       const response = await deferredTx
+      // contract.functions.<method>() always returns the full ethers v5 Result array, even for a
+      // single-output function, unlike the bare contract[method]() call (the ?? fallback above),
+      // which auto-unwraps it. Mirror ethers' own single-output unwrapping so `value` is a plain
+      // value either way, instead of an array someone downstream (e.g. `holder.toLowerCase()`)
+      // expects a string.
+      const fragment = (contract as any)?.interface?.getFunction?.(
+        method as string
+      )
+      const value =
+        Array.isArray(response) && fragment?.outputs?.length === 1
+          ? response[0]
+          : response
       setState('CONFIRMED')
-      setValue(response)
+      setValue(value)
     } catch (e) {
       setErrorMessage(getMetaMaskErrorMessage(e))
       setState('ERROR')
