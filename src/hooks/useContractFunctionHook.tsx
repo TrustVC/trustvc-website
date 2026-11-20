@@ -254,7 +254,12 @@ export function useContractFunctionHook<
     try {
       const response = await deferredTx
       setState('CONFIRMED')
-      setValue(response)
+      // ethers v5 contract.functions.* wraps a single output in a Result.
+      const resolved =
+        Array.isArray(response) && response.length === 1
+          ? response[0]
+          : response
+      setValue(resolved)
     } catch (e) {
       setErrorMessage(getMetaMaskErrorMessage(e))
       setState('ERROR')
