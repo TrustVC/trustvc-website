@@ -92,10 +92,14 @@ describe('getRpcUrl', () => {
     }
   })
 
-  it('returns chain default URL from SUPPORTED_CHAINS', () => {
+  it('uses Alchemy for Polygon when the key is set, otherwise the chain default', () => {
+    const key = String(process.env.ALCHEMY_API_KEY ?? '').trim()
     const result = getRpcUrl('137')
-    expect(typeof result).toBe('string')
-    expect(result).toBeTruthy()
+    if (key) {
+      expect(result).toBe(`https://polygon-mainnet.g.alchemy.com/v2/${key}`)
+    } else {
+      expect(result).toBe('https://polygon-rpc.com')
+    }
   })
 
   it('returns null for unrecognised chain', () => {

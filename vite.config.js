@@ -11,8 +11,7 @@ export default defineConfig(({ mode }) => {
   const isTest = mode === 'test'
   const env = loadEnv(mode, process.cwd(), '')
 
-  const sentryAuthToken =
-    env.SENTRY_AUTH_TOKEN ?? process.env.SENTRY_AUTH_TOKEN
+  const sentryAuthToken = env.SENTRY_AUTH_TOKEN ?? process.env.SENTRY_AUTH_TOKEN
   const sentryOrg = env.SENTRY_ORG ?? process.env.SENTRY_ORG
   const sentryProject = env.SENTRY_PROJECT ?? process.env.SENTRY_PROJECT
   const sentryRelease =
@@ -46,11 +45,11 @@ export default defineConfig(({ mode }) => {
   return {
     define: {
       'process.env': {
-        INFURA_API_KEY:
-          env.INFURA_API_KEY || process.env.INFURA_API_KEY,
+        INFURA_API_KEY: env.INFURA_API_KEY || process.env.INFURA_API_KEY,
+        ALCHEMY_API_KEY: env.ALCHEMY_API_KEY || process.env.ALCHEMY_API_KEY,
       },
       'process.browser': true,
-      ...(isTest ? {} : { 'process.version': JSON.stringify('v16.0.0') })
+      ...(isTest ? {} : { 'process.version': JSON.stringify('v16.0.0') }),
     },
     build: {
       sourcemap: enableSentrySourceMaps ? 'hidden' : false,
@@ -66,12 +65,14 @@ export default defineConfig(({ mode }) => {
               id.includes('/node_modules/ethers/') ||
               id.includes('/node_modules/@tradetrust-tt/') ||
               id.includes('/node_modules/@trustvc/')
-            ) return 'vendor-web3'
+            )
+              return 'vendor-web3'
             if (
               id.includes('/node_modules/react/') ||
               id.includes('/node_modules/react-dom/') ||
               id.includes('/node_modules/react-router')
-            ) return 'vendor-react'
+            )
+              return 'vendor-react'
           },
         },
       },
@@ -102,13 +103,18 @@ export default defineConfig(({ mode }) => {
       // of treating it as external. Remove once the SDK is back on a published version.
       preserveSymlinks: true,
       alias: {
-
         'dotenv/config': path.resolve(__dirname, 'src/shims/dotenv-config.js'),
         'node-fetch': path.resolve(__dirname, 'src/shims/node-fetch.js'),
         // Pure ESM shim — avoids CJS `exports` in the browser bundle (crypto-browserify).
         randomfill: path.resolve(__dirname, 'src/shims/randomfill-esm.js'),
-        'randomfill/browser': path.resolve(__dirname, 'src/shims/randomfill-esm.js'),
-        'randombytes/browser': path.resolve(__dirname, 'src/shims/randombytes-esm.js'),
+        'randomfill/browser': path.resolve(
+          __dirname,
+          'src/shims/randomfill-esm.js'
+        ),
+        'randombytes/browser': path.resolve(
+          __dirname,
+          'src/shims/randombytes-esm.js'
+        ),
         '@': fileURLToPath(new URL('./src', import.meta.url)),
       },
     },
@@ -121,6 +127,6 @@ export default defineConfig(({ mode }) => {
       coverage: {
         reporter: ['text', 'lcov'],
       },
-    }
+    },
   }
 })
