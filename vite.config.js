@@ -97,6 +97,10 @@ export default defineConfig(({ mode }) => {
         : []),
     ],
     resolve: {
+      // Temporary: needed while @trustvc/trustvc is a `file:` link to ../trustvc, so Vite
+      // resolves the linked package's own node_modules (incl. the node-polyfill shims) instead
+      // of treating it as external. Remove once the SDK is back on a published version.
+      preserveSymlinks: true,
       alias: {
 
         'dotenv/config': path.resolve(__dirname, 'src/shims/dotenv-config.js'),

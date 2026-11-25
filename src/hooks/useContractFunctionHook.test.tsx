@@ -345,6 +345,9 @@ describe('useContractFunctionHook', () => {
     it('unwraps a single-element ethers Result into the address string', async () => {
       const address = '0x1111111111111111111111111111111111111111'
       const mockContractWithMethod = {
+        interface: {
+          getFunction: () => ({ outputs: [{ type: 'address' }] }),
+        },
         functions: {
           holder: vi.fn().mockResolvedValueOnce([address]),
         },
