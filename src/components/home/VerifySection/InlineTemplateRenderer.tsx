@@ -52,6 +52,17 @@ const InlineTemplateRenderer = forwardRef<
     decompressInlineHtmlTemplate(rawDocument)
       .then(decompressed => {
         if (cancelled || !hostRef.current) return
+        // trustvc binds data-field keys to a single subject object; an array subject would
+        // render every field blank yet still report success, so fall back instead.
+        if (
+          Array.isArray(
+            (decompressed as { credentialSubject?: unknown })?.credentialSubject
+          )
+        ) {
+          throw new Error(
+            'INLINE_HTML_TEMPLATE needs a single credentialSubject'
+          )
+        }
         if (!renderInlineHtmlTemplate(decompressed, hostRef.current)) {
           throw new Error('No renderable INLINE_HTML_TEMPLATE entry')
         }
