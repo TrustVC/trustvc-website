@@ -79,7 +79,7 @@ jobs:
           echo "VITE_PIMLICO_API_KEY=${VITE_PIMLICO_API_KEY}" >> .env
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --ignore-scripts
 
       - name: Build
         run: npm run build
@@ -112,24 +112,23 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Select target bucket
-        id: bucket
-        run: |
-            echo "bucket=${S3_BUCKET_DEV}" >> $GITHUB_OUTPUT
+      # Secrets reach run blocks only through env, never ${{ secrets.* }}
+      # inside the script, so they never appear in the command text.
+      - name: Sync static assets with long cache
         env:
           S3_BUCKET_DEV: ${{ secrets.S3_BUCKET_DEV }}
-
-      - name: Sync static assets with long cache
         run: |
-          aws s3 sync $BUILD_DIR s3://${{ steps.bucket.outputs.bucket }} \
+          aws s3 sync "$BUILD_DIR" "s3://${S3_BUCKET_DEV}" \
             --delete \
             --exclude "*" \
             --include "assets/*" \
             --cache-control "public, max-age=31536000, immutable"
 
       - name: Sync HTML and other assets with no-cache
+        env:
+          S3_BUCKET_DEV: ${{ secrets.S3_BUCKET_DEV }}
         run: |
-          aws s3 sync $BUILD_DIR s3://${{ steps.bucket.outputs.bucket }} \
+          aws s3 sync "$BUILD_DIR" "s3://${S3_BUCKET_DEV}" \
             --delete \
             --exclude "assets/*" \
             --cache-control "no-cache, no-store, must-revalidate"
@@ -140,5 +139,5 @@ jobs:
         if: ${{ env.CLOUDFRONT_DISTRIBUTION_ID_DEV != '' }}
         run: |
           aws cloudfront create-invalidation \
-            --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID_DEV }} \
+            --distribution-id "${CLOUDFRONT_DISTRIBUTION_ID_DEV}" \
             --paths "/*"
