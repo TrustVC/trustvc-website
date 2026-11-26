@@ -59,7 +59,7 @@ const InlineTemplateRenderer = forwardRef<
             (decompressed as { credentialSubject?: unknown })?.credentialSubject
           )
         ) {
-          throw new Error(
+          throw new TypeError(
             'INLINE_HTML_TEMPLATE needs a single credentialSubject'
           )
         }
