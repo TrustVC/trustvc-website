@@ -71,7 +71,11 @@ jobs:
             | grep -v '^VITE_GA4_TAG_ID=' \
             | grep -v '^VITE_PLATFORM=' \
             | grep -v '^VITE_PIMLICO_API_KEY=' \
-            | grep -v '^ALCHEMY_API_KEY=' > .env
+            | grep -v '^ALCHEMY_API_KEY=' \
+            | grep -v '^VITE_RPC_URL_1=' \
+            | grep -v '^VITE_RPC_URL_137=' \
+            | grep -v '^VITE_RPC_URL_11155111=' \
+            | grep -v '^VITE_RPC_URL_80002=' > .env
           echo "VITE_GTM_CONTAINER_ID=${VITE_GTM_CONTAINER_ID}" >> .env
           echo "VITE_GA4_TAG_ID=${VITE_GA4_TAG_ID}" >> .env
           echo "VITE_PLATFORM=${VITE_PLATFORM}" >> .env
