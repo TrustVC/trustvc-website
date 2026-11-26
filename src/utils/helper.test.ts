@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import {
   getRpcUrl,
   toErrorMessage,
@@ -81,6 +81,10 @@ vi.mock('@trustvc/trustvc', async importOriginal => {
 const trustvc = await import('@trustvc/trustvc')
 
 describe('getRpcUrl', () => {
+  afterEach(() => {
+    vi.unstubAllEnvs()
+  })
+
   it('returns env variable if set', () => {
     const originalEnv = import.meta.env.VITE_RPC_URL_1
     import.meta.env.VITE_RPC_URL_1 = 'https://custom-rpc.io'
@@ -92,14 +96,52 @@ describe('getRpcUrl', () => {
     }
   })
 
-  it('uses Alchemy for Polygon when the key is set, otherwise the chain default', () => {
-    const key = String(process.env.ALCHEMY_API_KEY ?? '').trim()
-    const result = getRpcUrl('137')
-    if (key) {
-      expect(result).toBe(`https://polygon-mainnet.g.alchemy.com/v2/${key}`)
+  it('prefers a chain RPC override even when an Alchemy key is set', () => {
+    vi.stubEnv('ALCHEMY_API_KEY', 'test-key')
+    const originalEnv = import.meta.env.VITE_RPC_URL_137
+    import.meta.env.VITE_RPC_URL_137 = 'https://override.example'
+    expect(getRpcUrl('137')).toBe('https://override.example')
+    if (originalEnv) {
+      import.meta.env.VITE_RPC_URL_137 = originalEnv
     } else {
-      expect(result).toBe('https://polygon-rpc.com')
+      delete import.meta.env.VITE_RPC_URL_137
     }
+  })
+
+  it('uses the Alchemy URL for Ethereum and Polygon when the key is set', () => {
+    vi.stubEnv('ALCHEMY_API_KEY', 'test-key')
+    const chainIds = ['1', '137', '11155111', '80002']
+    const previous = new Map(
+      chainIds.map(id => [id, import.meta.env[`VITE_RPC_URL_${id}`]])
+    )
+    for (const id of chainIds) delete import.meta.env[`VITE_RPC_URL_${id}`]
+
+    expect(getRpcUrl('1')).toBe('https://eth-mainnet.g.alchemy.com/v2/test-key')
+    expect(getRpcUrl('137')).toBe(
+      'https://polygon-mainnet.g.alchemy.com/v2/test-key'
+    )
+    expect(getRpcUrl('11155111')).toBe(
+      'https://eth-sepolia.g.alchemy.com/v2/test-key'
+    )
+    expect(getRpcUrl('80002')).toBe(
+      'https://polygon-amoy.g.alchemy.com/v2/test-key'
+    )
+
+    for (const [id, value] of previous) {
+      if (value) import.meta.env[`VITE_RPC_URL_${id}`] = value
+    }
+  })
+
+  it('falls back to the chain default when the Alchemy key is empty or blank', () => {
+    vi.stubEnv('ALCHEMY_API_KEY', '')
+    expect(getRpcUrl('137')).toBe('https://polygon-rpc.com')
+    vi.stubEnv('ALCHEMY_API_KEY', '   ')
+    expect(getRpcUrl('137')).toBe('https://polygon-rpc.com')
+  })
+
+  it('ignores Alchemy for a chain it does not host', () => {
+    vi.stubEnv('ALCHEMY_API_KEY', 'test-key')
+    expect(getRpcUrl('999')).toBeNull()
   })
 
   it('returns null for unrecognised chain', () => {
