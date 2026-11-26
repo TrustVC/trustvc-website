@@ -22,19 +22,19 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --ignore-scripts
 
       - name: Install Playwright browsers
-        run: npx playwright install chromium --with-deps
+        run: ./node_modules/.bin/playwright install chromium --with-deps
 
       # ── Local chain + contracts ──────────────────────────────────────────
       - name: Start Hardhat node
-        run: npx hardhat node &
+        run: ./node_modules/.bin/hardhat node &
         env:
           NODE_OPTIONS: --max-old-space-size=4096
 
       - name: Wait for Hardhat node
-        run: npx wait-on http://127.0.0.1:8545 --timeout 180000
+        run: ./node_modules/.bin/wait-on http://127.0.0.1:8545 --timeout 180000
 
       # Token registry (token-registry fixtures) + document store (doc-store fixtures)
       - name: Deploy contracts and mint tokens
@@ -56,7 +56,7 @@ jobs:
           VITE_PLATFORM: local
 
       - name: Wait for dev server
-        run: npx wait-on http://localhost:5173 --timeout 180000
+        run: ./node_modules/.bin/wait-on http://localhost:5173 --timeout 180000
 
       # ── Verification tests (headless, no MetaMask) ───────────────────────
       - name: Run verification E2E tests

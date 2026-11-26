@@ -1,6 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useAddressBook } from '@/hooks/useAddressBook'
 import {
+  type AddressResolver,
+  HEADER_NAME_PATTERN,
+  loadAddressResolvers,
+  parseResolverEndpoint,
+  saveAddressResolvers,
+} from '@/utils/addressResolvers'
+import {
   SourceDropdown,
   AddressBookHelpTooltip,
 } from '@/components/common/AddressBookShared'
@@ -38,16 +45,8 @@ const Settings = ({ isDarkMode }: SettingsProps) => {
       : addressBook.filter(e => e.source === selectedSource)
 
   // Resolver state
-  const [resolvers, setResolvers] = useState<
-    { name: string; endpoint: string; apiHeader: string; apiKey: string }[]
-  >(() => {
-    try {
-      const stored = localStorage.getItem('ADDRESS_RESOLVERS')
-      return stored ? JSON.parse(stored) : []
-    } catch {
-      return []
-    }
-  })
+  const [resolvers, setResolvers] =
+    useState<AddressResolver[]>(loadAddressResolvers)
   const [showResolverForm, setShowResolverForm] = useState(false)
   const [editingResolverIndex, setEditingResolverIndex] = useState<
     number | null
@@ -72,12 +71,8 @@ const Settings = ({ isDarkMode }: SettingsProps) => {
 
     if (!resolverForm.endpoint.trim()) {
       errors.endpoint = 'Endpoint is required'
-    } else {
-      try {
-        new URL(resolverForm.endpoint)
-      } catch {
-        errors.endpoint = 'Please enter a valid URL'
-      }
+    } else if (!parseResolverEndpoint(resolverForm.endpoint)) {
+      errors.endpoint = 'Please enter a valid https:// URL'
     }
 
     if (resolverForm.apiHeader.trim() && !resolverForm.apiKey.trim()) {
@@ -86,6 +81,11 @@ const Settings = ({ isDarkMode }: SettingsProps) => {
 
     if (resolverForm.apiKey.trim() && !resolverForm.apiHeader.trim()) {
       errors.apiHeader = 'API Header is required when API Key is set'
+    } else if (
+      resolverForm.apiHeader.trim() &&
+      !HEADER_NAME_PATTERN.test(resolverForm.apiHeader.trim())
+    ) {
+      errors.apiHeader = 'Enter a valid header name (e.g. x-api-key)'
     }
 
     const duplicate = resolvers.some(
@@ -113,18 +113,25 @@ const Settings = ({ isDarkMode }: SettingsProps) => {
 
     try {
       // Fetch addresses from endpoint
-      const headers: Record<string, string> = {
-        'Content-Type': 'application/json',
-      }
+      const headers = new Headers({ 'Content-Type': 'application/json' })
       if (resolverForm.apiHeader && resolverForm.apiKey) {
-        headers[resolverForm.apiHeader] = resolverForm.apiKey
+        headers.set(resolverForm.apiHeader.trim(), resolverForm.apiKey)
       }
 
+      const endpoint = parseResolverEndpoint(resolverForm.endpoint)
+      if (!endpoint) {
+        setResolverErrors({ endpoint: 'Please enter a valid https:// URL' })
+        return
+      }
       const controller = new AbortController()
       const timeout = setTimeout(() => controller.abort(), 10000)
-      const res = await fetch(resolverForm.endpoint, {
+      // A third-party resolver gets only the API key the user configured:
+      // no cookies for this site and no referrer.
+      const res = await fetch(endpoint, {
         headers,
         signal: controller.signal,
+        credentials: 'omit',
+        referrerPolicy: 'no-referrer',
       })
       clearTimeout(timeout)
 
@@ -176,8 +183,7 @@ const Settings = ({ isDarkMode }: SettingsProps) => {
       } else {
         updated = [...resolvers, { ...resolverForm }]
       }
-      setResolvers(updated)
-      localStorage.setItem('ADDRESS_RESOLVERS', JSON.stringify(updated))
+      setResolvers(saveAddressResolvers(updated))
       setResolverForm({ name: '', endpoint: '', apiHeader: '', apiKey: '' })
       setResolverErrors({})
       setEditingResolverIndex(null)
@@ -199,8 +205,7 @@ const Settings = ({ isDarkMode }: SettingsProps) => {
 
   const _removeResolver = (index: number) => {
     const updated = resolvers.filter((_, i) => i !== index)
-    setResolvers(updated)
-    localStorage.setItem('ADDRESS_RESOLVERS', JSON.stringify(updated))
+    setResolvers(saveAddressResolvers(updated))
   }
 
   const handleCopy = (address: string) => {

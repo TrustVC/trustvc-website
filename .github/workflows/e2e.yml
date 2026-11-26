@@ -21,20 +21,20 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --ignore-scripts
 
       - name: Install Playwright browsers
-        run: npx playwright install chromium --with-deps
+        run: ./node_modules/.bin/playwright install chromium --with-deps
 
       # ── Hardhat node ─────────────────────────────────────────────────────
       - name: Start Hardhat node
-        run: npx hardhat node &
+        run: ./node_modules/.bin/hardhat node &
         env:
           # Give the node a moment before we use it
           NODE_OPTIONS: --max-old-space-size=4096
 
       - name: Wait for Hardhat node
-        run: npx wait-on http://127.0.0.1:8545 --timeout 180000
+        run: ./node_modules/.bin/wait-on http://127.0.0.1:8545 --timeout 180000
 
       - name: Deploy contracts and mint tokens
         run: node e2e/setup-contracts.cjs
@@ -54,7 +54,7 @@ jobs:
           VITE_PLATFORM: local
 
       - name: Wait for dev server
-        run: npx wait-on http://localhost:5173 --timeout 180000
+        run: ./node_modules/.bin/wait-on http://localhost:5173 --timeout 180000
 
       # ── MetaMask wallet cache ────────────────────────────────────────────
       # Cache the wallet setup so it is not rebuilt on every run.

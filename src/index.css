@@ -3845,7 +3845,6 @@ p.small {
   padding: 16px;
   opacity: 1;
   border-radius: 12px;
-  border-width: 1px;
   background:
     linear-gradient(
       0deg,
@@ -3853,7 +3852,6 @@ p.small {
       var(--Base-100-Base-L1, #ffffff)
     ),
     linear-gradient(0deg, rgba(222, 228, 233, 0), rgba(222, 228, 233, 0));
-
   border: 1px solid var(--Neutral-33-90, #a9b2bb54);
 }
 #connect-blockchain .frame {
@@ -4650,7 +4648,6 @@ p.small {
 .connect-metamask-button-text h3 {
   font-family: Urbanist;
   font-weight: 700;
-  font-style: Bold;
   font-size: 18px;
   line-height: 136%;
   letter-spacing: 0%;
