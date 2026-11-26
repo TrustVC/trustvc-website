@@ -199,8 +199,12 @@ describe('useTitleEscrowContract', () => {
     nextProvider.gates[0].resolve(encodeOwner(OWNER_B))
     await waitFor(() => expect(result.current.documentOwner).toBe(OWNER_B))
 
-    firstProvider.gates[0].resolve(encodeOwner(OWNER_A))
-    await waitFor(() => expect(result.current.documentOwner).toBe(OWNER_B))
+    // Let the stale response finish before asserting; a waitFor here would
+    // pass immediately, before that response had a chance to land.
+    await act(async () => {
+      firstProvider.gates[0].resolve(encodeOwner(OWNER_A))
+    })
+    expect(result.current.documentOwner).toBe(OWNER_B)
   })
 
   it('ignores an older refresh that fails after a newer one succeeds', async () => {

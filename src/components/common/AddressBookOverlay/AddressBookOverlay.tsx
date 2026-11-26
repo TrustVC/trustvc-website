@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useAddressBook } from '../../../hooks/useAddressBook'
+import { loadAddressResolvers } from '../../../utils/addressResolvers'
 import { SourceDropdown, AddressBookHelpTooltip } from '../AddressBookShared'
 
 interface AddressBookOverlayProps {
@@ -23,13 +24,7 @@ const AddressBookOverlay: React.FC<AddressBookOverlayProps> = ({
   const sourceName = selectedSource === 'local' ? 'Local' : selectedSource
 
   // Get resolvers from localStorage
-  const resolvers: { name: string; endpoint: string }[] = (() => {
-    try {
-      return JSON.parse(localStorage.getItem('ADDRESS_RESOLVERS') || '[]')
-    } catch {
-      return []
-    }
-  })()
+  const resolvers = loadAddressResolvers()
 
   const handleSourceChange = (source: string) => {
     setSelectedSource(source)

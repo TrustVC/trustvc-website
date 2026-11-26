@@ -168,6 +168,13 @@ the real-document half is what actually guards the bug.
   DOCUMENT_INTEGRITY, which is what made an expired credential look like tampering.
   `2.16.0-beta.6` has it. **Re-check this when changing the version** — the fragment a failure
   lands on is version-specific, and so is the copy that keys off it.
+- **CI installs with `npm ci --ignore-scripts`** (every workflow, including the Sanity studio), so
+  dependency install scripts never run there. Everything in use today works without them: esbuild
+  and `@sentry/cli` ship binaries as platform packages, `keccak` falls back to JS, and husky is
+  not needed in CI. A **new** dependency that relies on its install script (a native build, a
+  binary download) will work locally and break in CI. Check with a clean
+  `npm ci --ignore-scripts` before adding one. Workflows also call tools as
+  `./node_modules/.bin/<tool>`, not `npx`, so nothing is fetched on demand.
 - **Restart the dev server after any dependency change.** Vite pre-bundles dependencies, so a
   server started before `npm install` keeps serving the old copy — a version bump appears to do
   nothing. `npx vite --mode development --port 5174 --force`, or delete `node_modules/.vite`.
