@@ -73,6 +73,11 @@ export const saveAddressResolvers = (
   resolvers: AddressResolver[]
 ): AddressResolver[] => {
   const clean = sanitize(resolvers)
-  localStorage.setItem(ADDRESS_RESOLVERS_KEY, JSON.stringify(clean))
+  const persisted = clean.map(({ name, endpoint, apiHeader }) => ({
+    name,
+    endpoint,
+    apiHeader,
+  }))
+  localStorage.setItem(ADDRESS_RESOLVERS_KEY, JSON.stringify(persisted))
   return clean
 }
