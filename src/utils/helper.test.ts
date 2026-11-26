@@ -133,6 +133,7 @@ describe('getRpcUrl', () => {
   })
 
   it('falls back to the chain default when the Alchemy key is empty or blank', () => {
+    vi.stubEnv('VITE_RPC_URL_137', '')
     vi.stubEnv('ALCHEMY_API_KEY', '')
     expect(getRpcUrl('137')).toBe('https://polygon-rpc.com')
     vi.stubEnv('ALCHEMY_API_KEY', '   ')
