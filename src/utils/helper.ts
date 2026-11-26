@@ -284,7 +284,8 @@ export const isEthereumAddress = (address: string): boolean => {
 
 export const convertSecondsToMinAndSec = (seconds: number): string => {
   const sec = seconds % 60
-  return `${Math.trunc(seconds / 60)}:${sec < 10 ? `0${sec}` : sec}m`
+  const paddedSec = sec < 10 ? `0${sec}` : String(sec)
+  return `${Math.trunc(seconds / 60)}:${paddedSec}m`
 }
 
 export const getSortedByDateDesc = (items: any[]): any[] => {
