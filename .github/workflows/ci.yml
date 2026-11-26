@@ -80,7 +80,21 @@ jobs:
           name: coverage
           path: coverage
 
+      # Secrets aren't passed to fork or Dependabot PRs; skip the scan there
+      # rather than fail CI. `secrets` can't be read in an `if:`, hence this step.
+      - name: Check for SONAR_TOKEN
+        id: sonar-token
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          if [ -n "$SONAR_TOKEN" ]; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::SONAR_TOKEN not available; skipping SonarCloud scan"
+          fi
+
       - name: SonarCloud Scan
+        if: steps.sonar-token.outputs.available == 'true'
         uses: SonarSource/sonarqube-scan-action@689fb39b34b9aa95ebc5f8f119343ddd51542402 # v4.2.2
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
