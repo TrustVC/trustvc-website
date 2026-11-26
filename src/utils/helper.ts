@@ -15,9 +15,27 @@ import { utils } from 'ethers'
 import { compareDesc, compareAsc } from 'date-fns'
 import { getChainInfo, getChainInfoFromNetworkName } from './chain-utils'
 
+const ALCHEMY_HOST: Record<string, string> = {
+  '1': 'eth-mainnet',
+  '137': 'polygon-mainnet',
+  '11155111': 'eth-sepolia',
+  '80002': 'polygon-amoy',
+}
+
+/** Alchemy for Ethereum and Polygon when the key is set. Same rule as the TrustVC SDK. */
+const alchemyRpcUrl = (chainId: string): string | null => {
+  const host = ALCHEMY_HOST[chainId]
+  const key = String(process.env.ALCHEMY_API_KEY ?? '').trim()
+  if (!host || !key) return null
+  return `https://${host}.g.alchemy.com/v2/${key}`
+}
+
 export const getRpcUrl = (chainId: string): string | null => {
   const chainEnvUrl = import.meta.env[`VITE_RPC_URL_${chainId}`]
   if (chainEnvUrl) return chainEnvUrl
+
+  const alchemyUrl = alchemyRpcUrl(chainId)
+  if (alchemyUrl) return alchemyUrl
 
   const chainDefaultUrl =
     SUPPORTED_CHAINS[chainId as keyof typeof SUPPORTED_CHAINS]?.rpcUrl

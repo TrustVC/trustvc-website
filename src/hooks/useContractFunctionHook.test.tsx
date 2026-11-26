@@ -342,6 +342,49 @@ describe('useContractFunctionHook', () => {
       expect(result.current.errorMessage).toBeUndefined()
     })
 
+    it('unwraps a single-element ethers Result into the address string', async () => {
+      const address = '0x1111111111111111111111111111111111111111'
+      const mockContractWithMethod = {
+        interface: {
+          getFunction: () => ({ outputs: [{ type: 'address' }] }),
+        },
+        functions: {
+          holder: vi.fn().mockResolvedValueOnce([address]),
+        },
+      } as any
+
+      const { result } = renderHook(() =>
+        useContractFunctionHook(mockContractWithMethod, 'holder' as any)
+      )
+
+      await act(async () => {
+        await result.current.call()
+      })
+
+      expect(result.current.state).toBe('CONFIRMED')
+      expect(result.current.value).toBe(address)
+      expect(typeof (result.current.value as string).toLowerCase).toBe(
+        'function'
+      )
+    })
+
+    it('keeps a direct string return from ethers v6', async () => {
+      const address = '0x2222222222222222222222222222222222222222'
+      const mockContractWithMethod = {
+        holder: vi.fn().mockResolvedValueOnce(address),
+      } as any
+
+      const { result } = renderHook(() =>
+        useContractFunctionHook(mockContractWithMethod, 'holder' as any)
+      )
+
+      await act(async () => {
+        await result.current.call()
+      })
+
+      expect(result.current.value).toBe(address)
+    })
+
     it('maps call error code to errorMessage', async () => {
       const mockContractWithMethod = {
         functions: {
