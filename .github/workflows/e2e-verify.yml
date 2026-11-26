@@ -5,6 +5,9 @@ on:
     branches: [main, develop]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 # Read-only document verification suite (OA + W3C VC). No MetaMask, runs headless.
 jobs:
   e2e-verify:

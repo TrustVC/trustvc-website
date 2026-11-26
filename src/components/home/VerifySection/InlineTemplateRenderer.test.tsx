@@ -176,6 +176,27 @@ describe('InlineTemplateRenderer', () => {
     await waitFor(() => expect(onFailure).toHaveBeenCalledTimes(1))
   })
 
+  it('calls onFailure, not onRendered, when credentialSubject is an array', async () => {
+    // trustvc's template binding reads fields off one subject object, so an
+    // array would render every field blank while still reporting success.
+    vi.spyOn(console, 'error').mockImplementation(() => undefined)
+    const onRendered = vi.fn()
+    const onFailure = vi.fn()
+    render(
+      <InlineTemplateRenderer
+        rawDocument={{
+          ...inlineDocument,
+          credentialSubject: [credentialSubject],
+        }}
+        onRendered={onRendered}
+        onFailure={onFailure}
+      />
+    )
+    await waitFor(() => expect(onFailure).toHaveBeenCalledTimes(1))
+    expect(onRendered).not.toHaveBeenCalled()
+    expect(getFrame()).toBeNull()
+  })
+
   it('does not call onFailure when the template renders', async () => {
     const onFailure = vi.fn()
     render(
