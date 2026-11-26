@@ -1,8 +1,16 @@
-import { execSync } from 'child_process'
+import { execFileSync } from 'child_process'
 import path from 'path'
 import { fileURLToPath } from 'url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const e2eDir = path.resolve(__dirname, '..')
+
+// Run the locally installed Synpress CLI with the current Node binary rather
+// than `npx synpress`, so nothing is resolved through PATH and no shell runs.
+const synpressCli = path.resolve(
+  e2eDir,
+  '../node_modules/@synthetixio/synpress/dist/cli.js'
+)
 
 /**
  * Playwright global setup:
@@ -11,12 +19,10 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
  */
 export default async function globalSetup() {
   try {
-    execSync(
-      'npx synpress --wallet-setup-file ./wallet-setup/basic.setup.ts',
-      {
-        cwd: path.resolve(__dirname, '..'),
-        stdio: 'inherit',
-      }
+    execFileSync(
+      process.execPath,
+      [synpressCli, 'wallet-setup'],
+      { cwd: e2eDir, stdio: 'inherit' }
     )
   } catch (err) {
     // Synpress cache may already exist — ignore duplicate-build errors
