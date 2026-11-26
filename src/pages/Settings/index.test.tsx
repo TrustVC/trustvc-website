@@ -122,9 +122,9 @@ describe('Settings page — address book resolvers', () => {
         name: 'Acme',
         endpoint: 'https://example.com/addresses',
         apiHeader: ' x-api-key ',
-        apiKey: 'secret',
       },
     ])
+    expect(localStorage.getItem(ADDRESS_RESOLVERS_KEY)).not.toContain('secret')
 
     // The import summary is shown on the Address Book tab
     await user.click(screen.getByRole('button', { name: /^address book$/i }))
@@ -219,7 +219,6 @@ describe('Settings page — address book resolvers', () => {
           name: 'Acme',
           endpoint: 'https://example.com/v2',
           apiHeader: '',
-          apiKey: '',
         },
       ])
     )

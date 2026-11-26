@@ -104,14 +104,24 @@ describe('loadAddressResolvers', () => {
 describe('saveAddressResolvers', () => {
   beforeEach(() => localStorage.clear())
 
-  it('stores and returns only valid resolvers', () => {
+  it('returns only valid resolvers, with their API keys', () => {
     const saved = saveAddressResolvers([
       valid,
       { ...valid, name: 'Bad', endpoint: 'http://evil.example.com' },
     ])
     expect(saved).toEqual([valid])
-    expect(JSON.parse(localStorage.getItem(ADDRESS_RESOLVERS_KEY)!)).toEqual([
-      valid,
-    ])
+  })
+
+  it('never writes the API key to localStorage', () => {
+    saveAddressResolvers([valid])
+    const raw = localStorage.getItem(ADDRESS_RESOLVERS_KEY)!
+    const { apiKey: _apiKey, ...withoutKey } = valid
+    expect(JSON.parse(raw)).toEqual([withoutKey])
+    expect(raw).not.toContain(valid.apiKey)
+  })
+
+  it('loads a saved resolver back with an empty API key', () => {
+    saveAddressResolvers([valid])
+    expect(loadAddressResolvers()).toEqual([{ ...valid, apiKey: '' }])
   })
 })
