@@ -66,7 +66,18 @@ jobs:
           # Drop the keys set explicitly below. sed, not grep -v: grep exits 1
           # when no lines are left, which would fail this step.
           printf '%s\n' "$ENV_FILE" \
-            | sed -E '/^(VITE_SENTRY_DSN|VITE_SENTRY_ENVIRONMENT|VITE_SENTRY_RELEASE|VITE_GTM_CONTAINER_ID|VITE_GA4_TAG_ID|VITE_PLATFORM|VITE_PIMLICO_API_KEY|ALCHEMY_API_KEY)=/d' > .env
+            | grep -v '^VITE_SENTRY_DSN=' \
+            | grep -v '^VITE_SENTRY_ENVIRONMENT=' \
+            | grep -v '^VITE_SENTRY_RELEASE=' \
+            | grep -v '^VITE_GTM_CONTAINER_ID=' \
+            | grep -v '^VITE_GA4_TAG_ID=' \
+            | grep -v '^VITE_PLATFORM=' \
+            | grep -v '^VITE_PIMLICO_API_KEY=' \
+            | grep -v '^ALCHEMY_API_KEY=' \
+            | grep -v '^VITE_RPC_URL_1=' \
+            | grep -v '^VITE_RPC_URL_137=' \
+            | grep -v '^VITE_RPC_URL_11155111=' \
+            | grep -v '^VITE_RPC_URL_80002=' > .env
           echo "VITE_GTM_CONTAINER_ID=${VITE_GTM_CONTAINER_ID}" >> .env
           echo "VITE_GA4_TAG_ID=${VITE_GA4_TAG_ID}" >> .env
           echo "VITE_PLATFORM=${VITE_PLATFORM}" >> .env
