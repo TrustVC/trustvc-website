@@ -15,10 +15,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: '20'
           cache: 'npm'
@@ -63,7 +63,7 @@ jobs:
       # Cache the wallet setup so it is not rebuilt on every run.
       - name: Cache MetaMask wallet
         id: metamask-cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: .cache-synpress
           key: metamask-wallet-${{ hashFiles('e2e/wallet-setup/**') }}
@@ -106,7 +106,7 @@ jobs:
       # ── Artifacts ────────────────────────────────────────────────────────
       - name: Upload Playwright report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-report
           path: playwright-report/
@@ -114,7 +114,7 @@ jobs:
 
       - name: Upload screen recording
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: screen-recording
           path: /tmp/e2e-recording.mp4
@@ -123,7 +123,7 @@ jobs:
 
       - name: Upload screenshots on failure
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: test-results
           path: test-results/
