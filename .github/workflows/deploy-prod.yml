@@ -24,6 +24,7 @@ jobs:
       VITE_GTM_CONTAINER_ID: ${{ secrets.VITE_GTM_CONTAINER_ID_PRODUCTION }}
       VITE_GA4_TAG_ID: ${{ secrets.VITE_GA4_TAG_ID_PRODUCTION }}
       VITE_PIMLICO_API_KEY: ${{ secrets.VITE_PIMLICO_API_KEY }}
+      ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}
 
       VITE_PLATFORM: production
 
@@ -42,6 +43,8 @@ jobs:
 
       - name: Create .env for build
         run: |
+          # Drop the keys set explicitly below. sed, not grep -v: grep exits 1
+          # when no lines are left, which would fail this step.
           printf '%s\n' "$ENV_FILE" \
             | grep -v '^VITE_SENTRY_DSN=' \
             | grep -v '^VITE_SENTRY_ENVIRONMENT=' \
@@ -49,7 +52,12 @@ jobs:
             | grep -v '^VITE_GTM_CONTAINER_ID=' \
             | grep -v '^VITE_GA4_TAG_ID=' \
             | grep -v '^VITE_PLATFORM=' \
-            | grep -v '^VITE_PIMLICO_API_KEY=' > .env
+            | grep -v '^VITE_PIMLICO_API_KEY=' \
+            | grep -v '^ALCHEMY_API_KEY=' \
+            | grep -v '^VITE_RPC_URL_1=' \
+            | grep -v '^VITE_RPC_URL_137=' \
+            | grep -v '^VITE_RPC_URL_11155111=' \
+            | grep -v '^VITE_RPC_URL_80002=' > .env
           echo "VITE_GTM_CONTAINER_ID=${VITE_GTM_CONTAINER_ID}" >> .env
           echo "VITE_GA4_TAG_ID=${VITE_GA4_TAG_ID}" >> .env
           echo "VITE_PLATFORM=${VITE_PLATFORM}" >> .env
@@ -57,9 +65,10 @@ jobs:
           echo "VITE_SENTRY_ENVIRONMENT=${VITE_SENTRY_ENVIRONMENT}" >> .env
           echo "VITE_SENTRY_RELEASE=${VITE_SENTRY_RELEASE}" >> .env
           echo "VITE_PIMLICO_API_KEY=${VITE_PIMLICO_API_KEY}" >> .env
+          echo "ALCHEMY_API_KEY=${ALCHEMY_API_KEY}" >> .env
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --ignore-scripts
 
       - name: Lint
         run: npm run lint
@@ -72,7 +81,7 @@ jobs:
           SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4.3.1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

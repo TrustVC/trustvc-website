@@ -2923,6 +2923,41 @@ p.small {
   background: #ffffff;
 }
 
+/* Inline (INLINE_HTML_TEMPLATE) templates render without generic-templates' page wrapper, so
+   this replicates its compiled `container` (no 475px step, capped at 1280px) to give the
+   template the same width a URL-rendered document gets. */
+.vr-inline-template-frame {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .vr-inline-template-frame {
+    max-width: 640px;
+  }
+}
+
+@media (min-width: 768px) {
+  .vr-inline-template-frame {
+    max-width: 768px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .vr-inline-template-frame {
+    max-width: 1024px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .vr-inline-template-frame {
+    max-width: 1280px;
+  }
+}
+
 /* Attachment tab badge */
 .vr-attachment-count {
   display: inline-flex;
@@ -3845,7 +3880,6 @@ p.small {
   padding: 16px;
   opacity: 1;
   border-radius: 12px;
-  border-width: 1px;
   background:
     linear-gradient(
       0deg,
@@ -3853,7 +3887,6 @@ p.small {
       var(--Base-100-Base-L1, #ffffff)
     ),
     linear-gradient(0deg, rgba(222, 228, 233, 0), rgba(222, 228, 233, 0));
-
   border: 1px solid var(--Neutral-33-90, #a9b2bb54);
 }
 #connect-blockchain .frame {
@@ -4650,7 +4683,6 @@ p.small {
 .connect-metamask-button-text h3 {
   font-family: Urbanist;
   font-weight: 700;
-  font-style: Bold;
   font-size: 18px;
   line-height: 136%;
   letter-spacing: 0%;

@@ -9,6 +9,9 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   lint-and-test:
     name: Lint & Test
@@ -21,6 +24,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
@@ -29,7 +34,7 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --ignore-scripts
 
       - name: Run ESLint
         run: npm run lint
@@ -46,3 +51,50 @@ jobs:
           VITE_GTM_CONTAINER_ID: ''
           VITE_GA4_TAG_ID: ''
           VITE_PLATFORM: local
+
+      - name: Upload coverage for Sonar
+        if: ${{ !cancelled() && matrix.node-version == '22.x' }} # one leg is enough
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage/lcov.info
+          retention-days: 1
+          if-no-files-found: warn
+
+  sonar:
+    name: SonarCloud Scan
+    needs: lint-and-test
+    if: ${{ !cancelled() }} # still report to Sonar when a test fails
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # full history, needed for Sonar's new-code analysis
+
+      - name: Download coverage
+        uses: actions/download-artifact@v4
+        continue-on-error: true # scan without coverage rather than not at all
+        with:
+          name: coverage
+          path: coverage
+
+      # Secrets aren't passed to fork or Dependabot PRs; skip the scan there
+      # rather than fail CI. `secrets` can't be read in an `if:`, hence this step.
+      - name: Check for SONAR_TOKEN
+        id: sonar-token
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          if [ -n "$SONAR_TOKEN" ]; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::SONAR_TOKEN not available; skipping SonarCloud scan"
+          fi
+
+      - name: SonarCloud Scan
+        if: steps.sonar-token.outputs.available == 'true'
+        uses: SonarSource/sonarqube-scan-action@689fb39b34b9aa95ebc5f8f119343ddd51542402 # v4.2.2
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

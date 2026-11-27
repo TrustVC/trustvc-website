@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Wait for CI workflow
-        uses: lewagon/wait-on-check-action@v1.3.4
+        uses: lewagon/wait-on-check-action@ccfb013c15c8afb7bf2b7c028fb74dc5a068cccc # v1.3.4
         with:
           ref: ${{ github.ref }}
           check-name: 'Lint & Test (22.x)'
@@ -46,6 +46,7 @@ jobs:
       VITE_GA4_TAG_ID: ${{ secrets.VITE_GA4_TAG_ID_DEVELOPMENT }}
       VITE_PLATFORM: dev
       VITE_PIMLICO_API_KEY: ${{ secrets.VITE_PIMLICO_API_KEY }}
+      ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}
 
     steps:
       - name: Checkout code
@@ -62,6 +63,8 @@ jobs:
 
       - name: Create .env for build
         run: |
+          # Drop the keys set explicitly below. sed, not grep -v: grep exits 1
+          # when no lines are left, which would fail this step.
           printf '%s\n' "$ENV_FILE" \
             | grep -v '^VITE_SENTRY_DSN=' \
             | grep -v '^VITE_SENTRY_ENVIRONMENT=' \
@@ -69,7 +72,12 @@ jobs:
             | grep -v '^VITE_GTM_CONTAINER_ID=' \
             | grep -v '^VITE_GA4_TAG_ID=' \
             | grep -v '^VITE_PLATFORM=' \
-            | grep -v '^VITE_PIMLICO_API_KEY=' > .env
+            | grep -v '^VITE_PIMLICO_API_KEY=' \
+            | grep -v '^ALCHEMY_API_KEY=' \
+            | grep -v '^VITE_RPC_URL_1=' \
+            | grep -v '^VITE_RPC_URL_137=' \
+            | grep -v '^VITE_RPC_URL_11155111=' \
+            | grep -v '^VITE_RPC_URL_80002=' > .env
           echo "VITE_GTM_CONTAINER_ID=${VITE_GTM_CONTAINER_ID}" >> .env
           echo "VITE_GA4_TAG_ID=${VITE_GA4_TAG_ID}" >> .env
           echo "VITE_PLATFORM=${VITE_PLATFORM}" >> .env
@@ -77,9 +85,10 @@ jobs:
           echo "VITE_SENTRY_ENVIRONMENT=${VITE_SENTRY_ENVIRONMENT}" >> .env
           echo "VITE_SENTRY_RELEASE=${VITE_SENTRY_RELEASE}" >> .env
           echo "VITE_PIMLICO_API_KEY=${VITE_PIMLICO_API_KEY}" >> .env
+          echo "ALCHEMY_API_KEY=${ALCHEMY_API_KEY}" >> .env
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --ignore-scripts
 
       - name: Build
         run: npm run build
@@ -106,30 +115,29 @@ jobs:
           path: ${{ env.BUILD_DIR }}
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4.3.1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Select target bucket
-        id: bucket
-        run: |
-            echo "bucket=${S3_BUCKET_DEV}" >> $GITHUB_OUTPUT
+      # Secrets reach run blocks only through env, never ${{ secrets.* }}
+      # inside the script, so they never appear in the command text.
+      - name: Sync static assets with long cache
         env:
           S3_BUCKET_DEV: ${{ secrets.S3_BUCKET_DEV }}
-
-      - name: Sync static assets with long cache
         run: |
-          aws s3 sync $BUILD_DIR s3://${{ steps.bucket.outputs.bucket }} \
+          aws s3 sync "$BUILD_DIR" "s3://${S3_BUCKET_DEV}" \
             --delete \
             --exclude "*" \
             --include "assets/*" \
             --cache-control "public, max-age=31536000, immutable"
 
       - name: Sync HTML and other assets with no-cache
+        env:
+          S3_BUCKET_DEV: ${{ secrets.S3_BUCKET_DEV }}
         run: |
-          aws s3 sync $BUILD_DIR s3://${{ steps.bucket.outputs.bucket }} \
+          aws s3 sync "$BUILD_DIR" "s3://${S3_BUCKET_DEV}" \
             --delete \
             --exclude "assets/*" \
             --cache-control "no-cache, no-store, must-revalidate"
@@ -140,5 +148,5 @@ jobs:
         if: ${{ env.CLOUDFRONT_DISTRIBUTION_ID_DEV != '' }}
         run: |
           aws cloudfront create-invalidation \
-            --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID_DEV }} \
+            --distribution-id "${CLOUDFRONT_DISTRIBUTION_ID_DEV}" \
             --paths "/*"

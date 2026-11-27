@@ -9,14 +9,33 @@ import {
   vc,
   SignedVerifiableCredential,
   CHAIN_ID,
+  getRenderMethods,
 } from '@trustvc/trustvc'
 import { utils } from 'ethers'
 import { compareDesc, compareAsc } from 'date-fns'
 import { getChainInfo, getChainInfoFromNetworkName } from './chain-utils'
 
+const ALCHEMY_HOST: Record<string, string> = {
+  '1': 'eth-mainnet',
+  '137': 'polygon-mainnet',
+  '11155111': 'eth-sepolia',
+  '80002': 'polygon-amoy',
+}
+
+/** Alchemy for Ethereum and Polygon when the key is set. Same rule as the TrustVC SDK. */
+const alchemyRpcUrl = (chainId: string): string | null => {
+  const host = ALCHEMY_HOST[chainId]
+  const key = String(process.env.ALCHEMY_API_KEY ?? '').trim()
+  if (!host || !key) return null
+  return `https://${host}.g.alchemy.com/v2/${key}`
+}
+
 export const getRpcUrl = (chainId: string): string | null => {
   const chainEnvUrl = import.meta.env[`VITE_RPC_URL_${chainId}`]
   if (chainEnvUrl) return chainEnvUrl
+
+  const alchemyUrl = alchemyRpcUrl(chainId)
+  if (alchemyUrl) return alchemyUrl
 
   const chainDefaultUrl =
     SUPPORTED_CHAINS[chainId as keyof typeof SUPPORTED_CHAINS]?.rpcUrl
@@ -76,8 +95,16 @@ export interface DocumentAttachment {
 
 // ── Document helper functions ──
 
+/** Whether the document carries its own INLINE_HTML_TEMPLATE renderMethod entry. */
+export const hasInlineTemplate = (rawDocument: unknown): boolean =>
+  !!getRenderMethods(rawDocument).inlineHtmlTemplate
+
 export const getTemplateSourceUrl = (rawDocument: any): string | undefined => {
   if (vc.isSignedDocument(rawDocument) || vc.isRawDocument(rawDocument)) {
+    // An INLINE_HTML_TEMPLATE entry has no `id` and may come first, so take the URL-based
+    // entry (the fallback renderer) instead. Documents without one keep the original lookup.
+    const { inlineHtmlTemplate, renderer } = getRenderMethods(rawDocument)
+    if (inlineHtmlTemplate) return renderer?.id
     return [rawDocument.renderMethod]?.flat()?.[0]?.id
   } else if (isWrappedV2Document(rawDocument)) {
     const documentData = getDocumentData(rawDocument)
@@ -257,7 +284,8 @@ export const isEthereumAddress = (address: string): boolean => {
 
 export const convertSecondsToMinAndSec = (seconds: number): string => {
   const sec = seconds % 60
-  return `${~~(seconds / 60)}:${sec < 10 ? `0${sec}` : sec}m`
+  const paddedSec = sec < 10 ? `0${sec}` : String(sec)
+  return `${Math.trunc(seconds / 60)}:${paddedSec}m`
 }
 
 export const getSortedByDateDesc = (items: any[]): any[] => {
